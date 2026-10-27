@@ -1,0 +1,3280 @@
+# comet-execution: managed-run
+change_id: ba09fa7a-fcdb-4a66-b07c-579e604b5251
+workflow: hotfix
+language: zh-CN
+phase: archive
+context_compression: off
+build_mode: direct
+build_pause: null
+subagent_dispatch: null
+tdd_mode: direct
+review_mode: off
+isolation: branch
+verify_mode: light
+auto_transition: true
+base_ref: 14193184f8ed1a5885beb354005f7b36b4d3e314
+design_doc: null
+plan: null
+verify_result: pass
+verify_failures: 0
+verification_report: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+branch_status: pending
+created_at: 2026-10-27
+verified_at: 2026-10-27
+archive_confirmation: confirmed
+archived: true
+bound_branch: hotfix/20261027/harden-offline-data-fallbacks
+direct_override: null
+handoff_context: null
+handoff_hash: null
+classic_profile: null
+classic_migration: null
+run_checkpoint:
+  schema: comet.workflow-run-checkpoint.v1
+  hash: 4586ff4fc96e1f0ab85fe57c3f74f50b030d0c06283c068ff436a9e513811211
+  run:
+    protocolVersion: 1
+    schemaVersion: 1
+    runId: harden-offline-data-fallbacks
+    revision: 1
+    workflow:
+      id: comet-classic-hotfix
+      version: "1"
+      hash: 59c8440e5c03ef56376797cfb0bc38e82bb8dc8d5cfb7a7351795f7a73fefbe8
+    definitionHashes:
+      '["comet-classic-hotfix","1"]': 59c8440e5c03ef56376797cfb0bc38e82bb8dc8d5cfb7a7351795f7a73fefbe8
+    initialStateHash: cfce3011bd86162918eb9193ed9f8fcb2ccf50bd1dee3508716d066248c784dd
+    input:
+      change: harden-offline-data-fallbacks
+      changeDir: docs/openspec/changes/harden-offline-data-fallbacks
+    state:
+      archiveConfirmation: confirmed
+      archived: true
+      autoTransition: true
+      baseRef: 14193184f8ed1a5885beb354005f7b36b4d3e314
+      boundBranch: hotfix/20261027/harden-offline-data-fallbacks
+      branchStatus: pending
+      buildMode: direct
+      buildPause: null
+      checkEpoch: 7
+      classicMigration: null
+      classicProfile: null
+      contextCompression: off
+      createdAt: 2026-10-27
+      designDoc: null
+      directOverride: null
+      handoffContext: null
+      handoffHash: null
+      isolation: branch
+      language: zh-CN
+      phase: archive
+      plan: null
+      reviewMode: off
+      subagentDispatch: null
+      tddMode: direct
+      verificationReport: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+      verifiedAt: 2026-10-27
+      verifyFailures: 0
+      verifyMode: light
+      verifyResult: pass
+      workflow: hotfix
+    status: running
+    sequence: 20
+    actions:
+      - attempt: 1
+        claim:
+          executorId: comet-classic-guard
+          token: portable-4ece0649ecf0551ea88fd239509b0e7630993c299726d51a1052672d50cde351
+        executionOrigin:
+          workflow:
+            hash: 59c8440e5c03ef56376797cfb0bc38e82bb8dc8d5cfb7a7351795f7a73fefbe8
+            id: comet-classic-hotfix
+            version: "1"
+        id: harden-offline-data-fallbacks:1
+        input:
+          input:
+            change: harden-offline-data-fallbacks
+            changeDir: docs/openspec/changes/harden-offline-data-fallbacks
+          outputs: {}
+        inputHash: 3ed474d95f89f89eae561ae1e1da38dc84100d64385a34b4c36bfb5dd962fab6
+        outcome:
+          actionId: harden-offline-data-fallbacks:1
+          attempt: 1
+          claimToken: portable-4ece0649ecf0551ea88fd239509b0e7630993c299726d51a1052672d50cde351
+          inputHash: 3ed474d95f89f89eae561ae1e1da38dc84100d64385a34b4c36bfb5dd962fab6
+          outcomeId: 222c32a7-0926-4882-9604-968bc1449f76
+          output:
+            event: open-complete
+            requirementsEvidence:
+              contentHash: 4d491dd556bc14d64a55c083aa0eda4804da269ad5f1cae7dd17e4d8ac0ace7d
+              ref: docs/openspec/changes/harden-offline-data-fallbacks
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: c8ad430a68d9b4522da9c336c868be81f9d92bd2c40364b1e600b22a64e1a624
+            outcomeId: 222c32a7-0926-4882-9604-968bc1449f76
+        reconciliations: []
+        ref: comet-hotfix
+        requiredCapabilities: []
+        retry: manual
+        runId: harden-offline-data-fallbacks
+        status: succeeded
+        stepId: hotfix.open
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-state
+          sessionId: classic-builder/harden-offline-data-fallbacks:3/1
+          token: portable-b072156e875b88f61f58db8c38a3bbdb59951857376239fe703d19e18184d87f
+        executionOrigin:
+          workflow:
+            hash: 59c8440e5c03ef56376797cfb0bc38e82bb8dc8d5cfb7a7351795f7a73fefbe8
+            id: comet-classic-hotfix
+            version: "1"
+        id: harden-offline-data-fallbacks:3
+        input:
+          input:
+            change: harden-offline-data-fallbacks
+            changeDir: docs/openspec/changes/harden-offline-data-fallbacks
+          outputs:
+            hotfix.open:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: 4d491dd556bc14d64a55c083aa0eda4804da269ad5f1cae7dd17e4d8ac0ace7d
+                ref: docs/openspec/changes/harden-offline-data-fallbacks
+            hotfix.open.evidence:
+              contentHash: b72c5210d20b4bd3313f6e01030f8f53d4dcdc5b5faf3f1f2822cfb02a6c4118
+              ref: docs/openspec/changes/harden-offline-data-fallbacks
+        inputHash: 3831c65c562de26d081ffea3575d0455d410cc73f7a3e5399bce8886d6e02c6b
+        outcome:
+          actionId: harden-offline-data-fallbacks:3
+          attempt: 1
+          claimToken: portable-b072156e875b88f61f58db8c38a3bbdb59951857376239fe703d19e18184d87f
+          inputHash: 3831c65c562de26d081ffea3575d0455d410cc73f7a3e5399bce8886d6e02c6b
+          outcomeId: 562354fc-e9c4-4cef-8b9c-a5ed51ea924b
+          output:
+            event: build-complete
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: e76b8ffbd979ed64e14a5f4b569c991e5310659c156eca87b702621186477a6a
+            outcomeId: 562354fc-e9c4-4cef-8b9c-a5ed51ea924b
+        reconciliations: []
+        ref: comet-build
+        requiredCapabilities: []
+        retry: manual
+        runId: harden-offline-data-fallbacks
+        status: succeeded
+        stepId: hotfix.build.execute
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-check
+          token: portable-43bea4e7ea3b1207ab439def785d584170f82684698185b4285efa5ebf23c2c5
+        executionOrigin:
+          workflow:
+            hash: 59c8440e5c03ef56376797cfb0bc38e82bb8dc8d5cfb7a7351795f7a73fefbe8
+            id: comet-classic-hotfix
+            version: "1"
+        id: harden-offline-data-fallbacks:4
+        input:
+          input:
+            change: harden-offline-data-fallbacks
+            changeDir: docs/openspec/changes/harden-offline-data-fallbacks
+          outputs:
+            hotfix.build.execute:
+              event: build-complete
+            hotfix.open:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: 4d491dd556bc14d64a55c083aa0eda4804da269ad5f1cae7dd17e4d8ac0ace7d
+                ref: docs/openspec/changes/harden-offline-data-fallbacks
+            hotfix.open.evidence:
+              contentHash: b72c5210d20b4bd3313f6e01030f8f53d4dcdc5b5faf3f1f2822cfb02a6c4118
+              ref: docs/openspec/changes/harden-offline-data-fallbacks
+        inputHash: d626dd3a63f00836b9fcbb60ab41e881fd7e595978ad7f63b876cdcd47e84368
+        outcome:
+          actionId: harden-offline-data-fallbacks:4
+          attempt: 1
+          claimToken: portable-43bea4e7ea3b1207ab439def785d584170f82684698185b4285efa5ebf23c2c5
+          inputHash: d626dd3a63f00836b9fcbb60ab41e881fd7e595978ad7f63b876cdcd47e84368
+          outcomeId: 85113bc4-ec8d-4625-9bfd-d9e2feba1b9c
+          output:
+            argv:
+              - go
+              - test
+              - -C
+              - combined_refactor
+              - -count=1
+              - ./...
+              - --json
+            changedDuringExecution: []
+            checkEpoch: 1
+            contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+            cwd: .
+            environment: 3e5e89bd7ec62cd6a3926cc985c4b759d7b9426395fa957b07aef6cb2aa240e7
+            exitCode: 0
+            inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+            inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+            manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+            manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/c593564c-0ee0-4751-8366-1405f0a0b7d8.manifest
+            receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+            reusable: true
+            reused: false
+            scope: build
+            tier: full
+            timeoutMs: 300000
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 5506bcff53bea8248b6d3a1daa3df3dbb4dff33323fc236c80f6f2bb88ff6de7
+            outcomeId: 85113bc4-ec8d-4625-9bfd-d9e2feba1b9c
+        reconciliations: []
+        ref: classic-check
+        requiredCapabilities: []
+        retry: manual
+        runId: harden-offline-data-fallbacks
+        status: succeeded
+        stepId: hotfix.build.check
+        type: call_tool
+      - attempt: 1
+        claim:
+          executorId: comet-classic-guard
+          token: portable-6567d45f6b8e876b8ed1daffe332b252bd7eb5143ddc8165329c9247c046b409
+        executionOrigin:
+          workflow:
+            hash: 59c8440e5c03ef56376797cfb0bc38e82bb8dc8d5cfb7a7351795f7a73fefbe8
+            id: comet-classic-hotfix
+            version: "1"
+        id: harden-offline-data-fallbacks:6
+        input:
+          input:
+            change: harden-offline-data-fallbacks
+            changeDir: docs/openspec/changes/harden-offline-data-fallbacks
+          outputs:
+            hotfix.build.check:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+                - --json
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              cwd: .
+              environment: 3e5e89bd7ec62cd6a3926cc985c4b759d7b9426395fa957b07aef6cb2aa240e7
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/c593564c-0ee0-4751-8366-1405f0a0b7d8.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+              reusable: true
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+            hotfix.build.check.evidence:
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+            hotfix.build.execute:
+              event: build-complete
+            hotfix.open:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: 4d491dd556bc14d64a55c083aa0eda4804da269ad5f1cae7dd17e4d8ac0ace7d
+                ref: docs/openspec/changes/harden-offline-data-fallbacks
+            hotfix.open.evidence:
+              contentHash: b72c5210d20b4bd3313f6e01030f8f53d4dcdc5b5faf3f1f2822cfb02a6c4118
+              ref: docs/openspec/changes/harden-offline-data-fallbacks
+        inputHash: aacc726a2ecd24b5c7be99700bd16f82cdb909eee3f6d702c5fc15bca9794405
+        outcome:
+          actionId: harden-offline-data-fallbacks:6
+          attempt: 1
+          claimToken: portable-6567d45f6b8e876b8ed1daffe332b252bd7eb5143ddc8165329c9247c046b409
+          inputHash: aacc726a2ecd24b5c7be99700bd16f82cdb909eee3f6d702c5fc15bca9794405
+          outcomeId: 039223ad-f1d4-4e03-be1f-4aa1779d5c65
+          output:
+            event: verification-ready
+            verificationReport: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: d09b41c500eecdc91ead0bf1c654802d9b4461b2df84593f767f15717a97e354
+            outcomeId: 039223ad-f1d4-4e03-be1f-4aa1779d5c65
+        reconciliations: []
+        ref: comet-verify
+        requiredCapabilities: []
+        retry: manual
+        runId: harden-offline-data-fallbacks
+        status: succeeded
+        stepId: hotfix.verify.run
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-check
+          token: portable-087f3e480dd3ea7307211e614f1ddec0692bbedae232711da7f835f3652df739
+        executionOrigin:
+          workflow:
+            hash: 59c8440e5c03ef56376797cfb0bc38e82bb8dc8d5cfb7a7351795f7a73fefbe8
+            id: comet-classic-hotfix
+            version: "1"
+        id: harden-offline-data-fallbacks:8
+        input:
+          input:
+            change: harden-offline-data-fallbacks
+            changeDir: docs/openspec/changes/harden-offline-data-fallbacks
+          outputs:
+            hotfix.build.check:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+                - --json
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              cwd: .
+              environment: 3e5e89bd7ec62cd6a3926cc985c4b759d7b9426395fa957b07aef6cb2aa240e7
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/c593564c-0ee0-4751-8366-1405f0a0b7d8.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+              reusable: true
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+            hotfix.build.check.evidence:
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+            hotfix.build.execute:
+              event: build-complete
+            hotfix.open:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: 4d491dd556bc14d64a55c083aa0eda4804da269ad5f1cae7dd17e4d8ac0ace7d
+                ref: docs/openspec/changes/harden-offline-data-fallbacks
+            hotfix.open.evidence:
+              contentHash: b72c5210d20b4bd3313f6e01030f8f53d4dcdc5b5faf3f1f2822cfb02a6c4118
+              ref: docs/openspec/changes/harden-offline-data-fallbacks
+            hotfix.verify.report.evidence:
+              contentHash: 1562a1854109de6d4a1f948f5b3646fa4fcc044a904dffb02c1186e67b693c4a
+              ref: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+            hotfix.verify.run:
+              event: verification-ready
+              verificationReport: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+        inputHash: 993cf6b1e3e9510b5178449355cee6079ecba162802a4489d1e8378d825bf8fb
+        outcome:
+          actionId: harden-offline-data-fallbacks:8
+          attempt: 1
+          claimToken: portable-087f3e480dd3ea7307211e614f1ddec0692bbedae232711da7f835f3652df739
+          inputHash: 993cf6b1e3e9510b5178449355cee6079ecba162802a4489d1e8378d825bf8fb
+          outcomeId: 21579d57-6e01-4849-9f20-9f2930e4a0a1
+          output:
+            argv:
+              - go
+              - test
+              - -C
+              - combined_refactor
+              - -count=1
+              - ./...
+            changedDuringExecution: []
+            checkEpoch: 2
+            contentHash: a1fe329dbdd0edd59ad0692652b08a1894e912bfc2df062ba6c19c71cc2c10af
+            cwd: .
+            deliveryInputs:
+              combined_refactor/asn.go: git:684b2eeb6914eee1f0200fe772fdcc246f30b541
+              combined_refactor/fallback/geolite2-asn.snapshot.mmdb.gz: git:e5520acc27e6f0f0d037d0ac47e38ce5d0116e59
+              combined_refactor/fixes_test.go: git:e8f427a573ef5306a46f32f83e14df71aee0986c
+              combined_refactor/storage.go: git:9718607c411c987f6ce280695b7ddcbf77c74dd1
+            environment: aa14739470e611d4aa627405c6d655f35ddca119fe1bf1382f7cddc1ac718d4d
+            exitCode: 0
+            inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+            inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+            manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+            manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/1918e66f-bd24-4def-afd2-7cbd807509aa.manifest
+            receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/21e2e1f2-3bff-4095-9573-1b958f35c244.log
+            reusable: false
+            reused: false
+            scope: verify
+            tier: full
+            timeoutMs: 300000
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: de0191836ce33ca3316e3e21637e09de593ab8246e731d204cdbc25293b97d66
+            outcomeId: 21579d57-6e01-4849-9f20-9f2930e4a0a1
+        reconciliations: []
+        ref: classic-check
+        requiredCapabilities: []
+        retry: manual
+        runId: harden-offline-data-fallbacks
+        status: succeeded
+        stepId: hotfix.verify.check
+        type: call_tool
+      - attempt: 1
+        claim:
+          executorId: comet-classic-state
+          token: portable-2c9aaebfa01b8a4667e61891ba0740288241532a1bc1f8cc26a6099988e6b3c8
+        executionOrigin:
+          workflow:
+            hash: 59c8440e5c03ef56376797cfb0bc38e82bb8dc8d5cfb7a7351795f7a73fefbe8
+            id: comet-classic-hotfix
+            version: "1"
+        id: harden-offline-data-fallbacks:10
+        input:
+          input:
+            change: harden-offline-data-fallbacks
+            changeDir: docs/openspec/changes/harden-offline-data-fallbacks
+          outputs:
+            hotfix.build.check:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+                - --json
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              cwd: .
+              environment: 3e5e89bd7ec62cd6a3926cc985c4b759d7b9426395fa957b07aef6cb2aa240e7
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/c593564c-0ee0-4751-8366-1405f0a0b7d8.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+              reusable: true
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+            hotfix.build.check.evidence:
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+            hotfix.build.execute:
+              event: build-complete
+            hotfix.open:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: 4d491dd556bc14d64a55c083aa0eda4804da269ad5f1cae7dd17e4d8ac0ace7d
+                ref: docs/openspec/changes/harden-offline-data-fallbacks
+            hotfix.open.evidence:
+              contentHash: b72c5210d20b4bd3313f6e01030f8f53d4dcdc5b5faf3f1f2822cfb02a6c4118
+              ref: docs/openspec/changes/harden-offline-data-fallbacks
+            hotfix.verify.check:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 2
+              contentHash: a1fe329dbdd0edd59ad0692652b08a1894e912bfc2df062ba6c19c71cc2c10af
+              cwd: .
+              deliveryInputs:
+                combined_refactor/asn.go: git:684b2eeb6914eee1f0200fe772fdcc246f30b541
+                combined_refactor/fallback/geolite2-asn.snapshot.mmdb.gz: git:e5520acc27e6f0f0d037d0ac47e38ce5d0116e59
+                combined_refactor/fixes_test.go: git:e8f427a573ef5306a46f32f83e14df71aee0986c
+                combined_refactor/storage.go: git:9718607c411c987f6ce280695b7ddcbf77c74dd1
+              environment: aa14739470e611d4aa627405c6d655f35ddca119fe1bf1382f7cddc1ac718d4d
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/1918e66f-bd24-4def-afd2-7cbd807509aa.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/21e2e1f2-3bff-4095-9573-1b958f35c244.log
+              reusable: false
+              reused: false
+              scope: verify
+              tier: full
+              timeoutMs: 300000
+            hotfix.verify.check.evidence:
+              contentHash: a1fe329dbdd0edd59ad0692652b08a1894e912bfc2df062ba6c19c71cc2c10af
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/21e2e1f2-3bff-4095-9573-1b958f35c244.log
+            hotfix.verify.report.evidence:
+              contentHash: 1562a1854109de6d4a1f948f5b3646fa4fcc044a904dffb02c1186e67b693c4a
+              ref: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+            hotfix.verify.run:
+              event: verification-ready
+              verificationReport: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+        inputHash: cbd8c750f403bd5cfe20cab7bf69e8e9a7df63dc9e4e462bee9c86b78babb040
+        outcome:
+          actionId: harden-offline-data-fallbacks:10
+          attempt: 1
+          claimToken: portable-2c9aaebfa01b8a4667e61891ba0740288241532a1bc1f8cc26a6099988e6b3c8
+          inputHash: cbd8c750f403bd5cfe20cab7bf69e8e9a7df63dc9e4e462bee9c86b78babb040
+          outcomeId: 04bae55f-98f1-4bb7-b746-5ab4a29f2ce7
+          output:
+            summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+              locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+              test/vet/build 通过，离线启动实测回退成功。交付文件 4
+              个（asn.go、storage.go、fixes_test.go、fallback/geolite2-asn.snapshot.mmdb.gz），当前均未提交；分支
+              hotfix/20261027/harden-offline-data-fallbacks，remote origin。归档将把
+              change 目录移入 archive（无 delta spec），实现文件需单独提交。
+            targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: d6fb1e6c67a4a44a27d06eafb9ea34be7d22ce19123d9df9dd8269004a14341b
+            outcomeId: 04bae55f-98f1-4bb7-b746-5ab4a29f2ce7
+        reconciliations: []
+        ref: comet-archive
+        requiredCapabilities: []
+        retry: manual
+        runId: harden-offline-data-fallbacks
+        status: succeeded
+        stepId: hotfix.archive.prepare
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-guard
+          token: portable-18cdd4b1ca5b591cbf10f43dd2b23b240123f343d69aaa5f9f07f1b5db66d286
+        executionOrigin:
+          workflow:
+            hash: 59c8440e5c03ef56376797cfb0bc38e82bb8dc8d5cfb7a7351795f7a73fefbe8
+            id: comet-classic-hotfix
+            version: "1"
+        id: harden-offline-data-fallbacks:12
+        input:
+          input:
+            change: harden-offline-data-fallbacks
+            changeDir: docs/openspec/changes/harden-offline-data-fallbacks
+          outputs:
+            hotfix.archive.confirm:
+              choice: reverify
+              proposal:
+                input:
+                  change: harden-offline-data-fallbacks
+                  changeDir: docs/openspec/changes/harden-offline-data-fallbacks
+                outputs:
+                  hotfix.archive.prepare:
+                    summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+                      locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+                      test/vet/build 通过，离线启动实测回退成功。交付文件 4
+                      个（asn.go、storage.go、fixes_test.go、fallback/geolite2-asn.snapshot.mmdb.gz），当前均未提交；分支
+                      hotfix/20261027/harden-offline-data-fallbacks，remote
+                      origin。归档将把 change 目录移入 archive（无 delta spec），实现文件需单独提交。
+                    targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+            hotfix.archive.prepare:
+              summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+                locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+                test/vet/build 通过，离线启动实测回退成功。交付文件 4
+                个（asn.go、storage.go、fixes_test.go、fallback/geolite2-asn.snapshot.mmdb.gz），当前均未提交；分支
+                hotfix/20261027/harden-offline-data-fallbacks，remote origin。归档将把
+                change 目录移入 archive（无 delta spec），实现文件需单独提交。
+              targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+            hotfix.build.check:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+                - --json
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              cwd: .
+              environment: 3e5e89bd7ec62cd6a3926cc985c4b759d7b9426395fa957b07aef6cb2aa240e7
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/c593564c-0ee0-4751-8366-1405f0a0b7d8.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+              reusable: true
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+            hotfix.build.check.evidence:
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+            hotfix.build.execute:
+              event: build-complete
+            hotfix.open:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: 4d491dd556bc14d64a55c083aa0eda4804da269ad5f1cae7dd17e4d8ac0ace7d
+                ref: docs/openspec/changes/harden-offline-data-fallbacks
+            hotfix.open.evidence:
+              contentHash: b72c5210d20b4bd3313f6e01030f8f53d4dcdc5b5faf3f1f2822cfb02a6c4118
+              ref: docs/openspec/changes/harden-offline-data-fallbacks
+            hotfix.verify.check:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 2
+              contentHash: a1fe329dbdd0edd59ad0692652b08a1894e912bfc2df062ba6c19c71cc2c10af
+              cwd: .
+              deliveryInputs:
+                combined_refactor/asn.go: git:684b2eeb6914eee1f0200fe772fdcc246f30b541
+                combined_refactor/fallback/geolite2-asn.snapshot.mmdb.gz: git:e5520acc27e6f0f0d037d0ac47e38ce5d0116e59
+                combined_refactor/fixes_test.go: git:e8f427a573ef5306a46f32f83e14df71aee0986c
+                combined_refactor/storage.go: git:9718607c411c987f6ce280695b7ddcbf77c74dd1
+              environment: aa14739470e611d4aa627405c6d655f35ddca119fe1bf1382f7cddc1ac718d4d
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/1918e66f-bd24-4def-afd2-7cbd807509aa.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/21e2e1f2-3bff-4095-9573-1b958f35c244.log
+              reusable: false
+              reused: false
+              scope: verify
+              tier: full
+              timeoutMs: 300000
+            hotfix.verify.check.evidence:
+              contentHash: a1fe329dbdd0edd59ad0692652b08a1894e912bfc2df062ba6c19c71cc2c10af
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/21e2e1f2-3bff-4095-9573-1b958f35c244.log
+            hotfix.verify.report.evidence:
+              contentHash: 1562a1854109de6d4a1f948f5b3646fa4fcc044a904dffb02c1186e67b693c4a
+              ref: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+            hotfix.verify.run:
+              event: verification-ready
+              verificationReport: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+        inputHash: 8296c53b07f8d1b131a206102eeabf56a604480a33a53780eeafdc306f10f975
+        outcome:
+          actionId: harden-offline-data-fallbacks:12
+          attempt: 1
+          claimToken: portable-18cdd4b1ca5b591cbf10f43dd2b23b240123f343d69aaa5f9f07f1b5db66d286
+          inputHash: 8296c53b07f8d1b131a206102eeabf56a604480a33a53780eeafdc306f10f975
+          outcomeId: 1bf5a811-2dad-4888-85d2-8be39724aa36
+          output:
+            event: verification-ready
+            verificationReport: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 9f3c91117e85be8fd88466e585eae6ea641b82e6a4cd60202b97ed4ee389ed78
+            outcomeId: 1bf5a811-2dad-4888-85d2-8be39724aa36
+        reconciliations: []
+        ref: comet-verify
+        requiredCapabilities: []
+        retry: manual
+        runId: harden-offline-data-fallbacks
+        status: succeeded
+        stepId: hotfix.verify.run
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-check
+          token: portable-68fd3a0bfbeeb8ea98049d9e3c9fec378333706eaf22087e7a9300c839ee17a8
+        executionOrigin:
+          workflow:
+            hash: 59c8440e5c03ef56376797cfb0bc38e82bb8dc8d5cfb7a7351795f7a73fefbe8
+            id: comet-classic-hotfix
+            version: "1"
+        id: harden-offline-data-fallbacks:14
+        input:
+          input:
+            change: harden-offline-data-fallbacks
+            changeDir: docs/openspec/changes/harden-offline-data-fallbacks
+          outputs:
+            hotfix.archive.confirm:
+              choice: reverify
+              proposal:
+                input:
+                  change: harden-offline-data-fallbacks
+                  changeDir: docs/openspec/changes/harden-offline-data-fallbacks
+                outputs:
+                  hotfix.archive.prepare:
+                    summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+                      locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+                      test/vet/build 通过，离线启动实测回退成功。交付文件 4
+                      个（asn.go、storage.go、fixes_test.go、fallback/geolite2-asn.snapshot.mmdb.gz），当前均未提交；分支
+                      hotfix/20261027/harden-offline-data-fallbacks，remote
+                      origin。归档将把 change 目录移入 archive（无 delta spec），实现文件需单独提交。
+                    targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+            hotfix.archive.prepare:
+              summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+                locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+                test/vet/build 通过，离线启动实测回退成功。交付文件 4
+                个（asn.go、storage.go、fixes_test.go、fallback/geolite2-asn.snapshot.mmdb.gz），当前均未提交；分支
+                hotfix/20261027/harden-offline-data-fallbacks，remote origin。归档将把
+                change 目录移入 archive（无 delta spec），实现文件需单独提交。
+              targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+            hotfix.build.check:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+                - --json
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              cwd: .
+              environment: 3e5e89bd7ec62cd6a3926cc985c4b759d7b9426395fa957b07aef6cb2aa240e7
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/c593564c-0ee0-4751-8366-1405f0a0b7d8.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+              reusable: true
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+            hotfix.build.check.evidence:
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+            hotfix.build.execute:
+              event: build-complete
+            hotfix.open:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: 4d491dd556bc14d64a55c083aa0eda4804da269ad5f1cae7dd17e4d8ac0ace7d
+                ref: docs/openspec/changes/harden-offline-data-fallbacks
+            hotfix.open.evidence:
+              contentHash: b72c5210d20b4bd3313f6e01030f8f53d4dcdc5b5faf3f1f2822cfb02a6c4118
+              ref: docs/openspec/changes/harden-offline-data-fallbacks
+            hotfix.verify.check:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 2
+              contentHash: a1fe329dbdd0edd59ad0692652b08a1894e912bfc2df062ba6c19c71cc2c10af
+              cwd: .
+              deliveryInputs:
+                combined_refactor/asn.go: git:684b2eeb6914eee1f0200fe772fdcc246f30b541
+                combined_refactor/fallback/geolite2-asn.snapshot.mmdb.gz: git:e5520acc27e6f0f0d037d0ac47e38ce5d0116e59
+                combined_refactor/fixes_test.go: git:e8f427a573ef5306a46f32f83e14df71aee0986c
+                combined_refactor/storage.go: git:9718607c411c987f6ce280695b7ddcbf77c74dd1
+              environment: aa14739470e611d4aa627405c6d655f35ddca119fe1bf1382f7cddc1ac718d4d
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/1918e66f-bd24-4def-afd2-7cbd807509aa.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/21e2e1f2-3bff-4095-9573-1b958f35c244.log
+              reusable: false
+              reused: false
+              scope: verify
+              tier: full
+              timeoutMs: 300000
+            hotfix.verify.check.evidence:
+              contentHash: a1fe329dbdd0edd59ad0692652b08a1894e912bfc2df062ba6c19c71cc2c10af
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/21e2e1f2-3bff-4095-9573-1b958f35c244.log
+            hotfix.verify.report.evidence:
+              contentHash: 10ca0d451c6992593c10890eaee43f4550fce8ac969cbfee80d3cc2bb2738e98
+              ref: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+            hotfix.verify.run:
+              event: verification-ready
+              verificationReport: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+        inputHash: db63c947d619515e072643162bf5b728d9e04b5d3b2ff501cdb1f4b76eb1f53a
+        outcome:
+          actionId: harden-offline-data-fallbacks:14
+          attempt: 1
+          claimToken: portable-68fd3a0bfbeeb8ea98049d9e3c9fec378333706eaf22087e7a9300c839ee17a8
+          inputHash: db63c947d619515e072643162bf5b728d9e04b5d3b2ff501cdb1f4b76eb1f53a
+          outcomeId: e85a243f-f0bd-48c0-b26d-41f6dcfaef28
+          output:
+            argv:
+              - go
+              - test
+              - -C
+              - combined_refactor
+              - -count=1
+              - ./...
+            changedDuringExecution: []
+            checkEpoch: 4
+            contentHash: bdf0518e3f88ea2b33540b9bfe83e31305eb2284c7c8b67388646a6fddffd271
+            cwd: .
+            deliveryInputs: {}
+            environment: aa14739470e611d4aa627405c6d655f35ddca119fe1bf1382f7cddc1ac718d4d
+            exitCode: 0
+            inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+            inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+            manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+            manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/057d3392-ba0f-421a-9561-12f8c7d1da2e.manifest
+            receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/dfe51b83-e249-4440-bc41-1b635113f3cc.log
+            reusable: false
+            reused: false
+            scope: verify
+            tier: full
+            timeoutMs: 300000
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 3a267eeb4ad4eaf0171d0e40dd7b749db320da4329a36e3cb48dcf2706a0f863
+            outcomeId: e85a243f-f0bd-48c0-b26d-41f6dcfaef28
+        reconciliations: []
+        ref: classic-check
+        requiredCapabilities: []
+        retry: manual
+        runId: harden-offline-data-fallbacks
+        status: succeeded
+        stepId: hotfix.verify.check
+        type: call_tool
+      - attempt: 1
+        claim:
+          executorId: comet-classic-state
+          token: portable-e6fed3184a8c27b22689edbc7c6433bbce3a7913bb9cccd5f616f408fb923d58
+        executionOrigin:
+          workflow:
+            hash: 59c8440e5c03ef56376797cfb0bc38e82bb8dc8d5cfb7a7351795f7a73fefbe8
+            id: comet-classic-hotfix
+            version: "1"
+        id: harden-offline-data-fallbacks:16
+        input:
+          input:
+            change: harden-offline-data-fallbacks
+            changeDir: docs/openspec/changes/harden-offline-data-fallbacks
+          outputs:
+            hotfix.archive.confirm:
+              choice: reverify
+              proposal:
+                input:
+                  change: harden-offline-data-fallbacks
+                  changeDir: docs/openspec/changes/harden-offline-data-fallbacks
+                outputs:
+                  hotfix.archive.prepare:
+                    summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+                      locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+                      test/vet/build 通过，离线启动实测回退成功。交付文件 4
+                      个（asn.go、storage.go、fixes_test.go、fallback/geolite2-asn.snapshot.mmdb.gz），当前均未提交；分支
+                      hotfix/20261027/harden-offline-data-fallbacks，remote
+                      origin。归档将把 change 目录移入 archive（无 delta spec），实现文件需单独提交。
+                    targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+            hotfix.archive.prepare:
+              summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+                locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+                test/vet/build 通过，离线启动实测回退成功。交付文件 4
+                个（asn.go、storage.go、fixes_test.go、fallback/geolite2-asn.snapshot.mmdb.gz），当前均未提交；分支
+                hotfix/20261027/harden-offline-data-fallbacks，remote origin。归档将把
+                change 目录移入 archive（无 delta spec），实现文件需单独提交。
+              targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+            hotfix.build.check:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+                - --json
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              cwd: .
+              environment: 3e5e89bd7ec62cd6a3926cc985c4b759d7b9426395fa957b07aef6cb2aa240e7
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/c593564c-0ee0-4751-8366-1405f0a0b7d8.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+              reusable: true
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+            hotfix.build.check.evidence:
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+            hotfix.build.execute:
+              event: build-complete
+            hotfix.open:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: 4d491dd556bc14d64a55c083aa0eda4804da269ad5f1cae7dd17e4d8ac0ace7d
+                ref: docs/openspec/changes/harden-offline-data-fallbacks
+            hotfix.open.evidence:
+              contentHash: b72c5210d20b4bd3313f6e01030f8f53d4dcdc5b5faf3f1f2822cfb02a6c4118
+              ref: docs/openspec/changes/harden-offline-data-fallbacks
+            hotfix.verify.check:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 4
+              contentHash: bdf0518e3f88ea2b33540b9bfe83e31305eb2284c7c8b67388646a6fddffd271
+              cwd: .
+              deliveryInputs: {}
+              environment: aa14739470e611d4aa627405c6d655f35ddca119fe1bf1382f7cddc1ac718d4d
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/057d3392-ba0f-421a-9561-12f8c7d1da2e.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/dfe51b83-e249-4440-bc41-1b635113f3cc.log
+              reusable: false
+              reused: false
+              scope: verify
+              tier: full
+              timeoutMs: 300000
+            hotfix.verify.check.evidence:
+              contentHash: bdf0518e3f88ea2b33540b9bfe83e31305eb2284c7c8b67388646a6fddffd271
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/dfe51b83-e249-4440-bc41-1b635113f3cc.log
+            hotfix.verify.report.evidence:
+              contentHash: 10ca0d451c6992593c10890eaee43f4550fce8ac969cbfee80d3cc2bb2738e98
+              ref: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+            hotfix.verify.run:
+              event: verification-ready
+              verificationReport: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+        inputHash: 54889e04bc45344b94f5de3c3b0ae9716d625bc94bfe0b6467b0a9dda3565d65
+        outcome:
+          actionId: harden-offline-data-fallbacks:16
+          attempt: 1
+          claimToken: portable-e6fed3184a8c27b22689edbc7c6433bbce3a7913bb9cccd5f616f408fb923d58
+          inputHash: 54889e04bc45344b94f5de3c3b0ae9716d625bc94bfe0b6467b0a9dda3565d65
+          outcomeId: 1a4b2a71-cb40-465a-8043-320837731d0f
+          output:
+            remote: origin
+            summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+              locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+              test/vet/build 通过，离线启动实测回退成功。实现提交 a1b13e9（4 个文件）；分支
+              hotfix/20261027/harden-offline-data-fallbacks，remote origin。归档将把
+              change 目录移入 archive（无 delta spec），然后推送分支。
+            targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: ac8b75a39ffe5deeaae1d1651be3e4ec1292e51a9346ecaad81a9f037231a7f6
+            outcomeId: 1a4b2a71-cb40-465a-8043-320837731d0f
+        reconciliations: []
+        ref: comet-archive
+        requiredCapabilities: []
+        retry: manual
+        runId: harden-offline-data-fallbacks
+        status: succeeded
+        stepId: hotfix.archive.prepare
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-archive-preflight
+          token: portable-81a87fa7fceb7593061f0823e29d6f899432a52385893d57ddb28e99a9774c11
+        executionOrigin:
+          workflow:
+            hash: 59c8440e5c03ef56376797cfb0bc38e82bb8dc8d5cfb7a7351795f7a73fefbe8
+            id: comet-classic-hotfix
+            version: "1"
+        id: harden-offline-data-fallbacks:18
+        input:
+          input:
+            change: harden-offline-data-fallbacks
+            changeDir: docs/openspec/changes/harden-offline-data-fallbacks
+          outputs:
+            hotfix.archive.confirm:
+              choice: push
+              proposal:
+                input:
+                  change: harden-offline-data-fallbacks
+                  changeDir: docs/openspec/changes/harden-offline-data-fallbacks
+                outputs:
+                  hotfix.archive.prepare:
+                    remote: origin
+                    summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+                      locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+                      test/vet/build 通过，离线启动实测回退成功。实现提交 a1b13e9（4 个文件）；分支
+                      hotfix/20261027/harden-offline-data-fallbacks，remote
+                      origin。归档将把 change 目录移入 archive（无 delta spec），然后推送分支。
+                    targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+            hotfix.archive.prepare:
+              remote: origin
+              summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+                locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+                test/vet/build 通过，离线启动实测回退成功。实现提交 a1b13e9（4 个文件）；分支
+                hotfix/20261027/harden-offline-data-fallbacks，remote origin。归档将把
+                change 目录移入 archive（无 delta spec），然后推送分支。
+              targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+            hotfix.build.check:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+                - --json
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              cwd: .
+              environment: 3e5e89bd7ec62cd6a3926cc985c4b759d7b9426395fa957b07aef6cb2aa240e7
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/c593564c-0ee0-4751-8366-1405f0a0b7d8.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+              reusable: true
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+            hotfix.build.check.evidence:
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+            hotfix.build.execute:
+              event: build-complete
+            hotfix.open:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: 4d491dd556bc14d64a55c083aa0eda4804da269ad5f1cae7dd17e4d8ac0ace7d
+                ref: docs/openspec/changes/harden-offline-data-fallbacks
+            hotfix.open.evidence:
+              contentHash: b72c5210d20b4bd3313f6e01030f8f53d4dcdc5b5faf3f1f2822cfb02a6c4118
+              ref: docs/openspec/changes/harden-offline-data-fallbacks
+            hotfix.verify.check:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 4
+              contentHash: bdf0518e3f88ea2b33540b9bfe83e31305eb2284c7c8b67388646a6fddffd271
+              cwd: .
+              deliveryInputs: {}
+              environment: aa14739470e611d4aa627405c6d655f35ddca119fe1bf1382f7cddc1ac718d4d
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/057d3392-ba0f-421a-9561-12f8c7d1da2e.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/dfe51b83-e249-4440-bc41-1b635113f3cc.log
+              reusable: false
+              reused: false
+              scope: verify
+              tier: full
+              timeoutMs: 300000
+            hotfix.verify.check.evidence:
+              contentHash: bdf0518e3f88ea2b33540b9bfe83e31305eb2284c7c8b67388646a6fddffd271
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/dfe51b83-e249-4440-bc41-1b635113f3cc.log
+            hotfix.verify.report.evidence:
+              contentHash: 10ca0d451c6992593c10890eaee43f4550fce8ac969cbfee80d3cc2bb2738e98
+              ref: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+            hotfix.verify.run:
+              event: verification-ready
+              verificationReport: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+        inputHash: 80317a2a255f00bf6d5e510a9c56f4ea5ab3ca86a25b77e88d8fb7c72691510c
+        outcome:
+          actionId: harden-offline-data-fallbacks:18
+          attempt: 1
+          claimToken: portable-81a87fa7fceb7593061f0823e29d6f899432a52385893d57ddb28e99a9774c11
+          inputHash: 80317a2a255f00bf6d5e510a9c56f4ea5ab3ca86a25b77e88d8fb7c72691510c
+          outcomeId: f1702bd3-a280-461f-b3cd-1411565dbe89
+          output:
+            baseCommit: a1b13e90b7be651d4df71da6b538d34c35c00248
+            deliveryAction: push
+            remote: origin
+            remoteIdentity: f77fd8941c2db1c30d5e8e3438a94109c2534b02c7bc211de17168b469821b65
+            targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+            verifiedBranch: hotfix/20261027/harden-offline-data-fallbacks
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 75a0d88c22657e58460b6f825a234728dade3c478ca9ab38effae3f8cabc6daa
+            outcomeId: f1702bd3-a280-461f-b3cd-1411565dbe89
+        reconciliations: []
+        ref: classic-archive-preflight
+        requiredCapabilities: []
+        retry: manual
+        runId: harden-offline-data-fallbacks
+        status: succeeded
+        stepId: hotfix.archive.preflight
+        type: call_tool
+      - attempt: 1
+        claim:
+          executorId: comet-classic-archive
+          token: portable-bf003e8f84bfef7912607fa0f6edb7ac579b8d91e94e00259c9dfe85bdad71e9
+        executionOrigin:
+          workflow:
+            hash: 59c8440e5c03ef56376797cfb0bc38e82bb8dc8d5cfb7a7351795f7a73fefbe8
+            id: comet-classic-hotfix
+            version: "1"
+        id: harden-offline-data-fallbacks:19
+        input:
+          input:
+            change: harden-offline-data-fallbacks
+            changeDir: docs/openspec/changes/harden-offline-data-fallbacks
+          outputs:
+            hotfix.archive.confirm:
+              choice: push
+              proposal:
+                input:
+                  change: harden-offline-data-fallbacks
+                  changeDir: docs/openspec/changes/harden-offline-data-fallbacks
+                outputs:
+                  hotfix.archive.prepare:
+                    remote: origin
+                    summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+                      locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+                      test/vet/build 通过，离线启动实测回退成功。实现提交 a1b13e9（4 个文件）；分支
+                      hotfix/20261027/harden-offline-data-fallbacks，remote
+                      origin。归档将把 change 目录移入 archive（无 delta spec），然后推送分支。
+                    targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+            hotfix.archive.preflight:
+              baseCommit: a1b13e90b7be651d4df71da6b538d34c35c00248
+              deliveryAction: push
+              remote: origin
+              remoteIdentity: f77fd8941c2db1c30d5e8e3438a94109c2534b02c7bc211de17168b469821b65
+              targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+              verifiedBranch: hotfix/20261027/harden-offline-data-fallbacks
+            hotfix.archive.prepare:
+              remote: origin
+              summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+                locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+                test/vet/build 通过，离线启动实测回退成功。实现提交 a1b13e9（4 个文件）；分支
+                hotfix/20261027/harden-offline-data-fallbacks，remote origin。归档将把
+                change 目录移入 archive（无 delta spec），然后推送分支。
+              targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+            hotfix.build.check:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+                - --json
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              cwd: .
+              environment: 3e5e89bd7ec62cd6a3926cc985c4b759d7b9426395fa957b07aef6cb2aa240e7
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/c593564c-0ee0-4751-8366-1405f0a0b7d8.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+              reusable: true
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+            hotfix.build.check.evidence:
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+            hotfix.build.execute:
+              event: build-complete
+            hotfix.open:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: 4d491dd556bc14d64a55c083aa0eda4804da269ad5f1cae7dd17e4d8ac0ace7d
+                ref: docs/openspec/changes/harden-offline-data-fallbacks
+            hotfix.open.evidence:
+              contentHash: b72c5210d20b4bd3313f6e01030f8f53d4dcdc5b5faf3f1f2822cfb02a6c4118
+              ref: docs/openspec/changes/harden-offline-data-fallbacks
+            hotfix.verify.check:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 4
+              contentHash: bdf0518e3f88ea2b33540b9bfe83e31305eb2284c7c8b67388646a6fddffd271
+              cwd: .
+              deliveryInputs: {}
+              environment: aa14739470e611d4aa627405c6d655f35ddca119fe1bf1382f7cddc1ac718d4d
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/057d3392-ba0f-421a-9561-12f8c7d1da2e.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/dfe51b83-e249-4440-bc41-1b635113f3cc.log
+              reusable: false
+              reused: false
+              scope: verify
+              tier: full
+              timeoutMs: 300000
+            hotfix.verify.check.evidence:
+              contentHash: bdf0518e3f88ea2b33540b9bfe83e31305eb2284c7c8b67388646a6fddffd271
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/dfe51b83-e249-4440-bc41-1b635113f3cc.log
+            hotfix.verify.report.evidence:
+              contentHash: 10ca0d451c6992593c10890eaee43f4550fce8ac969cbfee80d3cc2bb2738e98
+              ref: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+            hotfix.verify.run:
+              event: verification-ready
+              verificationReport: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+        inputHash: ca3acc59bd0ecbf5439ed04140afa8a34c267a3a01ad4a5a7caf15b4f7a00297
+        outcome:
+          actionId: harden-offline-data-fallbacks:19
+          attempt: 1
+          claimToken: portable-bf003e8f84bfef7912607fa0f6edb7ac579b8d91e94e00259c9dfe85bdad71e9
+          inputHash: ca3acc59bd0ecbf5439ed04140afa8a34c267a3a01ad4a5a7caf15b4f7a00297
+          outcomeId: 3b1ca5c6-2621-4ce2-831c-760a32cead4c
+          output:
+            archiveDirectory: docs/openspec/changes/archive/2026-10-27-harden-offline-data-fallbacks
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 015713c9a43c75a4b2d0092bf15d4c0d80232fd2436a86c6807fec35b0e515a9
+            outcomeId: 3b1ca5c6-2621-4ce2-831c-760a32cead4c
+        reconciliations: []
+        ref: classic-archive
+        requiredCapabilities: []
+        retry: manual
+        runId: harden-offline-data-fallbacks
+        status: succeeded
+        stepId: hotfix.archive.execute
+        type: call_tool
+      - attempt: 1
+        id: harden-offline-data-fallbacks:20
+        input:
+          input:
+            change: harden-offline-data-fallbacks
+            changeDir: docs/openspec/changes/harden-offline-data-fallbacks
+          outputs:
+            hotfix.archive.confirm:
+              choice: push
+              proposal:
+                input:
+                  change: harden-offline-data-fallbacks
+                  changeDir: docs/openspec/changes/harden-offline-data-fallbacks
+                outputs:
+                  hotfix.archive.prepare:
+                    remote: origin
+                    summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+                      locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+                      test/vet/build 通过，离线启动实测回退成功。实现提交 a1b13e9（4 个文件）；分支
+                      hotfix/20261027/harden-offline-data-fallbacks，remote
+                      origin。归档将把 change 目录移入 archive（无 delta spec），然后推送分支。
+                    targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+            hotfix.archive.execute:
+              archiveDirectory: docs/openspec/changes/archive/2026-10-27-harden-offline-data-fallbacks
+            hotfix.archive.preflight:
+              baseCommit: a1b13e90b7be651d4df71da6b538d34c35c00248
+              deliveryAction: push
+              remote: origin
+              remoteIdentity: f77fd8941c2db1c30d5e8e3438a94109c2534b02c7bc211de17168b469821b65
+              targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+              verifiedBranch: hotfix/20261027/harden-offline-data-fallbacks
+            hotfix.archive.prepare:
+              remote: origin
+              summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+                locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+                test/vet/build 通过，离线启动实测回退成功。实现提交 a1b13e9（4 个文件）；分支
+                hotfix/20261027/harden-offline-data-fallbacks，remote origin。归档将把
+                change 目录移入 archive（无 delta spec），然后推送分支。
+              targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+            hotfix.build.check:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+                - --json
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              cwd: .
+              environment: 3e5e89bd7ec62cd6a3926cc985c4b759d7b9426395fa957b07aef6cb2aa240e7
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/c593564c-0ee0-4751-8366-1405f0a0b7d8.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+              reusable: true
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+            hotfix.build.check.evidence:
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+            hotfix.build.execute:
+              event: build-complete
+            hotfix.open:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: 4d491dd556bc14d64a55c083aa0eda4804da269ad5f1cae7dd17e4d8ac0ace7d
+                ref: docs/openspec/changes/harden-offline-data-fallbacks
+            hotfix.open.evidence:
+              contentHash: b72c5210d20b4bd3313f6e01030f8f53d4dcdc5b5faf3f1f2822cfb02a6c4118
+              ref: docs/openspec/changes/harden-offline-data-fallbacks
+            hotfix.verify.check:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 4
+              contentHash: bdf0518e3f88ea2b33540b9bfe83e31305eb2284c7c8b67388646a6fddffd271
+              cwd: .
+              deliveryInputs: {}
+              environment: aa14739470e611d4aa627405c6d655f35ddca119fe1bf1382f7cddc1ac718d4d
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/057d3392-ba0f-421a-9561-12f8c7d1da2e.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/dfe51b83-e249-4440-bc41-1b635113f3cc.log
+              reusable: false
+              reused: false
+              scope: verify
+              tier: full
+              timeoutMs: 300000
+            hotfix.verify.check.evidence:
+              contentHash: bdf0518e3f88ea2b33540b9bfe83e31305eb2284c7c8b67388646a6fddffd271
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/dfe51b83-e249-4440-bc41-1b635113f3cc.log
+            hotfix.verify.report.evidence:
+              contentHash: 10ca0d451c6992593c10890eaee43f4550fce8ac969cbfee80d3cc2bb2738e98
+              ref: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+            hotfix.verify.run:
+              event: verification-ready
+              verificationReport: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+        inputHash: e623310e820e8f03b820d9dac29f2bd11e459647ef6c80df4429f50060d4387b
+        protocolVersion: 1
+        receipts: []
+        reconciliations: []
+        ref: comet-archive
+        requiredCapabilities: []
+        retry: manual
+        runId: harden-offline-data-fallbacks
+        status: pending
+        stepId: hotfix.archive.deliver
+        type: invoke_skill
+    actionContexts:
+      harden-offline-data-fallbacks:1:
+        results: {}
+        sequence: 1
+      harden-offline-data-fallbacks:10:
+        results:
+          hotfix.build.check:
+            sequence: 4
+            value:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+                - --json
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              cwd: .
+              environment: 3e5e89bd7ec62cd6a3926cc985c4b759d7b9426395fa957b07aef6cb2aa240e7
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/c593564c-0ee0-4751-8366-1405f0a0b7d8.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+              reusable: true
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+          hotfix.build.check.evidence:
+            sequence: 5
+            value:
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+          hotfix.build.execute:
+            sequence: 3
+            value:
+              event: build-complete
+          hotfix.open:
+            sequence: 1
+            value:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: 4d491dd556bc14d64a55c083aa0eda4804da269ad5f1cae7dd17e4d8ac0ace7d
+                ref: docs/openspec/changes/harden-offline-data-fallbacks
+          hotfix.open.evidence:
+            sequence: 2
+            value:
+              contentHash: b72c5210d20b4bd3313f6e01030f8f53d4dcdc5b5faf3f1f2822cfb02a6c4118
+              ref: docs/openspec/changes/harden-offline-data-fallbacks
+          hotfix.verify.check:
+            sequence: 8
+            value:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 2
+              contentHash: a1fe329dbdd0edd59ad0692652b08a1894e912bfc2df062ba6c19c71cc2c10af
+              cwd: .
+              deliveryInputs:
+                combined_refactor/asn.go: git:684b2eeb6914eee1f0200fe772fdcc246f30b541
+                combined_refactor/fallback/geolite2-asn.snapshot.mmdb.gz: git:e5520acc27e6f0f0d037d0ac47e38ce5d0116e59
+                combined_refactor/fixes_test.go: git:e8f427a573ef5306a46f32f83e14df71aee0986c
+                combined_refactor/storage.go: git:9718607c411c987f6ce280695b7ddcbf77c74dd1
+              environment: aa14739470e611d4aa627405c6d655f35ddca119fe1bf1382f7cddc1ac718d4d
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/1918e66f-bd24-4def-afd2-7cbd807509aa.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/21e2e1f2-3bff-4095-9573-1b958f35c244.log
+              reusable: false
+              reused: false
+              scope: verify
+              tier: full
+              timeoutMs: 300000
+          hotfix.verify.check.evidence:
+            sequence: 9
+            value:
+              contentHash: a1fe329dbdd0edd59ad0692652b08a1894e912bfc2df062ba6c19c71cc2c10af
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/21e2e1f2-3bff-4095-9573-1b958f35c244.log
+          hotfix.verify.report.evidence:
+            sequence: 7
+            value:
+              contentHash: 1562a1854109de6d4a1f948f5b3646fa4fcc044a904dffb02c1186e67b693c4a
+              ref: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+          hotfix.verify.run:
+            sequence: 6
+            value:
+              event: verification-ready
+              verificationReport: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+        sequence: 10
+      harden-offline-data-fallbacks:12:
+        results:
+          hotfix.archive.confirm:
+            sequence: 11
+            value:
+              choice: reverify
+              proposal:
+                input:
+                  change: harden-offline-data-fallbacks
+                  changeDir: docs/openspec/changes/harden-offline-data-fallbacks
+                outputs:
+                  hotfix.archive.prepare:
+                    summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+                      locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+                      test/vet/build 通过，离线启动实测回退成功。交付文件 4
+                      个（asn.go、storage.go、fixes_test.go、fallback/geolite2-asn.snapshot.mmdb.gz），当前均未提交；分支
+                      hotfix/20261027/harden-offline-data-fallbacks，remote
+                      origin。归档将把 change 目录移入 archive（无 delta spec），实现文件需单独提交。
+                    targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+          hotfix.archive.prepare:
+            sequence: 10
+            value:
+              summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+                locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+                test/vet/build 通过，离线启动实测回退成功。交付文件 4
+                个（asn.go、storage.go、fixes_test.go、fallback/geolite2-asn.snapshot.mmdb.gz），当前均未提交；分支
+                hotfix/20261027/harden-offline-data-fallbacks，remote origin。归档将把
+                change 目录移入 archive（无 delta spec），实现文件需单独提交。
+              targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+          hotfix.build.check:
+            sequence: 4
+            value:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+                - --json
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              cwd: .
+              environment: 3e5e89bd7ec62cd6a3926cc985c4b759d7b9426395fa957b07aef6cb2aa240e7
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/c593564c-0ee0-4751-8366-1405f0a0b7d8.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+              reusable: true
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+          hotfix.build.check.evidence:
+            sequence: 5
+            value:
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+          hotfix.build.execute:
+            sequence: 3
+            value:
+              event: build-complete
+          hotfix.open:
+            sequence: 1
+            value:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: 4d491dd556bc14d64a55c083aa0eda4804da269ad5f1cae7dd17e4d8ac0ace7d
+                ref: docs/openspec/changes/harden-offline-data-fallbacks
+          hotfix.open.evidence:
+            sequence: 2
+            value:
+              contentHash: b72c5210d20b4bd3313f6e01030f8f53d4dcdc5b5faf3f1f2822cfb02a6c4118
+              ref: docs/openspec/changes/harden-offline-data-fallbacks
+          hotfix.verify.check:
+            sequence: 8
+            value:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 2
+              contentHash: a1fe329dbdd0edd59ad0692652b08a1894e912bfc2df062ba6c19c71cc2c10af
+              cwd: .
+              deliveryInputs:
+                combined_refactor/asn.go: git:684b2eeb6914eee1f0200fe772fdcc246f30b541
+                combined_refactor/fallback/geolite2-asn.snapshot.mmdb.gz: git:e5520acc27e6f0f0d037d0ac47e38ce5d0116e59
+                combined_refactor/fixes_test.go: git:e8f427a573ef5306a46f32f83e14df71aee0986c
+                combined_refactor/storage.go: git:9718607c411c987f6ce280695b7ddcbf77c74dd1
+              environment: aa14739470e611d4aa627405c6d655f35ddca119fe1bf1382f7cddc1ac718d4d
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/1918e66f-bd24-4def-afd2-7cbd807509aa.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/21e2e1f2-3bff-4095-9573-1b958f35c244.log
+              reusable: false
+              reused: false
+              scope: verify
+              tier: full
+              timeoutMs: 300000
+          hotfix.verify.check.evidence:
+            sequence: 9
+            value:
+              contentHash: a1fe329dbdd0edd59ad0692652b08a1894e912bfc2df062ba6c19c71cc2c10af
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/21e2e1f2-3bff-4095-9573-1b958f35c244.log
+          hotfix.verify.report.evidence:
+            sequence: 7
+            value:
+              contentHash: 1562a1854109de6d4a1f948f5b3646fa4fcc044a904dffb02c1186e67b693c4a
+              ref: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+          hotfix.verify.run:
+            sequence: 6
+            value:
+              event: verification-ready
+              verificationReport: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+        sequence: 12
+      harden-offline-data-fallbacks:14:
+        results:
+          hotfix.archive.confirm:
+            sequence: 11
+            value:
+              choice: reverify
+              proposal:
+                input:
+                  change: harden-offline-data-fallbacks
+                  changeDir: docs/openspec/changes/harden-offline-data-fallbacks
+                outputs:
+                  hotfix.archive.prepare:
+                    summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+                      locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+                      test/vet/build 通过，离线启动实测回退成功。交付文件 4
+                      个（asn.go、storage.go、fixes_test.go、fallback/geolite2-asn.snapshot.mmdb.gz），当前均未提交；分支
+                      hotfix/20261027/harden-offline-data-fallbacks，remote
+                      origin。归档将把 change 目录移入 archive（无 delta spec），实现文件需单独提交。
+                    targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+          hotfix.archive.prepare:
+            sequence: 10
+            value:
+              summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+                locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+                test/vet/build 通过，离线启动实测回退成功。交付文件 4
+                个（asn.go、storage.go、fixes_test.go、fallback/geolite2-asn.snapshot.mmdb.gz），当前均未提交；分支
+                hotfix/20261027/harden-offline-data-fallbacks，remote origin。归档将把
+                change 目录移入 archive（无 delta spec），实现文件需单独提交。
+              targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+          hotfix.build.check:
+            sequence: 4
+            value:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+                - --json
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              cwd: .
+              environment: 3e5e89bd7ec62cd6a3926cc985c4b759d7b9426395fa957b07aef6cb2aa240e7
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/c593564c-0ee0-4751-8366-1405f0a0b7d8.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+              reusable: true
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+          hotfix.build.check.evidence:
+            sequence: 5
+            value:
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+          hotfix.build.execute:
+            sequence: 3
+            value:
+              event: build-complete
+          hotfix.open:
+            sequence: 1
+            value:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: 4d491dd556bc14d64a55c083aa0eda4804da269ad5f1cae7dd17e4d8ac0ace7d
+                ref: docs/openspec/changes/harden-offline-data-fallbacks
+          hotfix.open.evidence:
+            sequence: 2
+            value:
+              contentHash: b72c5210d20b4bd3313f6e01030f8f53d4dcdc5b5faf3f1f2822cfb02a6c4118
+              ref: docs/openspec/changes/harden-offline-data-fallbacks
+          hotfix.verify.check:
+            sequence: 8
+            value:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 2
+              contentHash: a1fe329dbdd0edd59ad0692652b08a1894e912bfc2df062ba6c19c71cc2c10af
+              cwd: .
+              deliveryInputs:
+                combined_refactor/asn.go: git:684b2eeb6914eee1f0200fe772fdcc246f30b541
+                combined_refactor/fallback/geolite2-asn.snapshot.mmdb.gz: git:e5520acc27e6f0f0d037d0ac47e38ce5d0116e59
+                combined_refactor/fixes_test.go: git:e8f427a573ef5306a46f32f83e14df71aee0986c
+                combined_refactor/storage.go: git:9718607c411c987f6ce280695b7ddcbf77c74dd1
+              environment: aa14739470e611d4aa627405c6d655f35ddca119fe1bf1382f7cddc1ac718d4d
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/1918e66f-bd24-4def-afd2-7cbd807509aa.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/21e2e1f2-3bff-4095-9573-1b958f35c244.log
+              reusable: false
+              reused: false
+              scope: verify
+              tier: full
+              timeoutMs: 300000
+          hotfix.verify.check.evidence:
+            sequence: 9
+            value:
+              contentHash: a1fe329dbdd0edd59ad0692652b08a1894e912bfc2df062ba6c19c71cc2c10af
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/21e2e1f2-3bff-4095-9573-1b958f35c244.log
+          hotfix.verify.report.evidence:
+            sequence: 13
+            value:
+              contentHash: 10ca0d451c6992593c10890eaee43f4550fce8ac969cbfee80d3cc2bb2738e98
+              ref: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+          hotfix.verify.run:
+            sequence: 12
+            value:
+              event: verification-ready
+              verificationReport: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+        sequence: 14
+      harden-offline-data-fallbacks:16:
+        results:
+          hotfix.archive.confirm:
+            sequence: 11
+            value:
+              choice: reverify
+              proposal:
+                input:
+                  change: harden-offline-data-fallbacks
+                  changeDir: docs/openspec/changes/harden-offline-data-fallbacks
+                outputs:
+                  hotfix.archive.prepare:
+                    summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+                      locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+                      test/vet/build 通过，离线启动实测回退成功。交付文件 4
+                      个（asn.go、storage.go、fixes_test.go、fallback/geolite2-asn.snapshot.mmdb.gz），当前均未提交；分支
+                      hotfix/20261027/harden-offline-data-fallbacks，remote
+                      origin。归档将把 change 目录移入 archive（无 delta spec），实现文件需单独提交。
+                    targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+          hotfix.archive.prepare:
+            sequence: 10
+            value:
+              summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+                locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+                test/vet/build 通过，离线启动实测回退成功。交付文件 4
+                个（asn.go、storage.go、fixes_test.go、fallback/geolite2-asn.snapshot.mmdb.gz），当前均未提交；分支
+                hotfix/20261027/harden-offline-data-fallbacks，remote origin。归档将把
+                change 目录移入 archive（无 delta spec），实现文件需单独提交。
+              targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+          hotfix.build.check:
+            sequence: 4
+            value:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+                - --json
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              cwd: .
+              environment: 3e5e89bd7ec62cd6a3926cc985c4b759d7b9426395fa957b07aef6cb2aa240e7
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/c593564c-0ee0-4751-8366-1405f0a0b7d8.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+              reusable: true
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+          hotfix.build.check.evidence:
+            sequence: 5
+            value:
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+          hotfix.build.execute:
+            sequence: 3
+            value:
+              event: build-complete
+          hotfix.open:
+            sequence: 1
+            value:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: 4d491dd556bc14d64a55c083aa0eda4804da269ad5f1cae7dd17e4d8ac0ace7d
+                ref: docs/openspec/changes/harden-offline-data-fallbacks
+          hotfix.open.evidence:
+            sequence: 2
+            value:
+              contentHash: b72c5210d20b4bd3313f6e01030f8f53d4dcdc5b5faf3f1f2822cfb02a6c4118
+              ref: docs/openspec/changes/harden-offline-data-fallbacks
+          hotfix.verify.check:
+            sequence: 14
+            value:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 4
+              contentHash: bdf0518e3f88ea2b33540b9bfe83e31305eb2284c7c8b67388646a6fddffd271
+              cwd: .
+              deliveryInputs: {}
+              environment: aa14739470e611d4aa627405c6d655f35ddca119fe1bf1382f7cddc1ac718d4d
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/057d3392-ba0f-421a-9561-12f8c7d1da2e.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/dfe51b83-e249-4440-bc41-1b635113f3cc.log
+              reusable: false
+              reused: false
+              scope: verify
+              tier: full
+              timeoutMs: 300000
+          hotfix.verify.check.evidence:
+            sequence: 15
+            value:
+              contentHash: bdf0518e3f88ea2b33540b9bfe83e31305eb2284c7c8b67388646a6fddffd271
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/dfe51b83-e249-4440-bc41-1b635113f3cc.log
+          hotfix.verify.report.evidence:
+            sequence: 13
+            value:
+              contentHash: 10ca0d451c6992593c10890eaee43f4550fce8ac969cbfee80d3cc2bb2738e98
+              ref: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+          hotfix.verify.run:
+            sequence: 12
+            value:
+              event: verification-ready
+              verificationReport: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+        sequence: 16
+      harden-offline-data-fallbacks:18:
+        results:
+          hotfix.archive.confirm:
+            sequence: 17
+            value:
+              choice: push
+              proposal:
+                input:
+                  change: harden-offline-data-fallbacks
+                  changeDir: docs/openspec/changes/harden-offline-data-fallbacks
+                outputs:
+                  hotfix.archive.prepare:
+                    remote: origin
+                    summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+                      locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+                      test/vet/build 通过，离线启动实测回退成功。实现提交 a1b13e9（4 个文件）；分支
+                      hotfix/20261027/harden-offline-data-fallbacks，remote
+                      origin。归档将把 change 目录移入 archive（无 delta spec），然后推送分支。
+                    targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+          hotfix.archive.prepare:
+            sequence: 16
+            value:
+              remote: origin
+              summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+                locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+                test/vet/build 通过，离线启动实测回退成功。实现提交 a1b13e9（4 个文件）；分支
+                hotfix/20261027/harden-offline-data-fallbacks，remote origin。归档将把
+                change 目录移入 archive（无 delta spec），然后推送分支。
+              targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+          hotfix.build.check:
+            sequence: 4
+            value:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+                - --json
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              cwd: .
+              environment: 3e5e89bd7ec62cd6a3926cc985c4b759d7b9426395fa957b07aef6cb2aa240e7
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/c593564c-0ee0-4751-8366-1405f0a0b7d8.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+              reusable: true
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+          hotfix.build.check.evidence:
+            sequence: 5
+            value:
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+          hotfix.build.execute:
+            sequence: 3
+            value:
+              event: build-complete
+          hotfix.open:
+            sequence: 1
+            value:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: 4d491dd556bc14d64a55c083aa0eda4804da269ad5f1cae7dd17e4d8ac0ace7d
+                ref: docs/openspec/changes/harden-offline-data-fallbacks
+          hotfix.open.evidence:
+            sequence: 2
+            value:
+              contentHash: b72c5210d20b4bd3313f6e01030f8f53d4dcdc5b5faf3f1f2822cfb02a6c4118
+              ref: docs/openspec/changes/harden-offline-data-fallbacks
+          hotfix.verify.check:
+            sequence: 14
+            value:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 4
+              contentHash: bdf0518e3f88ea2b33540b9bfe83e31305eb2284c7c8b67388646a6fddffd271
+              cwd: .
+              deliveryInputs: {}
+              environment: aa14739470e611d4aa627405c6d655f35ddca119fe1bf1382f7cddc1ac718d4d
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/057d3392-ba0f-421a-9561-12f8c7d1da2e.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/dfe51b83-e249-4440-bc41-1b635113f3cc.log
+              reusable: false
+              reused: false
+              scope: verify
+              tier: full
+              timeoutMs: 300000
+          hotfix.verify.check.evidence:
+            sequence: 15
+            value:
+              contentHash: bdf0518e3f88ea2b33540b9bfe83e31305eb2284c7c8b67388646a6fddffd271
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/dfe51b83-e249-4440-bc41-1b635113f3cc.log
+          hotfix.verify.report.evidence:
+            sequence: 13
+            value:
+              contentHash: 10ca0d451c6992593c10890eaee43f4550fce8ac969cbfee80d3cc2bb2738e98
+              ref: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+          hotfix.verify.run:
+            sequence: 12
+            value:
+              event: verification-ready
+              verificationReport: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+        sequence: 18
+      harden-offline-data-fallbacks:19:
+        results:
+          hotfix.archive.confirm:
+            sequence: 17
+            value:
+              choice: push
+              proposal:
+                input:
+                  change: harden-offline-data-fallbacks
+                  changeDir: docs/openspec/changes/harden-offline-data-fallbacks
+                outputs:
+                  hotfix.archive.prepare:
+                    remote: origin
+                    summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+                      locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+                      test/vet/build 通过，离线启动实测回退成功。实现提交 a1b13e9（4 个文件）；分支
+                      hotfix/20261027/harden-offline-data-fallbacks，remote
+                      origin。归档将把 change 目录移入 archive（无 delta spec），然后推送分支。
+                    targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+          hotfix.archive.preflight:
+            sequence: 18
+            value:
+              baseCommit: a1b13e90b7be651d4df71da6b538d34c35c00248
+              deliveryAction: push
+              remote: origin
+              remoteIdentity: f77fd8941c2db1c30d5e8e3438a94109c2534b02c7bc211de17168b469821b65
+              targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+              verifiedBranch: hotfix/20261027/harden-offline-data-fallbacks
+          hotfix.archive.prepare:
+            sequence: 16
+            value:
+              remote: origin
+              summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+                locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+                test/vet/build 通过，离线启动实测回退成功。实现提交 a1b13e9（4 个文件）；分支
+                hotfix/20261027/harden-offline-data-fallbacks，remote origin。归档将把
+                change 目录移入 archive（无 delta spec），然后推送分支。
+              targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+          hotfix.build.check:
+            sequence: 4
+            value:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+                - --json
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              cwd: .
+              environment: 3e5e89bd7ec62cd6a3926cc985c4b759d7b9426395fa957b07aef6cb2aa240e7
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/c593564c-0ee0-4751-8366-1405f0a0b7d8.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+              reusable: true
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+          hotfix.build.check.evidence:
+            sequence: 5
+            value:
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+          hotfix.build.execute:
+            sequence: 3
+            value:
+              event: build-complete
+          hotfix.open:
+            sequence: 1
+            value:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: 4d491dd556bc14d64a55c083aa0eda4804da269ad5f1cae7dd17e4d8ac0ace7d
+                ref: docs/openspec/changes/harden-offline-data-fallbacks
+          hotfix.open.evidence:
+            sequence: 2
+            value:
+              contentHash: b72c5210d20b4bd3313f6e01030f8f53d4dcdc5b5faf3f1f2822cfb02a6c4118
+              ref: docs/openspec/changes/harden-offline-data-fallbacks
+          hotfix.verify.check:
+            sequence: 14
+            value:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 4
+              contentHash: bdf0518e3f88ea2b33540b9bfe83e31305eb2284c7c8b67388646a6fddffd271
+              cwd: .
+              deliveryInputs: {}
+              environment: aa14739470e611d4aa627405c6d655f35ddca119fe1bf1382f7cddc1ac718d4d
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/057d3392-ba0f-421a-9561-12f8c7d1da2e.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/dfe51b83-e249-4440-bc41-1b635113f3cc.log
+              reusable: false
+              reused: false
+              scope: verify
+              tier: full
+              timeoutMs: 300000
+          hotfix.verify.check.evidence:
+            sequence: 15
+            value:
+              contentHash: bdf0518e3f88ea2b33540b9bfe83e31305eb2284c7c8b67388646a6fddffd271
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/dfe51b83-e249-4440-bc41-1b635113f3cc.log
+          hotfix.verify.report.evidence:
+            sequence: 13
+            value:
+              contentHash: 10ca0d451c6992593c10890eaee43f4550fce8ac969cbfee80d3cc2bb2738e98
+              ref: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+          hotfix.verify.run:
+            sequence: 12
+            value:
+              event: verification-ready
+              verificationReport: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+        sequence: 19
+      harden-offline-data-fallbacks:20:
+        results:
+          hotfix.archive.confirm:
+            sequence: 17
+            value:
+              choice: push
+              proposal:
+                input:
+                  change: harden-offline-data-fallbacks
+                  changeDir: docs/openspec/changes/harden-offline-data-fallbacks
+                outputs:
+                  hotfix.archive.prepare:
+                    remote: origin
+                    summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+                      locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+                      test/vet/build 通过，离线启动实测回退成功。实现提交 a1b13e9（4 个文件）；分支
+                      hotfix/20261027/harden-offline-data-fallbacks，remote
+                      origin。归档将把 change 目录移入 archive（无 delta spec），然后推送分支。
+                    targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+          hotfix.archive.execute:
+            sequence: 19
+            value:
+              archiveDirectory: docs/openspec/changes/archive/2026-10-27-harden-offline-data-fallbacks
+          hotfix.archive.preflight:
+            sequence: 18
+            value:
+              baseCommit: a1b13e90b7be651d4df71da6b538d34c35c00248
+              deliveryAction: push
+              remote: origin
+              remoteIdentity: f77fd8941c2db1c30d5e8e3438a94109c2534b02c7bc211de17168b469821b65
+              targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+              verifiedBranch: hotfix/20261027/harden-offline-data-fallbacks
+          hotfix.archive.prepare:
+            sequence: 16
+            value:
+              remote: origin
+              summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+                locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+                test/vet/build 通过，离线启动实测回退成功。实现提交 a1b13e9（4 个文件）；分支
+                hotfix/20261027/harden-offline-data-fallbacks，remote origin。归档将把
+                change 目录移入 archive（无 delta spec），然后推送分支。
+              targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+          hotfix.build.check:
+            sequence: 4
+            value:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+                - --json
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              cwd: .
+              environment: 3e5e89bd7ec62cd6a3926cc985c4b759d7b9426395fa957b07aef6cb2aa240e7
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/c593564c-0ee0-4751-8366-1405f0a0b7d8.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+              reusable: true
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+          hotfix.build.check.evidence:
+            sequence: 5
+            value:
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+          hotfix.build.execute:
+            sequence: 3
+            value:
+              event: build-complete
+          hotfix.open:
+            sequence: 1
+            value:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: 4d491dd556bc14d64a55c083aa0eda4804da269ad5f1cae7dd17e4d8ac0ace7d
+                ref: docs/openspec/changes/harden-offline-data-fallbacks
+          hotfix.open.evidence:
+            sequence: 2
+            value:
+              contentHash: b72c5210d20b4bd3313f6e01030f8f53d4dcdc5b5faf3f1f2822cfb02a6c4118
+              ref: docs/openspec/changes/harden-offline-data-fallbacks
+          hotfix.verify.check:
+            sequence: 14
+            value:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 4
+              contentHash: bdf0518e3f88ea2b33540b9bfe83e31305eb2284c7c8b67388646a6fddffd271
+              cwd: .
+              deliveryInputs: {}
+              environment: aa14739470e611d4aa627405c6d655f35ddca119fe1bf1382f7cddc1ac718d4d
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/057d3392-ba0f-421a-9561-12f8c7d1da2e.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/dfe51b83-e249-4440-bc41-1b635113f3cc.log
+              reusable: false
+              reused: false
+              scope: verify
+              tier: full
+              timeoutMs: 300000
+          hotfix.verify.check.evidence:
+            sequence: 15
+            value:
+              contentHash: bdf0518e3f88ea2b33540b9bfe83e31305eb2284c7c8b67388646a6fddffd271
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/dfe51b83-e249-4440-bc41-1b635113f3cc.log
+          hotfix.verify.report.evidence:
+            sequence: 13
+            value:
+              contentHash: 10ca0d451c6992593c10890eaee43f4550fce8ac969cbfee80d3cc2bb2738e98
+              ref: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+          hotfix.verify.run:
+            sequence: 12
+            value:
+              event: verification-ready
+              verificationReport: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+        sequence: 20
+      harden-offline-data-fallbacks:3:
+        results:
+          hotfix.open:
+            sequence: 1
+            value:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: 4d491dd556bc14d64a55c083aa0eda4804da269ad5f1cae7dd17e4d8ac0ace7d
+                ref: docs/openspec/changes/harden-offline-data-fallbacks
+          hotfix.open.evidence:
+            sequence: 2
+            value:
+              contentHash: b72c5210d20b4bd3313f6e01030f8f53d4dcdc5b5faf3f1f2822cfb02a6c4118
+              ref: docs/openspec/changes/harden-offline-data-fallbacks
+        sequence: 3
+      harden-offline-data-fallbacks:4:
+        results:
+          hotfix.build.execute:
+            sequence: 3
+            value:
+              event: build-complete
+          hotfix.open:
+            sequence: 1
+            value:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: 4d491dd556bc14d64a55c083aa0eda4804da269ad5f1cae7dd17e4d8ac0ace7d
+                ref: docs/openspec/changes/harden-offline-data-fallbacks
+          hotfix.open.evidence:
+            sequence: 2
+            value:
+              contentHash: b72c5210d20b4bd3313f6e01030f8f53d4dcdc5b5faf3f1f2822cfb02a6c4118
+              ref: docs/openspec/changes/harden-offline-data-fallbacks
+        sequence: 4
+      harden-offline-data-fallbacks:6:
+        results:
+          hotfix.build.check:
+            sequence: 4
+            value:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+                - --json
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              cwd: .
+              environment: 3e5e89bd7ec62cd6a3926cc985c4b759d7b9426395fa957b07aef6cb2aa240e7
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/c593564c-0ee0-4751-8366-1405f0a0b7d8.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+              reusable: true
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+          hotfix.build.check.evidence:
+            sequence: 5
+            value:
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+          hotfix.build.execute:
+            sequence: 3
+            value:
+              event: build-complete
+          hotfix.open:
+            sequence: 1
+            value:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: 4d491dd556bc14d64a55c083aa0eda4804da269ad5f1cae7dd17e4d8ac0ace7d
+                ref: docs/openspec/changes/harden-offline-data-fallbacks
+          hotfix.open.evidence:
+            sequence: 2
+            value:
+              contentHash: b72c5210d20b4bd3313f6e01030f8f53d4dcdc5b5faf3f1f2822cfb02a6c4118
+              ref: docs/openspec/changes/harden-offline-data-fallbacks
+        sequence: 6
+      harden-offline-data-fallbacks:8:
+        results:
+          hotfix.build.check:
+            sequence: 4
+            value:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+                - --json
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              cwd: .
+              environment: 3e5e89bd7ec62cd6a3926cc985c4b759d7b9426395fa957b07aef6cb2aa240e7
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/c593564c-0ee0-4751-8366-1405f0a0b7d8.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+              reusable: true
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+          hotfix.build.check.evidence:
+            sequence: 5
+            value:
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+          hotfix.build.execute:
+            sequence: 3
+            value:
+              event: build-complete
+          hotfix.open:
+            sequence: 1
+            value:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: 4d491dd556bc14d64a55c083aa0eda4804da269ad5f1cae7dd17e4d8ac0ace7d
+                ref: docs/openspec/changes/harden-offline-data-fallbacks
+          hotfix.open.evidence:
+            sequence: 2
+            value:
+              contentHash: b72c5210d20b4bd3313f6e01030f8f53d4dcdc5b5faf3f1f2822cfb02a6c4118
+              ref: docs/openspec/changes/harden-offline-data-fallbacks
+          hotfix.verify.report.evidence:
+            sequence: 7
+            value:
+              contentHash: 1562a1854109de6d4a1f948f5b3646fa4fcc044a904dffb02c1186e67b693c4a
+              ref: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+          hotfix.verify.run:
+            sequence: 6
+            value:
+              event: verification-ready
+              verificationReport: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+        sequence: 8
+    waits:
+      - id: harden-offline-data-fallbacks:11
+        stepId: hotfix.archive.confirm
+        sequence: 11
+        status: resolved
+        proposal:
+          input:
+            change: harden-offline-data-fallbacks
+            changeDir: docs/openspec/changes/harden-offline-data-fallbacks
+          outputs:
+            hotfix.archive.prepare:
+              summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+                locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+                test/vet/build 通过，离线启动实测回退成功。交付文件 4
+                个（asn.go、storage.go、fixes_test.go、fallback/geolite2-asn.snapshot.mmdb.gz），当前均未提交；分支
+                hotfix/20261027/harden-offline-data-fallbacks，remote origin。归档将把
+                change 目录移入 archive（无 delta spec），实现文件需单独提交。
+              targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+        proposalHash: 8231fb2062f7473dfc14c9d44cffa669089227031e4d33c1a2e9dc4c362fd1bd
+        choices:
+          - local
+          - push
+          - pr
+          - reverify
+          - later
+        results:
+          hotfix.archive.prepare:
+            sequence: 10
+            value:
+              summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+                locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+                test/vet/build 通过，离线启动实测回退成功。交付文件 4
+                个（asn.go、storage.go、fixes_test.go、fallback/geolite2-asn.snapshot.mmdb.gz），当前均未提交；分支
+                hotfix/20261027/harden-offline-data-fallbacks，remote origin。归档将把
+                change 目录移入 archive（无 delta spec），实现文件需单独提交。
+              targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+          hotfix.build.check:
+            sequence: 4
+            value:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+                - --json
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              cwd: .
+              environment: 3e5e89bd7ec62cd6a3926cc985c4b759d7b9426395fa957b07aef6cb2aa240e7
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/c593564c-0ee0-4751-8366-1405f0a0b7d8.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+              reusable: true
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+          hotfix.build.check.evidence:
+            sequence: 5
+            value:
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+          hotfix.build.execute:
+            sequence: 3
+            value:
+              event: build-complete
+          hotfix.open:
+            sequence: 1
+            value:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: 4d491dd556bc14d64a55c083aa0eda4804da269ad5f1cae7dd17e4d8ac0ace7d
+                ref: docs/openspec/changes/harden-offline-data-fallbacks
+          hotfix.open.evidence:
+            sequence: 2
+            value:
+              contentHash: b72c5210d20b4bd3313f6e01030f8f53d4dcdc5b5faf3f1f2822cfb02a6c4118
+              ref: docs/openspec/changes/harden-offline-data-fallbacks
+          hotfix.verify.check:
+            sequence: 8
+            value:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 2
+              contentHash: a1fe329dbdd0edd59ad0692652b08a1894e912bfc2df062ba6c19c71cc2c10af
+              cwd: .
+              deliveryInputs:
+                combined_refactor/asn.go: git:684b2eeb6914eee1f0200fe772fdcc246f30b541
+                combined_refactor/fallback/geolite2-asn.snapshot.mmdb.gz: git:e5520acc27e6f0f0d037d0ac47e38ce5d0116e59
+                combined_refactor/fixes_test.go: git:e8f427a573ef5306a46f32f83e14df71aee0986c
+                combined_refactor/storage.go: git:9718607c411c987f6ce280695b7ddcbf77c74dd1
+              environment: aa14739470e611d4aa627405c6d655f35ddca119fe1bf1382f7cddc1ac718d4d
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/1918e66f-bd24-4def-afd2-7cbd807509aa.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/21e2e1f2-3bff-4095-9573-1b958f35c244.log
+              reusable: false
+              reused: false
+              scope: verify
+              tier: full
+              timeoutMs: 300000
+          hotfix.verify.check.evidence:
+            sequence: 9
+            value:
+              contentHash: a1fe329dbdd0edd59ad0692652b08a1894e912bfc2df062ba6c19c71cc2c10af
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/21e2e1f2-3bff-4095-9573-1b958f35c244.log
+          hotfix.verify.report.evidence:
+            sequence: 7
+            value:
+              contentHash: 1562a1854109de6d4a1f948f5b3646fa4fcc044a904dffb02c1186e67b693c4a
+              ref: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+          hotfix.verify.run:
+            sequence: 6
+            value:
+              event: verification-ready
+              verificationReport: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+        decision:
+          id: classic-archive-8231fb2062f7473dfc14c9d44cffa669089227031e4d33c1a2e9dc4c362fd1bd-reverify
+          choice: reverify
+          proposalHash: 8231fb2062f7473dfc14c9d44cffa669089227031e4d33c1a2e9dc4c362fd1bd
+      - id: harden-offline-data-fallbacks:17
+        stepId: hotfix.archive.confirm
+        sequence: 17
+        status: resolved
+        proposal:
+          input:
+            change: harden-offline-data-fallbacks
+            changeDir: docs/openspec/changes/harden-offline-data-fallbacks
+          outputs:
+            hotfix.archive.prepare:
+              remote: origin
+              summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+                locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+                test/vet/build 通过，离线启动实测回退成功。实现提交 a1b13e9（4 个文件）；分支
+                hotfix/20261027/harden-offline-data-fallbacks，remote origin。归档将把
+                change 目录移入 archive（无 delta spec），然后推送分支。
+              targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+        proposalHash: be3d9e5179aa39da49ba4251f9c04af6fe71a3df97d1a0f7d4a1801be4c6478d
+        choices:
+          - local
+          - push
+          - pr
+          - reverify
+          - later
+        results:
+          hotfix.archive.confirm:
+            sequence: 11
+            value:
+              choice: reverify
+              proposal:
+                input:
+                  change: harden-offline-data-fallbacks
+                  changeDir: docs/openspec/changes/harden-offline-data-fallbacks
+                outputs:
+                  hotfix.archive.prepare:
+                    summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+                      locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+                      test/vet/build 通过，离线启动实测回退成功。交付文件 4
+                      个（asn.go、storage.go、fixes_test.go、fallback/geolite2-asn.snapshot.mmdb.gz），当前均未提交；分支
+                      hotfix/20261027/harden-offline-data-fallbacks，remote
+                      origin。归档将把 change 目录移入 archive（无 delta spec），实现文件需单独提交。
+                    targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+          hotfix.archive.prepare:
+            sequence: 16
+            value:
+              remote: origin
+              summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+                locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+                test/vet/build 通过，离线启动实测回退成功。实现提交 a1b13e9（4 个文件）；分支
+                hotfix/20261027/harden-offline-data-fallbacks，remote origin。归档将把
+                change 目录移入 archive（无 delta spec），然后推送分支。
+              targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+          hotfix.build.check:
+            sequence: 4
+            value:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+                - --json
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              cwd: .
+              environment: 3e5e89bd7ec62cd6a3926cc985c4b759d7b9426395fa957b07aef6cb2aa240e7
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/c593564c-0ee0-4751-8366-1405f0a0b7d8.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+              reusable: true
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+          hotfix.build.check.evidence:
+            sequence: 5
+            value:
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+          hotfix.build.execute:
+            sequence: 3
+            value:
+              event: build-complete
+          hotfix.open:
+            sequence: 1
+            value:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: 4d491dd556bc14d64a55c083aa0eda4804da269ad5f1cae7dd17e4d8ac0ace7d
+                ref: docs/openspec/changes/harden-offline-data-fallbacks
+          hotfix.open.evidence:
+            sequence: 2
+            value:
+              contentHash: b72c5210d20b4bd3313f6e01030f8f53d4dcdc5b5faf3f1f2822cfb02a6c4118
+              ref: docs/openspec/changes/harden-offline-data-fallbacks
+          hotfix.verify.check:
+            sequence: 14
+            value:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 4
+              contentHash: bdf0518e3f88ea2b33540b9bfe83e31305eb2284c7c8b67388646a6fddffd271
+              cwd: .
+              deliveryInputs: {}
+              environment: aa14739470e611d4aa627405c6d655f35ddca119fe1bf1382f7cddc1ac718d4d
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/057d3392-ba0f-421a-9561-12f8c7d1da2e.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/dfe51b83-e249-4440-bc41-1b635113f3cc.log
+              reusable: false
+              reused: false
+              scope: verify
+              tier: full
+              timeoutMs: 300000
+          hotfix.verify.check.evidence:
+            sequence: 15
+            value:
+              contentHash: bdf0518e3f88ea2b33540b9bfe83e31305eb2284c7c8b67388646a6fddffd271
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/dfe51b83-e249-4440-bc41-1b635113f3cc.log
+          hotfix.verify.report.evidence:
+            sequence: 13
+            value:
+              contentHash: 10ca0d451c6992593c10890eaee43f4550fce8ac969cbfee80d3cc2bb2738e98
+              ref: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+          hotfix.verify.run:
+            sequence: 12
+            value:
+              event: verification-ready
+              verificationReport: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+        decision:
+          id: classic-archive-be3d9e5179aa39da49ba4251f9c04af6fe71a3df97d1a0f7d4a1801be4c6478d-push
+          choice: push
+          proposalHash: be3d9e5179aa39da49ba4251f9c04af6fe71a3df97d1a0f7d4a1801be4c6478d
+    evidenceWaits:
+      - id: harden-offline-data-fallbacks:2
+        stepId: hotfix.open.evidence
+        sequence: 2
+        kind: classic-open-artifacts
+        status: resolved
+        results:
+          hotfix.open:
+            sequence: 1
+            value:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: 4d491dd556bc14d64a55c083aa0eda4804da269ad5f1cae7dd17e4d8ac0ace7d
+                ref: docs/openspec/changes/harden-offline-data-fallbacks
+        receipt:
+          ref: docs/openspec/changes/harden-offline-data-fallbacks
+          contentHash: b72c5210d20b4bd3313f6e01030f8f53d4dcdc5b5faf3f1f2822cfb02a6c4118
+          submissionId: d1450a24-974d-4154-a13d-27f992749536
+      - id: harden-offline-data-fallbacks:5
+        stepId: hotfix.build.check.evidence
+        sequence: 5
+        kind: classic-build-check
+        status: resolved
+        results:
+          hotfix.build.check:
+            sequence: 4
+            value:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+                - --json
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              cwd: .
+              environment: 3e5e89bd7ec62cd6a3926cc985c4b759d7b9426395fa957b07aef6cb2aa240e7
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/c593564c-0ee0-4751-8366-1405f0a0b7d8.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+              reusable: true
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+          hotfix.build.execute:
+            sequence: 3
+            value:
+              event: build-complete
+          hotfix.open:
+            sequence: 1
+            value:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: 4d491dd556bc14d64a55c083aa0eda4804da269ad5f1cae7dd17e4d8ac0ace7d
+                ref: docs/openspec/changes/harden-offline-data-fallbacks
+          hotfix.open.evidence:
+            sequence: 2
+            value:
+              contentHash: b72c5210d20b4bd3313f6e01030f8f53d4dcdc5b5faf3f1f2822cfb02a6c4118
+              ref: docs/openspec/changes/harden-offline-data-fallbacks
+        receipt:
+          ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+          contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+          submissionId: 033a8aaf-c353-4477-b4d8-c2bbe18114d0
+      - id: harden-offline-data-fallbacks:7
+        stepId: hotfix.verify.report.evidence
+        sequence: 7
+        kind: classic-verification-report
+        status: resolved
+        results:
+          hotfix.build.check:
+            sequence: 4
+            value:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+                - --json
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              cwd: .
+              environment: 3e5e89bd7ec62cd6a3926cc985c4b759d7b9426395fa957b07aef6cb2aa240e7
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/c593564c-0ee0-4751-8366-1405f0a0b7d8.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+              reusable: true
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+          hotfix.build.check.evidence:
+            sequence: 5
+            value:
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+          hotfix.build.execute:
+            sequence: 3
+            value:
+              event: build-complete
+          hotfix.open:
+            sequence: 1
+            value:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: 4d491dd556bc14d64a55c083aa0eda4804da269ad5f1cae7dd17e4d8ac0ace7d
+                ref: docs/openspec/changes/harden-offline-data-fallbacks
+          hotfix.open.evidence:
+            sequence: 2
+            value:
+              contentHash: b72c5210d20b4bd3313f6e01030f8f53d4dcdc5b5faf3f1f2822cfb02a6c4118
+              ref: docs/openspec/changes/harden-offline-data-fallbacks
+          hotfix.verify.run:
+            sequence: 6
+            value:
+              event: verification-ready
+              verificationReport: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+        receipt:
+          ref: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+          contentHash: 1562a1854109de6d4a1f948f5b3646fa4fcc044a904dffb02c1186e67b693c4a
+          submissionId: 02600c50-bba2-4b9f-89e1-4eff71f97179
+      - id: harden-offline-data-fallbacks:9
+        stepId: hotfix.verify.check.evidence
+        sequence: 9
+        kind: classic-verify-check
+        status: resolved
+        results:
+          hotfix.build.check:
+            sequence: 4
+            value:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+                - --json
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              cwd: .
+              environment: 3e5e89bd7ec62cd6a3926cc985c4b759d7b9426395fa957b07aef6cb2aa240e7
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/c593564c-0ee0-4751-8366-1405f0a0b7d8.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+              reusable: true
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+          hotfix.build.check.evidence:
+            sequence: 5
+            value:
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+          hotfix.build.execute:
+            sequence: 3
+            value:
+              event: build-complete
+          hotfix.open:
+            sequence: 1
+            value:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: 4d491dd556bc14d64a55c083aa0eda4804da269ad5f1cae7dd17e4d8ac0ace7d
+                ref: docs/openspec/changes/harden-offline-data-fallbacks
+          hotfix.open.evidence:
+            sequence: 2
+            value:
+              contentHash: b72c5210d20b4bd3313f6e01030f8f53d4dcdc5b5faf3f1f2822cfb02a6c4118
+              ref: docs/openspec/changes/harden-offline-data-fallbacks
+          hotfix.verify.check:
+            sequence: 8
+            value:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 2
+              contentHash: a1fe329dbdd0edd59ad0692652b08a1894e912bfc2df062ba6c19c71cc2c10af
+              cwd: .
+              deliveryInputs:
+                combined_refactor/asn.go: git:684b2eeb6914eee1f0200fe772fdcc246f30b541
+                combined_refactor/fallback/geolite2-asn.snapshot.mmdb.gz: git:e5520acc27e6f0f0d037d0ac47e38ce5d0116e59
+                combined_refactor/fixes_test.go: git:e8f427a573ef5306a46f32f83e14df71aee0986c
+                combined_refactor/storage.go: git:9718607c411c987f6ce280695b7ddcbf77c74dd1
+              environment: aa14739470e611d4aa627405c6d655f35ddca119fe1bf1382f7cddc1ac718d4d
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/1918e66f-bd24-4def-afd2-7cbd807509aa.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/21e2e1f2-3bff-4095-9573-1b958f35c244.log
+              reusable: false
+              reused: false
+              scope: verify
+              tier: full
+              timeoutMs: 300000
+          hotfix.verify.report.evidence:
+            sequence: 7
+            value:
+              contentHash: 1562a1854109de6d4a1f948f5b3646fa4fcc044a904dffb02c1186e67b693c4a
+              ref: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+          hotfix.verify.run:
+            sequence: 6
+            value:
+              event: verification-ready
+              verificationReport: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+        receipt:
+          ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/21e2e1f2-3bff-4095-9573-1b958f35c244.log
+          contentHash: a1fe329dbdd0edd59ad0692652b08a1894e912bfc2df062ba6c19c71cc2c10af
+          submissionId: e41d93aa-c30f-4ecd-bc36-36e87a646b23
+      - id: harden-offline-data-fallbacks:13
+        stepId: hotfix.verify.report.evidence
+        sequence: 13
+        kind: classic-verification-report
+        status: resolved
+        results:
+          hotfix.archive.confirm:
+            sequence: 11
+            value:
+              choice: reverify
+              proposal:
+                input:
+                  change: harden-offline-data-fallbacks
+                  changeDir: docs/openspec/changes/harden-offline-data-fallbacks
+                outputs:
+                  hotfix.archive.prepare:
+                    summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+                      locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+                      test/vet/build 通过，离线启动实测回退成功。交付文件 4
+                      个（asn.go、storage.go、fixes_test.go、fallback/geolite2-asn.snapshot.mmdb.gz），当前均未提交；分支
+                      hotfix/20261027/harden-offline-data-fallbacks，remote
+                      origin。归档将把 change 目录移入 archive（无 delta spec），实现文件需单独提交。
+                    targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+          hotfix.archive.prepare:
+            sequence: 10
+            value:
+              summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+                locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+                test/vet/build 通过，离线启动实测回退成功。交付文件 4
+                个（asn.go、storage.go、fixes_test.go、fallback/geolite2-asn.snapshot.mmdb.gz），当前均未提交；分支
+                hotfix/20261027/harden-offline-data-fallbacks，remote origin。归档将把
+                change 目录移入 archive（无 delta spec），实现文件需单独提交。
+              targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+          hotfix.build.check:
+            sequence: 4
+            value:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+                - --json
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              cwd: .
+              environment: 3e5e89bd7ec62cd6a3926cc985c4b759d7b9426395fa957b07aef6cb2aa240e7
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/c593564c-0ee0-4751-8366-1405f0a0b7d8.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+              reusable: true
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+          hotfix.build.check.evidence:
+            sequence: 5
+            value:
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+          hotfix.build.execute:
+            sequence: 3
+            value:
+              event: build-complete
+          hotfix.open:
+            sequence: 1
+            value:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: 4d491dd556bc14d64a55c083aa0eda4804da269ad5f1cae7dd17e4d8ac0ace7d
+                ref: docs/openspec/changes/harden-offline-data-fallbacks
+          hotfix.open.evidence:
+            sequence: 2
+            value:
+              contentHash: b72c5210d20b4bd3313f6e01030f8f53d4dcdc5b5faf3f1f2822cfb02a6c4118
+              ref: docs/openspec/changes/harden-offline-data-fallbacks
+          hotfix.verify.check:
+            sequence: 8
+            value:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 2
+              contentHash: a1fe329dbdd0edd59ad0692652b08a1894e912bfc2df062ba6c19c71cc2c10af
+              cwd: .
+              deliveryInputs:
+                combined_refactor/asn.go: git:684b2eeb6914eee1f0200fe772fdcc246f30b541
+                combined_refactor/fallback/geolite2-asn.snapshot.mmdb.gz: git:e5520acc27e6f0f0d037d0ac47e38ce5d0116e59
+                combined_refactor/fixes_test.go: git:e8f427a573ef5306a46f32f83e14df71aee0986c
+                combined_refactor/storage.go: git:9718607c411c987f6ce280695b7ddcbf77c74dd1
+              environment: aa14739470e611d4aa627405c6d655f35ddca119fe1bf1382f7cddc1ac718d4d
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/1918e66f-bd24-4def-afd2-7cbd807509aa.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/21e2e1f2-3bff-4095-9573-1b958f35c244.log
+              reusable: false
+              reused: false
+              scope: verify
+              tier: full
+              timeoutMs: 300000
+          hotfix.verify.check.evidence:
+            sequence: 9
+            value:
+              contentHash: a1fe329dbdd0edd59ad0692652b08a1894e912bfc2df062ba6c19c71cc2c10af
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/21e2e1f2-3bff-4095-9573-1b958f35c244.log
+          hotfix.verify.report.evidence:
+            sequence: 7
+            value:
+              contentHash: 1562a1854109de6d4a1f948f5b3646fa4fcc044a904dffb02c1186e67b693c4a
+              ref: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+          hotfix.verify.run:
+            sequence: 12
+            value:
+              event: verification-ready
+              verificationReport: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+        receipt:
+          ref: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+          contentHash: 10ca0d451c6992593c10890eaee43f4550fce8ac969cbfee80d3cc2bb2738e98
+          submissionId: 07d246a6-602d-4b02-9b45-d438de480b26
+      - id: harden-offline-data-fallbacks:15
+        stepId: hotfix.verify.check.evidence
+        sequence: 15
+        kind: classic-verify-check
+        status: resolved
+        results:
+          hotfix.archive.confirm:
+            sequence: 11
+            value:
+              choice: reverify
+              proposal:
+                input:
+                  change: harden-offline-data-fallbacks
+                  changeDir: docs/openspec/changes/harden-offline-data-fallbacks
+                outputs:
+                  hotfix.archive.prepare:
+                    summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+                      locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+                      test/vet/build 通过，离线启动实测回退成功。交付文件 4
+                      个（asn.go、storage.go、fixes_test.go、fallback/geolite2-asn.snapshot.mmdb.gz），当前均未提交；分支
+                      hotfix/20261027/harden-offline-data-fallbacks，remote
+                      origin。归档将把 change 目录移入 archive（无 delta spec），实现文件需单独提交。
+                    targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+          hotfix.archive.prepare:
+            sequence: 10
+            value:
+              summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+                locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+                test/vet/build 通过，离线启动实测回退成功。交付文件 4
+                个（asn.go、storage.go、fixes_test.go、fallback/geolite2-asn.snapshot.mmdb.gz），当前均未提交；分支
+                hotfix/20261027/harden-offline-data-fallbacks，remote origin。归档将把
+                change 目录移入 archive（无 delta spec），实现文件需单独提交。
+              targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+          hotfix.build.check:
+            sequence: 4
+            value:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+                - --json
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              cwd: .
+              environment: 3e5e89bd7ec62cd6a3926cc985c4b759d7b9426395fa957b07aef6cb2aa240e7
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/c593564c-0ee0-4751-8366-1405f0a0b7d8.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+              reusable: true
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+          hotfix.build.check.evidence:
+            sequence: 5
+            value:
+              contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+          hotfix.build.execute:
+            sequence: 3
+            value:
+              event: build-complete
+          hotfix.open:
+            sequence: 1
+            value:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: 4d491dd556bc14d64a55c083aa0eda4804da269ad5f1cae7dd17e4d8ac0ace7d
+                ref: docs/openspec/changes/harden-offline-data-fallbacks
+          hotfix.open.evidence:
+            sequence: 2
+            value:
+              contentHash: b72c5210d20b4bd3313f6e01030f8f53d4dcdc5b5faf3f1f2822cfb02a6c4118
+              ref: docs/openspec/changes/harden-offline-data-fallbacks
+          hotfix.verify.check:
+            sequence: 14
+            value:
+              argv:
+                - go
+                - test
+                - -C
+                - combined_refactor
+                - -count=1
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 4
+              contentHash: bdf0518e3f88ea2b33540b9bfe83e31305eb2284c7c8b67388646a6fddffd271
+              cwd: .
+              deliveryInputs: {}
+              environment: aa14739470e611d4aa627405c6d655f35ddca119fe1bf1382f7cddc1ac718d4d
+              exitCode: 0
+              inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+              manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+              manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/057d3392-ba0f-421a-9561-12f8c7d1da2e.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/dfe51b83-e249-4440-bc41-1b635113f3cc.log
+              reusable: false
+              reused: false
+              scope: verify
+              tier: full
+              timeoutMs: 300000
+          hotfix.verify.check.evidence:
+            sequence: 9
+            value:
+              contentHash: a1fe329dbdd0edd59ad0692652b08a1894e912bfc2df062ba6c19c71cc2c10af
+              ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/21e2e1f2-3bff-4095-9573-1b958f35c244.log
+          hotfix.verify.report.evidence:
+            sequence: 13
+            value:
+              contentHash: 10ca0d451c6992593c10890eaee43f4550fce8ac969cbfee80d3cc2bb2738e98
+              ref: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+          hotfix.verify.run:
+            sequence: 12
+            value:
+              event: verification-ready
+              verificationReport: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+        receipt:
+          ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/dfe51b83-e249-4440-bc41-1b635113f3cc.log
+          contentHash: bdf0518e3f88ea2b33540b9bfe83e31305eb2284c7c8b67388646a6fddffd271
+          submissionId: cb06c941-cddf-479f-b086-0f1fa2e52720
+    ready: []
+    joins: {}
+    outputs:
+      hotfix.archive.confirm:
+        sequence: 17
+        value:
+          choice: push
+          proposal:
+            input:
+              change: harden-offline-data-fallbacks
+              changeDir: docs/openspec/changes/harden-offline-data-fallbacks
+            outputs:
+              hotfix.archive.prepare:
+                remote: origin
+                summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+                  locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+                  test/vet/build 通过，离线启动实测回退成功。实现提交 a1b13e9（4 个文件）；分支
+                  hotfix/20261027/harden-offline-data-fallbacks，remote
+                  origin。归档将把 change 目录移入 archive（无 delta spec），然后推送分支。
+                targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+      hotfix.archive.execute:
+        sequence: 19
+        value:
+          archiveDirectory: docs/openspec/changes/archive/2026-10-27-harden-offline-data-fallbacks
+      hotfix.archive.preflight:
+        sequence: 18
+        value:
+          baseCommit: a1b13e90b7be651d4df71da6b538d34c35c00248
+          deliveryAction: push
+          remote: origin
+          remoteIdentity: f77fd8941c2db1c30d5e8e3438a94109c2534b02c7bc211de17168b469821b65
+          targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+          verifiedBranch: hotfix/20261027/harden-offline-data-fallbacks
+      hotfix.archive.prepare:
+        sequence: 16
+        value:
+          remote: origin
+          summary: harden-offline-data-fallbacks：为 GeoLite2-ASN 内嵌 5.1MB gzip 快照，加固
+            locations/ips-v4/ips-v6 的缓存校验与离线回退，并加入回归测试。验证通过：5/5 任务，go
+            test/vet/build 通过，离线启动实测回退成功。实现提交 a1b13e9（4 个文件）；分支
+            hotfix/20261027/harden-offline-data-fallbacks，remote origin。归档将把
+            change 目录移入 archive（无 delta spec），然后推送分支。
+          targetBranch: hotfix/20261027/harden-offline-data-fallbacks
+      hotfix.build.check:
+        sequence: 4
+        value:
+          argv:
+            - go
+            - test
+            - -C
+            - combined_refactor
+            - -count=1
+            - ./...
+            - --json
+          changedDuringExecution: []
+          checkEpoch: 1
+          contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+          cwd: .
+          environment: 3e5e89bd7ec62cd6a3926cc985c4b759d7b9426395fa957b07aef6cb2aa240e7
+          exitCode: 0
+          inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+          inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+          manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+          manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/c593564c-0ee0-4751-8366-1405f0a0b7d8.manifest
+          receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+          reusable: true
+          reused: false
+          scope: build
+          tier: full
+          timeoutMs: 300000
+      hotfix.build.check.evidence:
+        sequence: 5
+        value:
+          contentHash: ae9c4bb769a80c9d07748d4886b850a96fd84b44506861f778cebcee55d3ba01
+          ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/76167ce6-e595-404a-8de2-e6db17dc85d7.log
+      hotfix.build.execute:
+        sequence: 3
+        value:
+          event: build-complete
+      hotfix.open:
+        sequence: 1
+        value:
+          event: open-complete
+          requirementsEvidence:
+            contentHash: 4d491dd556bc14d64a55c083aa0eda4804da269ad5f1cae7dd17e4d8ac0ace7d
+            ref: docs/openspec/changes/harden-offline-data-fallbacks
+      hotfix.open.evidence:
+        sequence: 2
+        value:
+          contentHash: b72c5210d20b4bd3313f6e01030f8f53d4dcdc5b5faf3f1f2822cfb02a6c4118
+          ref: docs/openspec/changes/harden-offline-data-fallbacks
+      hotfix.verify.check:
+        sequence: 14
+        value:
+          argv:
+            - go
+            - test
+            - -C
+            - combined_refactor
+            - -count=1
+            - ./...
+          changedDuringExecution: []
+          checkEpoch: 4
+          contentHash: bdf0518e3f88ea2b33540b9bfe83e31305eb2284c7c8b67388646a6fddffd271
+          cwd: .
+          deliveryInputs: {}
+          environment: aa14739470e611d4aa627405c6d655f35ddca119fe1bf1382f7cddc1ac718d4d
+          exitCode: 0
+          inputAfter: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+          inputBefore: f7d90d6329ee20ae95dfc05d1bd8d2b2434e9090eed80fdad9b70be3cf1d8d64
+          manifestHash: d3f9b2def48a8200e45576a961c4a07e7dc1f5943bc515892d8119038ac3b086
+          manifestRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/057d3392-ba0f-421a-9561-12f8c7d1da2e.manifest
+          receiptRef: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/dfe51b83-e249-4440-bc41-1b635113f3cc.log
+          reusable: false
+          reused: false
+          scope: verify
+          tier: full
+          timeoutMs: 300000
+      hotfix.verify.check.evidence:
+        sequence: 15
+        value:
+          contentHash: bdf0518e3f88ea2b33540b9bfe83e31305eb2284c7c8b67388646a6fddffd271
+          ref: .comet/runtime/classic-sdk-checks/c138aa24570553e5741f0dce597b90b1288fb9eb0ce3698c892a7d6e776c994e/dfe51b83-e249-4440-bc41-1b635113f3cc.log
+      hotfix.verify.report.evidence:
+        sequence: 13
+        value:
+          contentHash: 10ca0d451c6992593c10890eaee43f4550fce8ac969cbfee80d3cc2bb2738e98
+          ref: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+      hotfix.verify.run:
+        sequence: 12
+        value:
+          event: verification-ready
+          verificationReport: docs/superpowers/reports/2026-10-27-harden-offline-data-fallbacks-verify.md
+    children: []
+    lineage: []
+  sourceRevision: 31
+  sourceHash: 73a46643335e79d7183b71df4fff2eea92c28ee65ab67114fc2688608ceccd97
+check_epoch: 7
