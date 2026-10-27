@@ -24,7 +24,7 @@ type latestReleaseInfo struct {
 }
 
 func getLatestRelease(ctx context.Context) (latestReleaseInfo, error) {
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "https://api.github.com/repos/PoemMisty/CFData-WEB/releases/latest", nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, updateRepoAPI+"/releases/latest", nil)
 	if err != nil {
 		return latestReleaseInfo{}, err
 	}
@@ -37,6 +37,10 @@ func getLatestRelease(ctx context.Context) (latestReleaseInfo, error) {
 		return latestReleaseInfo{}, err
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode == http.StatusNotFound {
+		io.Copy(io.Discard, io.LimitReader(resp.Body, 4096))
+		return getLatestTag(ctx)
+	}
 	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusMultipleChoices {
 		io.Copy(io.Discard, io.LimitReader(resp.Body, 4096))
 		return latestReleaseInfo{}, fmt.Errorf("GitHub 返回状态 %d", resp.StatusCode)
@@ -45,16 +49,54 @@ func getLatestRelease(ctx context.Context) (latestReleaseInfo, error) {
 	if err := json.NewDecoder(resp.Body).Decode(&info); err != nil {
 		return latestReleaseInfo{}, err
 	}
+	if info.TagName == "" {
+		return getLatestTag(ctx)
+	}
 	if info.HTMLURL == "" {
 		info.HTMLURL = releaseLatestURL
 	}
 	return info, nil
 }
 
+type releaseTagInfo struct {
+	Name string `json:"name"`
+}
+
+func getLatestTag(ctx context.Context) (latestReleaseInfo, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, updateRepoAPI+"/tags?per_page=100", nil)
+	if err != nil {
+		return latestReleaseInfo{}, err
+	}
+	req.Header.Set("Accept", "application/vnd.github+json")
+	req.Header.Set("User-Agent", "CFData-WEB/"+appVersion)
+	resp, err := managementHTTPClient(0).Do(req)
+	if err != nil {
+		return latestReleaseInfo{}, err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusMultipleChoices {
+		io.Copy(io.Discard, io.LimitReader(resp.Body, 4096))
+		return latestReleaseInfo{}, fmt.Errorf("GitHub 返回状态 %d", resp.StatusCode)
+	}
+	var tags []releaseTagInfo
+	if err := json.NewDecoder(resp.Body).Decode(&tags); err != nil {
+		return latestReleaseInfo{}, err
+	}
+	names := make([]string, 0, len(tags))
+	for _, tag := range tags {
+		names = append(names, tag.Name)
+	}
+	latest := pickLatestVersionTag(names)
+	if latest == "" {
+		return latestReleaseInfo{}, nil
+	}
+	return latestReleaseInfo{TagName: latest, HTMLURL: "https://github.com/" + updateRepo + "/releases"}, nil
+}
+
 func versionIsOlder(current, latest string) bool {
 	current = strings.TrimPrefix(strings.TrimSpace(current), "v")
 	latest = strings.TrimPrefix(strings.TrimSpace(latest), "v")
-	if current == "" || latest == "" || current == "dev" {
+	if current == "" || latest == "" || current == "dev" || current == "edge" || strings.HasPrefix(current, "edge-") {
 		return false
 	}
 	cParts := strings.FieldsFunc(current, func(r rune) bool { return r == '.' || r == '-' || r == '_' })
@@ -80,12 +122,16 @@ func checkAndPrintUpdate(prefix string) {
 	info, err := getLatestRelease(ctx)
 	if err != nil {
 		recordDebugError("update_check", err.Error())
-		fmt.Printf("%s更新检测失败: %v\n", prefix, err)
 		return
 	}
-	if versionIsOlder(appVersion, info.TagName) {
-		fmt.Printf("%s发现新版本 %s，下载: %s\n", prefix, info.TagName, releaseLatestURL)
+	if info.TagName == "" || !versionIsOlder(appVersion, info.TagName) {
+		return
 	}
+	link := info.HTMLURL
+	if link == "" {
+		link = releaseLatestURL
+	}
+	fmt.Printf("%s发现新版本 %s，下载: %s\n", prefix, info.TagName, link)
 }
 
 func rewriteBoolFlagArgs() {

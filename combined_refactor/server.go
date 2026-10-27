@@ -105,10 +105,16 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 		info, err := getLatestRelease(ctx)
 		if err != nil {
 			recordDebugError("version_check", err.Error())
-			session.sendWSMessage("version_info", map[string]interface{}{"version": appVersion, "releaseURL": releaseLatestURL, "error": err.Error()})
 			return
 		}
-		session.sendWSMessage("version_info", map[string]interface{}{"version": appVersion, "latest": info.TagName, "releaseURL": releaseLatestURL, "hasUpdate": versionIsOlder(appVersion, info.TagName)})
+		if info.TagName == "" {
+			return
+		}
+		link := info.HTMLURL
+		if link == "" {
+			link = releaseLatestURL
+		}
+		session.sendWSMessage("version_info", map[string]interface{}{"version": appVersion, "latest": info.TagName, "releaseURL": link, "hasUpdate": versionIsOlder(appVersion, info.TagName)})
 	})
 
 	safeHandler := func(name string, fn func(json.RawMessage), data json.RawMessage) {

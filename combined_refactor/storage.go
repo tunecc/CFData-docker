@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	_ "embed"
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
@@ -14,6 +15,27 @@ import (
 )
 
 var upstreamHTTPClient = &http.Client{Timeout: 20 * time.Second}
+
+//go:embed fallback/locations.snapshot.json
+var fallbackLocationsJSON []byte
+
+//go:embed fallback/ips-v4.snapshot.txt
+var fallbackIPv4List string
+
+//go:embed fallback/ips-v6.snapshot.txt
+var fallbackIPv6List string
+
+func fallbackData(filename string) (string, bool) {
+	switch filepath.Base(filename) {
+	case "locations.json":
+		return string(fallbackLocationsJSON), true
+	case "ips-v4.txt":
+		return fallbackIPv4List, true
+	case "ips-v6.txt":
+		return fallbackIPv6List, true
+	}
+	return "", false
+}
 
 func configureHTTPClients() {
 	initCustomResolver()
@@ -32,15 +54,22 @@ func initLocations() {
 
 	if _, err = os.Stat(filename); os.IsNotExist(err) {
 		sendLog("本地 locations.json 不存在，正在从服务器下载...")
-		content, err := getURLContentViaProxy(context.Background(), url)
-		if err != nil {
-			sendLog("获取位置信息失败: " + err.Error())
-			sendLog("⚠️ locationMap 未就绪，后续扫描结果的 城市/地区 列将为空；可删除本地缓存（Web 端右上角设置）或检查网络后重启")
-			return
-		}
-		body = []byte(content)
-		if err := saveToFile(filename, content); err != nil {
-			sendLog("保存位置信息失败: " + err.Error())
+		content, fetchErr := getURLContentViaProxy(context.Background(), url)
+		if fetchErr != nil {
+			if fallback, ok := fallbackData(filename); ok {
+				recordDebugError("locations_fetch", fetchErr.Error())
+				sendLog("获取位置信息失败，已使用内置位置数据（离线快照）")
+				body = []byte(fallback)
+			} else {
+				sendLog("获取位置信息失败: " + fetchErr.Error())
+				sendLog("⚠️ locationMap 未就绪，后续扫描结果的 城市/地区 列将为空；可删除本地缓存（Web 端右上角设置）或检查网络后重启")
+				return
+			}
+		} else {
+			body = []byte(content)
+			if err := saveToFile(filename, content); err != nil {
+				sendLog("保存位置信息失败: " + err.Error())
+			}
 		}
 	} else {
 		sendLog(fmt.Sprintf("读取本地 %s 文件...", filename))
@@ -139,9 +168,14 @@ func resetAllConfigFiles(session *appSession) {
 
 func getIPListContent(filename, apiURL string) (string, error) {
 	if _, err := os.Stat(filename); os.IsNotExist(err) {
-		content, err := getURLContentViaProxy(context.Background(), apiURL)
-		if err != nil {
-			return "", err
+		content, fetchErr := getURLContentViaProxy(context.Background(), apiURL)
+		if fetchErr != nil {
+			if fallback, ok := fallbackData(filename); ok {
+				recordDebugError("ip_list_fetch", fetchErr.Error())
+				sendLog(fmt.Sprintf("获取 %s 失败，已使用内置 IP 列表（离线快照）", filename))
+				return fallback, nil
+			}
+			return "", fetchErr
 		}
 		if err := saveToFile(filename, content); err != nil {
 			fmt.Println("保存 IP 列表缓存失败:", err)

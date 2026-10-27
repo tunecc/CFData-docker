@@ -1,0 +1,2133 @@
+# comet-execution: managed-run
+change_id: e3969db3-9063-4949-b8a3-2503a62b60b8
+workflow: hotfix
+language: zh-CN
+phase: archive
+context_compression: off
+build_mode: direct
+build_pause: null
+subagent_dispatch: null
+tdd_mode: direct
+review_mode: off
+isolation: branch
+verify_mode: light
+auto_transition: true
+base_ref: 6138a7fe514fc1080d8fc16ddf22cd5706a2ed10
+design_doc: null
+plan: null
+verify_result: pass
+verify_failures: 0
+verification_report: docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md
+branch_status: pending
+created_at: 2026-10-27
+verified_at: 2026-10-27
+archive_confirmation: confirmed
+archived: true
+bound_branch: comet/fix-update-check-and-offline-data
+direct_override: null
+handoff_context: null
+handoff_hash: null
+classic_profile: null
+classic_migration: null
+run_checkpoint:
+  schema: comet.workflow-run-checkpoint.v1
+  hash: 406d8580705ee26676df7de3defe246281b470544c455534bc78ac19c6c6c12a
+  run:
+    protocolVersion: 1
+    schemaVersion: 1
+    runId: fix-update-check-and-offline-data
+    revision: 1
+    workflow:
+      id: comet-classic-hotfix
+      version: "1"
+      hash: 59c8440e5c03ef56376797cfb0bc38e82bb8dc8d5cfb7a7351795f7a73fefbe8
+    definitionHashes:
+      '["comet-classic-hotfix","1"]': 59c8440e5c03ef56376797cfb0bc38e82bb8dc8d5cfb7a7351795f7a73fefbe8
+    initialStateHash: 8e84a4f5660884ced2d53c7cf8ba484ae10f68e9985df0bd698173357f4a913b
+    input:
+      change: fix-update-check-and-offline-data
+      changeDir: docs/openspec/changes/fix-update-check-and-offline-data
+    state:
+      archiveConfirmation: confirmed
+      archived: true
+      autoTransition: true
+      baseRef: 6138a7fe514fc1080d8fc16ddf22cd5706a2ed10
+      boundBranch: comet/fix-update-check-and-offline-data
+      branchStatus: pending
+      buildMode: direct
+      buildPause: null
+      checkEpoch: 5
+      classicMigration: null
+      classicProfile: null
+      contextCompression: off
+      createdAt: 2026-10-27
+      designDoc: null
+      directOverride: null
+      handoffContext: null
+      handoffHash: null
+      isolation: branch
+      language: zh-CN
+      phase: archive
+      plan: null
+      reviewMode: off
+      subagentDispatch: null
+      tddMode: direct
+      verificationReport: docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md
+      verifiedAt: 2026-10-27
+      verifyFailures: 0
+      verifyMode: light
+      verifyResult: pass
+      workflow: hotfix
+    status: running
+    sequence: 14
+    actions:
+      - attempt: 1
+        claim:
+          executorId: comet-classic-guard
+          token: portable-51ef636577cb4734c7ab3bb71cabcdac4fa35b6367e9f679a95311ebd86b85e0
+        executionOrigin:
+          workflow:
+            hash: 59c8440e5c03ef56376797cfb0bc38e82bb8dc8d5cfb7a7351795f7a73fefbe8
+            id: comet-classic-hotfix
+            version: "1"
+        id: fix-update-check-and-offline-data:1
+        input:
+          input:
+            change: fix-update-check-and-offline-data
+            changeDir: docs/openspec/changes/fix-update-check-and-offline-data
+          outputs: {}
+        inputHash: 454ac9282ab718fe162646e6b6654594b07bf3aafa1ec51b297d2e83627435dd
+        outcome:
+          actionId: fix-update-check-and-offline-data:1
+          attempt: 1
+          claimToken: portable-51ef636577cb4734c7ab3bb71cabcdac4fa35b6367e9f679a95311ebd86b85e0
+          inputHash: 454ac9282ab718fe162646e6b6654594b07bf3aafa1ec51b297d2e83627435dd
+          outcomeId: 9dbdcfe4-7f93-46a6-8632-2b2e7d8554ec
+          output:
+            event: open-complete
+            requirementsEvidence:
+              contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+              ref: docs/openspec/changes/fix-update-check-and-offline-data
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 3c3711a91a77813558224a95a87eb817fd2f3ec3cf434dea59fba232681d5adb
+            outcomeId: 9dbdcfe4-7f93-46a6-8632-2b2e7d8554ec
+        reconciliations: []
+        ref: comet-hotfix
+        requiredCapabilities: []
+        retry: manual
+        runId: fix-update-check-and-offline-data
+        status: succeeded
+        stepId: hotfix.open
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-state
+          sessionId: classic-builder/fix-update-check-and-offline-data:3/1
+          token: portable-126b7584987a792e08c3a8b068e4c1edf3a9accf351bd71f30ca6f64b05fb768
+        executionOrigin:
+          workflow:
+            hash: 59c8440e5c03ef56376797cfb0bc38e82bb8dc8d5cfb7a7351795f7a73fefbe8
+            id: comet-classic-hotfix
+            version: "1"
+        id: fix-update-check-and-offline-data:3
+        input:
+          input:
+            change: fix-update-check-and-offline-data
+            changeDir: docs/openspec/changes/fix-update-check-and-offline-data
+          outputs:
+            hotfix.open:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+                ref: docs/openspec/changes/fix-update-check-and-offline-data
+            hotfix.open.evidence:
+              contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+              ref: docs/openspec/changes/fix-update-check-and-offline-data
+        inputHash: ab04e525231421f097f47c46b10b381a08e35f9f0dbdbd4f032591483394f8c9
+        outcome:
+          actionId: fix-update-check-and-offline-data:3
+          attempt: 1
+          claimToken: portable-126b7584987a792e08c3a8b068e4c1edf3a9accf351bd71f30ca6f64b05fb768
+          inputHash: ab04e525231421f097f47c46b10b381a08e35f9f0dbdbd4f032591483394f8c9
+          outcomeId: 8a58e168-2a77-4b0b-9a2d-a63fb37c9322
+          output:
+            event: build-complete
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 817323cff44693cedee0407f021f05e92a995d6f2ba0bed18242f80ace2536be
+            outcomeId: 8a58e168-2a77-4b0b-9a2d-a63fb37c9322
+        reconciliations: []
+        ref: comet-build
+        requiredCapabilities: []
+        retry: manual
+        runId: fix-update-check-and-offline-data
+        status: succeeded
+        stepId: hotfix.build.execute
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-check
+          token: portable-d8d84aaae2a274a83cd75b3b5b9d72af74d65317ff7403f2c4a793175d10ec48
+        executionOrigin:
+          workflow:
+            hash: 59c8440e5c03ef56376797cfb0bc38e82bb8dc8d5cfb7a7351795f7a73fefbe8
+            id: comet-classic-hotfix
+            version: "1"
+        id: fix-update-check-and-offline-data:4
+        input:
+          input:
+            change: fix-update-check-and-offline-data
+            changeDir: docs/openspec/changes/fix-update-check-and-offline-data
+          outputs:
+            hotfix.build.execute:
+              event: build-complete
+            hotfix.open:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+                ref: docs/openspec/changes/fix-update-check-and-offline-data
+            hotfix.open.evidence:
+              contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+              ref: docs/openspec/changes/fix-update-check-and-offline-data
+        inputHash: 8c9327ada98a15a61cbac622635f58dde0ff2892e5ced0939e8753752faed992
+        outcome:
+          actionId: fix-update-check-and-offline-data:4
+          attempt: 1
+          claimToken: portable-d8d84aaae2a274a83cd75b3b5b9d72af74d65317ff7403f2c4a793175d10ec48
+          inputHash: 8c9327ada98a15a61cbac622635f58dde0ff2892e5ced0939e8753752faed992
+          outcomeId: 1206bd97-0576-43f7-96cf-0c183b80a4a0
+          output:
+            argv:
+              - /opt/homebrew/bin/go
+              - -C
+              - combined_refactor
+              - test
+              - ./...
+            changedDuringExecution: []
+            checkEpoch: 1
+            contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+            cwd: .
+            environment: f2d15d0eb1c5c344758eee7e8775be81e61227dbcc6577b1a8416e64bc74187e
+            exitCode: 0
+            inputAfter: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+            inputBefore: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+            manifestHash: 44dd295ad2a83debaa882fb7e71d3459796831ed791f5aaa37e49f646bb69f2e
+            manifestRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/67d84bb2-6daa-48c4-9aab-510342deca86.manifest
+            receiptRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/dd27e675-06f7-4f5a-8660-8ae257816943.log
+            reusable: false
+            reused: false
+            scope: build
+            tier: full
+            timeoutMs: 300000
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 6334fb99ebe1898983745d5115f6db9737b7a20ffa728a1bf8ba8c16c10dc577
+            outcomeId: 1206bd97-0576-43f7-96cf-0c183b80a4a0
+        reconciliations: []
+        ref: classic-check
+        requiredCapabilities: []
+        retry: manual
+        runId: fix-update-check-and-offline-data
+        status: succeeded
+        stepId: hotfix.build.check
+        type: call_tool
+      - attempt: 1
+        claim:
+          executorId: comet-classic-guard
+          token: portable-5e7a03c8dd626e6f6c7e3e17cbd816b5dd8be6a52eb9941e4c32190261796456
+        executionOrigin:
+          workflow:
+            hash: 59c8440e5c03ef56376797cfb0bc38e82bb8dc8d5cfb7a7351795f7a73fefbe8
+            id: comet-classic-hotfix
+            version: "1"
+        id: fix-update-check-and-offline-data:6
+        input:
+          input:
+            change: fix-update-check-and-offline-data
+            changeDir: docs/openspec/changes/fix-update-check-and-offline-data
+          outputs:
+            hotfix.build.check:
+              argv:
+                - /opt/homebrew/bin/go
+                - -C
+                - combined_refactor
+                - test
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+              cwd: .
+              environment: f2d15d0eb1c5c344758eee7e8775be81e61227dbcc6577b1a8416e64bc74187e
+              exitCode: 0
+              inputAfter: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              inputBefore: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              manifestHash: 44dd295ad2a83debaa882fb7e71d3459796831ed791f5aaa37e49f646bb69f2e
+              manifestRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/67d84bb2-6daa-48c4-9aab-510342deca86.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/dd27e675-06f7-4f5a-8660-8ae257816943.log
+              reusable: false
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+            hotfix.build.check.evidence:
+              contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+              ref: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/dd27e675-06f7-4f5a-8660-8ae257816943.log
+            hotfix.build.execute:
+              event: build-complete
+            hotfix.open:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+                ref: docs/openspec/changes/fix-update-check-and-offline-data
+            hotfix.open.evidence:
+              contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+              ref: docs/openspec/changes/fix-update-check-and-offline-data
+        inputHash: 5903f1fcf8c581f45cd26d3a4280cdc5cc621d3875542a0bcb2e3e42ed5ab7ee
+        outcome:
+          actionId: fix-update-check-and-offline-data:6
+          attempt: 1
+          claimToken: portable-5e7a03c8dd626e6f6c7e3e17cbd816b5dd8be6a52eb9941e4c32190261796456
+          inputHash: 5903f1fcf8c581f45cd26d3a4280cdc5cc621d3875542a0bcb2e3e42ed5ab7ee
+          outcomeId: 63421052-3f37-4714-b184-3dd084a7617e
+          output:
+            event: verification-ready
+            verificationReport: docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 78ac11346719e2ae0251d8d5dcb9f350a6ee0e701a53c6edc16029cb56a17895
+            outcomeId: 63421052-3f37-4714-b184-3dd084a7617e
+        reconciliations: []
+        ref: comet-verify
+        requiredCapabilities: []
+        retry: manual
+        runId: fix-update-check-and-offline-data
+        status: succeeded
+        stepId: hotfix.verify.run
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-check
+          token: portable-82d5e4bea5705b21a1981df797eea6b34547089b334edc72416021239977e6d2
+        executionOrigin:
+          workflow:
+            hash: 59c8440e5c03ef56376797cfb0bc38e82bb8dc8d5cfb7a7351795f7a73fefbe8
+            id: comet-classic-hotfix
+            version: "1"
+        id: fix-update-check-and-offline-data:8
+        input:
+          input:
+            change: fix-update-check-and-offline-data
+            changeDir: docs/openspec/changes/fix-update-check-and-offline-data
+          outputs:
+            hotfix.build.check:
+              argv:
+                - /opt/homebrew/bin/go
+                - -C
+                - combined_refactor
+                - test
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+              cwd: .
+              environment: f2d15d0eb1c5c344758eee7e8775be81e61227dbcc6577b1a8416e64bc74187e
+              exitCode: 0
+              inputAfter: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              inputBefore: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              manifestHash: 44dd295ad2a83debaa882fb7e71d3459796831ed791f5aaa37e49f646bb69f2e
+              manifestRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/67d84bb2-6daa-48c4-9aab-510342deca86.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/dd27e675-06f7-4f5a-8660-8ae257816943.log
+              reusable: false
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+            hotfix.build.check.evidence:
+              contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+              ref: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/dd27e675-06f7-4f5a-8660-8ae257816943.log
+            hotfix.build.execute:
+              event: build-complete
+            hotfix.open:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+                ref: docs/openspec/changes/fix-update-check-and-offline-data
+            hotfix.open.evidence:
+              contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+              ref: docs/openspec/changes/fix-update-check-and-offline-data
+            hotfix.verify.report.evidence:
+              contentHash: 5772e41b6dd553bbc23ec7fe20de626bf89acb9faea91997cb5fa43556991727
+              ref: docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md
+            hotfix.verify.run:
+              event: verification-ready
+              verificationReport: docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md
+        inputHash: bf1ebf9e9a64fa09e3a14903c8bd7f4dde43c0d5ef6aeff358349b4f875806c5
+        outcome:
+          actionId: fix-update-check-and-offline-data:8
+          attempt: 1
+          claimToken: portable-82d5e4bea5705b21a1981df797eea6b34547089b334edc72416021239977e6d2
+          inputHash: bf1ebf9e9a64fa09e3a14903c8bd7f4dde43c0d5ef6aeff358349b4f875806c5
+          outcomeId: 4d280f1d-ba63-4c3d-a258-65a7eed56fb0
+          output:
+            argv:
+              - /opt/homebrew/bin/go
+              - -C
+              - combined_refactor
+              - test
+              - -count=1
+              - ./...
+            changedDuringExecution: []
+            checkEpoch: 2
+            contentHash: 9fee38083f25297f9542c8981949e2730db1f2d197f404f68f9aba4326e0aace
+            cwd: .
+            deliveryInputs:
+              .gitignore: git:d457bb2679e5da16497e307904515c5f404c34ab
+              AGENTS.md: git:36023087fecf7c3a5c99c926c693e6843844c813
+              combined_refactor/fallback/ips-v4.snapshot.txt: git:dcc32d7ae3895f9736667e71485a8b1e1ddf0fe1
+              combined_refactor/fallback/ips-v6.snapshot.txt: git:931fb0f8b0a78c80cdfeb2c270df4b83e66f48a7
+              combined_refactor/fallback/locations.snapshot.json: git:a8a1bfe725cde15117d04f1a649a4c129cacf88e
+              combined_refactor/fixes_test.go: git:5aa65d2413e3d18a0e78af92b6b972be4d44b494
+              combined_refactor/main.go: git:90423d3f80a07e6a7b180b5898dc6662384dfa1e
+              combined_refactor/server.go: git:5fd8df2fc952215aca8e8e4532293055312d49ea
+              combined_refactor/storage.go: git:58d9daea283ef2c9050b089c69657630d3ae957c
+              combined_refactor/version.go: git:125c317bcebccc6b02b8bdf303821f2dfd959eff
+            environment: 8be4ead12faa3cda99fc91ff5edfbb77fae26926019491d07b812cfb48a87545
+            exitCode: 0
+            inputAfter: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+            inputBefore: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+            manifestHash: 44dd295ad2a83debaa882fb7e71d3459796831ed791f5aaa37e49f646bb69f2e
+            manifestRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/6194b1f3-041e-4a4c-b336-e02cee4b46eb.manifest
+            receiptRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/27a0978e-7902-4883-8ee0-658124fd63b9.log
+            reusable: false
+            reused: false
+            scope: verify
+            tier: full
+            timeoutMs: 300000
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: ba4d8c366b83ec9b2f77149cb1517a92ca5af5833d1f59355b72134d860fdf3d
+            outcomeId: 4d280f1d-ba63-4c3d-a258-65a7eed56fb0
+        reconciliations: []
+        ref: classic-check
+        requiredCapabilities: []
+        retry: manual
+        runId: fix-update-check-and-offline-data
+        status: succeeded
+        stepId: hotfix.verify.check
+        type: call_tool
+      - attempt: 1
+        claim:
+          executorId: comet-classic-state
+          token: portable-3c4fbee9238c87eb607acd3d700e210fd885839cc2c3bfa0b1729cd68661101b
+        executionOrigin:
+          workflow:
+            hash: 59c8440e5c03ef56376797cfb0bc38e82bb8dc8d5cfb7a7351795f7a73fefbe8
+            id: comet-classic-hotfix
+            version: "1"
+        id: fix-update-check-and-offline-data:10
+        input:
+          input:
+            change: fix-update-check-and-offline-data
+            changeDir: docs/openspec/changes/fix-update-check-and-offline-data
+          outputs:
+            hotfix.build.check:
+              argv:
+                - /opt/homebrew/bin/go
+                - -C
+                - combined_refactor
+                - test
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+              cwd: .
+              environment: f2d15d0eb1c5c344758eee7e8775be81e61227dbcc6577b1a8416e64bc74187e
+              exitCode: 0
+              inputAfter: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              inputBefore: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              manifestHash: 44dd295ad2a83debaa882fb7e71d3459796831ed791f5aaa37e49f646bb69f2e
+              manifestRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/67d84bb2-6daa-48c4-9aab-510342deca86.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/dd27e675-06f7-4f5a-8660-8ae257816943.log
+              reusable: false
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+            hotfix.build.check.evidence:
+              contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+              ref: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/dd27e675-06f7-4f5a-8660-8ae257816943.log
+            hotfix.build.execute:
+              event: build-complete
+            hotfix.open:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+                ref: docs/openspec/changes/fix-update-check-and-offline-data
+            hotfix.open.evidence:
+              contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+              ref: docs/openspec/changes/fix-update-check-and-offline-data
+            hotfix.verify.check:
+              argv:
+                - /opt/homebrew/bin/go
+                - -C
+                - combined_refactor
+                - test
+                - -count=1
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 2
+              contentHash: 9fee38083f25297f9542c8981949e2730db1f2d197f404f68f9aba4326e0aace
+              cwd: .
+              deliveryInputs:
+                .gitignore: git:d457bb2679e5da16497e307904515c5f404c34ab
+                AGENTS.md: git:36023087fecf7c3a5c99c926c693e6843844c813
+                combined_refactor/fallback/ips-v4.snapshot.txt: git:dcc32d7ae3895f9736667e71485a8b1e1ddf0fe1
+                combined_refactor/fallback/ips-v6.snapshot.txt: git:931fb0f8b0a78c80cdfeb2c270df4b83e66f48a7
+                combined_refactor/fallback/locations.snapshot.json: git:a8a1bfe725cde15117d04f1a649a4c129cacf88e
+                combined_refactor/fixes_test.go: git:5aa65d2413e3d18a0e78af92b6b972be4d44b494
+                combined_refactor/main.go: git:90423d3f80a07e6a7b180b5898dc6662384dfa1e
+                combined_refactor/server.go: git:5fd8df2fc952215aca8e8e4532293055312d49ea
+                combined_refactor/storage.go: git:58d9daea283ef2c9050b089c69657630d3ae957c
+                combined_refactor/version.go: git:125c317bcebccc6b02b8bdf303821f2dfd959eff
+              environment: 8be4ead12faa3cda99fc91ff5edfbb77fae26926019491d07b812cfb48a87545
+              exitCode: 0
+              inputAfter: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              inputBefore: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              manifestHash: 44dd295ad2a83debaa882fb7e71d3459796831ed791f5aaa37e49f646bb69f2e
+              manifestRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/6194b1f3-041e-4a4c-b336-e02cee4b46eb.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/27a0978e-7902-4883-8ee0-658124fd63b9.log
+              reusable: false
+              reused: false
+              scope: verify
+              tier: full
+              timeoutMs: 300000
+            hotfix.verify.check.evidence:
+              contentHash: 9fee38083f25297f9542c8981949e2730db1f2d197f404f68f9aba4326e0aace
+              ref: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/27a0978e-7902-4883-8ee0-658124fd63b9.log
+            hotfix.verify.report.evidence:
+              contentHash: 5772e41b6dd553bbc23ec7fe20de626bf89acb9faea91997cb5fa43556991727
+              ref: docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md
+            hotfix.verify.run:
+              event: verification-ready
+              verificationReport: docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md
+        inputHash: 014856fc975b26d1090a4aa45cae401f2ddcc1e24978884269af5d86eaddb5b0
+        outcome:
+          actionId: fix-update-check-and-offline-data:10
+          attempt: 1
+          claimToken: portable-3c4fbee9238c87eb607acd3d700e210fd885839cc2c3bfa0b1729cd68661101b
+          inputHash: 014856fc975b26d1090a4aa45cae401f2ddcc1e24978884269af5d86eaddb5b0
+          outcomeId: d66d6787-70f3-4087-8520-da4725665b77
+          output:
+            summary: 更新检测指向本仓库 tunecc/CFData-docker（Release 优先、稳定 v* 标签兜底、edge/dev
+              跳过、失败静默），并为 locations/ips-v4/ips-v6 增加内嵌离线快照兜底。验证报告
+              docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md，结论
+              PASS。归档提交仅包含本 change 相关文件（4 个 Go 源文件、fixes_test.go、3 份 fallback
+              快照、OpenSpec 变更记录与验证报告），排除用户已有的 .gitignore/AGENTS.md 修改；交付方式为
+              local，仅保留在分支 comet/fix-update-check-and-offline-data，不推送、不创建 PR。
+            targetBranch: comet/fix-update-check-and-offline-data
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: a3f5935bb5c0ea0f9fd23dbf6e222cfa97ed4ddd38f0d8d5a3efc664c58bd7dc
+            outcomeId: d66d6787-70f3-4087-8520-da4725665b77
+        reconciliations: []
+        ref: comet-archive
+        requiredCapabilities: []
+        retry: manual
+        runId: fix-update-check-and-offline-data
+        status: succeeded
+        stepId: hotfix.archive.prepare
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-archive-preflight
+          token: portable-f879f4a9e47c2193f02101e73c9a316462582e66f824c72109cb9283b713467a
+        executionOrigin:
+          workflow:
+            hash: 59c8440e5c03ef56376797cfb0bc38e82bb8dc8d5cfb7a7351795f7a73fefbe8
+            id: comet-classic-hotfix
+            version: "1"
+        id: fix-update-check-and-offline-data:12
+        input:
+          input:
+            change: fix-update-check-and-offline-data
+            changeDir: docs/openspec/changes/fix-update-check-and-offline-data
+          outputs:
+            hotfix.archive.confirm:
+              choice: local
+              proposal:
+                input:
+                  change: fix-update-check-and-offline-data
+                  changeDir: docs/openspec/changes/fix-update-check-and-offline-data
+                outputs:
+                  hotfix.archive.prepare:
+                    summary: 更新检测指向本仓库 tunecc/CFData-docker（Release 优先、稳定 v* 标签兜底、edge/dev
+                      跳过、失败静默），并为 locations/ips-v4/ips-v6 增加内嵌离线快照兜底。验证报告
+                      docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md，结论
+                      PASS。归档提交仅包含本 change 相关文件（4 个 Go 源文件、fixes_test.go、3 份
+                      fallback 快照、OpenSpec 变更记录与验证报告），排除用户已有的
+                      .gitignore/AGENTS.md 修改；交付方式为 local，仅保留在分支
+                      comet/fix-update-check-and-offline-data，不推送、不创建 PR。
+                    targetBranch: comet/fix-update-check-and-offline-data
+            hotfix.archive.prepare:
+              summary: 更新检测指向本仓库 tunecc/CFData-docker（Release 优先、稳定 v* 标签兜底、edge/dev
+                跳过、失败静默），并为 locations/ips-v4/ips-v6 增加内嵌离线快照兜底。验证报告
+                docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md，结论
+                PASS。归档提交仅包含本 change 相关文件（4 个 Go 源文件、fixes_test.go、3 份 fallback
+                快照、OpenSpec 变更记录与验证报告），排除用户已有的 .gitignore/AGENTS.md 修改；交付方式为
+                local，仅保留在分支 comet/fix-update-check-and-offline-data，不推送、不创建 PR。
+              targetBranch: comet/fix-update-check-and-offline-data
+            hotfix.build.check:
+              argv:
+                - /opt/homebrew/bin/go
+                - -C
+                - combined_refactor
+                - test
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+              cwd: .
+              environment: f2d15d0eb1c5c344758eee7e8775be81e61227dbcc6577b1a8416e64bc74187e
+              exitCode: 0
+              inputAfter: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              inputBefore: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              manifestHash: 44dd295ad2a83debaa882fb7e71d3459796831ed791f5aaa37e49f646bb69f2e
+              manifestRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/67d84bb2-6daa-48c4-9aab-510342deca86.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/dd27e675-06f7-4f5a-8660-8ae257816943.log
+              reusable: false
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+            hotfix.build.check.evidence:
+              contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+              ref: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/dd27e675-06f7-4f5a-8660-8ae257816943.log
+            hotfix.build.execute:
+              event: build-complete
+            hotfix.open:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+                ref: docs/openspec/changes/fix-update-check-and-offline-data
+            hotfix.open.evidence:
+              contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+              ref: docs/openspec/changes/fix-update-check-and-offline-data
+            hotfix.verify.check:
+              argv:
+                - /opt/homebrew/bin/go
+                - -C
+                - combined_refactor
+                - test
+                - -count=1
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 2
+              contentHash: 9fee38083f25297f9542c8981949e2730db1f2d197f404f68f9aba4326e0aace
+              cwd: .
+              deliveryInputs:
+                .gitignore: git:d457bb2679e5da16497e307904515c5f404c34ab
+                AGENTS.md: git:36023087fecf7c3a5c99c926c693e6843844c813
+                combined_refactor/fallback/ips-v4.snapshot.txt: git:dcc32d7ae3895f9736667e71485a8b1e1ddf0fe1
+                combined_refactor/fallback/ips-v6.snapshot.txt: git:931fb0f8b0a78c80cdfeb2c270df4b83e66f48a7
+                combined_refactor/fallback/locations.snapshot.json: git:a8a1bfe725cde15117d04f1a649a4c129cacf88e
+                combined_refactor/fixes_test.go: git:5aa65d2413e3d18a0e78af92b6b972be4d44b494
+                combined_refactor/main.go: git:90423d3f80a07e6a7b180b5898dc6662384dfa1e
+                combined_refactor/server.go: git:5fd8df2fc952215aca8e8e4532293055312d49ea
+                combined_refactor/storage.go: git:58d9daea283ef2c9050b089c69657630d3ae957c
+                combined_refactor/version.go: git:125c317bcebccc6b02b8bdf303821f2dfd959eff
+              environment: 8be4ead12faa3cda99fc91ff5edfbb77fae26926019491d07b812cfb48a87545
+              exitCode: 0
+              inputAfter: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              inputBefore: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              manifestHash: 44dd295ad2a83debaa882fb7e71d3459796831ed791f5aaa37e49f646bb69f2e
+              manifestRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/6194b1f3-041e-4a4c-b336-e02cee4b46eb.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/27a0978e-7902-4883-8ee0-658124fd63b9.log
+              reusable: false
+              reused: false
+              scope: verify
+              tier: full
+              timeoutMs: 300000
+            hotfix.verify.check.evidence:
+              contentHash: 9fee38083f25297f9542c8981949e2730db1f2d197f404f68f9aba4326e0aace
+              ref: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/27a0978e-7902-4883-8ee0-658124fd63b9.log
+            hotfix.verify.report.evidence:
+              contentHash: 5772e41b6dd553bbc23ec7fe20de626bf89acb9faea91997cb5fa43556991727
+              ref: docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md
+            hotfix.verify.run:
+              event: verification-ready
+              verificationReport: docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md
+        inputHash: 691c0f0b708287cceeb6ae105bbf71e61141e932c194d8da5b4600609797ee4c
+        outcome:
+          actionId: fix-update-check-and-offline-data:12
+          attempt: 1
+          claimToken: portable-f879f4a9e47c2193f02101e73c9a316462582e66f824c72109cb9283b713467a
+          inputHash: 691c0f0b708287cceeb6ae105bbf71e61141e932c194d8da5b4600609797ee4c
+          outcomeId: de1eea13-3c43-4c44-8ee7-91c362338462
+          output:
+            baseCommit: 6138a7fe514fc1080d8fc16ddf22cd5706a2ed10
+            deliveryAction: local
+            targetBranch: comet/fix-update-check-and-offline-data
+            verifiedBranch: comet/fix-update-check-and-offline-data
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: dd357b407dbe5ff94f5a786845722231c4b76ba93b96ee09996a6a14403844d8
+            outcomeId: de1eea13-3c43-4c44-8ee7-91c362338462
+        reconciliations: []
+        ref: classic-archive-preflight
+        requiredCapabilities: []
+        retry: manual
+        runId: fix-update-check-and-offline-data
+        status: succeeded
+        stepId: hotfix.archive.preflight
+        type: call_tool
+      - attempt: 1
+        claim:
+          executorId: comet-classic-archive
+          token: portable-6e7660043a99d006992907aafb20f23f2c26fef97d23af45e2fe9c6e6a32659c
+        executionOrigin:
+          workflow:
+            hash: 59c8440e5c03ef56376797cfb0bc38e82bb8dc8d5cfb7a7351795f7a73fefbe8
+            id: comet-classic-hotfix
+            version: "1"
+        id: fix-update-check-and-offline-data:13
+        input:
+          input:
+            change: fix-update-check-and-offline-data
+            changeDir: docs/openspec/changes/fix-update-check-and-offline-data
+          outputs:
+            hotfix.archive.confirm:
+              choice: local
+              proposal:
+                input:
+                  change: fix-update-check-and-offline-data
+                  changeDir: docs/openspec/changes/fix-update-check-and-offline-data
+                outputs:
+                  hotfix.archive.prepare:
+                    summary: 更新检测指向本仓库 tunecc/CFData-docker（Release 优先、稳定 v* 标签兜底、edge/dev
+                      跳过、失败静默），并为 locations/ips-v4/ips-v6 增加内嵌离线快照兜底。验证报告
+                      docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md，结论
+                      PASS。归档提交仅包含本 change 相关文件（4 个 Go 源文件、fixes_test.go、3 份
+                      fallback 快照、OpenSpec 变更记录与验证报告），排除用户已有的
+                      .gitignore/AGENTS.md 修改；交付方式为 local，仅保留在分支
+                      comet/fix-update-check-and-offline-data，不推送、不创建 PR。
+                    targetBranch: comet/fix-update-check-and-offline-data
+            hotfix.archive.preflight:
+              baseCommit: 6138a7fe514fc1080d8fc16ddf22cd5706a2ed10
+              deliveryAction: local
+              targetBranch: comet/fix-update-check-and-offline-data
+              verifiedBranch: comet/fix-update-check-and-offline-data
+            hotfix.archive.prepare:
+              summary: 更新检测指向本仓库 tunecc/CFData-docker（Release 优先、稳定 v* 标签兜底、edge/dev
+                跳过、失败静默），并为 locations/ips-v4/ips-v6 增加内嵌离线快照兜底。验证报告
+                docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md，结论
+                PASS。归档提交仅包含本 change 相关文件（4 个 Go 源文件、fixes_test.go、3 份 fallback
+                快照、OpenSpec 变更记录与验证报告），排除用户已有的 .gitignore/AGENTS.md 修改；交付方式为
+                local，仅保留在分支 comet/fix-update-check-and-offline-data，不推送、不创建 PR。
+              targetBranch: comet/fix-update-check-and-offline-data
+            hotfix.build.check:
+              argv:
+                - /opt/homebrew/bin/go
+                - -C
+                - combined_refactor
+                - test
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+              cwd: .
+              environment: f2d15d0eb1c5c344758eee7e8775be81e61227dbcc6577b1a8416e64bc74187e
+              exitCode: 0
+              inputAfter: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              inputBefore: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              manifestHash: 44dd295ad2a83debaa882fb7e71d3459796831ed791f5aaa37e49f646bb69f2e
+              manifestRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/67d84bb2-6daa-48c4-9aab-510342deca86.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/dd27e675-06f7-4f5a-8660-8ae257816943.log
+              reusable: false
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+            hotfix.build.check.evidence:
+              contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+              ref: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/dd27e675-06f7-4f5a-8660-8ae257816943.log
+            hotfix.build.execute:
+              event: build-complete
+            hotfix.open:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+                ref: docs/openspec/changes/fix-update-check-and-offline-data
+            hotfix.open.evidence:
+              contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+              ref: docs/openspec/changes/fix-update-check-and-offline-data
+            hotfix.verify.check:
+              argv:
+                - /opt/homebrew/bin/go
+                - -C
+                - combined_refactor
+                - test
+                - -count=1
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 2
+              contentHash: 9fee38083f25297f9542c8981949e2730db1f2d197f404f68f9aba4326e0aace
+              cwd: .
+              deliveryInputs:
+                .gitignore: git:d457bb2679e5da16497e307904515c5f404c34ab
+                AGENTS.md: git:36023087fecf7c3a5c99c926c693e6843844c813
+                combined_refactor/fallback/ips-v4.snapshot.txt: git:dcc32d7ae3895f9736667e71485a8b1e1ddf0fe1
+                combined_refactor/fallback/ips-v6.snapshot.txt: git:931fb0f8b0a78c80cdfeb2c270df4b83e66f48a7
+                combined_refactor/fallback/locations.snapshot.json: git:a8a1bfe725cde15117d04f1a649a4c129cacf88e
+                combined_refactor/fixes_test.go: git:5aa65d2413e3d18a0e78af92b6b972be4d44b494
+                combined_refactor/main.go: git:90423d3f80a07e6a7b180b5898dc6662384dfa1e
+                combined_refactor/server.go: git:5fd8df2fc952215aca8e8e4532293055312d49ea
+                combined_refactor/storage.go: git:58d9daea283ef2c9050b089c69657630d3ae957c
+                combined_refactor/version.go: git:125c317bcebccc6b02b8bdf303821f2dfd959eff
+              environment: 8be4ead12faa3cda99fc91ff5edfbb77fae26926019491d07b812cfb48a87545
+              exitCode: 0
+              inputAfter: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              inputBefore: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              manifestHash: 44dd295ad2a83debaa882fb7e71d3459796831ed791f5aaa37e49f646bb69f2e
+              manifestRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/6194b1f3-041e-4a4c-b336-e02cee4b46eb.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/27a0978e-7902-4883-8ee0-658124fd63b9.log
+              reusable: false
+              reused: false
+              scope: verify
+              tier: full
+              timeoutMs: 300000
+            hotfix.verify.check.evidence:
+              contentHash: 9fee38083f25297f9542c8981949e2730db1f2d197f404f68f9aba4326e0aace
+              ref: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/27a0978e-7902-4883-8ee0-658124fd63b9.log
+            hotfix.verify.report.evidence:
+              contentHash: 5772e41b6dd553bbc23ec7fe20de626bf89acb9faea91997cb5fa43556991727
+              ref: docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md
+            hotfix.verify.run:
+              event: verification-ready
+              verificationReport: docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md
+        inputHash: 55c2470052da2427628f0f78b594a63d5013c0a1216322b3aeda5134c7371620
+        outcome:
+          actionId: fix-update-check-and-offline-data:13
+          attempt: 1
+          claimToken: portable-6e7660043a99d006992907aafb20f23f2c26fef97d23af45e2fe9c6e6a32659c
+          inputHash: 55c2470052da2427628f0f78b594a63d5013c0a1216322b3aeda5134c7371620
+          outcomeId: 2b4b1dc7-b8a9-42b9-8fa3-b9a892cb2797
+          output:
+            archiveDirectory: docs/openspec/changes/archive/2026-10-27-fix-update-check-and-offline-data
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 9f43eab01bfdd5546bacb05b08b8801c150593fba64a9159ef73680eed06953e
+            outcomeId: 2b4b1dc7-b8a9-42b9-8fa3-b9a892cb2797
+        reconciliations: []
+        ref: classic-archive
+        requiredCapabilities: []
+        retry: manual
+        runId: fix-update-check-and-offline-data
+        status: succeeded
+        stepId: hotfix.archive.execute
+        type: call_tool
+      - attempt: 1
+        id: fix-update-check-and-offline-data:14
+        input:
+          input:
+            change: fix-update-check-and-offline-data
+            changeDir: docs/openspec/changes/fix-update-check-and-offline-data
+          outputs:
+            hotfix.archive.confirm:
+              choice: local
+              proposal:
+                input:
+                  change: fix-update-check-and-offline-data
+                  changeDir: docs/openspec/changes/fix-update-check-and-offline-data
+                outputs:
+                  hotfix.archive.prepare:
+                    summary: 更新检测指向本仓库 tunecc/CFData-docker（Release 优先、稳定 v* 标签兜底、edge/dev
+                      跳过、失败静默），并为 locations/ips-v4/ips-v6 增加内嵌离线快照兜底。验证报告
+                      docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md，结论
+                      PASS。归档提交仅包含本 change 相关文件（4 个 Go 源文件、fixes_test.go、3 份
+                      fallback 快照、OpenSpec 变更记录与验证报告），排除用户已有的
+                      .gitignore/AGENTS.md 修改；交付方式为 local，仅保留在分支
+                      comet/fix-update-check-and-offline-data，不推送、不创建 PR。
+                    targetBranch: comet/fix-update-check-and-offline-data
+            hotfix.archive.execute:
+              archiveDirectory: docs/openspec/changes/archive/2026-10-27-fix-update-check-and-offline-data
+            hotfix.archive.preflight:
+              baseCommit: 6138a7fe514fc1080d8fc16ddf22cd5706a2ed10
+              deliveryAction: local
+              targetBranch: comet/fix-update-check-and-offline-data
+              verifiedBranch: comet/fix-update-check-and-offline-data
+            hotfix.archive.prepare:
+              summary: 更新检测指向本仓库 tunecc/CFData-docker（Release 优先、稳定 v* 标签兜底、edge/dev
+                跳过、失败静默），并为 locations/ips-v4/ips-v6 增加内嵌离线快照兜底。验证报告
+                docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md，结论
+                PASS。归档提交仅包含本 change 相关文件（4 个 Go 源文件、fixes_test.go、3 份 fallback
+                快照、OpenSpec 变更记录与验证报告），排除用户已有的 .gitignore/AGENTS.md 修改；交付方式为
+                local，仅保留在分支 comet/fix-update-check-and-offline-data，不推送、不创建 PR。
+              targetBranch: comet/fix-update-check-and-offline-data
+            hotfix.build.check:
+              argv:
+                - /opt/homebrew/bin/go
+                - -C
+                - combined_refactor
+                - test
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+              cwd: .
+              environment: f2d15d0eb1c5c344758eee7e8775be81e61227dbcc6577b1a8416e64bc74187e
+              exitCode: 0
+              inputAfter: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              inputBefore: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              manifestHash: 44dd295ad2a83debaa882fb7e71d3459796831ed791f5aaa37e49f646bb69f2e
+              manifestRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/67d84bb2-6daa-48c4-9aab-510342deca86.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/dd27e675-06f7-4f5a-8660-8ae257816943.log
+              reusable: false
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+            hotfix.build.check.evidence:
+              contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+              ref: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/dd27e675-06f7-4f5a-8660-8ae257816943.log
+            hotfix.build.execute:
+              event: build-complete
+            hotfix.open:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+                ref: docs/openspec/changes/fix-update-check-and-offline-data
+            hotfix.open.evidence:
+              contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+              ref: docs/openspec/changes/fix-update-check-and-offline-data
+            hotfix.verify.check:
+              argv:
+                - /opt/homebrew/bin/go
+                - -C
+                - combined_refactor
+                - test
+                - -count=1
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 2
+              contentHash: 9fee38083f25297f9542c8981949e2730db1f2d197f404f68f9aba4326e0aace
+              cwd: .
+              deliveryInputs:
+                .gitignore: git:d457bb2679e5da16497e307904515c5f404c34ab
+                AGENTS.md: git:36023087fecf7c3a5c99c926c693e6843844c813
+                combined_refactor/fallback/ips-v4.snapshot.txt: git:dcc32d7ae3895f9736667e71485a8b1e1ddf0fe1
+                combined_refactor/fallback/ips-v6.snapshot.txt: git:931fb0f8b0a78c80cdfeb2c270df4b83e66f48a7
+                combined_refactor/fallback/locations.snapshot.json: git:a8a1bfe725cde15117d04f1a649a4c129cacf88e
+                combined_refactor/fixes_test.go: git:5aa65d2413e3d18a0e78af92b6b972be4d44b494
+                combined_refactor/main.go: git:90423d3f80a07e6a7b180b5898dc6662384dfa1e
+                combined_refactor/server.go: git:5fd8df2fc952215aca8e8e4532293055312d49ea
+                combined_refactor/storage.go: git:58d9daea283ef2c9050b089c69657630d3ae957c
+                combined_refactor/version.go: git:125c317bcebccc6b02b8bdf303821f2dfd959eff
+              environment: 8be4ead12faa3cda99fc91ff5edfbb77fae26926019491d07b812cfb48a87545
+              exitCode: 0
+              inputAfter: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              inputBefore: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              manifestHash: 44dd295ad2a83debaa882fb7e71d3459796831ed791f5aaa37e49f646bb69f2e
+              manifestRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/6194b1f3-041e-4a4c-b336-e02cee4b46eb.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/27a0978e-7902-4883-8ee0-658124fd63b9.log
+              reusable: false
+              reused: false
+              scope: verify
+              tier: full
+              timeoutMs: 300000
+            hotfix.verify.check.evidence:
+              contentHash: 9fee38083f25297f9542c8981949e2730db1f2d197f404f68f9aba4326e0aace
+              ref: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/27a0978e-7902-4883-8ee0-658124fd63b9.log
+            hotfix.verify.report.evidence:
+              contentHash: 5772e41b6dd553bbc23ec7fe20de626bf89acb9faea91997cb5fa43556991727
+              ref: docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md
+            hotfix.verify.run:
+              event: verification-ready
+              verificationReport: docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md
+        inputHash: ba261c68f685cc73ca0c44c63c6923184dfba26c3bd6e196aaf181d43a956a87
+        protocolVersion: 1
+        receipts: []
+        reconciliations: []
+        ref: comet-archive
+        requiredCapabilities: []
+        retry: manual
+        runId: fix-update-check-and-offline-data
+        status: pending
+        stepId: hotfix.archive.deliver
+        type: invoke_skill
+    actionContexts:
+      fix-update-check-and-offline-data:1:
+        results: {}
+        sequence: 1
+      fix-update-check-and-offline-data:10:
+        results:
+          hotfix.build.check:
+            sequence: 4
+            value:
+              argv:
+                - /opt/homebrew/bin/go
+                - -C
+                - combined_refactor
+                - test
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+              cwd: .
+              environment: f2d15d0eb1c5c344758eee7e8775be81e61227dbcc6577b1a8416e64bc74187e
+              exitCode: 0
+              inputAfter: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              inputBefore: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              manifestHash: 44dd295ad2a83debaa882fb7e71d3459796831ed791f5aaa37e49f646bb69f2e
+              manifestRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/67d84bb2-6daa-48c4-9aab-510342deca86.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/dd27e675-06f7-4f5a-8660-8ae257816943.log
+              reusable: false
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+          hotfix.build.check.evidence:
+            sequence: 5
+            value:
+              contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+              ref: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/dd27e675-06f7-4f5a-8660-8ae257816943.log
+          hotfix.build.execute:
+            sequence: 3
+            value:
+              event: build-complete
+          hotfix.open:
+            sequence: 1
+            value:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+                ref: docs/openspec/changes/fix-update-check-and-offline-data
+          hotfix.open.evidence:
+            sequence: 2
+            value:
+              contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+              ref: docs/openspec/changes/fix-update-check-and-offline-data
+          hotfix.verify.check:
+            sequence: 8
+            value:
+              argv:
+                - /opt/homebrew/bin/go
+                - -C
+                - combined_refactor
+                - test
+                - -count=1
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 2
+              contentHash: 9fee38083f25297f9542c8981949e2730db1f2d197f404f68f9aba4326e0aace
+              cwd: .
+              deliveryInputs:
+                .gitignore: git:d457bb2679e5da16497e307904515c5f404c34ab
+                AGENTS.md: git:36023087fecf7c3a5c99c926c693e6843844c813
+                combined_refactor/fallback/ips-v4.snapshot.txt: git:dcc32d7ae3895f9736667e71485a8b1e1ddf0fe1
+                combined_refactor/fallback/ips-v6.snapshot.txt: git:931fb0f8b0a78c80cdfeb2c270df4b83e66f48a7
+                combined_refactor/fallback/locations.snapshot.json: git:a8a1bfe725cde15117d04f1a649a4c129cacf88e
+                combined_refactor/fixes_test.go: git:5aa65d2413e3d18a0e78af92b6b972be4d44b494
+                combined_refactor/main.go: git:90423d3f80a07e6a7b180b5898dc6662384dfa1e
+                combined_refactor/server.go: git:5fd8df2fc952215aca8e8e4532293055312d49ea
+                combined_refactor/storage.go: git:58d9daea283ef2c9050b089c69657630d3ae957c
+                combined_refactor/version.go: git:125c317bcebccc6b02b8bdf303821f2dfd959eff
+              environment: 8be4ead12faa3cda99fc91ff5edfbb77fae26926019491d07b812cfb48a87545
+              exitCode: 0
+              inputAfter: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              inputBefore: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              manifestHash: 44dd295ad2a83debaa882fb7e71d3459796831ed791f5aaa37e49f646bb69f2e
+              manifestRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/6194b1f3-041e-4a4c-b336-e02cee4b46eb.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/27a0978e-7902-4883-8ee0-658124fd63b9.log
+              reusable: false
+              reused: false
+              scope: verify
+              tier: full
+              timeoutMs: 300000
+          hotfix.verify.check.evidence:
+            sequence: 9
+            value:
+              contentHash: 9fee38083f25297f9542c8981949e2730db1f2d197f404f68f9aba4326e0aace
+              ref: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/27a0978e-7902-4883-8ee0-658124fd63b9.log
+          hotfix.verify.report.evidence:
+            sequence: 7
+            value:
+              contentHash: 5772e41b6dd553bbc23ec7fe20de626bf89acb9faea91997cb5fa43556991727
+              ref: docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md
+          hotfix.verify.run:
+            sequence: 6
+            value:
+              event: verification-ready
+              verificationReport: docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md
+        sequence: 10
+      fix-update-check-and-offline-data:12:
+        results:
+          hotfix.archive.confirm:
+            sequence: 11
+            value:
+              choice: local
+              proposal:
+                input:
+                  change: fix-update-check-and-offline-data
+                  changeDir: docs/openspec/changes/fix-update-check-and-offline-data
+                outputs:
+                  hotfix.archive.prepare:
+                    summary: 更新检测指向本仓库 tunecc/CFData-docker（Release 优先、稳定 v* 标签兜底、edge/dev
+                      跳过、失败静默），并为 locations/ips-v4/ips-v6 增加内嵌离线快照兜底。验证报告
+                      docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md，结论
+                      PASS。归档提交仅包含本 change 相关文件（4 个 Go 源文件、fixes_test.go、3 份
+                      fallback 快照、OpenSpec 变更记录与验证报告），排除用户已有的
+                      .gitignore/AGENTS.md 修改；交付方式为 local，仅保留在分支
+                      comet/fix-update-check-and-offline-data，不推送、不创建 PR。
+                    targetBranch: comet/fix-update-check-and-offline-data
+          hotfix.archive.prepare:
+            sequence: 10
+            value:
+              summary: 更新检测指向本仓库 tunecc/CFData-docker（Release 优先、稳定 v* 标签兜底、edge/dev
+                跳过、失败静默），并为 locations/ips-v4/ips-v6 增加内嵌离线快照兜底。验证报告
+                docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md，结论
+                PASS。归档提交仅包含本 change 相关文件（4 个 Go 源文件、fixes_test.go、3 份 fallback
+                快照、OpenSpec 变更记录与验证报告），排除用户已有的 .gitignore/AGENTS.md 修改；交付方式为
+                local，仅保留在分支 comet/fix-update-check-and-offline-data，不推送、不创建 PR。
+              targetBranch: comet/fix-update-check-and-offline-data
+          hotfix.build.check:
+            sequence: 4
+            value:
+              argv:
+                - /opt/homebrew/bin/go
+                - -C
+                - combined_refactor
+                - test
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+              cwd: .
+              environment: f2d15d0eb1c5c344758eee7e8775be81e61227dbcc6577b1a8416e64bc74187e
+              exitCode: 0
+              inputAfter: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              inputBefore: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              manifestHash: 44dd295ad2a83debaa882fb7e71d3459796831ed791f5aaa37e49f646bb69f2e
+              manifestRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/67d84bb2-6daa-48c4-9aab-510342deca86.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/dd27e675-06f7-4f5a-8660-8ae257816943.log
+              reusable: false
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+          hotfix.build.check.evidence:
+            sequence: 5
+            value:
+              contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+              ref: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/dd27e675-06f7-4f5a-8660-8ae257816943.log
+          hotfix.build.execute:
+            sequence: 3
+            value:
+              event: build-complete
+          hotfix.open:
+            sequence: 1
+            value:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+                ref: docs/openspec/changes/fix-update-check-and-offline-data
+          hotfix.open.evidence:
+            sequence: 2
+            value:
+              contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+              ref: docs/openspec/changes/fix-update-check-and-offline-data
+          hotfix.verify.check:
+            sequence: 8
+            value:
+              argv:
+                - /opt/homebrew/bin/go
+                - -C
+                - combined_refactor
+                - test
+                - -count=1
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 2
+              contentHash: 9fee38083f25297f9542c8981949e2730db1f2d197f404f68f9aba4326e0aace
+              cwd: .
+              deliveryInputs:
+                .gitignore: git:d457bb2679e5da16497e307904515c5f404c34ab
+                AGENTS.md: git:36023087fecf7c3a5c99c926c693e6843844c813
+                combined_refactor/fallback/ips-v4.snapshot.txt: git:dcc32d7ae3895f9736667e71485a8b1e1ddf0fe1
+                combined_refactor/fallback/ips-v6.snapshot.txt: git:931fb0f8b0a78c80cdfeb2c270df4b83e66f48a7
+                combined_refactor/fallback/locations.snapshot.json: git:a8a1bfe725cde15117d04f1a649a4c129cacf88e
+                combined_refactor/fixes_test.go: git:5aa65d2413e3d18a0e78af92b6b972be4d44b494
+                combined_refactor/main.go: git:90423d3f80a07e6a7b180b5898dc6662384dfa1e
+                combined_refactor/server.go: git:5fd8df2fc952215aca8e8e4532293055312d49ea
+                combined_refactor/storage.go: git:58d9daea283ef2c9050b089c69657630d3ae957c
+                combined_refactor/version.go: git:125c317bcebccc6b02b8bdf303821f2dfd959eff
+              environment: 8be4ead12faa3cda99fc91ff5edfbb77fae26926019491d07b812cfb48a87545
+              exitCode: 0
+              inputAfter: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              inputBefore: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              manifestHash: 44dd295ad2a83debaa882fb7e71d3459796831ed791f5aaa37e49f646bb69f2e
+              manifestRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/6194b1f3-041e-4a4c-b336-e02cee4b46eb.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/27a0978e-7902-4883-8ee0-658124fd63b9.log
+              reusable: false
+              reused: false
+              scope: verify
+              tier: full
+              timeoutMs: 300000
+          hotfix.verify.check.evidence:
+            sequence: 9
+            value:
+              contentHash: 9fee38083f25297f9542c8981949e2730db1f2d197f404f68f9aba4326e0aace
+              ref: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/27a0978e-7902-4883-8ee0-658124fd63b9.log
+          hotfix.verify.report.evidence:
+            sequence: 7
+            value:
+              contentHash: 5772e41b6dd553bbc23ec7fe20de626bf89acb9faea91997cb5fa43556991727
+              ref: docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md
+          hotfix.verify.run:
+            sequence: 6
+            value:
+              event: verification-ready
+              verificationReport: docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md
+        sequence: 12
+      fix-update-check-and-offline-data:13:
+        results:
+          hotfix.archive.confirm:
+            sequence: 11
+            value:
+              choice: local
+              proposal:
+                input:
+                  change: fix-update-check-and-offline-data
+                  changeDir: docs/openspec/changes/fix-update-check-and-offline-data
+                outputs:
+                  hotfix.archive.prepare:
+                    summary: 更新检测指向本仓库 tunecc/CFData-docker（Release 优先、稳定 v* 标签兜底、edge/dev
+                      跳过、失败静默），并为 locations/ips-v4/ips-v6 增加内嵌离线快照兜底。验证报告
+                      docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md，结论
+                      PASS。归档提交仅包含本 change 相关文件（4 个 Go 源文件、fixes_test.go、3 份
+                      fallback 快照、OpenSpec 变更记录与验证报告），排除用户已有的
+                      .gitignore/AGENTS.md 修改；交付方式为 local，仅保留在分支
+                      comet/fix-update-check-and-offline-data，不推送、不创建 PR。
+                    targetBranch: comet/fix-update-check-and-offline-data
+          hotfix.archive.preflight:
+            sequence: 12
+            value:
+              baseCommit: 6138a7fe514fc1080d8fc16ddf22cd5706a2ed10
+              deliveryAction: local
+              targetBranch: comet/fix-update-check-and-offline-data
+              verifiedBranch: comet/fix-update-check-and-offline-data
+          hotfix.archive.prepare:
+            sequence: 10
+            value:
+              summary: 更新检测指向本仓库 tunecc/CFData-docker（Release 优先、稳定 v* 标签兜底、edge/dev
+                跳过、失败静默），并为 locations/ips-v4/ips-v6 增加内嵌离线快照兜底。验证报告
+                docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md，结论
+                PASS。归档提交仅包含本 change 相关文件（4 个 Go 源文件、fixes_test.go、3 份 fallback
+                快照、OpenSpec 变更记录与验证报告），排除用户已有的 .gitignore/AGENTS.md 修改；交付方式为
+                local，仅保留在分支 comet/fix-update-check-and-offline-data，不推送、不创建 PR。
+              targetBranch: comet/fix-update-check-and-offline-data
+          hotfix.build.check:
+            sequence: 4
+            value:
+              argv:
+                - /opt/homebrew/bin/go
+                - -C
+                - combined_refactor
+                - test
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+              cwd: .
+              environment: f2d15d0eb1c5c344758eee7e8775be81e61227dbcc6577b1a8416e64bc74187e
+              exitCode: 0
+              inputAfter: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              inputBefore: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              manifestHash: 44dd295ad2a83debaa882fb7e71d3459796831ed791f5aaa37e49f646bb69f2e
+              manifestRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/67d84bb2-6daa-48c4-9aab-510342deca86.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/dd27e675-06f7-4f5a-8660-8ae257816943.log
+              reusable: false
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+          hotfix.build.check.evidence:
+            sequence: 5
+            value:
+              contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+              ref: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/dd27e675-06f7-4f5a-8660-8ae257816943.log
+          hotfix.build.execute:
+            sequence: 3
+            value:
+              event: build-complete
+          hotfix.open:
+            sequence: 1
+            value:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+                ref: docs/openspec/changes/fix-update-check-and-offline-data
+          hotfix.open.evidence:
+            sequence: 2
+            value:
+              contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+              ref: docs/openspec/changes/fix-update-check-and-offline-data
+          hotfix.verify.check:
+            sequence: 8
+            value:
+              argv:
+                - /opt/homebrew/bin/go
+                - -C
+                - combined_refactor
+                - test
+                - -count=1
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 2
+              contentHash: 9fee38083f25297f9542c8981949e2730db1f2d197f404f68f9aba4326e0aace
+              cwd: .
+              deliveryInputs:
+                .gitignore: git:d457bb2679e5da16497e307904515c5f404c34ab
+                AGENTS.md: git:36023087fecf7c3a5c99c926c693e6843844c813
+                combined_refactor/fallback/ips-v4.snapshot.txt: git:dcc32d7ae3895f9736667e71485a8b1e1ddf0fe1
+                combined_refactor/fallback/ips-v6.snapshot.txt: git:931fb0f8b0a78c80cdfeb2c270df4b83e66f48a7
+                combined_refactor/fallback/locations.snapshot.json: git:a8a1bfe725cde15117d04f1a649a4c129cacf88e
+                combined_refactor/fixes_test.go: git:5aa65d2413e3d18a0e78af92b6b972be4d44b494
+                combined_refactor/main.go: git:90423d3f80a07e6a7b180b5898dc6662384dfa1e
+                combined_refactor/server.go: git:5fd8df2fc952215aca8e8e4532293055312d49ea
+                combined_refactor/storage.go: git:58d9daea283ef2c9050b089c69657630d3ae957c
+                combined_refactor/version.go: git:125c317bcebccc6b02b8bdf303821f2dfd959eff
+              environment: 8be4ead12faa3cda99fc91ff5edfbb77fae26926019491d07b812cfb48a87545
+              exitCode: 0
+              inputAfter: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              inputBefore: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              manifestHash: 44dd295ad2a83debaa882fb7e71d3459796831ed791f5aaa37e49f646bb69f2e
+              manifestRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/6194b1f3-041e-4a4c-b336-e02cee4b46eb.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/27a0978e-7902-4883-8ee0-658124fd63b9.log
+              reusable: false
+              reused: false
+              scope: verify
+              tier: full
+              timeoutMs: 300000
+          hotfix.verify.check.evidence:
+            sequence: 9
+            value:
+              contentHash: 9fee38083f25297f9542c8981949e2730db1f2d197f404f68f9aba4326e0aace
+              ref: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/27a0978e-7902-4883-8ee0-658124fd63b9.log
+          hotfix.verify.report.evidence:
+            sequence: 7
+            value:
+              contentHash: 5772e41b6dd553bbc23ec7fe20de626bf89acb9faea91997cb5fa43556991727
+              ref: docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md
+          hotfix.verify.run:
+            sequence: 6
+            value:
+              event: verification-ready
+              verificationReport: docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md
+        sequence: 13
+      fix-update-check-and-offline-data:14:
+        results:
+          hotfix.archive.confirm:
+            sequence: 11
+            value:
+              choice: local
+              proposal:
+                input:
+                  change: fix-update-check-and-offline-data
+                  changeDir: docs/openspec/changes/fix-update-check-and-offline-data
+                outputs:
+                  hotfix.archive.prepare:
+                    summary: 更新检测指向本仓库 tunecc/CFData-docker（Release 优先、稳定 v* 标签兜底、edge/dev
+                      跳过、失败静默），并为 locations/ips-v4/ips-v6 增加内嵌离线快照兜底。验证报告
+                      docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md，结论
+                      PASS。归档提交仅包含本 change 相关文件（4 个 Go 源文件、fixes_test.go、3 份
+                      fallback 快照、OpenSpec 变更记录与验证报告），排除用户已有的
+                      .gitignore/AGENTS.md 修改；交付方式为 local，仅保留在分支
+                      comet/fix-update-check-and-offline-data，不推送、不创建 PR。
+                    targetBranch: comet/fix-update-check-and-offline-data
+          hotfix.archive.execute:
+            sequence: 13
+            value:
+              archiveDirectory: docs/openspec/changes/archive/2026-10-27-fix-update-check-and-offline-data
+          hotfix.archive.preflight:
+            sequence: 12
+            value:
+              baseCommit: 6138a7fe514fc1080d8fc16ddf22cd5706a2ed10
+              deliveryAction: local
+              targetBranch: comet/fix-update-check-and-offline-data
+              verifiedBranch: comet/fix-update-check-and-offline-data
+          hotfix.archive.prepare:
+            sequence: 10
+            value:
+              summary: 更新检测指向本仓库 tunecc/CFData-docker（Release 优先、稳定 v* 标签兜底、edge/dev
+                跳过、失败静默），并为 locations/ips-v4/ips-v6 增加内嵌离线快照兜底。验证报告
+                docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md，结论
+                PASS。归档提交仅包含本 change 相关文件（4 个 Go 源文件、fixes_test.go、3 份 fallback
+                快照、OpenSpec 变更记录与验证报告），排除用户已有的 .gitignore/AGENTS.md 修改；交付方式为
+                local，仅保留在分支 comet/fix-update-check-and-offline-data，不推送、不创建 PR。
+              targetBranch: comet/fix-update-check-and-offline-data
+          hotfix.build.check:
+            sequence: 4
+            value:
+              argv:
+                - /opt/homebrew/bin/go
+                - -C
+                - combined_refactor
+                - test
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+              cwd: .
+              environment: f2d15d0eb1c5c344758eee7e8775be81e61227dbcc6577b1a8416e64bc74187e
+              exitCode: 0
+              inputAfter: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              inputBefore: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              manifestHash: 44dd295ad2a83debaa882fb7e71d3459796831ed791f5aaa37e49f646bb69f2e
+              manifestRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/67d84bb2-6daa-48c4-9aab-510342deca86.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/dd27e675-06f7-4f5a-8660-8ae257816943.log
+              reusable: false
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+          hotfix.build.check.evidence:
+            sequence: 5
+            value:
+              contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+              ref: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/dd27e675-06f7-4f5a-8660-8ae257816943.log
+          hotfix.build.execute:
+            sequence: 3
+            value:
+              event: build-complete
+          hotfix.open:
+            sequence: 1
+            value:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+                ref: docs/openspec/changes/fix-update-check-and-offline-data
+          hotfix.open.evidence:
+            sequence: 2
+            value:
+              contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+              ref: docs/openspec/changes/fix-update-check-and-offline-data
+          hotfix.verify.check:
+            sequence: 8
+            value:
+              argv:
+                - /opt/homebrew/bin/go
+                - -C
+                - combined_refactor
+                - test
+                - -count=1
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 2
+              contentHash: 9fee38083f25297f9542c8981949e2730db1f2d197f404f68f9aba4326e0aace
+              cwd: .
+              deliveryInputs:
+                .gitignore: git:d457bb2679e5da16497e307904515c5f404c34ab
+                AGENTS.md: git:36023087fecf7c3a5c99c926c693e6843844c813
+                combined_refactor/fallback/ips-v4.snapshot.txt: git:dcc32d7ae3895f9736667e71485a8b1e1ddf0fe1
+                combined_refactor/fallback/ips-v6.snapshot.txt: git:931fb0f8b0a78c80cdfeb2c270df4b83e66f48a7
+                combined_refactor/fallback/locations.snapshot.json: git:a8a1bfe725cde15117d04f1a649a4c129cacf88e
+                combined_refactor/fixes_test.go: git:5aa65d2413e3d18a0e78af92b6b972be4d44b494
+                combined_refactor/main.go: git:90423d3f80a07e6a7b180b5898dc6662384dfa1e
+                combined_refactor/server.go: git:5fd8df2fc952215aca8e8e4532293055312d49ea
+                combined_refactor/storage.go: git:58d9daea283ef2c9050b089c69657630d3ae957c
+                combined_refactor/version.go: git:125c317bcebccc6b02b8bdf303821f2dfd959eff
+              environment: 8be4ead12faa3cda99fc91ff5edfbb77fae26926019491d07b812cfb48a87545
+              exitCode: 0
+              inputAfter: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              inputBefore: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              manifestHash: 44dd295ad2a83debaa882fb7e71d3459796831ed791f5aaa37e49f646bb69f2e
+              manifestRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/6194b1f3-041e-4a4c-b336-e02cee4b46eb.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/27a0978e-7902-4883-8ee0-658124fd63b9.log
+              reusable: false
+              reused: false
+              scope: verify
+              tier: full
+              timeoutMs: 300000
+          hotfix.verify.check.evidence:
+            sequence: 9
+            value:
+              contentHash: 9fee38083f25297f9542c8981949e2730db1f2d197f404f68f9aba4326e0aace
+              ref: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/27a0978e-7902-4883-8ee0-658124fd63b9.log
+          hotfix.verify.report.evidence:
+            sequence: 7
+            value:
+              contentHash: 5772e41b6dd553bbc23ec7fe20de626bf89acb9faea91997cb5fa43556991727
+              ref: docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md
+          hotfix.verify.run:
+            sequence: 6
+            value:
+              event: verification-ready
+              verificationReport: docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md
+        sequence: 14
+      fix-update-check-and-offline-data:3:
+        results:
+          hotfix.open:
+            sequence: 1
+            value:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+                ref: docs/openspec/changes/fix-update-check-and-offline-data
+          hotfix.open.evidence:
+            sequence: 2
+            value:
+              contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+              ref: docs/openspec/changes/fix-update-check-and-offline-data
+        sequence: 3
+      fix-update-check-and-offline-data:4:
+        results:
+          hotfix.build.execute:
+            sequence: 3
+            value:
+              event: build-complete
+          hotfix.open:
+            sequence: 1
+            value:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+                ref: docs/openspec/changes/fix-update-check-and-offline-data
+          hotfix.open.evidence:
+            sequence: 2
+            value:
+              contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+              ref: docs/openspec/changes/fix-update-check-and-offline-data
+        sequence: 4
+      fix-update-check-and-offline-data:6:
+        results:
+          hotfix.build.check:
+            sequence: 4
+            value:
+              argv:
+                - /opt/homebrew/bin/go
+                - -C
+                - combined_refactor
+                - test
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+              cwd: .
+              environment: f2d15d0eb1c5c344758eee7e8775be81e61227dbcc6577b1a8416e64bc74187e
+              exitCode: 0
+              inputAfter: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              inputBefore: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              manifestHash: 44dd295ad2a83debaa882fb7e71d3459796831ed791f5aaa37e49f646bb69f2e
+              manifestRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/67d84bb2-6daa-48c4-9aab-510342deca86.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/dd27e675-06f7-4f5a-8660-8ae257816943.log
+              reusable: false
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+          hotfix.build.check.evidence:
+            sequence: 5
+            value:
+              contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+              ref: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/dd27e675-06f7-4f5a-8660-8ae257816943.log
+          hotfix.build.execute:
+            sequence: 3
+            value:
+              event: build-complete
+          hotfix.open:
+            sequence: 1
+            value:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+                ref: docs/openspec/changes/fix-update-check-and-offline-data
+          hotfix.open.evidence:
+            sequence: 2
+            value:
+              contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+              ref: docs/openspec/changes/fix-update-check-and-offline-data
+        sequence: 6
+      fix-update-check-and-offline-data:8:
+        results:
+          hotfix.build.check:
+            sequence: 4
+            value:
+              argv:
+                - /opt/homebrew/bin/go
+                - -C
+                - combined_refactor
+                - test
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+              cwd: .
+              environment: f2d15d0eb1c5c344758eee7e8775be81e61227dbcc6577b1a8416e64bc74187e
+              exitCode: 0
+              inputAfter: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              inputBefore: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              manifestHash: 44dd295ad2a83debaa882fb7e71d3459796831ed791f5aaa37e49f646bb69f2e
+              manifestRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/67d84bb2-6daa-48c4-9aab-510342deca86.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/dd27e675-06f7-4f5a-8660-8ae257816943.log
+              reusable: false
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+          hotfix.build.check.evidence:
+            sequence: 5
+            value:
+              contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+              ref: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/dd27e675-06f7-4f5a-8660-8ae257816943.log
+          hotfix.build.execute:
+            sequence: 3
+            value:
+              event: build-complete
+          hotfix.open:
+            sequence: 1
+            value:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+                ref: docs/openspec/changes/fix-update-check-and-offline-data
+          hotfix.open.evidence:
+            sequence: 2
+            value:
+              contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+              ref: docs/openspec/changes/fix-update-check-and-offline-data
+          hotfix.verify.report.evidence:
+            sequence: 7
+            value:
+              contentHash: 5772e41b6dd553bbc23ec7fe20de626bf89acb9faea91997cb5fa43556991727
+              ref: docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md
+          hotfix.verify.run:
+            sequence: 6
+            value:
+              event: verification-ready
+              verificationReport: docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md
+        sequence: 8
+    waits:
+      - id: fix-update-check-and-offline-data:11
+        stepId: hotfix.archive.confirm
+        sequence: 11
+        status: resolved
+        proposal:
+          input:
+            change: fix-update-check-and-offline-data
+            changeDir: docs/openspec/changes/fix-update-check-and-offline-data
+          outputs:
+            hotfix.archive.prepare:
+              summary: 更新检测指向本仓库 tunecc/CFData-docker（Release 优先、稳定 v* 标签兜底、edge/dev
+                跳过、失败静默），并为 locations/ips-v4/ips-v6 增加内嵌离线快照兜底。验证报告
+                docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md，结论
+                PASS。归档提交仅包含本 change 相关文件（4 个 Go 源文件、fixes_test.go、3 份 fallback
+                快照、OpenSpec 变更记录与验证报告），排除用户已有的 .gitignore/AGENTS.md 修改；交付方式为
+                local，仅保留在分支 comet/fix-update-check-and-offline-data，不推送、不创建 PR。
+              targetBranch: comet/fix-update-check-and-offline-data
+        proposalHash: c9be0e14ed9f4b8ff3054538f39f2196990922cb88be9dfdcefffeea3bc1d51d
+        choices:
+          - local
+          - push
+          - pr
+          - reverify
+          - later
+        results:
+          hotfix.archive.prepare:
+            sequence: 10
+            value:
+              summary: 更新检测指向本仓库 tunecc/CFData-docker（Release 优先、稳定 v* 标签兜底、edge/dev
+                跳过、失败静默），并为 locations/ips-v4/ips-v6 增加内嵌离线快照兜底。验证报告
+                docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md，结论
+                PASS。归档提交仅包含本 change 相关文件（4 个 Go 源文件、fixes_test.go、3 份 fallback
+                快照、OpenSpec 变更记录与验证报告），排除用户已有的 .gitignore/AGENTS.md 修改；交付方式为
+                local，仅保留在分支 comet/fix-update-check-and-offline-data，不推送、不创建 PR。
+              targetBranch: comet/fix-update-check-and-offline-data
+          hotfix.build.check:
+            sequence: 4
+            value:
+              argv:
+                - /opt/homebrew/bin/go
+                - -C
+                - combined_refactor
+                - test
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+              cwd: .
+              environment: f2d15d0eb1c5c344758eee7e8775be81e61227dbcc6577b1a8416e64bc74187e
+              exitCode: 0
+              inputAfter: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              inputBefore: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              manifestHash: 44dd295ad2a83debaa882fb7e71d3459796831ed791f5aaa37e49f646bb69f2e
+              manifestRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/67d84bb2-6daa-48c4-9aab-510342deca86.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/dd27e675-06f7-4f5a-8660-8ae257816943.log
+              reusable: false
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+          hotfix.build.check.evidence:
+            sequence: 5
+            value:
+              contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+              ref: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/dd27e675-06f7-4f5a-8660-8ae257816943.log
+          hotfix.build.execute:
+            sequence: 3
+            value:
+              event: build-complete
+          hotfix.open:
+            sequence: 1
+            value:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+                ref: docs/openspec/changes/fix-update-check-and-offline-data
+          hotfix.open.evidence:
+            sequence: 2
+            value:
+              contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+              ref: docs/openspec/changes/fix-update-check-and-offline-data
+          hotfix.verify.check:
+            sequence: 8
+            value:
+              argv:
+                - /opt/homebrew/bin/go
+                - -C
+                - combined_refactor
+                - test
+                - -count=1
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 2
+              contentHash: 9fee38083f25297f9542c8981949e2730db1f2d197f404f68f9aba4326e0aace
+              cwd: .
+              deliveryInputs:
+                .gitignore: git:d457bb2679e5da16497e307904515c5f404c34ab
+                AGENTS.md: git:36023087fecf7c3a5c99c926c693e6843844c813
+                combined_refactor/fallback/ips-v4.snapshot.txt: git:dcc32d7ae3895f9736667e71485a8b1e1ddf0fe1
+                combined_refactor/fallback/ips-v6.snapshot.txt: git:931fb0f8b0a78c80cdfeb2c270df4b83e66f48a7
+                combined_refactor/fallback/locations.snapshot.json: git:a8a1bfe725cde15117d04f1a649a4c129cacf88e
+                combined_refactor/fixes_test.go: git:5aa65d2413e3d18a0e78af92b6b972be4d44b494
+                combined_refactor/main.go: git:90423d3f80a07e6a7b180b5898dc6662384dfa1e
+                combined_refactor/server.go: git:5fd8df2fc952215aca8e8e4532293055312d49ea
+                combined_refactor/storage.go: git:58d9daea283ef2c9050b089c69657630d3ae957c
+                combined_refactor/version.go: git:125c317bcebccc6b02b8bdf303821f2dfd959eff
+              environment: 8be4ead12faa3cda99fc91ff5edfbb77fae26926019491d07b812cfb48a87545
+              exitCode: 0
+              inputAfter: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              inputBefore: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              manifestHash: 44dd295ad2a83debaa882fb7e71d3459796831ed791f5aaa37e49f646bb69f2e
+              manifestRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/6194b1f3-041e-4a4c-b336-e02cee4b46eb.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/27a0978e-7902-4883-8ee0-658124fd63b9.log
+              reusable: false
+              reused: false
+              scope: verify
+              tier: full
+              timeoutMs: 300000
+          hotfix.verify.check.evidence:
+            sequence: 9
+            value:
+              contentHash: 9fee38083f25297f9542c8981949e2730db1f2d197f404f68f9aba4326e0aace
+              ref: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/27a0978e-7902-4883-8ee0-658124fd63b9.log
+          hotfix.verify.report.evidence:
+            sequence: 7
+            value:
+              contentHash: 5772e41b6dd553bbc23ec7fe20de626bf89acb9faea91997cb5fa43556991727
+              ref: docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md
+          hotfix.verify.run:
+            sequence: 6
+            value:
+              event: verification-ready
+              verificationReport: docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md
+        decision:
+          id: classic-archive-c9be0e14ed9f4b8ff3054538f39f2196990922cb88be9dfdcefffeea3bc1d51d-local
+          choice: local
+          proposalHash: c9be0e14ed9f4b8ff3054538f39f2196990922cb88be9dfdcefffeea3bc1d51d
+    evidenceWaits:
+      - id: fix-update-check-and-offline-data:2
+        stepId: hotfix.open.evidence
+        sequence: 2
+        kind: classic-open-artifacts
+        status: resolved
+        results:
+          hotfix.open:
+            sequence: 1
+            value:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+                ref: docs/openspec/changes/fix-update-check-and-offline-data
+        receipt:
+          ref: docs/openspec/changes/fix-update-check-and-offline-data
+          contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+          submissionId: 5a0c2a9a-6699-4158-9b29-3593be2124dd
+      - id: fix-update-check-and-offline-data:5
+        stepId: hotfix.build.check.evidence
+        sequence: 5
+        kind: classic-build-check
+        status: resolved
+        results:
+          hotfix.build.check:
+            sequence: 4
+            value:
+              argv:
+                - /opt/homebrew/bin/go
+                - -C
+                - combined_refactor
+                - test
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+              cwd: .
+              environment: f2d15d0eb1c5c344758eee7e8775be81e61227dbcc6577b1a8416e64bc74187e
+              exitCode: 0
+              inputAfter: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              inputBefore: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              manifestHash: 44dd295ad2a83debaa882fb7e71d3459796831ed791f5aaa37e49f646bb69f2e
+              manifestRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/67d84bb2-6daa-48c4-9aab-510342deca86.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/dd27e675-06f7-4f5a-8660-8ae257816943.log
+              reusable: false
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+          hotfix.build.execute:
+            sequence: 3
+            value:
+              event: build-complete
+          hotfix.open:
+            sequence: 1
+            value:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+                ref: docs/openspec/changes/fix-update-check-and-offline-data
+          hotfix.open.evidence:
+            sequence: 2
+            value:
+              contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+              ref: docs/openspec/changes/fix-update-check-and-offline-data
+        receipt:
+          ref: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/dd27e675-06f7-4f5a-8660-8ae257816943.log
+          contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+          submissionId: 2160e517-5dbe-4f40-afd8-04a4494435ac
+      - id: fix-update-check-and-offline-data:7
+        stepId: hotfix.verify.report.evidence
+        sequence: 7
+        kind: classic-verification-report
+        status: resolved
+        results:
+          hotfix.build.check:
+            sequence: 4
+            value:
+              argv:
+                - /opt/homebrew/bin/go
+                - -C
+                - combined_refactor
+                - test
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+              cwd: .
+              environment: f2d15d0eb1c5c344758eee7e8775be81e61227dbcc6577b1a8416e64bc74187e
+              exitCode: 0
+              inputAfter: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              inputBefore: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              manifestHash: 44dd295ad2a83debaa882fb7e71d3459796831ed791f5aaa37e49f646bb69f2e
+              manifestRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/67d84bb2-6daa-48c4-9aab-510342deca86.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/dd27e675-06f7-4f5a-8660-8ae257816943.log
+              reusable: false
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+          hotfix.build.check.evidence:
+            sequence: 5
+            value:
+              contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+              ref: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/dd27e675-06f7-4f5a-8660-8ae257816943.log
+          hotfix.build.execute:
+            sequence: 3
+            value:
+              event: build-complete
+          hotfix.open:
+            sequence: 1
+            value:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+                ref: docs/openspec/changes/fix-update-check-and-offline-data
+          hotfix.open.evidence:
+            sequence: 2
+            value:
+              contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+              ref: docs/openspec/changes/fix-update-check-and-offline-data
+          hotfix.verify.run:
+            sequence: 6
+            value:
+              event: verification-ready
+              verificationReport: docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md
+        receipt:
+          ref: docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md
+          contentHash: 5772e41b6dd553bbc23ec7fe20de626bf89acb9faea91997cb5fa43556991727
+          submissionId: c162fc16-2489-46cd-8e32-723eb4726aac
+      - id: fix-update-check-and-offline-data:9
+        stepId: hotfix.verify.check.evidence
+        sequence: 9
+        kind: classic-verify-check
+        status: resolved
+        results:
+          hotfix.build.check:
+            sequence: 4
+            value:
+              argv:
+                - /opt/homebrew/bin/go
+                - -C
+                - combined_refactor
+                - test
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 1
+              contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+              cwd: .
+              environment: f2d15d0eb1c5c344758eee7e8775be81e61227dbcc6577b1a8416e64bc74187e
+              exitCode: 0
+              inputAfter: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              inputBefore: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              manifestHash: 44dd295ad2a83debaa882fb7e71d3459796831ed791f5aaa37e49f646bb69f2e
+              manifestRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/67d84bb2-6daa-48c4-9aab-510342deca86.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/dd27e675-06f7-4f5a-8660-8ae257816943.log
+              reusable: false
+              reused: false
+              scope: build
+              tier: full
+              timeoutMs: 300000
+          hotfix.build.check.evidence:
+            sequence: 5
+            value:
+              contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+              ref: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/dd27e675-06f7-4f5a-8660-8ae257816943.log
+          hotfix.build.execute:
+            sequence: 3
+            value:
+              event: build-complete
+          hotfix.open:
+            sequence: 1
+            value:
+              event: open-complete
+              requirementsEvidence:
+                contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+                ref: docs/openspec/changes/fix-update-check-and-offline-data
+          hotfix.open.evidence:
+            sequence: 2
+            value:
+              contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+              ref: docs/openspec/changes/fix-update-check-and-offline-data
+          hotfix.verify.check:
+            sequence: 8
+            value:
+              argv:
+                - /opt/homebrew/bin/go
+                - -C
+                - combined_refactor
+                - test
+                - -count=1
+                - ./...
+              changedDuringExecution: []
+              checkEpoch: 2
+              contentHash: 9fee38083f25297f9542c8981949e2730db1f2d197f404f68f9aba4326e0aace
+              cwd: .
+              deliveryInputs:
+                .gitignore: git:d457bb2679e5da16497e307904515c5f404c34ab
+                AGENTS.md: git:36023087fecf7c3a5c99c926c693e6843844c813
+                combined_refactor/fallback/ips-v4.snapshot.txt: git:dcc32d7ae3895f9736667e71485a8b1e1ddf0fe1
+                combined_refactor/fallback/ips-v6.snapshot.txt: git:931fb0f8b0a78c80cdfeb2c270df4b83e66f48a7
+                combined_refactor/fallback/locations.snapshot.json: git:a8a1bfe725cde15117d04f1a649a4c129cacf88e
+                combined_refactor/fixes_test.go: git:5aa65d2413e3d18a0e78af92b6b972be4d44b494
+                combined_refactor/main.go: git:90423d3f80a07e6a7b180b5898dc6662384dfa1e
+                combined_refactor/server.go: git:5fd8df2fc952215aca8e8e4532293055312d49ea
+                combined_refactor/storage.go: git:58d9daea283ef2c9050b089c69657630d3ae957c
+                combined_refactor/version.go: git:125c317bcebccc6b02b8bdf303821f2dfd959eff
+              environment: 8be4ead12faa3cda99fc91ff5edfbb77fae26926019491d07b812cfb48a87545
+              exitCode: 0
+              inputAfter: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              inputBefore: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+              manifestHash: 44dd295ad2a83debaa882fb7e71d3459796831ed791f5aaa37e49f646bb69f2e
+              manifestRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/6194b1f3-041e-4a4c-b336-e02cee4b46eb.manifest
+              receiptRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/27a0978e-7902-4883-8ee0-658124fd63b9.log
+              reusable: false
+              reused: false
+              scope: verify
+              tier: full
+              timeoutMs: 300000
+          hotfix.verify.report.evidence:
+            sequence: 7
+            value:
+              contentHash: 5772e41b6dd553bbc23ec7fe20de626bf89acb9faea91997cb5fa43556991727
+              ref: docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md
+          hotfix.verify.run:
+            sequence: 6
+            value:
+              event: verification-ready
+              verificationReport: docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md
+        receipt:
+          ref: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/27a0978e-7902-4883-8ee0-658124fd63b9.log
+          contentHash: 9fee38083f25297f9542c8981949e2730db1f2d197f404f68f9aba4326e0aace
+          submissionId: b0d7bb95-98ee-4df8-a1de-ec02ba138976
+    ready: []
+    joins: {}
+    outputs:
+      hotfix.archive.confirm:
+        sequence: 11
+        value:
+          choice: local
+          proposal:
+            input:
+              change: fix-update-check-and-offline-data
+              changeDir: docs/openspec/changes/fix-update-check-and-offline-data
+            outputs:
+              hotfix.archive.prepare:
+                summary: 更新检测指向本仓库 tunecc/CFData-docker（Release 优先、稳定 v* 标签兜底、edge/dev
+                  跳过、失败静默），并为 locations/ips-v4/ips-v6 增加内嵌离线快照兜底。验证报告
+                  docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md，结论
+                  PASS。归档提交仅包含本 change 相关文件（4 个 Go 源文件、fixes_test.go、3 份
+                  fallback 快照、OpenSpec 变更记录与验证报告），排除用户已有的 .gitignore/AGENTS.md
+                  修改；交付方式为 local，仅保留在分支
+                  comet/fix-update-check-and-offline-data，不推送、不创建 PR。
+                targetBranch: comet/fix-update-check-and-offline-data
+      hotfix.archive.execute:
+        sequence: 13
+        value:
+          archiveDirectory: docs/openspec/changes/archive/2026-10-27-fix-update-check-and-offline-data
+      hotfix.archive.preflight:
+        sequence: 12
+        value:
+          baseCommit: 6138a7fe514fc1080d8fc16ddf22cd5706a2ed10
+          deliveryAction: local
+          targetBranch: comet/fix-update-check-and-offline-data
+          verifiedBranch: comet/fix-update-check-and-offline-data
+      hotfix.archive.prepare:
+        sequence: 10
+        value:
+          summary: 更新检测指向本仓库 tunecc/CFData-docker（Release 优先、稳定 v* 标签兜底、edge/dev
+            跳过、失败静默），并为 locations/ips-v4/ips-v6 增加内嵌离线快照兜底。验证报告
+            docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md，结论
+            PASS。归档提交仅包含本 change 相关文件（4 个 Go 源文件、fixes_test.go、3 份 fallback
+            快照、OpenSpec 变更记录与验证报告），排除用户已有的 .gitignore/AGENTS.md 修改；交付方式为
+            local，仅保留在分支 comet/fix-update-check-and-offline-data，不推送、不创建 PR。
+          targetBranch: comet/fix-update-check-and-offline-data
+      hotfix.build.check:
+        sequence: 4
+        value:
+          argv:
+            - /opt/homebrew/bin/go
+            - -C
+            - combined_refactor
+            - test
+            - ./...
+          changedDuringExecution: []
+          checkEpoch: 1
+          contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+          cwd: .
+          environment: f2d15d0eb1c5c344758eee7e8775be81e61227dbcc6577b1a8416e64bc74187e
+          exitCode: 0
+          inputAfter: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+          inputBefore: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+          manifestHash: 44dd295ad2a83debaa882fb7e71d3459796831ed791f5aaa37e49f646bb69f2e
+          manifestRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/67d84bb2-6daa-48c4-9aab-510342deca86.manifest
+          receiptRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/dd27e675-06f7-4f5a-8660-8ae257816943.log
+          reusable: false
+          reused: false
+          scope: build
+          tier: full
+          timeoutMs: 300000
+      hotfix.build.check.evidence:
+        sequence: 5
+        value:
+          contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+          ref: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/dd27e675-06f7-4f5a-8660-8ae257816943.log
+      hotfix.build.execute:
+        sequence: 3
+        value:
+          event: build-complete
+      hotfix.open:
+        sequence: 1
+        value:
+          event: open-complete
+          requirementsEvidence:
+            contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+            ref: docs/openspec/changes/fix-update-check-and-offline-data
+      hotfix.open.evidence:
+        sequence: 2
+        value:
+          contentHash: ce587e0bdfb7e36eb0be85c5fb94bed1a0b2275176ffd9a818e7446e657b84d6
+          ref: docs/openspec/changes/fix-update-check-and-offline-data
+      hotfix.verify.check:
+        sequence: 8
+        value:
+          argv:
+            - /opt/homebrew/bin/go
+            - -C
+            - combined_refactor
+            - test
+            - -count=1
+            - ./...
+          changedDuringExecution: []
+          checkEpoch: 2
+          contentHash: 9fee38083f25297f9542c8981949e2730db1f2d197f404f68f9aba4326e0aace
+          cwd: .
+          deliveryInputs:
+            .gitignore: git:d457bb2679e5da16497e307904515c5f404c34ab
+            AGENTS.md: git:36023087fecf7c3a5c99c926c693e6843844c813
+            combined_refactor/fallback/ips-v4.snapshot.txt: git:dcc32d7ae3895f9736667e71485a8b1e1ddf0fe1
+            combined_refactor/fallback/ips-v6.snapshot.txt: git:931fb0f8b0a78c80cdfeb2c270df4b83e66f48a7
+            combined_refactor/fallback/locations.snapshot.json: git:a8a1bfe725cde15117d04f1a649a4c129cacf88e
+            combined_refactor/fixes_test.go: git:5aa65d2413e3d18a0e78af92b6b972be4d44b494
+            combined_refactor/main.go: git:90423d3f80a07e6a7b180b5898dc6662384dfa1e
+            combined_refactor/server.go: git:5fd8df2fc952215aca8e8e4532293055312d49ea
+            combined_refactor/storage.go: git:58d9daea283ef2c9050b089c69657630d3ae957c
+            combined_refactor/version.go: git:125c317bcebccc6b02b8bdf303821f2dfd959eff
+          environment: 8be4ead12faa3cda99fc91ff5edfbb77fae26926019491d07b812cfb48a87545
+          exitCode: 0
+          inputAfter: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+          inputBefore: 1f43243be165e00007c3b3d46166e804cfdce6ac7cea5412507de52a433a3ce3
+          manifestHash: 44dd295ad2a83debaa882fb7e71d3459796831ed791f5aaa37e49f646bb69f2e
+          manifestRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/6194b1f3-041e-4a4c-b336-e02cee4b46eb.manifest
+          receiptRef: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/27a0978e-7902-4883-8ee0-658124fd63b9.log
+          reusable: false
+          reused: false
+          scope: verify
+          tier: full
+          timeoutMs: 300000
+      hotfix.verify.check.evidence:
+        sequence: 9
+        value:
+          contentHash: 9fee38083f25297f9542c8981949e2730db1f2d197f404f68f9aba4326e0aace
+          ref: .comet/runtime/classic-sdk-checks/1a1413fb0601079a89d7021db33fe959f5b198d7e66b7074deecbeacb821f627/27a0978e-7902-4883-8ee0-658124fd63b9.log
+      hotfix.verify.report.evidence:
+        sequence: 7
+        value:
+          contentHash: 5772e41b6dd553bbc23ec7fe20de626bf89acb9faea91997cb5fa43556991727
+          ref: docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md
+      hotfix.verify.run:
+        sequence: 6
+        value:
+          event: verification-ready
+          verificationReport: docs/superpowers/reports/2026-10-27-fix-update-check-and-offline-data-verify.md
+    children: []
+    lineage: []
+  sourceRevision: 22
+  sourceHash: 9b9a0e94ee918d43094ca522f6d986e83d16cbc7aa1b75b554c2b04adbf05981
+check_epoch: 5
