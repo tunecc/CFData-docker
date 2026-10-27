@@ -1,0 +1,6 @@
+{
+  "build_mode": "autonomous",
+  "tdd_mode": "direct",
+  "review_mode": "standard",
+  "subagent_dispatch": null
+}

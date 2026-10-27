@@ -1,0 +1,145 @@
+# Docker 使用说明
+
+镜像地址：`ghcr.io/tunecc/cfdata-web`，支持 `linux/amd64` 与 `linux/arm64`。
+
+## 标签策略
+
+| 触发方式 | 生成的镜像标签 | 说明 |
+| -------- | -------------- | ---- |
+| 推送稳定 tag（如 `v1.2.3`） | `v1.2.3`、`latest`、`sha-<短哈希>` | 三个标签指向同一多架构镜像 |
+| 推送预发布 tag（如 `v1.3.0-beta.1`） | `v1.3.0-beta.1`、`sha-<短哈希>` | 不更新 `latest` |
+| Actions 页面手动触发 | `latest`、`edge`、`sha-<短哈希>` | 使用所选分支最新提交；不写入任何 `v*` 标签 |
+
+`latest` 指向最近一次完成的稳定 tag 发布或手动构建；并发发布时以最后完成的运行为准。需要可复现的稳定版本时请固定使用 `v*` 版本标签。
+
+## 拉取与运行
+
+```bash
+docker pull ghcr.io/tunecc/cfdata-web:latest
+docker run -d --name cfdata \
+  -p 13335:13335 \
+  -v cfdata-data:/data \
+  --restart unless-stopped \
+  ghcr.io/tunecc/cfdata-web:latest
+```
+
+浏览器打开 `http://localhost:13335` 即可使用。容器默认以 Web 模式启动，监听 `0.0.0.0:13335`。
+
+以 CLI 交互菜单运行（需要 TTY）：
+
+```bash
+docker run --rm -it -v cfdata-data:/data ghcr.io/tunecc/cfdata-web:latest -cli
+```
+
+## Docker Compose
+
+仓库根目录提供 `docker-compose.yml`：
+
+```bash
+docker compose up -d
+docker compose logs -f
+docker compose down
+```
+
+## Web 认证
+
+通过启动参数开启认证（需同时提供用户名和密码）：
+
+```bash
+docker run -d --name cfdata \
+  -p 13335:13335 \
+  -v cfdata-data:/data \
+  ghcr.io/tunecc/cfdata-web:latest \
+  -user admin -password 'change-me'
+```
+
+`docker-compose.yml` 中提供了对应的注释示例。
+
+## 端口与健康检查
+
+镜像内置健康检查，默认请求 `http://127.0.0.1:13335/favicon.png`。修改程序监听端口时，必须同步设置 `CFDATA_HEALTHCHECK_PORT`，否则容器会显示 unhealthy；如果通过 `-host` 绑定了非回环地址，还需设置 `CFDATA_HEALTHCHECK_HOST` 指向该地址：
+
+```bash
+docker run -d --name cfdata \
+  -p 8080:8080 \
+  -e CFDATA_HEALTHCHECK_PORT=8080 \
+  -v cfdata-data:/data \
+  ghcr.io/tunecc/cfdata-web:latest \
+  -port 8080
+```
+
+查看健康状态：
+
+```bash
+docker inspect --format '{{.State.Health.Status}}' cfdata
+```
+
+## 数据持久化
+
+容器的配置、IP 列表、位置信息、ASN 数据库与调试日志统一写入 `/data`。镜像启动时会把内置二进制同步到 `/data/cfdata`，因此配置与 `.bak`、迁移备份都留在数据卷内，镜像升级后卷内二进制会自动更新。
+
+- 命名卷（推荐）：`-v cfdata-data:/data`，属主自动继承镜像内的 `10001:10001`。
+- 宿主机目录：`-v /path/to/cfdata-data:/data`，需要先确保目录可被 UID/GID `10001` 写入：
+
+```bash
+sudo mkdir -p /path/to/cfdata-data
+sudo chown -R 10001:10001 /path/to/cfdata-data
+```
+
+同一个数据卷只应运行一个容器，避免多个实例同时修改配置。
+
+## 升级
+
+```bash
+docker pull ghcr.io/tunecc/cfdata-web:latest
+docker rm -f cfdata
+docker run -d --name cfdata \
+  -p 13335:13335 \
+  -v cfdata-data:/data \
+  --restart unless-stopped \
+  ghcr.io/tunecc/cfdata-web:latest
+```
+
+新版本启动时会自动用镜像内二进制替换卷内旧二进制，`/data` 中的配置与缓存保持不变。使用 Compose 时执行 `docker compose pull && docker compose up -d`。
+
+## 从源码构建
+
+在仓库根目录执行：
+
+```bash
+docker build -t cfdata-web:dev .
+docker run --rm -p 13335:13335 cfdata-web:dev
+```
+
+指定版本号（会显示在启动日志与 Web 界面）：
+
+```bash
+docker build --build-arg VERSION=v1.2.3 -t cfdata-web:v1.2.3 .
+```
+
+同时构建两种架构（需要 buildx）：
+
+```bash
+docker buildx build \
+  --platform linux/amd64,linux/arm64 \
+  --build-arg VERSION=v1.2.3 \
+  -t cfdata-web:v1.2.3 \
+  --output type=oci,dest=/tmp/cfdata-multi.tar .
+```
+
+构建阶段使用 `golang:1.26-bookworm` 交叉编译，运行镜像基于 `alpine:3.22`，不包含 Go 工具链与源码。
+
+## GHCR 包可见性
+
+GHCR 包首次发布后默认是私有可见性。首次构建成功后，仓库所有者需要在 GitHub 的 **Packages → cfdata-web → Package settings → Change visibility** 中改为 public，其他人才能匿名拉取。
+
+## 手动构建提醒
+
+在 Actions 页面手动触发 Docker 工作流时，会使用所选分支的最新代码构建，并把 `latest` 指向这次构建。请不要在未经验证的功能分支上手动触发发布，测试用途请使用 `edge` 或 `sha-<短哈希>` 标签。
+
+## 常见问题
+
+- **容器启动即退出，日志提示 `/data` 不可写**：宿主机 bind mount 目录属主不是 `10001`，按上文执行 `chown`，或改用命名卷。
+- **健康状态为 unhealthy**：确认 `-port` 与 `CFDATA_HEALTHCHECK_PORT` 一致、`-host` 与 `CFDATA_HEALTHCHECK_HOST` 一致，且容器内配置的监听端口未被其他进程占用。
+- **拉取镜像提示未授权**：包仍为私有，按“GHCR 包可见性”改为 public，或使用有 `read:packages` 权限的凭据登录 `ghcr.io`。
+- **多架构构建很慢**：非本机架构的运行阶段依赖 QEMU 仿真；CI 中已启用 GHA 缓存，本地首次构建耗时属正常现象。

@@ -18,4 +18,5 @@ mkdir -p /root/project/CFData-WEB/release_assets && CGO_ENABLED=0 GOOS=linux GOA
 
 ## 禁止修改的文件
 - `.github/` 目录下的任何文件（GitHub Actions 配置）
+- 例外：Docker 镜像相关变更可维护 `.github/workflows/docker.yml`，其余 `.github/` 文件仍禁止修改
 - 顶层目录中注释包含"原版源码"的文件

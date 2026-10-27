@@ -1,0 +1,17 @@
+{
+  "change": "docker-image-support",
+  "phase": "design",
+  "mode": "compact",
+  "canonical_spec": "openspec",
+  "task_hash_policy": "task-content-v1",
+  "generated_by": "comet-handoff.sh",
+  "context_hash": "bd71ff59ecff9a79096bf69e6ed32362d97ac1af9e235a350afb0c01a3c9fc19",
+  "files": [
+    { "path": "docs/openspec/changes/docker-image-support/proposal.md", "sha256": "8611c1b44862bae9d98980f23ff36a48ab54cdb869975fbe2193feef25ada5c4" },
+    { "path": "docs/openspec/changes/docker-image-support/design.md", "sha256": "9e6d09740a966394fe7645d5f3f61d4aaad88ea37a97089e43f0a3f6ef432a84" },
+    { "path": "docs/openspec/changes/docker-image-support/tasks.md", "sha256": "9d5248240683c7d962a6b2614d3ac8b29c876f6b6ed78893b2b3b39797483c7b" },
+    { "path": "docs/openspec/changes/docker-image-support/.openspec.yaml", "sha256": "89901217d56bdfb49c20b541962dc5db50e8161beb30e5c2cae1d189e5d53eb5" },
+    { "path": "docs/openspec/changes/docker-image-support/specs/container-image/spec.md", "sha256": "fcb0dbc1d747dec7c9efa28d6ecc780a4abf8a32e1b5785364227d1bb7e506d8" },
+    { "path": "docs/openspec/changes/docker-image-support/specs/image-publishing/spec.md", "sha256": "858396cca5d6d61b79f11ce0d9001c518d1385867dc0920460cae1f9aa1f144c" }
+  ]
+}

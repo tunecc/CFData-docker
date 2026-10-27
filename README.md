@@ -73,6 +73,17 @@ CLI 模式（进入交互菜单）：
 ./cfdata-linux-amd64 -cli -mode nsb -nsbfile ip.txt -nsbtls=true -nsbspeedtest 5 -nsburl auto
 ```
 
+## Docker
+
+镜像发布在 GHCR：`ghcr.io/tunecc/cfdata-web`，支持 linux/amd64 与 linux/arm64。
+
+```bash
+docker pull ghcr.io/tunecc/cfdata-web:latest
+docker run -d --name cfdata -p 13335:13335 -v cfdata-data:/data ghcr.io/tunecc/cfdata-web:latest
+```
+
+浏览器打开 `http://localhost:13335` 即可使用。配置、缓存与日志保存在 `/data` 卷中，容器重建后不会丢失。认证参数、Compose、健康检查、升级与标签策略见 [docs/docker.md](docs/docker.md)。
+
 ## Web 使用
 
 界面顶部「扫描方式」选择器支持 TCPing（默认）和 HTTPing。不同扫描模式的延迟数据不可互相比较，仅同模式内的对比才有意义。

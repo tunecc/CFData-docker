@@ -1,0 +1,20 @@
+name: cfdata
+
+services:
+  cfdata:
+    image: ghcr.io/tunecc/cfdata-web:latest
+    container_name: cfdata
+    ports:
+      - "13335:13335"
+    volumes:
+      - cfdata-data:/data
+    restart: unless-stopped
+
+    # 启用 Web 认证（取消注释后生效）：
+    # command: ["-user", "admin", "-password", "change-me"]
+    #
+    # 修改监听端口时，需同时调整上方 ports 与容器环境变量 CFDATA_HEALTHCHECK_PORT，
+    # 完整示例见 docs/docker.md 的「端口与健康检查」。
+
+volumes:
+  cfdata-data:
