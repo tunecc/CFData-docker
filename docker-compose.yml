@@ -1,13 +1,12 @@
-name: cfdata
-
 services:
   cfdata:
     image: ghcr.io/tunecc/cfdata-web:latest
     container_name: cfdata
     ports:
       - "13335:13335"
+    # 启动时自动修正 ./data 属主；如需匹配宿主机用户，设置 PUID/PGID（见 docs/docker.md）
     volumes:
-      - cfdata-data:/data
+      - ./data:/data
     restart: unless-stopped
 
     # 启用 Web 认证（取消注释后生效）：
@@ -15,6 +14,3 @@ services:
     #
     # 修改监听端口时，需同时调整上方 ports 与容器环境变量 CFDATA_HEALTHCHECK_PORT，
     # 完整示例见 docs/docker.md 的「端口与健康检查」。
-
-volumes:
-  cfdata-data:

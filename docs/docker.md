@@ -33,12 +33,20 @@ docker run --rm -it -v cfdata-data:/data ghcr.io/tunecc/cfdata-web:latest -cli
 
 ## Docker Compose
 
-仓库根目录提供 `docker-compose.yml`：
+仓库根目录提供 `docker-compose.yml`，数据目录挂载到当前目录的 `./data`：
 
 ```bash
 docker compose up -d
 docker compose logs -f
 docker compose down
+```
+
+Docker 会创建 `./data`，容器启动时会自动修正其属主，无需手动 `chown`。数据文件在宿主机上默认属于 UID/GID `10001`；希望归属你自己的账号时，在 compose 中设置 `PUID`/`PGID`：
+
+```yaml
+environment:
+  PUID: 501   # 宿主机 id -u
+  PGID: 20    # 宿主机 id -g
 ```
 
 ## Web 认证
@@ -78,13 +86,10 @@ docker inspect --format '{{.State.Health.Status}}' cfdata
 
 容器的配置、IP 列表、位置信息、ASN 数据库与调试日志统一写入 `/data`。镜像启动时会把内置二进制同步到 `/data/cfdata`，因此配置与 `.bak`、迁移备份都留在数据卷内，镜像升级后卷内二进制会自动更新。
 
-- 命名卷（推荐）：`-v cfdata-data:/data`，属主自动继承镜像内的 `10001:10001`。
-- 宿主机目录：`-v /path/to/cfdata-data:/data`，需要先确保目录可被 UID/GID `10001` 写入：
+- 宿主机目录（Compose 默认挂载 `./data`）：`-v ./data:/data`，入口会自动把目录属主修正为 `10001`（或 `PUID`/`PGID` 指定的用户），无需手动 `chown`。
+- 命名卷：`-v cfdata-data:/data`，属主自动继承镜像内的 `10001:10001`，无需手工授权。
 
-```bash
-sudo mkdir -p /path/to/cfdata-data
-sudo chown -R 10001:10001 /path/to/cfdata-data
-```
+入口脚本以 root 启动仅用于修正数据目录属主，随后立即降权，应用进程始终以非 root 用户运行。若运行环境禁止容器以 root 启动（如 Kubernetes `runAsNonRoot`），可设置 `user: "10001:10001"`，并确保挂载目录已可写。
 
 同一个数据卷只应运行一个容器，避免多个实例同时修改配置。
 
@@ -139,7 +144,7 @@ GHCR 包首次发布后默认是私有可见性。首次构建成功后，仓库
 
 ## 常见问题
 
-- **容器启动即退出，日志提示 `/data` 不可写**：宿主机 bind mount 目录属主不是 `10001`，按上文执行 `chown`，或改用命名卷。
+- **容器启动即退出，日志提示 `/data` 不可写**：入口会自动修正属主；仍失败通常是因为目录只读、NFS root-squash，或用 `user:` 强制非 root 启动。改用 `PUID`/`PGID` 指定可写用户，或修正挂载目录属主。
 - **健康状态为 unhealthy**：确认 `-port` 与 `CFDATA_HEALTHCHECK_PORT` 一致、`-host` 与 `CFDATA_HEALTHCHECK_HOST` 一致，且容器内配置的监听端口未被其他进程占用。
 - **拉取镜像提示未授权**：包仍为私有，按“GHCR 包可见性”改为 public，或使用有 `read:packages` 权限的凭据登录 `ghcr.io`。
 - **多架构构建很慢**：非本机架构的运行阶段依赖 QEMU 仿真；CI 中已启用 GHA 缓存，本地首次构建耗时属正常现象。

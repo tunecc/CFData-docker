@@ -25,7 +25,7 @@ LABEL org.opencontainers.image.title="CFData-WEB" \
       org.opencontainers.image.revision="${REVISION}" \
       org.opencontainers.image.licenses="GPL-3.0-or-later"
 
-RUN apk add --no-cache ca-certificates tzdata \
+RUN apk add --no-cache ca-certificates tzdata su-exec \
     && mkdir -p /app /data \
     && addgroup -g 10001 -S cfdata \
     && adduser -u 10001 -S -D -H -G cfdata -h /data cfdata \
@@ -45,7 +45,8 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
 
 WORKDIR /data
 EXPOSE 13335
-USER 10001:10001
 
+# 入口以 root 启动，仅用于把 /data 属主修正为 PUID/PGID（默认 10001:10001），
+# 随后立即降权，应用进程始终以非 root 运行。
 ENTRYPOINT ["/app/docker-entrypoint.sh"]
 CMD []
