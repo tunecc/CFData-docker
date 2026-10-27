@@ -2,6 +2,7 @@
 change: docker-image-support
 design-doc: docs/openspec/changes/docker-image-support/design.md
 base-ref: 49d5571f4e44d1fe265c44f9fa289bc296b865f3
+archived-with: 2026-10-27-docker-image-support
 ---
 
 <!-- comet-task-authority: docs/openspec/changes/docker-image-support/tasks.md -->

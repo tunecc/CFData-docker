@@ -2,6 +2,8 @@
 comet_change: docker-image-support
 role: technical-design
 canonical_spec: openspec
+archived-with: 2026-10-27-docker-image-support
+status: final
 ---
 
 # Design（技术设计）
