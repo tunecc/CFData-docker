@@ -208,13 +208,13 @@ func runCLIMenu(cfg *cliConfig) {
 	}
 	provided := map[string]bool{"cli": true}
 	for {
-		status, _ := scheduleStatus()
+		scheduleStatus := scheduleMenuSummary(configPath)
 		fmt.Println(colorize("========== CFDATA-WEB ==========", ansiBold+ansiCyan))
 		fmt.Printf("  版本: %s\n", colorize(appVersion, ansiBold+ansiGreen))
 		fmt.Println("  1. 启动（按照设置的参数）")
 		fmt.Println("  2. 启动（自定义参数）")
 		fmt.Println("  3. 修改配置参数")
-		fmt.Printf("  4. 定时任务（%s）\n", status)
+		fmt.Printf("  4. 自动调度（%s）\n", scheduleStatus)
 		fmt.Println("  5. 帮助")
 		fmt.Println("  6. 退出")
 		fmt.Print("请选择> ")
@@ -284,7 +284,7 @@ func runCLIMenu(cfg *cliConfig) {
 				}
 			}
 		case "4":
-			runScheduleMenu()
+			runScheduleMenu(configPath)
 		case "5":
 			printCLIUsage()
 		case "6":

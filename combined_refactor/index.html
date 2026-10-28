@@ -137,6 +137,8 @@
             box-shadow: 0 12px 24px rgba(0, 0, 0, .12);
             padding: 12px;
             z-index: 30;
+            max-height: calc(100vh - 90px);
+            overflow-y: auto;
         }
 
         .settings-menu.hidden {
@@ -1656,6 +1658,17 @@
             <div style="font-size:11px;line-height:1.5;color:var(--text-secondary);margin-top:6px;">
                 仅作用于下载 ASN 库/locations、版本检查、GitHub/订阅上传等管理操作；扫描与测速保持直连。程序配置优先生效，未配置时使用系统环境变量代理。
             </div>
+
+            <div class="settings-title" style="margin-top:12px;">⏱️ 自动调度 / R2 上传</div>
+            <div class="upload-status" id="scheduleStatusText">调度未启用</div>
+            <label class="inline-check" style="margin-top:4px;"><input type="checkbox" id="scheduleEnabled"> 启用自动调度</label>
+            <input id="scheduleCron" type="text" placeholder="Cron 表达式（优先），例如 0 4 * * *" style="width:100%;margin-top:6px;">
+            <input id="scheduleInterval" type="number" min="0" placeholder="检测间隔（分钟），默认 2880" style="width:100%;margin-top:6px;">
+            <label class="inline-check" style="margin-top:6px;"><input type="checkbox" id="r2Enabled"> 启用 R2 上传</label>
+            <input id="r2WorkerUrl" type="text" placeholder="Worker 地址，例如 https://r2.example.com" style="width:100%;margin-top:6px;">
+            <input id="r2WorkerToken" type="password" placeholder="Worker token" style="width:100%;margin-top:6px;">
+            <input id="r2Filename" type="text" placeholder="文件名，默认 cfdata-targets.txt" style="width:100%;margin-top:6px;">
+            <button class="menu-btn" style="width:100%;margin-top:6px;" onclick="saveScheduleConfig()">保存调度设置</button>
         </div>
 
         <div id="configMenu" class="settings-menu hidden">
@@ -2063,6 +2076,7 @@
                         <select id="resultFormat" onchange="handleResultFormatChange()">
                             <option value="txt" selected>TXT</option>
                             <option value="csv">CSV</option>
+                            <option value="substore">Sub-Store 目标列表</option>
                         </select>
                     </div>
                     <div class="modal-field">
@@ -2314,6 +2328,7 @@
                 </div>
             </div>
             <div class="modal-actions footer">
+                <button class="action-btn export-btn" onclick="copySubstoreResults(event)">复制 Sub-Store 列表</button>
                 <button class="action-btn export-btn" onclick="copyConfiguredResults(event)">复制结果</button>
             </div>
         </div>
@@ -2584,6 +2599,7 @@
                 menu.classList.add('no-transition');
                 setTimeout(() => menu.classList.remove('no-transition'), 0);
                 wsSend({ type: 'get_management_proxy' });
+                wsSend({ type: 'get_schedule_config' });
             }
         }
 
@@ -2764,6 +2780,78 @@
 
         function clearManagementProxy() {
             if (!wsSend({ type: 'set_management_proxy', data: { value: '' } })) {
+                showNoticeCard('与服务端的连接尚未就绪，请稍后再试');
+            }
+        }
+
+        function applyScheduleConfig(payload) {
+            if (!payload) return;
+            const setValue = (id, value) => {
+                const el = document.getElementById(id);
+                if (el) el.value = value ?? '';
+            };
+            const setChecked = (id, value) => {
+                const el = document.getElementById(id);
+                if (el) el.checked = !!value;
+            };
+            setChecked('scheduleEnabled', payload.scheduleEnabled);
+            setValue('scheduleCron', payload.cronExpression || '');
+            setValue('scheduleInterval', payload.checkInterval || '');
+            setChecked('r2Enabled', payload.r2Enabled);
+            setValue('r2WorkerUrl', payload.r2WorkerUrl || '');
+            const tokenInput = document.getElementById('r2WorkerToken');
+            if (tokenInput) {
+                tokenInput.value = '';
+                tokenInput.placeholder = payload.r2WorkerTokenSet ? '已保存，留空保持不变' : 'Worker token';
+            }
+            setValue('r2Filename', payload.r2Filename || '');
+            renderScheduleStatus(payload);
+        }
+
+        function formatScheduleTime(value) {
+            if (!value) return '';
+            const date = new Date(value);
+            return Number.isNaN(date.getTime()) ? value : date.toLocaleString('zh-CN', { hour12: false });
+        }
+
+        function renderScheduleStatus(payload) {
+            const el = document.getElementById('scheduleStatusText');
+            if (!el) return;
+            const status = payload.status || {};
+            const parts = [];
+            if (!payload.scheduleEnabled) {
+                parts.push('调度未启用');
+            } else if (status.mode === 'cron') {
+                parts.push('Cron 模式');
+            } else {
+                const minutes = status.intervalMinutes || payload.effectiveIntervalMinutes;
+                parts.push(`每 ${minutes} 分钟`);
+            }
+            if (status.running) parts.push('扫描进行中');
+            if (status.nextRun) parts.push('下次: ' + formatScheduleTime(status.nextRun));
+            if (status.lastRun) {
+                parts.push('上次: ' + formatScheduleTime(status.lastRun) + (status.lastResult ? ' ' + status.lastResult : ''));
+            }
+            if (payload.warning) parts.push('⚠ ' + payload.warning);
+            el.textContent = parts.join(' · ');
+        }
+
+        function saveScheduleConfig() {
+            const textValue = (id) => document.getElementById(id)?.value ?? '';
+            const checkedValue = (id) => !!document.getElementById(id)?.checked;
+            const interval = parseInt(textValue('scheduleInterval'), 10);
+            const payload = {
+                scheduleEnabled: checkedValue('scheduleEnabled'),
+                cronExpression: textValue('scheduleCron').trim(),
+                checkInterval: Number.isFinite(interval) ? interval : 0,
+                r2Enabled: checkedValue('r2Enabled'),
+                r2WorkerUrl: textValue('r2WorkerUrl').trim(),
+                r2Filename: textValue('r2Filename').trim(),
+            };
+            // 留空表示不修改已保存的 token
+            const token = textValue('r2WorkerToken').trim();
+            if (token) payload.r2WorkerToken = token;
+            if (!wsSend({ type: 'set_schedule_config', data: payload })) {
                 showNoticeCard('与服务端的连接尚未就绪，请稍后再试');
             }
         }
@@ -5295,6 +5383,7 @@
         }
 
         function getDefaultResultFieldOrderFor(mode, format) {
+            if (format === 'substore') return ['ipport'];
             if (format === 'txt') return mode === 'nsb' ? ['ipport', 'dc', 'loc'] : ['ipport', 'dc', 'dcCountry'];
             if (format === 'csv') return getCompactResultFieldOrderFor(mode);
             const rows = getCurrentResultRows(mode);
@@ -5349,7 +5438,8 @@
             resultFieldOrder = getDefaultResultFieldOrder(format);
             const pathInput = document.getElementById('githubPath');
             if (pathInput && pathInput.value.trim()) {
-                pathInput.value = pathInput.value.trim().replace(/\.(csv|txt)$/i, `.${format}`);
+                const ext = format === 'substore' ? 'txt' : format;
+                pathInput.value = pathInput.value.trim().replace(/\.(csv|txt)$/i, `.${ext}`);
             }
             renderResultFieldOptions();
         }
@@ -5915,6 +6005,17 @@
             copyToClipboard(content, event);
         }
 
+        function copySubstoreResults(event) {
+            let content;
+            try {
+                content = buildSubstoreContent(getSelectedCopyRows());
+            } catch (err) {
+                showNoticeCard(err.message || '暂无可复制结果');
+                return;
+            }
+            copyToClipboard(content, event);
+        }
+
         function getCurrentResultRows(mode) {
             if (currentMode === 'nsb') return getNSBResultObjects();
             if (mode === 'test') return testData.map(testResultToObject);
@@ -6029,8 +6130,80 @@
             return raw;
         }
 
+        function buildSubstoreContent(rows) {
+            if (!rows.length) throw new Error('暂无可操作结果');
+            const lines = rows.map((row) => {
+                const endpoint = buildSubstoreEndpoint(row);
+                return endpoint ? `${endpoint}#${buildSubstoreAlias(row)}` : '';
+            }).filter(Boolean);
+            if (!lines.length) throw new Error('没有可导出的目标地址');
+            return lines.join('\n') + '\n';
+        }
+
+        function buildSubstoreEndpoint(row) {
+            let host = String(row.ip ?? '').trim();
+            let port = String(row.port ?? '').trim();
+            if (!host) {
+                const parsed = splitSubstoreIPPort(row.ipport);
+                host = parsed.host;
+                port = parsed.port;
+            }
+            return formatSubstoreEndpoint(host, port);
+        }
+
+        function splitSubstoreIPPort(value) {
+            const endpoint = String(value ?? '').trim();
+            if (!endpoint) return { host: '', port: '' };
+            if (endpoint.startsWith('[')) {
+                if (endpoint.endsWith(']')) return { host: endpoint.slice(1, -1), port: '' };
+                const match = endpoint.match(/^\[([^\]]+)\]:(\d+)$/);
+                if (!match || !isValidSubstorePort(match[2])) return { host: '', port: '' };
+                return { host: match[1], port: match[2] };
+            }
+            const parts = endpoint.split(':');
+            if (parts.length === 1) return { host: endpoint, port: '' };
+            if (parts.length > 2) {
+                // 未加括号的 IPv6 只接受含 :: 或 8 组完整写法，避免把 host:port:port 当成地址
+                const likelyIPv6 = /^[0-9a-fA-F:.]+$/.test(endpoint) && (endpoint.includes('::') || parts.length === 8);
+                return likelyIPv6 ? { host: endpoint, port: '' } : { host: '', port: '' };
+            }
+            if (!parts[0] || !isValidSubstorePort(parts[1])) return { host: '', port: '' };
+            return { host: parts[0], port: parts[1] };
+        }
+
+        function isValidSubstorePort(port) {
+            return /^\d+$/.test(port) && Number(port) >= 1 && Number(port) <= 65535;
+        }
+
+        function formatSubstoreEndpoint(host, port) {
+            let safeHost = String(host ?? '').trim();
+            if (!safeHost) return '';
+            if (safeHost.startsWith('[') && safeHost.endsWith(']')) safeHost = safeHost.slice(1, -1);
+            const safePort = String(port ?? '').trim();
+            const formattedHost = safeHost.includes(':') ? `[${safeHost}]` : safeHost;
+            return safePort && safePort !== '0' ? `${formattedHost}:${safePort}` : formattedHost;
+        }
+
+        function sanitizeSubstoreAliasPart(value) {
+            return String(value ?? '').replaceAll('#', '').split(/\s+/).filter(Boolean).join(' ');
+        }
+
+        function buildSubstoreAlias(row) {
+            const dc = sanitizeSubstoreAliasPart(row.dc);
+            const city = sanitizeSubstoreAliasPart(row.city);
+            if (dc && city) return `${dc}-${city}`;
+            if (dc) return dc;
+            if (city) return city;
+            const loc = sanitizeSubstoreAliasPart(row.loc);
+            if (loc) return loc;
+            const ip = sanitizeSubstoreAliasPart(row.ip);
+            if (ip) return ip;
+            return sanitizeSubstoreAliasPart(row.ipport);
+        }
+
         function buildResultContent(format, rows, fields, textSeparator = '-', useBrackets = true) {
             if (!rows.length) throw new Error('暂无可操作结果');
+            if (format === 'substore') return buildSubstoreContent(rows);
             if (format === 'txt') {
                 return rows.map((r) => {
                     const ipport = r.ip ? formatIPPort(r.ip, r.port, useBrackets) : (r.ipport || `${r.ip || ''}:${r.port || ''}`);
@@ -6081,6 +6254,7 @@
             if (!rows.length) return '暂无预览';
             const fields = resultFieldOrder.length ? resultFieldOrder : getDefaultResultFieldOrder(format);
             const first = rows[0];
+            if (format === 'substore') return buildSubstoreContent([first]).trimEnd();
             if (format === 'txt') {
                 const ipport = first.ip ? formatIPPort(first.ip, first.port, useIPv6BracketsFor('result')) : (first.ipport || `${first.ip || ''}:${first.port || ''}`);
                 const extras = fields.filter((k) => k !== 'ipport').map((k) => first[k]).filter((v) => String(v ?? '').trim() !== '');
@@ -6184,7 +6358,7 @@
                 return;
             }
             const name = document.getElementById('resultFileName').value.trim() || 'cfdata-results';
-            downloadFile(content, name, format);
+            downloadFile(content, name, format === 'substore' ? 'txt' : format);
         }
 
         async function uploadSelectedResultsToGitHub() {
@@ -6203,7 +6377,7 @@
                 token: document.getElementById('githubToken').value.trim(),
                 owner: repoParts[0], repo: repoParts[1],
                 branch: document.getElementById('githubBranch').value.trim() || 'main',
-                path: document.getElementById('githubPath').value.trim() || (quickFile ? `results/${quickFile.name}` : `results/ip.${format}`),
+                path: document.getElementById('githubPath').value.trim() || (quickFile ? `results/${quickFile.name}` : `results/ip.${format === 'substore' ? 'txt' : format}`),
                 message: document.getElementById('githubMessage').value.trim() || 'update cfdata results',
                 content,
             };
@@ -6303,6 +6477,10 @@
                     break;
                 case 'proxy_status':
                     applyProxyStatus(msg.data || {});
+                    break;
+                case 'schedule_config':
+                    applyScheduleConfig(msg.data || {});
+                    if (msg.data && msg.data.saved) showNoticeCard('调度设置已保存');
                     break;
                 case 'proxy_updated':
                     applyProxyStatus(msg.data || {}); {

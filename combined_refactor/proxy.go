@@ -118,6 +118,14 @@ func applyManagementProxy(transport *http.Transport) *http.Transport {
 	return transport
 }
 
+func managementTransport() *http.Transport {
+	transport := http.DefaultTransport.(*http.Transport).Clone()
+	transport.DialContext = dialContext
+	transport.TLSClientConfig = tlsConfigWithRootCAs("")
+	applyManagementProxy(transport)
+	return transport
+}
+
 var managementHTTPClientCache struct {
 	sync.RWMutex
 	client *http.Client
@@ -136,10 +144,7 @@ func managementHTTPClient(timeout time.Duration) *http.Client {
 		return client
 	}
 
-	transport := http.DefaultTransport.(*http.Transport).Clone()
-	transport.DialContext = dialContext
-	transport.TLSClientConfig = tlsConfigWithRootCAs("")
-	applyManagementProxy(transport)
+	transport := managementTransport()
 	name := "upstream"
 	if managementProxyConfigured() {
 		name = "upstream-proxy"
@@ -200,11 +205,11 @@ func applyManagementProxyFromConfigFile(path string) {
 	}
 }
 
-var proxyConfigWriteMutex sync.Mutex
+var configFileWriteMutex sync.Mutex
 
 func updateProxyInConfigFile(path, raw string) error {
-	proxyConfigWriteMutex.Lock()
-	defer proxyConfigWriteMutex.Unlock()
+	configFileWriteMutex.Lock()
+	defer configFileWriteMutex.Unlock()
 	data, err := os.ReadFile(path)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -234,7 +239,7 @@ func updateProxyInConfigFile(path, raw string) error {
 		return err
 	}
 	out = append(out, '\n')
-	if err := os.WriteFile(path, out, 0600); err != nil {
+	if err := atomicWriteFile(path, out, 0600); err != nil {
 		return err
 	}
 	os.WriteFile(path+".bak", data, 0600)

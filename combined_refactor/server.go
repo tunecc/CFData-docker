@@ -475,19 +475,61 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 			}
 			session.sendWSMessage("proxy_updated", status)
 		},
-		"get_config": func(data json.RawMessage) {
-			cfgPath := defaultCLIConfigPath()
-			raw, err := os.ReadFile(cfgPath)
+		"get_schedule_config": func(data json.RawMessage) {
+			payload, err := scheduleConfigPayload(defaultCLIConfigPath())
 			if err != nil {
-				session.sendWSMessage("error", "读取配置文件失败: "+err.Error())
+				session.sendWSMessage("error", "读取调度配置失败: "+err.Error())
 				return
 			}
-			var parsed interface{}
-			if err := json.Unmarshal(raw, &parsed); err != nil {
-				session.sendWSMessage("error", "解析配置文件失败: "+err.Error())
+			session.sendWSMessage("schedule_config", payload)
+		},
+		"set_schedule_config": func(data json.RawMessage) {
+			var params struct {
+				ScheduleEnabled *bool   `json:"scheduleEnabled"`
+				CronExpression  *string `json:"cronExpression"`
+				CheckInterval   *int    `json:"checkInterval"`
+				R2Enabled       *bool   `json:"r2Enabled"`
+				R2WorkerURL     *string `json:"r2WorkerUrl"`
+				R2WorkerToken   *string `json:"r2WorkerToken"`
+				R2Filename      *string `json:"r2Filename"`
+			}
+			if err := json.Unmarshal(data, &params); err != nil {
+				session.sendWSMessage("error", "set_schedule_config 参数解析失败")
 				return
 			}
-			session.sendWSMessage("config_data", parsed)
+			update := scheduleConfigUpdate{
+				ScheduleEnabled: params.ScheduleEnabled,
+				CronExpression:  params.CronExpression,
+				CheckInterval:   params.CheckInterval,
+				R2Enabled:       params.R2Enabled,
+				R2WorkerURL:     params.R2WorkerURL,
+				R2WorkerToken:   params.R2WorkerToken,
+				R2Filename:      params.R2Filename,
+			}
+			if err := validateScheduleConfigUpdate(&update); err != nil {
+				session.sendWSMessage("error", err.Error())
+				return
+			}
+			if err := saveScheduleConfigFields(defaultCLIConfigPath(), update); err != nil {
+				session.sendWSMessage("error", "保存调度配置失败: "+err.Error())
+				return
+			}
+			reloadWebScheduler()
+			payload, err := scheduleConfigPayload(defaultCLIConfigPath())
+			if err != nil {
+				session.sendWSMessage("error", "调度配置已保存，但重新读取失败: "+err.Error())
+				return
+			}
+			payload["saved"] = true
+			session.sendWSMessage("schedule_config", payload)
+		},
+		"get_config": func(data json.RawMessage) {
+			payload, err := buildConfigDataPayload(defaultCLIConfigPath())
+			if err != nil {
+				session.sendWSMessage("error", err.Error())
+				return
+			}
+			session.sendWSMessage("config_data", payload)
 		},
 		"check_proxy_country": func(data json.RawMessage) {
 			if skipGeoCheck {
@@ -842,4 +884,34 @@ func uploadToEdgetunnel(ctx context.Context, params edgetunnelUploadRequest, onS
 		return err
 	}
 	return nil
+}
+
+func buildConfigDataPayload(path string) (interface{}, error) {
+	raw, err := os.ReadFile(path)
+	if err != nil {
+		return nil, fmt.Errorf("读取配置文件失败: %w", err)
+	}
+	var parsed interface{}
+	if err := json.Unmarshal(raw, &parsed); err != nil {
+		return nil, fmt.Errorf("解析配置文件失败: %w", err)
+	}
+	return sanitizeConfigDataForWeb(parsed), nil
+}
+
+func sanitizeConfigDataForWeb(parsed interface{}) interface{} {
+	root, ok := parsed.(map[string]interface{})
+	if !ok {
+		return parsed
+	}
+	blankR2WorkerToken(root)
+	if inner, ok := root["config"].(map[string]interface{}); ok {
+		blankR2WorkerToken(inner)
+	}
+	return root
+}
+
+func blankR2WorkerToken(container map[string]interface{}) {
+	if _, exists := container["r2workertoken"]; exists {
+		container["r2workertoken"] = ""
+	}
 }

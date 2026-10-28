@@ -16,9 +16,9 @@ CFData-Web 是一个基于 Go 的 Cloudflare IP 测试与筛选工具，提供�
 - 测速地址可用性预检：启动时并行探测全部内置与自定义测速地址，自动选择时排除不可用项，全部不可用回退 CF 官方地址；Web 下拉框实时展示可用性
 - 结果区「筛选排序」合一：原独立筛选下拉与一键排序合并进单个弹窗，新增「延迟低于 xx ms」「丢包低于 xx%」筛选，并与复制/导出内容联动
 - 管理面代理：新增 -proxy 参数与配置文件 proxy 键（支持 socks5://、socks5h://、http://、https://），覆盖数据下载、版本检查、GitHub/订阅上传；Web 设置菜单可直接配置，未配置时自动使用系统环境变量代理；扫描与测速保持直连
-- CLI 交互菜单：`-cli` 进入菜单（按配置启动 / 自定义参数启动 / 修改配置参数 / 定时任务 / 帮助），`-cli qs` 按已保存配置快速启动，`-cli -参数…` 直接执行；启动时输出 Banner 与「调试等级」
+- CLI 交互菜单：`-cli` 进入菜单（按配置启动 / 自定义参数启动 / 修改配置参数 / 自动调度 / 帮助），`-cli qs` 按已保存配置快速启动，`-cli -参数…` 直接执行；启动时输出 Banner 与「调试等级」
 - 参数设置向导：分模块逐项设置，提示格式与可选值，可保存为配置文件
-- 定时任务：仅 Linux systemd，按天/周/月执行，开机自启，失败自动回滚清理，unit 与日志在程序目录
+- 自动调度：进程内 Cron/Ticker 调度，支持 Cron 表达式与检测间隔两种计划，Web 设置与 CLI 菜单可直接开关，无需 systemd
 - 官方/非标的扫描并发、延迟阈值、测速网址在命令行与配置文件中完全独立，互不影响
 - 配置文件自动迁移：键名无变化时静默按新模板迁移；存在旧键名时交互提示（仅迁移同名值），原文件备份为 `.bak`，非交互环境自动跳过
 - 启动输出统一为简洁的「当前配置」单块，版本行下方显示调试等级
@@ -29,9 +29,9 @@ CFData-Web 是一个基于 Go 的 Cloudflare IP 测试与筛选工具，提供�
 - 非标优选：上传本地 txt/csv 或填写网络 URL，测试自定义 IP/域名与端口。
 - 测速：支持单点测速、批量测速、非标并发测速和测速阈值筛选。
 - 链路复验：扫描完成后对候选做真实 TCP+TLS+HTTP 探针验证，自动剔除不可用项；Web 支持手动复验按钮。
-- 导出：支持 CSV/TXT、自定义字段、IP 类型筛选、合格结果筛选。
-- 上传：支持将导出结果上传到 GitHub。
-- CLI：交互菜单、参数设置向导、定时任务、配置自动迁移。
+- 导出：支持 CSV/TXT/Sub-Store 目标列表、自定义字段、IP 类型筛选、合格结果筛选。
+- 上传：支持将导出结果上传到 GitHub 与 R2（Worker 兼容接口）。
+- CLI：交互菜单、参数设置向导、自动调度、配置自动迁移。
 - APK：支持 Android WebView 壳运行内置后端。
 
 ## 快速开始
@@ -53,7 +53,7 @@ CLI 模式（进入交互菜单）：
 ./cfdata-linux-amd64 -cli
 ```
 
-菜单提供：按配置启动（菜单 1，等价 `-cli qs`）、自定义参数启动（向导）、修改配置参数、定时任务、帮助。
+菜单提供：按配置启动（菜单 1，等价 `-cli qs`）、自定义参数启动（向导）、修改配置参数、自动调度、帮助。
 
 首次使用 CLI 配置文件时会生成模板并退出，编辑配置后重新运行即可；也可通过菜单「修改配置参数」逐项设置。升级后启动时若配置键名有变化会提示迁移：同名值保留，原文件备份为 `.bak`，非交互环境自动跳过。
 
@@ -121,6 +121,108 @@ docker run -d --name cfdata -p 13335:13335 -v cfdata-data:/data ghcr.io/tunecc/c
 ```
 
 未提供端口时会使用备用端口；备用端口默认随 TLS 模式自动选择，关闭 TLS 为 80，开启 TLS 为 443。
+
+### Sub-Store 目标列表
+
+导出弹窗的「文件格式」和一键复制弹窗提供「Sub-Store 目标列表」，CLI 使用 `-outformat substore`。输出为每行 `host[:port]#alias` 的纯文本，文件扩展名固定为 `.txt`：
+
+```text
+1.2.3.4:443#LAX-洛杉矶
+[2606:4700::1]:443#HKG-香港
+```
+
+- IPv6 始终输出方括号，不受 `-outv6bracket` 影响；端口为空或为 0 时省略 `:port`。
+- 别名默认为「数据中心-城市」，缺失时依次回退到数据中心、城市、`loc`、IP，并清洗 `#`、换行与多余空白。
+- 输出遵循开始行/结束行、IP 类型与合格结果筛选，超出上限的行不会导出或上传。
+
+配合 Sub-Store operator 脚本 [`substore/cloudflare-targets.js`](substore/cloudflare-targets.js) 使用，把导出的文件地址加入脚本的 `urls`，例如 R2 的公网地址：
+
+```js
+const CONFIG = {
+  // ...
+  urls: [
+    'https://<你的-R2-公网域名>/cfdata-targets.txt',
+  ],
+  urlTimeout: 5000,
+};
+```
+
+脚本同时支持 Untitled.js 原有的 `host[:port]#alias` 文本与 WeTest 优选地址表格（`data-label="线路名称"` 页面）。脚本用法与常见问题见 [substore/README.md](substore/README.md)。
+
+### R2 上传（Worker 兼容接口）
+
+在配置文件 `config` 中启用 R2 上传：
+
+```json
+{
+  "config": {
+    "r2enabled": true,
+    "r2workerurl": "https://r2.example.com",
+    "r2workertoken": "your-token",
+    "r2filename": "cfdata-targets.txt"
+  }
+}
+```
+
+Web 设置菜单的「自动调度 / R2 上传」面板可直接编辑并保存，保存后立即热更新。保存后 token 不再回显到浏览器：输入框显示「已保存，留空保持不变」，留空保存不会覆盖已存储的 token。调度或手动导出完成后，上传内容始终为 Sub-Store 目标列表，与本地导出格式无关；未产生结果时跳过上传。
+
+Worker 协议：
+
+```text
+POST {r2workerurl}/storage?token={r2workertoken}
+Content-Type: application/json
+
+{"filename": "cfdata-targets.txt", "value": "1.2.3.4:443#LAX-洛杉矶\n"}
+```
+
+返回 2xx 视为成功。上传遵循管理面代理配置，单次请求 30 秒超时，失败最多尝试 3 次（间隔 2 秒）；HTTP 401/403 视为 token 配置错误，不重试。上传失败只记录日志，不会覆盖 R2 上的旧文件，也不影响本地导出与后续调度。
+
+故障排查：
+
+- 日志提示 `worker-url 未配置` 或 `worker-token 未配置`：启用 R2 前需同时填写两项。
+- 日志提示 `R2 鉴权失败（HTTP 401/403）`：检查 token 是否与 Worker 一致，注意不要带入多余空格或换行。
+- 连续失败：检查 Worker 地址、管理面代理、R2 绑定与网络连通性；日志中的地址已去除 query，不会输出 token。
+- Sub-Store 拉取不到内容：确认 `r2filename` 与 `urls` 中的地址一致，并确认 Worker 对该文件名提供公开 GET。
+
+## 自动调度
+
+调度由程序进程内完成，不依赖 systemd、root 权限或 Linux 专有机制；Web 模式启动后自动加载，CLI 菜单「自动调度 → 启动常驻调度」也可运行。调度参数来自配置文件 `config`：
+
+```json
+{
+  "config": {
+    "schedule-enabled": true,
+    "cron-expression": "0 4 * * *",
+    "check-interval": 720
+  }
+}
+```
+
+- `schedule-enabled`：总开关，默认 `false`。
+- `cron-expression`：5 段标准 Cron（分 时 日 月 周），非空且有效时优先于检测间隔，例如 `0 4 * * *` 表示每天 04:00。
+- `check-interval`：检测间隔（分钟）。`<=0` 按 2880 分钟、小于 60 按 60 分钟处理；仅在 Cron 为空或无效时生效。
+
+计划行为：
+
+- Cron 模式：进程启动后不立即扫描，按表达式等待下一次触发。
+- 间隔模式：进程启动后立即执行一次，之后按间隔重复；`Reload` 只重建计划，不补发立即执行。
+- 每次触发前检查是否有任务运行中，忙碌时跳过本次并记录日志。
+- 调度扫描完成后固定按 Sub-Store 目标列表导出（本地文件为 `.txt`），启用 R2 时同步上传；空结果跳过上传，上传失败只记录日志，不影响后续调度。
+- 修改配置后 Web 设置面板会立即热更新；直接编辑配置文件时，后台每 10 秒检测变更并重载。
+
+Web 设置菜单的「自动调度 / R2 上传」面板可开关调度、编辑 Cron/间隔与 R2 参数，保存即生效。
+
+### 从 systemd 迁移
+
+旧版本的定时任务通过 `cfdata-schedule.timer` 触发外部 CLI。升级后请停用并清理旧 unit，避免与进程内调度重复执行：
+
+```bash
+sudo systemctl disable --now cfdata-schedule.timer
+sudo systemctl daemon-reload
+sudo rm -f /etc/systemd/system/cfdata-schedule.timer /etc/systemd/system/cfdata-schedule.service
+```
+
+程序目录中的 `cfdata-schedule.service`、`cfdata-schedule.timer` 与 `cfdata-schedule.log` 不再使用，可按需删除。随后在 Web 设置面板或 CLI 菜单「自动调度」中启用调度并设置 Cron/间隔。同一个配置文件只应由一个进程加载调度，避免多实例重复扫描。
 
 ## 测速地址
 

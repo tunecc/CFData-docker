@@ -93,6 +93,26 @@ docker inspect --format '{{.State.Health.Status}}' cfdata
 
 同一个数据卷只应运行一个容器，避免多个实例同时修改配置。
 
+## 自动调度
+
+调度在容器内的应用进程中运行，不使用 systemd。容器以 Web 模式启动后会自动读取 `/data/cfdata-config.json` 中的调度配置：
+
+```json
+{
+  "config": {
+    "schedule-enabled": true,
+    "cron-expression": "0 4 * * *",
+    "check-interval": 720
+  }
+}
+```
+
+- `cron-expression` 为 5 段标准 Cron，有效时优先；留空或无效时使用 `check-interval`（分钟）。
+- 也可在 Web 右上角设置菜单的「自动调度 / R2 上传」面板中开关和编辑，保存后立即热更新。
+- 调度扫描完成后固定导出 Sub-Store 目标列表并触发已启用的 R2 上传；空结果跳过上传，失败只记录日志。
+- 需要长期运行请使用 `--restart unless-stopped`（Compose 示例已包含），并确保容器只有一个实例使用该数据卷。
+- 升级前已用宿主机 systemd `cfdata-schedule.timer` 调度的，请先停用旧 timer 并清理 unit，避免与容器内调度重复执行。
+
 ## 升级
 
 ```bash

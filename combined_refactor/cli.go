@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"math"
+	"net"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -57,6 +58,10 @@ type cliConfig struct {
 	outQualified    string
 	startRow        int
 	endRow          int
+	r2Enabled       bool
+	r2WorkerURL     string
+	r2WorkerToken   string
+	r2Filename      string
 	export          cliExportConfig
 }
 
@@ -140,6 +145,13 @@ type cliFileConfig struct {
 	ETHost          string  `json:"ethost"`
 	ETPassword      string  `json:"etpassword"`
 	ETMode          string  `json:"etmode"`
+	ScheduleEnabled bool    `json:"schedule-enabled"`
+	CronExpression  string  `json:"cron-expression"`
+	CheckInterval   int     `json:"check-interval"`
+	R2Enabled       bool    `json:"r2enabled"`
+	R2WorkerURL     string  `json:"r2workerurl"`
+	R2WorkerToken   string  `json:"r2workertoken"`
+	R2Filename      string  `json:"r2filename"`
 }
 
 type cliResultRow map[string]string
@@ -219,7 +231,7 @@ var (
 		{name: "debug", description: "调试输出等级：error、all；true 等同 error", defaultValue: "false"},
 		{name: "compactipv4", description: "精简本地 IPv4 地址库：按 /24 子网测 TCP:80 连通性并覆盖 ips-v4.txt", defaultValue: "false"},
 		{name: "config", description: "CLI 配置文件路径，不存在时在二进制目录自动生成模板", defaultValue: "二进制目录/cfdata-config.json"},
-		{name: "outformat", description: "CLI 导出格式：csv 或 txt", defaultValue: "txt"},
+		{name: "outformat", description: "CLI 导出格式：csv、txt 或 substore（Sub-Store 目标列表，固定导出 .txt）", defaultValue: "txt"},
 		{name: "outfields", description: "CLI 导出字段：compact、all、ipport 或逗号分隔字段 key；可用 -outcustom 增加常量字段", defaultValue: "compact"},
 		{name: "outcustom", description: "CLI 自定义导出字段，格式 标题:内容，多项用逗号分隔；在 -outfields 中可用标题排序，未写入则默认追加到最后", defaultValue: ""},
 		{name: "outv6bracket", description: "TXT 导出时对 IPv6 地址加方括号（[IPv6]:端口）", defaultValue: "true"},
@@ -314,7 +326,7 @@ func registerCLIFlags() *cliConfig {
 	flag.BoolVar(&cfg.noColor, "nocolor", false, "禁用 ANSI 颜色输出（cmd 等不支持的终端建议开启）")
 	flag.BoolVar(&cfg.compactIPv4, "compactipv4", false, "精简本地 IPv4 地址库，按 /24 子网探测 TCP:80 连通性后覆盖 ips-v4.txt")
 	flag.StringVar(&cfg.export.ConfigFile, "config", "", "CLI 导出/GitHub 配置文件路径")
-	flag.StringVar(&cfg.export.Format, "outformat", "", "CLI 导出格式：csv 或 txt")
+	flag.StringVar(&cfg.export.Format, "outformat", "", "CLI 导出格式：csv、txt 或 substore")
 	flag.StringVar(&cfg.export.Fields, "outfields", "", "CLI 导出字段：compact、all、ipport 或逗号分隔字段 key")
 	flag.StringVar(&cfg.export.Custom, "outcustom", "", "CLI 自定义导出字段，格式 标题:内容，多项用逗号分隔")
 	flag.StringVar(&cfg.export.Separator, "outseparator", "", "TXT 导出字段分隔符；写 空格 表示空格")
@@ -448,8 +460,13 @@ func resolveCLIExportConfig(cfg *cliConfig) error {
 }
 
 func applyCLIExportResolution(cfg *cliConfig, fileCfg cliFileConfig, configPath string, provided map[string]bool) error {
-	merged := defaultCLIExportConfig()
 	applyCLIFileConfig(cfg, fileCfg, provided)
+	return resolveCLIExportFields(cfg, fileCfg, configPath, provided)
+}
+
+// resolveCLIExportFields 只解析导出配置，不修改进程级运行时设置
+func resolveCLIExportFields(cfg *cliConfig, fileCfg cliFileConfig, configPath string, provided map[string]bool) error {
+	merged := defaultCLIExportConfig()
 	if !provided["nsbfallbackport"] && fileCfg.NSBFallbackPort <= 0 {
 		cfg.nsbFallbackPort = defaultNSBPort(cfg.enableTLS)
 	}
@@ -460,7 +477,7 @@ func applyCLIExportResolution(cfg *cliConfig, fileCfg cliFileConfig, configPath 
 	if merged.Format == "" {
 		merged.Format = "txt"
 	}
-	if merged.Format != "csv" && merged.Format != "txt" {
+	if merged.Format != "csv" && merged.Format != "txt" && merged.Format != "substore" {
 		return fmt.Errorf("不支持的 -outformat: %s", merged.Format)
 	}
 	if strings.TrimSpace(merged.Fields) == "" {
@@ -476,7 +493,7 @@ func applyCLIExportResolution(cfg *cliConfig, fileCfg cliFileConfig, configPath 
 		merged.GHMessage = "update cfdata results"
 	}
 	if strings.TrimSpace(merged.GHPath) == "" || (!provided["ghpath"] && fileCfg.GHPath == "") {
-		merged.GHPath = "results/ip." + merged.Format
+		merged.GHPath = "results/ip." + cliExportFileExtension(merged.Format)
 	}
 	if merged.GHToken == "" && strings.TrimSpace(merged.GHTokenFile) != "" {
 		data, err := os.ReadFile(expandHome(merged.GHTokenFile))
@@ -517,7 +534,7 @@ func defaultCLIExportConfig() cliExportConfig {
 }
 
 func defaultCLIFileConfig() cliFileConfig {
-	return cliFileConfig{CLI: false, Mode: "official", ScanMode: "tcping", IPType: 4, Threads: 100, NSBThreads: 100, Out: "cfdata-results", SpeedTest: 0, Progress: true, NoColor: false, URL: autoSpeedURLValue, NSBURL: autoSpeedURLValue, DNS: defaultDNSServers, Debug: false, CompactIPv4: false, TestPort: 443, Delay: 500, NSBDelay: 0, DC: "", SpeedLimit: 5, SpeedMin: 0.1, File: "", SourceURL: "", NSBFallbackPort: 0, OutIPType: "all", OutQualified: "all", NSBDC: "", Relink: true, RelinkHost: "probe.609909.xyz", TLS: true, Compact: true, ResultLimit: 1000, NSBSpeedMin: 0.1, NSBSpeedLimit: 5, Format: "txt", Fields: "compact", Custom: "", V6Bracket: true, Separator: "-", OutStartRow: 1, OutEndRow: 20, GitHub: false, GHBranch: "main", GHPath: "", GHMessage: "update cfdata results", EdgeTunnel: false, ETMode: "overwrite"}
+	return cliFileConfig{CLI: false, Mode: "official", ScanMode: "tcping", IPType: 4, Threads: 100, NSBThreads: 100, Out: "cfdata-results", SpeedTest: 0, Progress: true, NoColor: false, URL: autoSpeedURLValue, NSBURL: autoSpeedURLValue, DNS: defaultDNSServers, Debug: false, CompactIPv4: false, TestPort: 443, Delay: 500, NSBDelay: 0, DC: "", SpeedLimit: 5, SpeedMin: 0.1, File: "", SourceURL: "", NSBFallbackPort: 0, OutIPType: "all", OutQualified: "all", NSBDC: "", Relink: true, RelinkHost: "probe.609909.xyz", TLS: true, Compact: true, ResultLimit: 1000, NSBSpeedMin: 0.1, NSBSpeedLimit: 5, Format: "txt", Fields: "compact", Custom: "", V6Bracket: true, Separator: "-", OutStartRow: 1, OutEndRow: 20, GitHub: false, GHBranch: "main", GHPath: "", GHMessage: "update cfdata results", EdgeTunnel: false, ETMode: "overwrite", ScheduleEnabled: false, CronExpression: "", CheckInterval: 0, R2Enabled: false, R2WorkerURL: "", R2WorkerToken: "", R2Filename: "cfdata-targets.txt"}
 }
 
 func (c cliFileConfig) Export() cliExportConfig {
@@ -743,7 +760,7 @@ func newCLIConfigTemplate(cfg cliFileConfig) cliExportConfigTemplate {
 		Priority:        "命令行参数 > 配置文件 > 默认值",
 		Usage:           "首次生成后建议退出并编辑本文件，再重新运行测试。debug 支持 false、error、all、true。",
 		ConfigHelp:      buildCLIConfigHelp(),
-		FormatValues:    []string{"csv", "txt"},
+		FormatValues:    []string{"csv", "txt", "substore"},
 		FieldsValues:    []string{"compact", "all", "ipport", "ipport,dc,loc", "ipport,latency,dc,loc"},
 		ModeValues:      []string{"official", "nsb"},
 		AvailableFields: cliResultFields,
@@ -759,7 +776,7 @@ func writeCLIConfigTemplate(path string, cfg cliFileConfig) error {
 	if err := encoder.Encode(template); err != nil {
 		return err
 	}
-	return os.WriteFile(path, []byte(buf.String()), 0600)
+	return atomicWriteFile(path, []byte(buf.String()), 0600)
 }
 
 func buildCLIConfigHelp() []cliConfigHelp {
@@ -798,7 +815,7 @@ func buildCLIConfigHelp() []cliConfigHelp {
 		{Name: "relink", Description: "链路复验开关；开启后非标扫描完成时对结果做真实链路验证（TCP+TLS+HTTP 访问探针域），不可用的候选将被剔除", Default: "true", Options: []string{"true", "false"}},
 		{Name: "relinkhost", Description: "链路复验探针域名；默认使用内置公共探针，配合 relink 开关使用", Default: "probe.609909.xyz"},
 		{Name: "proxy", Description: "管理面代理；下载 ASN 库/locations、版本检查上传 GitHub/订阅等走此代理，扫描测速不受影响。支持 socks5://、socks5h://、http://、https://，留空使用系统环境变量代理", Default: ""},
-		{Name: "outformat", Description: "导出/上传内容格式", Default: "txt", Options: []string{"csv", "txt"}},
+		{Name: "outformat", Description: "导出/上传内容格式；substore 为 Sub-Store 目标列表，固定导出 .txt", Default: "txt", Options: []string{"csv", "txt", "substore"}},
 		{Name: "outfields", Description: "导出字段；支持 compact、all、ipport 或逗号分隔字段 key；自定义字段可写在这里排序", Default: "compact", Options: []string{"compact", "all", "ipport", "ipport,dc,loc", "ipport,latency,dc,loc"}},
 		{Name: "outcustom", Description: "自定义导出字段，格式 标题:内容，多项用逗号分隔；未在 outfields 中排序时默认追加到最后。兼容 key=标题:内容", Default: ""},
 		{Name: "outv6bracket", Description: "TXT 导出时对 IPv6 地址加方括号（[IPv6]:端口），仅对 IPv6 行生效", Default: "true", Options: []string{"true", "false"}},
@@ -819,10 +836,18 @@ func buildCLIConfigHelp() []cliConfigHelp {
 		{Name: "ethost", Description: "edgetunnel 主机地址，例如 https://example.com", Default: ""},
 		{Name: "etpassword", Description: "edgetunnel 密码", Default: ""},
 		{Name: "etmode", Description: "edgetunnel 上传模式", Default: "overwrite", Options: []string{"overwrite", "append"}},
+		{Name: "schedule-enabled", Description: "启用进程内自动调度；关闭时不执行任何定时扫描", Default: "false", Options: []string{"true", "false"}},
+		{Name: "cron-expression", Description: "Cron 表达式（5 段标准格式）；非空且有效时优先于 check-interval", Default: ""},
+		{Name: "check-interval", Description: "检测间隔（分钟）；<=0 按 2880、<60 按 60 处理；cron-expression 有效时忽略", Default: "0"},
+		{Name: "r2enabled", Description: "调度或导出后上传目标列表到 Cloudflare R2（Worker 兼容接口）", Default: "false", Options: []string{"true", "false"}},
+		{Name: "r2workerurl", Description: "R2 Worker 基础地址，例如 https://r2.example.com；系统请求其 /storage 端点", Default: ""},
+		{Name: "r2workertoken", Description: "R2 Worker 访问令牌；仅通过查询参数发送，不写入日志", Default: ""},
+		{Name: "r2filename", Description: "上传到 R2 的文件名", Default: "cfdata-targets.txt"},
 	}
 }
 
-func applyCLIFileConfig(cfg *cliConfig, fileCfg cliFileConfig, provided map[string]bool) {
+// applyCLIFileConfigFields 只填充本次运行的 cliConfig，不修改进程级运行时设置
+func applyCLIFileConfigFields(cfg *cliConfig, fileCfg cliFileConfig, provided map[string]bool) {
 	setString := func(name string, target *string, value string) {
 		if !provided[name] && strings.TrimSpace(value) != "" {
 			*target = value
@@ -838,12 +863,8 @@ func applyCLIFileConfig(cfg *cliConfig, fileCfg cliFileConfig, provided map[stri
 			*target = value
 		}
 	}
-	if !provided["debug"] {
-		applyConfigDebug(fileCfg.Debug)
-	}
 	setString("mode", &cfg.mode, fileCfg.Mode)
 	setString("scanmode", &cfg.scanMode, fileCfg.ScanMode)
-	isNSBRun := strings.EqualFold(strings.TrimSpace(cfg.mode), "nsb")
 	if !provided["offiptype"] {
 		cfg.ipType = fileCfg.IPType
 	}
@@ -857,26 +878,29 @@ func applyCLIFileConfig(cfg *cliConfig, fileCfg cliFileConfig, provided map[stri
 		cfg.outFile = fileCfg.Out
 	}
 	setInt("nsbspeedtest", &cfg.speedTest, fileCfg.SpeedTest)
+	if !provided["r2enabled"] {
+		cfg.r2Enabled = fileCfg.R2Enabled
+	}
+	if !provided["r2workerurl"] {
+		cfg.r2WorkerURL = fileCfg.R2WorkerURL
+	}
+	if !provided["r2workertoken"] {
+		cfg.r2WorkerToken = fileCfg.R2WorkerToken
+	}
+	if !provided["r2filename"] {
+		cfg.r2Filename = fileCfg.R2Filename
+	}
 	if !provided["progress"] {
 		cfg.showProgress = fileCfg.Progress
 	}
 	if !provided["nocolor"] {
 		cfg.noColor = fileCfg.NoColor
 	}
-	if !provided["skipgeo"] {
-		skipGeoCheck = fileCfg.SkipGeo
-	}
 	if !provided["offurl"] && strings.TrimSpace(fileCfg.URL) != "" {
 		cfg.offURL = fileCfg.URL
 	}
 	if !provided["nsburl"] && strings.TrimSpace(fileCfg.NSBURL) != "" {
 		cfg.nsbURL = fileCfg.NSBURL
-	}
-	if !provided["dns"] && strings.TrimSpace(fileCfg.DNS) != "" {
-		customDNSServer = fileCfg.DNS
-	}
-	if provided["dns"] {
-		customDNSForced = true
 	}
 	if !provided["compactipv4"] {
 		cfg.compactIPv4 = fileCfg.CompactIPv4
@@ -918,6 +942,30 @@ func applyCLIFileConfig(cfg *cliConfig, fileCfg cliFileConfig, provided map[stri
 		cfg.relink = fileCfg.Relink
 	}
 	setString("relinkhost", &cfg.relinkHost, fileCfg.RelinkHost)
+	if strings.EqualFold(strings.TrimSpace(cfg.mode), "nsb") {
+		cfg.threads = cfg.nsbThreads
+		cfg.delay = cfg.nsbDelay
+	} else {
+		cfg.threads = cfg.offThreads
+		cfg.delay = cfg.offDelay
+	}
+}
+
+func applyCLIFileConfig(cfg *cliConfig, fileCfg cliFileConfig, provided map[string]bool) {
+	applyCLIFileConfigFields(cfg, fileCfg, provided)
+
+	if !provided["debug"] {
+		applyConfigDebug(fileCfg.Debug)
+	}
+	if !provided["skipgeo"] {
+		skipGeoCheck = fileCfg.SkipGeo
+	}
+	if !provided["dns"] && strings.TrimSpace(fileCfg.DNS) != "" {
+		customDNSServer = fileCfg.DNS
+	}
+	if provided["dns"] {
+		customDNSForced = true
+	}
 
 	proxyValue := strings.TrimSpace(fileCfg.Proxy)
 	if provided["proxy"] {
@@ -928,22 +976,18 @@ func applyCLIFileConfig(cfg *cliConfig, fileCfg cliFileConfig, provided map[stri
 	}
 
 	genericURL := speedTestURL
-	if isNSBRun {
-		cfg.threads = cfg.nsbThreads
-		cfg.delay = cfg.nsbDelay
+	if strings.EqualFold(strings.TrimSpace(cfg.mode), "nsb") {
 		if isAutoSpeedURL(cfg.nsbURL) && provided["url"] && strings.TrimSpace(genericURL) != "" {
 			speedTestURL = genericURL
 		} else {
 			speedTestURL = cfg.nsbURL
 		}
+		return
+	}
+	if isAutoSpeedURL(cfg.offURL) && provided["url"] && strings.TrimSpace(genericURL) != "" {
+		speedTestURL = genericURL
 	} else {
-		cfg.threads = cfg.offThreads
-		cfg.delay = cfg.offDelay
-		if isAutoSpeedURL(cfg.offURL) && provided["url"] && strings.TrimSpace(genericURL) != "" {
-			speedTestURL = genericURL
-		} else {
-			speedTestURL = cfg.offURL
-		}
+		speedTestURL = cfg.offURL
 	}
 }
 
@@ -1146,7 +1190,7 @@ func handleCLIMessage(cfg *cliConfig, session *appSession, msgType string, data 
 	}
 }
 
-func runOfficialCLI(cfg *cliConfig) error {
+func prepareOfficialCLIConfig(cfg *cliConfig) error {
 	if cfg.ipType != 4 && cfg.ipType != 6 {
 		return errors.New("官方模式 -offiptype 仅支持 4 或 6")
 	}
@@ -1165,17 +1209,32 @@ func runOfficialCLI(cfg *cliConfig) error {
 	if cfg.speedMin <= 0 {
 		cfg.speedMin = 0.1
 	}
+	return nil
+}
 
+func runOfficialCLI(cfg *cliConfig) error {
+	if err := prepareOfficialCLIConfig(cfg); err != nil {
+		return err
+	}
+
+	session := newCLISession(cfg)
+	var pipelineErr error
+	if err := session.runTaskSync(func(ctx context.Context, session *appSession) {
+		pipelineErr = runOfficialPipeline(ctx, session, cfg, speedTestURL)
+	}); err != nil {
+		return cliTaskError(err)
+	}
+	return pipelineErr
+}
+
+func runOfficialPipeline(ctx context.Context, session *appSession, cfg *cliConfig, speedURL string) error {
 	scanMode := cfg.scanMode
 	if scanMode == "" {
 		scanMode = scanModeTCPing
 	}
-
-	session := newCLISession(cfg)
-	if err := session.runTaskSync(func(ctx context.Context, session *appSession) {
-		runOfficialTask(ctx, session, cfg.ipType, cfg.threads, cfg.port, cfg.delay, scanMode)
-	}); err != nil {
-		return cliTaskError(err)
+	runOfficialTask(ctx, session, cfg.ipType, cfg.threads, cfg.port, cfg.delay, scanMode)
+	if ctx.Err() != nil {
+		return ctx.Err()
 	}
 
 	session.scanMutex.Lock()
@@ -1194,14 +1253,16 @@ func runOfficialCLI(cfg *cliConfig) error {
 		}
 		fmt.Printf("%s[official]%s 自动选择数据中心: %s\n", ansiGreen, ansiReset, colorize(dc, ansiBold+ansiGreen))
 	}
+	if ctx.Err() != nil {
+		return ctx.Err()
+	}
 
 	session.testMutex.Lock()
 	session.testResults = nil
 	session.testMutex.Unlock()
-	if err := session.runTaskSync(func(ctx context.Context, session *appSession) {
-		runDetailedTest(ctx, session, dc, cfg.port, cfg.delay, scanMode)
-	}); err != nil {
-		return cliTaskError(err)
+	runDetailedTest(ctx, session, dc, cfg.port, cfg.delay, scanMode)
+	if ctx.Err() != nil {
+		return ctx.Err()
 	}
 
 	session.testMutex.Lock()
@@ -1215,12 +1276,12 @@ func runOfficialCLI(cfg *cliConfig) error {
 		sortOfficialTestResults(results)
 		setCLIProgress(session, "speed", 0, cfg.speedLimit)
 		fmt.Printf("%s[official]%s 开始测速：目标上限=%d，测速阈值=%.2fMB/s\n", ansiGreen, ansiReset, cfg.speedLimit, cfg.speedMin)
-		results = runOfficialSpeedTests(context.Background(), session, results, cfg.port, cfg.speedLimit, cfg.speedMin)
+		results = runOfficialSpeedTests(ctx, session, results, cfg.port, cfg.speedLimit, cfg.speedMin, speedURL)
 	}
 	return writeCLIExportAndMaybeUpload(cfg, applyCLIExportFilters(cfg, officialResultRows(scanResults, results, scanMode), cfg.speedMin), "official")
 }
 
-func runNSBCLI(cfg *cliConfig) error {
+func prepareNSBCLIConfig(cfg *cliConfig) error {
 	if strings.TrimSpace(cfg.file) == "" && strings.TrimSpace(cfg.sourceURL) == "" {
 		return errors.New("非标模式需要通过 -nsbfile 或 -nsbsourceurl 指定输入来源")
 	}
@@ -1248,40 +1309,63 @@ func runNSBCLI(cfg *cliConfig) error {
 	if strings.TrimSpace(cfg.outFile) == "" {
 		cfg.outFile = "cfdata-results"
 	}
-	inputName := cfg.file
-	content := ""
-	var err error
-	if strings.TrimSpace(cfg.file) != "" {
-		content, err = getFileContent(cfg.file)
-		if err != nil {
-			return err
-		}
-	} else {
-		parsedURL, parseErr := url.Parse(cfg.sourceURL)
-		if parseErr != nil || (parsedURL.Scheme != "http" && parsedURL.Scheme != "https") || parsedURL.Host == "" {
-			return errors.New("-nsbsourceurl 必须是有效的 http/https 地址")
-		}
-		inputName = cfg.sourceURL
-		content, err = getURLContentViaProxy(context.Background(), cfg.sourceURL)
-		if err != nil {
-			return fmt.Errorf("获取非标网络输入失败: %w", err)
-		}
+	return nil
+}
+
+func runNSBCLI(cfg *cliConfig) error {
+	if err := prepareNSBCLIConfig(cfg); err != nil {
+		return err
 	}
 
 	session := newCLISession(cfg)
+	var pipelineErr error
 	if err := session.runTaskSync(func(ctx context.Context, session *appSession) {
-		scanMode := cfg.scanMode
-		if scanMode == "" {
-			scanMode = scanModeTCPing
-		}
-		runNSBTask(ctx, session, inputName, content, cfg.outFile, cfg.threads, cfg.nsbFallbackPort, cfg.speedTest, speedTestURL, cfg.enableTLS, cfg.delay, cfg.resultLimit, cfg.nsbDC, cfg.nsbSpeedMin, cfg.nsbSpeedLimit, cfg.compactNSB, scanMode, func() string {
-			if !cfg.relink {
-				return ""
-			}
-			return cfg.relinkHost
-		}())
+		pipelineErr = runNSBPipeline(ctx, session, cfg, speedTestURL)
 	}); err != nil {
 		return cliTaskError(err)
+	}
+	return pipelineErr
+}
+
+func loadNSBInput(ctx context.Context, cfg *cliConfig) (string, string, error) {
+	if strings.TrimSpace(cfg.file) != "" {
+		content, err := getFileContent(cfg.file)
+		if err != nil {
+			return "", "", err
+		}
+		return cfg.file, content, nil
+	}
+	parsedURL, parseErr := url.Parse(cfg.sourceURL)
+	if parseErr != nil || (parsedURL.Scheme != "http" && parsedURL.Scheme != "https") || parsedURL.Host == "" {
+		return "", "", errors.New("-nsbsourceurl 必须是有效的 http/https 地址")
+	}
+	content, err := getURLContentViaProxy(ctx, cfg.sourceURL)
+	if err != nil {
+		return "", "", fmt.Errorf("获取非标网络输入失败: %w", err)
+	}
+	return cfg.sourceURL, content, nil
+}
+
+func runNSBPipeline(ctx context.Context, session *appSession, cfg *cliConfig, speedURL string) error {
+	inputName, content, err := loadNSBInput(ctx, cfg)
+	if err != nil {
+		return err
+	}
+	if ctx.Err() != nil {
+		return ctx.Err()
+	}
+	scanMode := cfg.scanMode
+	if scanMode == "" {
+		scanMode = scanModeTCPing
+	}
+	runNSBTask(ctx, session, inputName, content, cfg.outFile, cfg.threads, cfg.nsbFallbackPort, cfg.speedTest, speedURL, cfg.enableTLS, cfg.delay, cfg.resultLimit, cfg.nsbDC, cfg.nsbSpeedMin, cfg.nsbSpeedLimit, cfg.compactNSB, scanMode, func() string {
+		if !cfg.relink {
+			return ""
+		}
+		return cfg.relinkHost
+	}())
+	if ctx.Err() != nil {
+		return ctx.Err()
 	}
 	session.nsbMutex.Lock()
 	rows := nsbPayloadRows(session.nsbHeaders, session.nsbRows)
@@ -1324,8 +1408,8 @@ func pickBestDataCenter(scanResults []ScanResult) string {
 	return items[0].dc
 }
 
-func runOfficialSpeedTests(ctx context.Context, session *appSession, results []TestResult, port int, limit int, speedMinMB float64) []TestResult {
-	updated, _ := runOfficialSpeedTestsCore(ctx, results, port, limit, speedMinMB, speedTestURL, func(current, total, qualifiedCount int, result TestResult) {
+func runOfficialSpeedTests(ctx context.Context, session *appSession, results []TestResult, port int, limit int, speedMinMB float64, speedURL string) []TestResult {
+	updated, _ := runOfficialSpeedTestsCore(ctx, results, port, limit, speedMinMB, speedURL, func(current, total, qualifiedCount int, result TestResult) {
 		setCLIProgress(session, "speed", min(qualifiedCount, limit), limit)
 		fmt.Printf("%s[speed]%s %s %s:%d %s\n", ansiMagenta, ansiReset, renderCLIProgress(session, "speed"), result.IP, port, colorizeSpeedString(result.Speed))
 		if speedMB, ok := parseSpeedMBForSort(result.Speed); ok && speedMB >= speedMinMB {
@@ -1669,6 +1753,13 @@ func asInt(v interface{}) int {
 	return 0
 }
 
+func cliExportFileExtension(format string) string {
+	if format == "substore" {
+		return "txt"
+	}
+	return format
+}
+
 func writeCLIExportAndMaybeUpload(cfg *cliConfig, rows []cliResultRow, mode string) error {
 	if len(rows) == 0 {
 		return nil
@@ -1677,12 +1768,13 @@ func writeCLIExportAndMaybeUpload(cfg *cliConfig, rows []cliResultRow, mode stri
 	if err != nil {
 		return err
 	}
+	ext := cliExportFileExtension(cfg.export.Format)
 	filename := cfg.outFile
 	if strings.TrimSpace(filename) == "" {
-		filename = "cfdata-results." + cfg.export.Format
+		filename = "cfdata-results." + ext
 	}
-	if ext := "." + cfg.export.Format; !strings.HasSuffix(strings.ToLower(filename), ext) {
-		filename = strings.TrimSuffix(filename, filepath.Ext(filename)) + ext
+	if suffix := "." + ext; !strings.HasSuffix(strings.ToLower(filename), suffix) {
+		filename = strings.TrimSuffix(filename, filepath.Ext(filename)) + suffix
 	}
 	filename = safeFilename(filename)
 	file, err := os.Create(filename)
@@ -1699,17 +1791,34 @@ func writeCLIExportAndMaybeUpload(cfg *cliConfig, rows []cliResultRow, mode stri
 		return err
 	}
 	fmt.Printf("[%s-output] %s (%d rows, %s)\n", mode, filename, len(rows), cfg.export.Format)
-	if cfg.export.GitHub {
-		if err := uploadCLIExportToGitHub(cfg, content); err != nil {
-			return err
+	// 各上传目标互不阻塞：都尝试后返回首个错误，其余错误就地记录
+	var firstErr error
+	recordErr := func(name string, err error) {
+		if err == nil {
+			return
 		}
+		if firstErr == nil {
+			firstErr = err
+			return
+		}
+		fmt.Printf("[%s] 上传失败: %v\n", name, err)
+	}
+	if cfg.export.GitHub {
+		recordErr("github", uploadCLIExportToGitHub(cfg, content))
 	}
 	if cfg.export.EdgeTunnel {
-		if err := uploadCLIExportToEdgetunnel(cfg, content); err != nil {
-			return err
+		recordErr("edgetunnel", uploadCLIExportToEdgetunnel(cfg, content))
+	}
+	if cfg.r2Enabled {
+		substoreContent := content
+		if cfg.export.Format != "substore" {
+			substoreContent = formatSubstoreResults(rows)
+		}
+		if err := uploadR2Content(cfg.r2WorkerURL, cfg.r2WorkerToken, cfg.r2Filename, substoreContent); err != nil {
+			fmt.Printf("[r2] 上传失败，保留 R2 上的旧内容: %v\n", err)
 		}
 	}
-	return nil
+	return firstErr
 }
 
 func resolveCLITextSeparator(value string) string {
@@ -1727,6 +1836,9 @@ func resolveCLITextSeparator(value string) string {
 }
 
 func formatCLIResults(rows []cliResultRow, cfg cliExportConfig) (string, error) {
+	if cfg.Format == "substore" {
+		return formatSubstoreResults(applyCLICustomFields(rows, parseCLICustomFields(cfg.Custom))), nil
+	}
 	customFields := parseCLICustomFields(cfg.Custom)
 	fields := resolveCLIFields(cfg.Fields, cfg.Format, rows, customFields)
 	rows = applyCLICustomFields(rows, customFields)
@@ -1783,6 +1895,110 @@ func formatCLIResults(rows []cliResultRow, cfg cliExportConfig) (string, error) 
 	}
 	writer.Flush()
 	return b.String(), writer.Error()
+}
+
+func formatSubstoreResults(rows []cliResultRow) string {
+	var b strings.Builder
+	for _, row := range rows {
+		endpoint := substoreEndpoint(row)
+		if endpoint == "" {
+			continue
+		}
+		b.WriteString(endpoint)
+		b.WriteString("#")
+		b.WriteString(substoreAlias(row))
+		b.WriteString("\n")
+	}
+	return b.String()
+}
+
+func substoreEndpoint(row cliResultRow) string {
+	host := strings.TrimSpace(row["ip"])
+	port := strings.TrimSpace(row["port"])
+	if host == "" {
+		host, port = splitSubstoreIPPort(row["ipport"])
+	}
+	return formatSubstoreEndpoint(host, port)
+}
+
+// splitSubstoreIPPort 从 ipport 回退字段解析主机与端口，无法可靠解析时返回空
+func splitSubstoreIPPort(value string) (string, string) {
+	endpoint := strings.TrimSpace(value)
+	if endpoint == "" {
+		return "", ""
+	}
+	if strings.HasPrefix(endpoint, "[") {
+		host, port, err := net.SplitHostPort(endpoint)
+		if err != nil {
+			if strings.HasSuffix(endpoint, "]") {
+				return strings.TrimSuffix(strings.TrimPrefix(endpoint, "["), "]"), ""
+			}
+			return "", ""
+		}
+		if !validSubstorePort(port) {
+			return "", ""
+		}
+		return host, port
+	}
+	if ip := net.ParseIP(endpoint); ip != nil {
+		return endpoint, ""
+	}
+	if strings.Count(endpoint, ":") == 1 {
+		host, port, err := net.SplitHostPort(endpoint)
+		if err != nil || host == "" || !validSubstorePort(port) {
+			return "", ""
+		}
+		return host, port
+	}
+	if strings.ContainsAny(endpoint, ":") {
+		return "", ""
+	}
+	return endpoint, ""
+}
+
+func formatSubstoreEndpoint(host, port string) string {
+	host = strings.TrimSpace(host)
+	if host == "" {
+		return ""
+	}
+	host = strings.TrimSuffix(strings.TrimPrefix(host, "["), "]")
+	if strings.Contains(host, ":") {
+		host = "[" + host + "]"
+	}
+	port = strings.TrimSpace(port)
+	if port == "" || port == "0" {
+		return host
+	}
+	return host + ":" + port
+}
+
+func validSubstorePort(port string) bool {
+	n, err := strconv.Atoi(port)
+	return err == nil && n >= 1 && n <= 65535
+}
+
+func substoreAlias(row cliResultRow) string {
+	dc := sanitizeSubstoreAliasPart(row["dc"])
+	city := sanitizeSubstoreAliasPart(row["city"])
+	switch {
+	case dc != "" && city != "":
+		return dc + "-" + city
+	case dc != "":
+		return dc
+	case city != "":
+		return city
+	}
+	if loc := sanitizeSubstoreAliasPart(row["loc"]); loc != "" {
+		return loc
+	}
+	if ip := sanitizeSubstoreAliasPart(row["ip"]); ip != "" {
+		return ip
+	}
+	return sanitizeSubstoreAliasPart(row["ipport"])
+}
+
+func sanitizeSubstoreAliasPart(value string) string {
+	return strings.Join(strings.Fields(strings.ReplaceAll(value, "#", "")), " ")
 }
 
 func resolveCLIFields(spec, format string, rows []cliResultRow, customFields []cliCustomField) []string {

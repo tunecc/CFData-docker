@@ -1,0 +1,18 @@
+{
+  "change": "scheduled-scan-r2-substore",
+  "phase": "design",
+  "mode": "compact",
+  "canonical_spec": "openspec",
+  "task_hash_policy": "task-content-v1",
+  "generated_by": "comet-handoff.sh",
+  "context_hash": "034d13f6a4e572d5239d0f2c7c6f1dc338cb2d2beb47a3c30415152256a122a6",
+  "files": [
+    { "path": "docs/openspec/changes/scheduled-scan-r2-substore/proposal.md", "sha256": "4befcf62941615174d997d6d47c15f6a8d79b3f64fa0b5782a495683638f2bc1" },
+    { "path": "docs/openspec/changes/scheduled-scan-r2-substore/design.md", "sha256": "10a2283bb5da72296c5b850341449e79a91ea4e11612b0f42c70623b99ff10c5" },
+    { "path": "docs/openspec/changes/scheduled-scan-r2-substore/tasks.md", "sha256": "1193f9776698d378107bb0f2bd098c2bbe4f5487d5fa2cbe88934b73603107ed" },
+    { "path": "docs/openspec/changes/scheduled-scan-r2-substore/.openspec.yaml", "sha256": "9e0a467e3934b14a2d9c9175305310e9359d34e2484a458af3d182c2956b9e2d" },
+    { "path": "docs/openspec/changes/scheduled-scan-r2-substore/specs/r2-worker-upload/spec.md", "sha256": "db76ec533da6f2c7758a5d95a7f44061acb3e24a5e9fcf45071188db2ad1d259" },
+    { "path": "docs/openspec/changes/scheduled-scan-r2-substore/specs/scan-scheduling/spec.md", "sha256": "49a629318871582368a53c79314b398de8113f0a7991e298ec8b9d297cc80aeb" },
+    { "path": "docs/openspec/changes/scheduled-scan-r2-substore/specs/substore-integration/spec.md", "sha256": "6590726f30fca09c4111216bcd9a77444d74e2291da2c1d3b8d89f5749e1d16b" }
+  ]
+}

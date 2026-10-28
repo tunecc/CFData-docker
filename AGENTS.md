@@ -11,13 +11,7 @@ mkdir -p /root/project/CFData-WEB/release_assets && CGO_ENABLED=0 GOOS=linux GOA
 ```
 注意：Go 模块在 `combined_refactor/` 下独立，须在此目录下构建。
 
-## Git 操作规则
-- **禁止**在未获得明确许可前执行 `git commit` 或 `git push`
-- **禁止**在任何情况下操作 `main` 主分支，主分支仅限用户本人操作
-- 所有修改均在 `beta` 等非主分支上完成
-
 ## 禁止修改的文件
-- `.github/` 目录下的任何文件（GitHub Actions 配置）
 - 例外：Docker 镜像相关变更可维护 `.github/workflows/docker.yml`，其余 `.github/` 文件仍禁止修改
 - 顶层目录中注释包含"原版源码"的文件
 

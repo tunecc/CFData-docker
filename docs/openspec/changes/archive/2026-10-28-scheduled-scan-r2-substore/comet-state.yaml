@@ -1,0 +1,4798 @@
+# comet-execution: managed-run
+change_id: 36227ca1-cdef-4cf2-87ad-9f43ab26ee4d
+workflow: full
+language: zh-CN
+phase: archive
+context_compression: off
+build_mode: autonomous
+build_pause: null
+subagent_dispatch: null
+tdd_mode: tdd
+review_mode: standard
+isolation: branch
+verify_mode: null
+auto_transition: true
+base_ref: b312c209edf1ca903c53ec0d959118c2c11d3f9b
+design_doc: docs/openspec/changes/archive/2026-10-28-scheduled-scan-r2-substore/design.md
+plan: docs/superpowers/plans/2026-10-28-scheduled-scan-r2-substore.md
+verify_result: pass
+verify_failures: 0
+verification_report: docs/superpowers/reports/2026-10-28-scheduled-scan-r2-substore-verify.md
+branch_status: handled
+created_at: 2026-10-28
+verified_at: 2026-10-28
+archive_confirmation: confirmed
+archived: true
+bound_branch: comet/scheduled-scan-r2-substore
+direct_override: false
+handoff_context: docs/openspec/changes/archive/2026-10-28-scheduled-scan-r2-substore/.comet/handoff/design-context.json
+handoff_hash: 034d13f6a4e572d5239d0f2c7c6f1dc338cb2d2beb47a3c30415152256a122a6
+classic_profile: null
+classic_migration: null
+run_checkpoint:
+  schema: comet.workflow-run-checkpoint.v2
+  hash: b534e215b8c71cb675f97dba1fc192137c4cfb9778fc47760b7ec66101d4ab4e
+  run:
+    protocolVersion: 1
+    schemaVersion: 1
+    runId: scheduled-scan-r2-substore
+    revision: 1
+    workflow:
+      id: comet-classic-full
+      version: "1"
+      hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+    definitionHashes:
+      '["comet-classic-full","1"]': ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+    initialStateHash: f9450b33de42cbfe1c0e186c92f9b8008ae2212f89ec4f7917497087b85f8c78
+    input:
+      change: scheduled-scan-r2-substore
+      changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+    state:
+      archiveConfirmation: confirmed
+      archived: true
+      autoTransition: true
+      baseRef: b312c209edf1ca903c53ec0d959118c2c11d3f9b
+      boundBranch: comet/scheduled-scan-r2-substore
+      branchStatus: handled
+      buildMode: autonomous
+      buildPause: null
+      checkEpoch: 10
+      classicMigration: null
+      classicProfile: null
+      contextCompression: off
+      createdAt: 2026-10-28
+      designDoc: docs/openspec/changes/archive/2026-10-28-scheduled-scan-r2-substore/design.md
+      directOverride: false
+      handoffContext: docs/openspec/changes/archive/2026-10-28-scheduled-scan-r2-substore/.comet/handoff/design-context.json
+      handoffHash: 034d13f6a4e572d5239d0f2c7c6f1dc338cb2d2beb47a3c30415152256a122a6
+      isolation: branch
+      language: zh-CN
+      phase: archive
+      plan: docs/superpowers/plans/2026-10-28-scheduled-scan-r2-substore.md
+      reviewMode: standard
+      subagentDispatch: null
+      tddMode: tdd
+      verificationReport: docs/superpowers/reports/2026-10-28-scheduled-scan-r2-substore-verify.md
+      verifiedAt: 2026-10-28
+      verifyFailures: 0
+      verifyMode: null
+      verifyResult: pass
+      workflow: full
+    status: completed
+    sequence: 38
+    actions:
+      - attempt: 1
+        claim:
+          executorId: comet-classic-guard
+          token: portable-e5f9cea263a3f8d9a05bbe8a08dd7e98a859f343601058b149a41135a9295aa2
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: scheduled-scan-r2-substore:1
+        input:
+          input:
+            change: scheduled-scan-r2-substore
+            changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+          outputs: {}
+        inputHash: b9cecc95ef448f42ff21507d5b521b7e761992db77f00ee38fee3f384553cb16
+        outcome:
+          actionId: scheduled-scan-r2-substore:1
+          attempt: 1
+          claimToken: portable-e5f9cea263a3f8d9a05bbe8a08dd7e98a859f343601058b149a41135a9295aa2
+          inputHash: b9cecc95ef448f42ff21507d5b521b7e761992db77f00ee38fee3f384553cb16
+          outcomeId: fff25279-6af5-4aba-b9cb-d3aef2270f35
+          output:
+            event: open-complete
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 3f3d28010d5e97f1448393eb0789afafc23e01b999732413224adcaf637354d1
+            outcomeId: fff25279-6af5-4aba-b9cb-d3aef2270f35
+        reconciliations: []
+        ref: comet-open
+        requiredCapabilities: []
+        retry: manual
+        runId: scheduled-scan-r2-substore
+        status: succeeded
+        stepId: full.open
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-open-revalidate
+          token: portable-82bf9e24cbc78102c87ac028002198c6b502f8c16081aa8e91ca4fbf0826e7c5
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: scheduled-scan-r2-substore:4
+        input:
+          input:
+            change: scheduled-scan-r2-substore
+            changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+          outputs: {}
+        inputHash: dd8909c2eaf3819f620ead62855e4231fc3608a017d56aca5eb5b81912e388d8
+        outcome:
+          actionId: scheduled-scan-r2-substore:4
+          attempt: 1
+          claimToken: portable-82bf9e24cbc78102c87ac028002198c6b502f8c16081aa8e91ca4fbf0826e7c5
+          inputHash: dd8909c2eaf3819f620ead62855e4231fc3608a017d56aca5eb5b81912e388d8
+          outcomeId: scheduled-scan-r2-substore:4:1:executor-result
+          output:
+            contentHash: 769bbc3d192fd7c7176698ef5d15ef0db3117d6d8d6b62a78049432f92fda176
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 7c23e32c64e882e0b15ce22a8eb5d47e1012bfd2cd82264e74021b35e2052758
+            outcomeId: scheduled-scan-r2-substore:4:1:executor-result
+        reconciliations: []
+        ref: classic-open-revalidate
+        requiredCapabilities: []
+        retry: manual
+        runId: scheduled-scan-r2-substore
+        status: succeeded
+        stepId: full.open.revalidate
+        type: call_tool
+      - attempt: 1
+        claim:
+          executorId: comet-classic-state
+          token: portable-c9b0470de36814373cdaf1eaddd4110f274dee493d9d39ea6addd0b702663584
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: scheduled-scan-r2-substore:5
+        input:
+          input:
+            change: scheduled-scan-r2-substore
+            changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+          outputs: {}
+        inputHash: 15ebb7d64c54cdeca86632b293bafc7d467399daef247c24c9f5358e769ce357
+        outcome:
+          actionId: scheduled-scan-r2-substore:5
+          attempt: 1
+          claimToken: portable-c9b0470de36814373cdaf1eaddd4110f274dee493d9d39ea6addd0b702663584
+          inputHash: 15ebb7d64c54cdeca86632b293bafc7d467399daef247c24c9f5358e769ce357
+          outcomeId: 53a090b2-3c7f-4c52-95f7-1369a178e364
+          output:
+            handoffContext: docs/openspec/changes/scheduled-scan-r2-substore/.comet/handoff/design-context.json
+            handoffHash: 034d13f6a4e572d5239d0f2c7c6f1dc338cb2d2beb47a3c30415152256a122a6
+            proposal: |-
+              # Brainstorm Summary
+
+              - Change: scheduled-scan-r2-substore
+              - Date: 2026-10-28
+
+              ## 确认的技术方案
+
+              状态：已确认（2026-10-28）
+
+              ### 1. 调度器（进程内，替换 systemd）
+
+              - 新增 `scheduler.go`：`robfig/cron/v3` + `time.Ticker`，由全局单例 `scanScheduler` 管理。
+              - 配置归一化（`normalizeSchedulePlan`，纯函数可测）：
+                - `schedule-enabled=false` → 不调度（新增显式开关，默认 false）。
+                - `cron-expression` 非空且可解析 → cron 模式，优先于间隔。
+                - cron 非法 → 记录错误并回退间隔模式。
+                - `check-interval <= 0 → 2880`，`< 60 → 60`。
+              - 启动行为：cron 模式不立即执行（按表达式下一次触发）；间隔模式进程启动即执行一次，然后按 ticker。
+              - 热更新：读取配置文件 mtime 轮询（10s）+ Web 保存后立即 `Reload`。Reload 只替换计划，不立即扫描、不打断进行中的扫描。
+              - 并发保护：扫描入口先 `anyTaskRunning()` 跳过（记录日志）；实际执行用 `runTaskSync` 持有全局任务计数，与手动 Web/CLI 任务互斥。另加原子 `running` 标志防止 ticker 重入。
+              - 流水线复用：从 `runOfficialCLI` / `runNSBCLI` 抽取 `runOfficialPipeline(cfg, session)` / `runNSBPipeline(cfg, session)`；官方流水线在同一个 `runTaskSync` 内完成扫描→DetailedIPs 检测→测速→导出，消除现有两段任务之间的并发空窗。
+              - 定时任务使用 headless session（`newCLISession`）复用 CLI 输出通道，由调度器包装为静默日志。
+              - Web：启动时（`initLocations()` 之后、HTTP 监听之前）启动调度器；新增 WS `get_schedule_config` / `set_schedule_config`，读改写配置文件嵌套 `config` 对象，保留未知字段，使用 `storage.go` 的 `atomicWriteFile` 原子写入，写后立即 `Reload`。
+              - CLI：删除 `schedule.go` 的 systemd 实现，替换为 `schedule_menu.go`（启用/停用、cron 表达式、检测间隔、保存并常驻运行、Ctrl+C 退出）。`menu.go` 菜单项 4 文案改为「自动调度」。
+              - 时区：cron 使用进程本地时区；启动日志打印当前时区与计划描述。
+
+              ### 2. R2 上传（CF Worker 兼容协议）
+
+              - 新增 `r2.go`：
+                - URL 校验：仅 http/https，base 拼接 `/storage`；token 通过 `url.Values` 编码进查询串。
+                - 请求体：JSON `{"filename": ..., "value": ...}`，`Content-Type: application/json`。
+                - 成功判定：HTTP 2xx。
+                - 重试：最多 3 次，固定间隔 2s（间隔与客户端可注入以便测试）；4xx 中 401/403 视为配置错误直接失败，其余按重试处理。
+                - 超时：30s。
+                - 空内容保护：内容为空或导出 0 行时跳过上传并记录错误，绝不覆盖 R2 旧文件。
+                - 代理：复用管理面代理传输（`applyManagementProxy`），但**不套 debug 包装**，避免 `?token=` 写入 debug 日志；错误日志只打印脱敏 URL（去掉 query）。
+                - 上传集成进 `writeCLIExportAndMaybeUpload`：手动 CLI、Web 导出、定时任务统一生效；上传失败只记录，不阻断导出与后续流程。
+              - 配置字段（嵌套 `config`）：`r2enabled`、`r2workerurl`、`r2workertoken`、`r2filename`（默认 `cfdata-targets.txt`）。
+              - 上传内容：始终为 Sub-Store 目标列表格式（不论本地导出格式）。
+
+              ### 3. Sub-Store 目标列表导出
+
+              - 新导出格式 `substore`（TXT 扩展名）：
+                - 每行 `host[:port]#alias`；IPv6 始终输出 `[v6]:port#alias`（不受 `outv6bracket=false` 影响）。
+                - alias 默认 `dc-city`，回退顺序 dc → loc → ip；清洗 `#`、换行、多余空白，空 alias 回退到地址本身。
+                - 复用现有 IP 类型/合格筛选、起止行限制。
+                - 端口为空或 0 时不追加 `:port`。
+              - CLI/Web 增加 substore 格式选项；Web 端在 `index.html` 中镜像实现 `buildSubstoreContent`（服务端 `formatCLIResults` 与前端各自维护格式），并提供「复制 Sub-Store 列表」按钮。
+              - GitHub/edgetunnel 上传配置默认文件名相应为 `results/ip.txt` 场景，不强制。
+
+              ### 4. Operator 脚本入库
+
+              - 新增 `substore/cloudflare-targets.js`：基于 Untitled.js 加固：
+                - 静态目标逐行解析，非法行跳过并告警，不再整脚本抛错。
+                - alias 清洗（`#`、换行、空白）。
+                - `fetch` 回退路径增加 `AbortController` 超时（与 `urlTimeout` 一致）。
+                - 完全重复目标去重；保留 `dedupAliases` 上标逻辑。
+                - 守卫式 `module.exports`（存在 `module` 时导出纯函数）便于 Node 测试，Sub-Store 环境不受影响。
+              - 新增 `substore/README.md`：输入格式、urls 示例、R2 公网地址接入、常见问题。
+
+              ## 关键取舍与风险
+
+              - 不引入状态持久化：定时任务重启后不补跑；间隔模式启动即跑一次，cron 模式等下一次触发。
+              - 单实例假设：进程内调度无法跨副本协调；文档明确同一配置目录只运行一个实例。
+              - 配置迁移：新增字段会被 `migrateConfigFileToLatest` 识别为缺失并触发一次性重写（生成 `.bak`）；文档说明。
+              - Web 导出为客户端实现，与服务端格式化存在两份代码；通过相同用例的单元/手动验证降低漂移风险。
+              - 移除 systemd 后不自动删除既有 unit 文件，文档给出迁移与清理命令。
+              - R2 令牌保护：不用 debug 传输；错误日志脱敏。
+              - 4xx 非鉴权错误重试意义有限，但保持与参考实现一致（3 次），避免复杂分类。
+
+              ## 测试策略
+
+              - Go 单元测试：
+                - `normalizeSchedulePlan` 表驱动（关闭、cron 优先、非法 cron 回退、间隔钳制）。
+                - 调度器：间隔模式立即触发一次；cron 模式启动不立即触发；Reload 后不立即触发且新计划生效；运行中跳过。
+                - R2：httptest 成功、失败两次后成功、全部失败、空内容跳过、token 不出现在日志。
+                - Sub-Store 格式：IPv4/IPv6、端口省略、alias 回退/清洗、筛选与行数限制。
+              - Node 脚本测试：`node --test` 或临时 harness 校验解析、去重、非法行跳过。
+              - 集成验证：`go vet ./...`、`go test ./...`、linux/amd64 构建；本地 Web 用 `cron-expression: "* * * * *"` + 本地 R2 mock 端点跑通一次定时流水线。
+              - 手动：CLI 菜单启用/保存/常驻；Web 设置保存后刷新页面状态一致；禁用调度后不再触发。
+
+              ## Spec Patch
+
+              将回写 delta spec（不重写需求结构，只补边界与场景）：
+
+              1. `specs/scan-scheduling/spec.md`
+                 - 新增「调度开关」需求：`schedule-enabled` 默认 false；场景「未启用时不调度」「启用为 cron 模式」「启用为间隔模式」。
+                 - 启动行为场景限定为「已启用且为间隔模式」；补充「cron 模式启动不立即扫描」。
+                 - 热更新场景补充：保存/重载不立即触发扫描、不中断进行中的扫描。
+              2. `specs/substore-integration/spec.md`
+                 - 新增场景：alias 清洗（`#`、换行、空白）与空 alias 回退。
+                 - 新增场景：`outv6bracket=false` 时 substore 格式仍输出 `[v6]:port`。
+              3. `specs/r2-worker-upload/spec.md`
+                 - 补充场景：令牌不得出现在日志/debug 输出；URL 非法时跳过并报错。
+            requirementsEvidence:
+              contentHash: 6106ec2bf939fa82792f18bde6c9ba4742dda02b36bb681f004e85ca823dd4b0
+              ref: docs/openspec/changes/scheduled-scan-r2-substore
+            sourceEvidence:
+              contentHash: ba37bedaf5484f7af4ce7045917f813ed56212b1bca6b39ae4959d5d9fc74020
+              ref: docs/openspec/changes/scheduled-scan-r2-substore
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 98451ff3337594f36f116026c8a1fa9ea496e9981c962da2559c5f961584c9da
+            outcomeId: 53a090b2-3c7f-4c52-95f7-1369a178e364
+        reconciliations: []
+        ref: comet-design
+        requiredCapabilities: []
+        retry: manual
+        runId: scheduled-scan-r2-substore
+        status: succeeded
+        stepId: full.design.handoff
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-state
+          token: portable-eeefed83c2819f343a34188bc8482ff2997b88332b6100e42407efe4de53d6e0
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: scheduled-scan-r2-substore:7
+        input:
+          input:
+            change: scheduled-scan-r2-substore
+            changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+          outputs: {}
+        inputHash: bb197e6cd2db1246caf4e4103016bccf893a900af62e9db77b9f9ad25dac5680
+        outcome:
+          actionId: scheduled-scan-r2-substore:7
+          attempt: 1
+          claimToken: portable-eeefed83c2819f343a34188bc8482ff2997b88332b6100e42407efe4de53d6e0
+          inputHash: bb197e6cd2db1246caf4e4103016bccf893a900af62e9db77b9f9ad25dac5680
+          outcomeId: 9183e6de-7052-4758-87ab-02b681b4504d
+          output:
+            designDoc: docs/openspec/changes/scheduled-scan-r2-substore/design.md
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 74ad6506024559e0b7f5ab07b4c312db2c45e8fa2039d2dc2e582d5d7c8036a4
+            outcomeId: 9183e6de-7052-4758-87ab-02b681b4504d
+        reconciliations: []
+        ref: comet-design
+        requiredCapabilities: []
+        retry: manual
+        runId: scheduled-scan-r2-substore
+        status: succeeded
+        stepId: full.design.document
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-state
+          token: portable-a861fb3a244b7892f2674d0d85bf5a1d221f9728ccba5876184f8abe2901e9c3
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: scheduled-scan-r2-substore:9
+        input:
+          input:
+            change: scheduled-scan-r2-substore
+            changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+          outputs: {}
+        inputHash: 425ae30a2f1357a1f86e7e47e7226a56a43b4ecd84ebb2192486d1b51f04e2ca
+        outcome:
+          actionId: scheduled-scan-r2-substore:9
+          attempt: 1
+          claimToken: portable-a861fb3a244b7892f2674d0d85bf5a1d221f9728ccba5876184f8abe2901e9c3
+          inputHash: 425ae30a2f1357a1f86e7e47e7226a56a43b4ecd84ebb2192486d1b51f04e2ca
+          outcomeId: f8f0c9f3-9487-4dc9-8d7a-1659bca0859e
+          output:
+            boundBranch: comet/scheduled-scan-r2-substore
+            buildMode: autonomous
+            directOverride: false
+            isolation: branch
+            reviewMode: standard
+            subagentDispatch: null
+            tddMode: tdd
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 669e539eeed1ab2d5f6ffcfbedfbb860d9d8f37f4b3ec0ad33b8ebb5b6352791
+            outcomeId: f8f0c9f3-9487-4dc9-8d7a-1659bca0859e
+        reconciliations: []
+        ref: comet-build
+        requiredCapabilities: []
+        retry: manual
+        runId: scheduled-scan-r2-substore
+        status: succeeded
+        stepId: full.build.configure
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-state
+          token: portable-b038abe08864c28849c8257f59f72109a113a6e956c1bd4afe46484124c66078
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: scheduled-scan-r2-substore:11
+        input:
+          input:
+            change: scheduled-scan-r2-substore
+            changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+          outputs: {}
+        inputHash: fd2f171ac86693fcd51d2b74501e645d9f7028dc7d8b1ded0b8675319168a893
+        outcome:
+          actionId: scheduled-scan-r2-substore:11
+          attempt: 1
+          claimToken: portable-b038abe08864c28849c8257f59f72109a113a6e956c1bd4afe46484124c66078
+          inputHash: fd2f171ac86693fcd51d2b74501e645d9f7028dc7d8b1ded0b8675319168a893
+          outcomeId: 4b66bf0c-e66a-4f06-ac13-6a439321ddce
+          output:
+            designEvidence:
+              contentHash: 10a2283bb5da72296c5b850341449e79a91ea4e11612b0f42c70623b99ff10c5
+              ref: docs/openspec/changes/scheduled-scan-r2-substore/design.md
+            plan: docs/superpowers/plans/2026-10-28-scheduled-scan-r2-substore.md
+            planEvidence:
+              contentHash: 5232a1dc02043ae0d40043e99c19f56a10d20850b36d6fd7eb48dd33500e82f0
+              ref: docs/superpowers/plans/2026-10-28-scheduled-scan-r2-substore.md
+            taskRevision: 1193f9776698d378107bb0f2bd098c2bbe4f5487d5fa2cbe88934b73603107ed
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 0cf5b518347587ec2b698f4510e981a3d7626db7f01f507ea31512c6b51000c6
+            outcomeId: 4b66bf0c-e66a-4f06-ac13-6a439321ddce
+        reconciliations: []
+        ref: comet-build
+        requiredCapabilities: []
+        retry: manual
+        runId: scheduled-scan-r2-substore
+        status: succeeded
+        stepId: full.build.plan
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-state
+          sessionId: classic-builder/scheduled-scan-r2-substore:13/1
+          token: portable-7810f00608dce6645efa7dda9071c40195524ebcb64fc3284d2369d0846fe516
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: scheduled-scan-r2-substore:13
+        input:
+          input:
+            change: scheduled-scan-r2-substore
+            changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+          outputs: {}
+        inputHash: 9cd9390902154e73a0145ba29adcf240c8fae0efc03f775d1a53805937efc095
+        outcome:
+          actionId: scheduled-scan-r2-substore:13
+          attempt: 1
+          claimToken: portable-7810f00608dce6645efa7dda9071c40195524ebcb64fc3284d2369d0846fe516
+          inputHash: 9cd9390902154e73a0145ba29adcf240c8fae0efc03f775d1a53805937efc095
+          outcomeId: 51c27088-6d05-400c-bfbe-1f2b498187b0
+          output:
+            event: build-complete
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 29e69096cfafe51d77d98e0b4e761afb560ed9c2389f7b64a8b49ebb09d16ac4
+            outcomeId: 51c27088-6d05-400c-bfbe-1f2b498187b0
+        reconciliations: []
+        ref: comet-build
+        requiredCapabilities: []
+        retry: manual
+        runId: scheduled-scan-r2-substore
+        status: succeeded
+        stepId: full.build.execute
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-check
+          token: portable-22195157fb560735ce2bb861b358cb593db776a3f3e9dae67a78b57c314193f3
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: scheduled-scan-r2-substore:14
+        input:
+          input:
+            change: scheduled-scan-r2-substore
+            changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+          outputs: {}
+        inputHash: 983b8c30e25b3c71bdff42c9b62f1f4c01f36c110edd153a30aa77478f82027b
+        outcome:
+          actionId: scheduled-scan-r2-substore:14
+          attempt: 1
+          claimToken: portable-22195157fb560735ce2bb861b358cb593db776a3f3e9dae67a78b57c314193f3
+          inputHash: 983b8c30e25b3c71bdff42c9b62f1f4c01f36c110edd153a30aa77478f82027b
+          outcomeId: 7ce62141-0d0e-4926-8965-55f50890fac7
+          output:
+            argv:
+              - go
+              - -C
+              - combined_refactor
+              - test
+              - -count=1
+              - ./...
+            changedDuringExecution: []
+            checkEpoch: 2
+            contentHash: 590b2a5d5bfb61d4d269058509b3ee106992b299d97bebbcf953bba21a7463c3
+            cwd: .
+            environment: d158050549f6e5c353252135d05d7d5aea9cfd911dd3d59d53e51f0f260f351e
+            exitCode: 0
+            inputAfter: cb95043fa2a9c0d31f294b1098562fac137c6a90080979d6fa3f74d4761c17a2
+            inputBefore: cb95043fa2a9c0d31f294b1098562fac137c6a90080979d6fa3f74d4761c17a2
+            manifestHash: da810f5ffda3d5ea8443cdc069df00e0514e869f5202974cf7998bc80f7a52a4
+            manifestRef: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/51fbf8ae-5b0c-412a-b8c3-1f42bb3dd4c7.manifest
+            receiptRef: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/eb9501c5-5eed-4525-be63-6adf8b10c4fa.log
+            reusable: true
+            reused: false
+            scope: build
+            tier: full
+            timeoutMs: 300000
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 1d6359c7030be954978a54f2dbc7d015b67b8a0de7baf0086e650ec6df9248eb
+            outcomeId: 7ce62141-0d0e-4926-8965-55f50890fac7
+        reconciliations: []
+        ref: classic-check
+        requiredCapabilities: []
+        retry: manual
+        runId: scheduled-scan-r2-substore
+        status: succeeded
+        stepId: full.build.check
+        type: call_tool
+      - attempt: 1
+        claim:
+          executorId: comet-classic-state
+          token: portable-84d8315575147e5fbd0ff149bd90d7445a4f83373f208ed14c46678c5e8860d7
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: scheduled-scan-r2-substore:16
+        input:
+          input:
+            change: scheduled-scan-r2-substore
+            changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+          outputs: {}
+        inputHash: 3fa56e5d92f15a765a9cfa7dc71347f2342102d65f427ed4467deb40504dc132
+        outcome:
+          actionId: scheduled-scan-r2-substore:16
+          attempt: 1
+          claimToken: portable-84d8315575147e5fbd0ff149bd90d7445a4f83373f208ed14c46678c5e8860d7
+          inputHash: 3fa56e5d92f15a765a9cfa7dc71347f2342102d65f427ed4467deb40504dc132
+          outcomeId: b8b641bc-48a1-4e09-9803-acdc23256680
+          output:
+            event: verify-fail
+            reason: "IMPORTANT: scheduled runs mutate process globals; mtime TOCTOU; R2
+              token exposed via WS; substore ipport unbracketed/invalid"
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: cdfa29c1c60b56c2ce848d82648cf63587b86f976bb9102061343dbec77401f9
+            outcomeId: b8b641bc-48a1-4e09-9803-acdc23256680
+        reconciliations: []
+        ref: comet-verify
+        requiredCapabilities: []
+        retry: manual
+        runId: scheduled-scan-r2-substore
+        status: succeeded
+        stepId: full.verify.run
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-state
+          token: portable-f320c449ce444c1643f9d3cd2d350ac1766671368be2ce282f1a45516f8d1614
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: scheduled-scan-r2-substore:17
+        input:
+          input:
+            change: scheduled-scan-r2-substore
+            changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+          outputs: {}
+        inputHash: 88d15644e521cb7738db26eac77582904a0d8db3ca06e17866daded946fdc98b
+        outcome:
+          actionId: scheduled-scan-r2-substore:17
+          attempt: 1
+          claimToken: portable-f320c449ce444c1643f9d3cd2d350ac1766671368be2ce282f1a45516f8d1614
+          inputHash: 88d15644e521cb7738db26eac77582904a0d8db3ca06e17866daded946fdc98b
+          outcomeId: cfdb0629-e152-4fd4-9683-498976ce0a1f
+          output:
+            designEvidence:
+              contentHash: 10a2283bb5da72296c5b850341449e79a91ea4e11612b0f42c70623b99ff10c5
+              ref: docs/openspec/changes/scheduled-scan-r2-substore/design.md
+            plan: docs/superpowers/plans/2026-10-28-scheduled-scan-r2-substore.md
+            planEvidence:
+              contentHash: 5232a1dc02043ae0d40043e99c19f56a10d20850b36d6fd7eb48dd33500e82f0
+              ref: docs/superpowers/plans/2026-10-28-scheduled-scan-r2-substore.md
+            taskRevision: 1193f9776698d378107bb0f2bd098c2bbe4f5487d5fa2cbe88934b73603107ed
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 8a8f8b6d26d5651ef6aaf8ef503e14ae824bda49999c2ee6082f594b526b38a8
+            outcomeId: cfdb0629-e152-4fd4-9683-498976ce0a1f
+        reconciliations: []
+        ref: comet-build
+        requiredCapabilities: []
+        retry: manual
+        runId: scheduled-scan-r2-substore
+        status: succeeded
+        stepId: full.build.plan
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-state
+          sessionId: classic-builder/scheduled-scan-r2-substore:19/1
+          token: portable-00029c1456afa9e8ccb50ca24a3593ad22f5dd5efb38fc4d1fcc7ebe9e901cf1
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: scheduled-scan-r2-substore:19
+        input:
+          input:
+            change: scheduled-scan-r2-substore
+            changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+          outputs: {}
+        inputHash: 88d15644e521cb7738db26eac77582904a0d8db3ca06e17866daded946fdc98b
+        outcome:
+          actionId: scheduled-scan-r2-substore:19
+          attempt: 1
+          claimToken: portable-00029c1456afa9e8ccb50ca24a3593ad22f5dd5efb38fc4d1fcc7ebe9e901cf1
+          inputHash: 88d15644e521cb7738db26eac77582904a0d8db3ca06e17866daded946fdc98b
+          outcomeId: 56e61743-fc39-46d9-a420-05f14007bac5
+          output:
+            event: build-complete
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: c3f687a2d6a870b69c85205cef5aecf32f4ad279f9571095a26d79f03ea033ae
+            outcomeId: 56e61743-fc39-46d9-a420-05f14007bac5
+        reconciliations: []
+        ref: comet-build
+        requiredCapabilities: []
+        retry: manual
+        runId: scheduled-scan-r2-substore
+        status: succeeded
+        stepId: full.build.execute
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-check
+          token: portable-3bba26ac038d82fbffbbfe1e0b484dc72947a57b4191e808c6712c7af84cb50a
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: scheduled-scan-r2-substore:20
+        input:
+          input:
+            change: scheduled-scan-r2-substore
+            changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+          outputs: {}
+        inputHash: 88d15644e521cb7738db26eac77582904a0d8db3ca06e17866daded946fdc98b
+        outcome:
+          actionId: scheduled-scan-r2-substore:20
+          attempt: 1
+          claimToken: portable-3bba26ac038d82fbffbbfe1e0b484dc72947a57b4191e808c6712c7af84cb50a
+          inputHash: 88d15644e521cb7738db26eac77582904a0d8db3ca06e17866daded946fdc98b
+          outcomeId: a8a167a1-1fde-4bdb-b56c-ef137c62bd05
+          output:
+            argv:
+              - go
+              - -C
+              - combined_refactor
+              - test
+              - -count=1
+              - ./...
+            changedDuringExecution: []
+            checkEpoch: 4
+            contentHash: 48ed84e9fa77fbe500004a0dd5dc8942a4d6baebe5d620ae2f55f9523cb7a695
+            cwd: .
+            environment: d158050549f6e5c353252135d05d7d5aea9cfd911dd3d59d53e51f0f260f351e
+            exitCode: 1
+            inputAfter: f793d42bb34b4ab98f4a9a20c444415ac09d4b50e47f503f872f22c1ff4c8ef6
+            inputBefore: f793d42bb34b4ab98f4a9a20c444415ac09d4b50e47f503f872f22c1ff4c8ef6
+            manifestHash: e7470a173ce66414e86f4dbee3feb1b6d82d3ac1a982e74c21188c85cdd4e138
+            manifestRef: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/893b8614-0e94-4ae5-9e70-bd2bfd1d7d9d.manifest
+            receiptRef: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/9dd8f321-9cf8-4a24-87eb-99f71c1eb81f.log
+            reusable: true
+            reused: false
+            scope: build
+            tier: full
+            timeoutMs: 600000
+          status: failed
+        protocolVersion: 1
+        receipts:
+          - hash: a3dfff6261f8febe8ca5e792f39cb48aaf9e67917fd18e587c088450bb1a7c34
+            outcomeId: a8a167a1-1fde-4bdb-b56c-ef137c62bd05
+        reconciliations: []
+        ref: classic-check
+        requiredCapabilities: []
+        retry: manual
+        runId: scheduled-scan-r2-substore
+        status: failed
+        stepId: full.build.check
+        type: call_tool
+      - attempt: 1
+        claim:
+          executorId: comet-classic-state
+          sessionId: classic-builder/scheduled-scan-r2-substore:21/1
+          token: portable-62765231c58bff16ff4078a2a45e6310430cb38156b1e9fac1cc711c9e0a96f1
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: scheduled-scan-r2-substore:21
+        input:
+          input:
+            change: scheduled-scan-r2-substore
+            changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+          outputs: {}
+        inputHash: c581956593f8f9b5d1f715cb923b8264305899973073f8e76b591fb2ff44bcd5
+        outcome:
+          actionId: scheduled-scan-r2-substore:21
+          attempt: 1
+          claimToken: portable-62765231c58bff16ff4078a2a45e6310430cb38156b1e9fac1cc711c9e0a96f1
+          inputHash: c581956593f8f9b5d1f715cb923b8264305899973073f8e76b591fb2ff44bcd5
+          outcomeId: ca25f475-4203-417d-9ad1-f7ac51b10b42
+          output:
+            event: build-complete
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 0ec04112af06e263c0d45e47178081a18d33ba8aa347bcca42b259e913eca366
+            outcomeId: ca25f475-4203-417d-9ad1-f7ac51b10b42
+        reconciliations: []
+        ref: comet-build
+        requiredCapabilities: []
+        retry: manual
+        runId: scheduled-scan-r2-substore
+        status: succeeded
+        stepId: full.build.execute
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-check
+          token: portable-7f6c53f45ed03de59daa90af73e19bffdcb09afe5e4b5ab4cc7252e053f6fa11
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: scheduled-scan-r2-substore:22
+        input:
+          input:
+            change: scheduled-scan-r2-substore
+            changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+          outputs: {}
+        inputHash: c581956593f8f9b5d1f715cb923b8264305899973073f8e76b591fb2ff44bcd5
+        outcome:
+          actionId: scheduled-scan-r2-substore:22
+          attempt: 1
+          claimToken: portable-7f6c53f45ed03de59daa90af73e19bffdcb09afe5e4b5ab4cc7252e053f6fa11
+          inputHash: c581956593f8f9b5d1f715cb923b8264305899973073f8e76b591fb2ff44bcd5
+          outcomeId: e5b11372-1006-4f9b-b68e-6a6f7e6cb73a
+          output:
+            argv:
+              - go
+              - -C
+              - combined_refactor
+              - test
+              - -count=1
+              - ./...
+            changedDuringExecution: []
+            checkEpoch: 4
+            contentHash: c5d184669a409fdf910a4e188f2dfc01bb5b17cb919a8817ffe3a82b4fa556bf
+            cwd: .
+            environment: d158050549f6e5c353252135d05d7d5aea9cfd911dd3d59d53e51f0f260f351e
+            exitCode: 0
+            inputAfter: f793d42bb34b4ab98f4a9a20c444415ac09d4b50e47f503f872f22c1ff4c8ef6
+            inputBefore: f793d42bb34b4ab98f4a9a20c444415ac09d4b50e47f503f872f22c1ff4c8ef6
+            manifestHash: e7470a173ce66414e86f4dbee3feb1b6d82d3ac1a982e74c21188c85cdd4e138
+            manifestRef: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/d5238a92-3813-44eb-a876-1d1c9972a71f.manifest
+            receiptRef: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/b23efbfa-c53c-46e5-8a70-e206fb21ef52.log
+            reusable: true
+            reused: false
+            scope: build
+            tier: full
+            timeoutMs: 600000
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: c72703e14c5704b4a7385e5bbd357bb165c4233e9b7f6fa1da07efed1e607e0b
+            outcomeId: e5b11372-1006-4f9b-b68e-6a6f7e6cb73a
+        reconciliations: []
+        ref: classic-check
+        requiredCapabilities: []
+        retry: manual
+        runId: scheduled-scan-r2-substore
+        status: succeeded
+        stepId: full.build.check
+        type: call_tool
+      - attempt: 1
+        claim:
+          executorId: comet-classic-state
+          token: portable-364111d0b7f443ca94ccb56608363786b05f382e971cf3225dc1995476635599
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: scheduled-scan-r2-substore:24
+        input:
+          input:
+            change: scheduled-scan-r2-substore
+            changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+          outputs: {}
+        inputHash: 67daacc2c3b97a38a2d76fe7d76aa3a6f457c9d39fdd9f0efdd35cbbb2a1d392
+        outcome:
+          actionId: scheduled-scan-r2-substore:24
+          attempt: 1
+          claimToken: portable-364111d0b7f443ca94ccb56608363786b05f382e971cf3225dc1995476635599
+          inputHash: 67daacc2c3b97a38a2d76fe7d76aa3a6f457c9d39fdd9f0efdd35cbbb2a1d392
+          outcomeId: b20a1e5a-f11f-4263-8401-becfcbf57af0
+          output:
+            event: verify-fail
+            reason: 集成审查发现：get_config 明文返回
+              r2workertoken（IMPORTANT）；调度保存与代理保存无共享写锁且代理保存非原子（WARNING）；reload
+              缺少时区/下次触发日志（design §8）；substore
+              导出未应用自定义字段与服务端/客户端不一致（WARNING）；cron 表达式未 trim（SUGGESTION）。返回 build
+              修复。
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 81a0584d8ff9b3e24d8f51d3b0473971f61e0195fc9954a62cfe3d8a3ac29a6f
+            outcomeId: b20a1e5a-f11f-4263-8401-becfcbf57af0
+        reconciliations: []
+        ref: comet-verify
+        requiredCapabilities: []
+        retry: manual
+        runId: scheduled-scan-r2-substore
+        status: succeeded
+        stepId: full.verify.run
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-state
+          token: portable-e89e169b6b3f522d02724327c13ac5c2a39ef4af2d1b429c47e93345e55d49ee
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: scheduled-scan-r2-substore:25
+        input:
+          input:
+            change: scheduled-scan-r2-substore
+            changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+          outputs: {}
+        inputHash: 38ec017e2ebbfd6219540e705c692385035b9dbe570720a08e27132b030e7f8e
+        outcome:
+          actionId: scheduled-scan-r2-substore:25
+          attempt: 1
+          claimToken: portable-e89e169b6b3f522d02724327c13ac5c2a39ef4af2d1b429c47e93345e55d49ee
+          inputHash: 38ec017e2ebbfd6219540e705c692385035b9dbe570720a08e27132b030e7f8e
+          outcomeId: 72420a3c-d069-4146-b79a-cc12d41c3174
+          output:
+            designEvidence:
+              contentHash: 10a2283bb5da72296c5b850341449e79a91ea4e11612b0f42c70623b99ff10c5
+              ref: docs/openspec/changes/scheduled-scan-r2-substore/design.md
+            plan: docs/superpowers/plans/2026-10-28-scheduled-scan-r2-substore.md
+            planEvidence:
+              contentHash: 6c075dab16cab8088966878c63a7b298163968cd0f363a8664c6a8df829f5290
+              ref: docs/superpowers/plans/2026-10-28-scheduled-scan-r2-substore.md
+            taskRevision: 1193f9776698d378107bb0f2bd098c2bbe4f5487d5fa2cbe88934b73603107ed
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 92830390c1b01e3c5a6b07fe656fb2eb9c4bea78cfc32de82949035de976ae65
+            outcomeId: 72420a3c-d069-4146-b79a-cc12d41c3174
+        reconciliations: []
+        ref: comet-build
+        requiredCapabilities: []
+        retry: manual
+        runId: scheduled-scan-r2-substore
+        status: succeeded
+        stepId: full.build.plan
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-state
+          sessionId: classic-builder/scheduled-scan-r2-substore:27/1
+          token: portable-976910610a3aacdada92f6480b060c51b7afafa2628629ac5b1ee65648095317
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: scheduled-scan-r2-substore:27
+        input:
+          input:
+            change: scheduled-scan-r2-substore
+            changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+          outputs: {}
+        inputHash: ebfd6ca37ecec5425325bb1e436e8df3a16e2437c85ad6ab5815b7ecbbe8a49e
+        outcome:
+          actionId: scheduled-scan-r2-substore:27
+          attempt: 1
+          claimToken: portable-976910610a3aacdada92f6480b060c51b7afafa2628629ac5b1ee65648095317
+          inputHash: ebfd6ca37ecec5425325bb1e436e8df3a16e2437c85ad6ab5815b7ecbbe8a49e
+          outcomeId: 441ad0a3-5940-42ab-8bb7-855f905e675c
+          output:
+            event: build-complete
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: dda1ca7098ee4f81aaf30a4378c3da21ac3bddc6bc2bdeb61333905d62a7e374
+            outcomeId: 441ad0a3-5940-42ab-8bb7-855f905e675c
+        reconciliations: []
+        ref: comet-build
+        requiredCapabilities: []
+        retry: manual
+        runId: scheduled-scan-r2-substore
+        status: succeeded
+        stepId: full.build.execute
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-check
+          token: portable-c88d9da60e19d6d94e9748cd3d4ff926dd7ecfe25d7a005169fc81b1e217150d
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: scheduled-scan-r2-substore:28
+        input:
+          input:
+            change: scheduled-scan-r2-substore
+            changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+          outputs: {}
+        inputHash: ebfd6ca37ecec5425325bb1e436e8df3a16e2437c85ad6ab5815b7ecbbe8a49e
+        outcome:
+          actionId: scheduled-scan-r2-substore:28
+          attempt: 1
+          claimToken: portable-c88d9da60e19d6d94e9748cd3d4ff926dd7ecfe25d7a005169fc81b1e217150d
+          inputHash: ebfd6ca37ecec5425325bb1e436e8df3a16e2437c85ad6ab5815b7ecbbe8a49e
+          outcomeId: 2d7bd499-521f-43a2-8364-548e174e8aa3
+          output:
+            argv:
+              - go
+              - -C
+              - combined_refactor
+              - test
+              - -count=1
+              - ./...
+            changedDuringExecution: []
+            checkEpoch: 6
+            contentHash: 7fa0b58252dd38e222da8a0842599b0cea55e890f6303748bd4bd5e83c295696
+            cwd: .
+            environment: d158050549f6e5c353252135d05d7d5aea9cfd911dd3d59d53e51f0f260f351e
+            exitCode: 0
+            inputAfter: 7126ccf5955b7deede958bb27eaeab0ea537e28dab5a7fb3f4443309650dda77
+            inputBefore: 7126ccf5955b7deede958bb27eaeab0ea537e28dab5a7fb3f4443309650dda77
+            manifestHash: 8c0fb9fdffdd5c882adcfe8de71b46156df47f5cf462cba835ae3e25e9552bdd
+            manifestRef: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/af63ed75-6c5b-4197-a521-365190b1cfe9.manifest
+            receiptRef: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/02b61eb9-b5eb-4447-9e4a-be27465448b6.log
+            reusable: true
+            reused: false
+            scope: build
+            tier: full
+            timeoutMs: 600000
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: a944b8afc50c4a50bb9f4d7b536b68fe13c5f9952d59d6d54bb53d4670c52348
+            outcomeId: 2d7bd499-521f-43a2-8364-548e174e8aa3
+        reconciliations: []
+        ref: classic-check
+        requiredCapabilities: []
+        retry: manual
+        runId: scheduled-scan-r2-substore
+        status: succeeded
+        stepId: full.build.check
+        type: call_tool
+      - attempt: 1
+        claim:
+          executorId: comet-classic-guard
+          token: portable-d55fab64ebd454b4d1ed825d89c158dab27996ccae9868ae466633c4584298ce
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: scheduled-scan-r2-substore:30
+        input:
+          input:
+            change: scheduled-scan-r2-substore
+            changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+          outputs: {}
+        inputHash: 9ec45265555563c9ff1a27c9198fe2daaff530aec3a247a44ef342b9f5d786ea
+        outcome:
+          actionId: scheduled-scan-r2-substore:30
+          attempt: 1
+          claimToken: portable-d55fab64ebd454b4d1ed825d89c158dab27996ccae9868ae466633c4584298ce
+          inputHash: 9ec45265555563c9ff1a27c9198fe2daaff530aec3a247a44ef342b9f5d786ea
+          outcomeId: c32fd7eb-dea9-4686-8933-b842af4e0dd3
+          output:
+            event: verification-ready
+            verificationReport: docs/superpowers/reports/2026-10-28-scheduled-scan-r2-substore-verify.md
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 626676287c8805427de8ee268a6e27a3f040c85dd1fdc75a9eb679bbe877e845
+            outcomeId: c32fd7eb-dea9-4686-8933-b842af4e0dd3
+        reconciliations: []
+        ref: comet-verify
+        requiredCapabilities: []
+        retry: manual
+        runId: scheduled-scan-r2-substore
+        status: succeeded
+        stepId: full.verify.run
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-check
+          token: portable-a0198f3de92fe7bcc59acccc3eed1ea024c993ae93b58b91578ebad89c13684c
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: scheduled-scan-r2-substore:32
+        input:
+          input:
+            change: scheduled-scan-r2-substore
+            changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+          outputs: {}
+        inputHash: b9733c58dbfe4902a795eb10c11a5781a90b5d305991b5f858a99e5545866139
+        outcome:
+          actionId: scheduled-scan-r2-substore:32
+          attempt: 1
+          claimToken: portable-a0198f3de92fe7bcc59acccc3eed1ea024c993ae93b58b91578ebad89c13684c
+          inputHash: b9733c58dbfe4902a795eb10c11a5781a90b5d305991b5f858a99e5545866139
+          outcomeId: 7c7a4a96-20df-4f44-8174-8c48b2fbbf25
+          output:
+            argv:
+              - go
+              - -C
+              - combined_refactor
+              - test
+              - -count=1
+              - ./...
+            changedDuringExecution: []
+            checkEpoch: 7
+            contentHash: 2a02ce614bb2e06d3a1e8a2f978b122d30de6f0d28a92afce82a23713ce603e3
+            cwd: .
+            deliveryInputs:
+              README.md: git:c0936680f1f1e17f27a7ab4604a2964f77c9e6ed
+              combined_refactor/cli.go: git:9bbd2f8acd3c787a92e539ab9efeaca400fdf9f9
+              combined_refactor/cli_export_test.go: git:131119e2f06a8cc4eb8693dfed74f490cfb28f92
+              combined_refactor/go.mod: git:0678cac33fa5cb48596d502cd7975578ca1b00e9
+              combined_refactor/go.sum: git:f648c2afe6948617c1ce7e59499cfec25ce45095
+              combined_refactor/index.html: git:6c1738a3860b9c3d555aedb57d61f4d155ee25dd
+              combined_refactor/main.go: git:44e786b147a70b7cdea93444a779a3487210fbbc
+              combined_refactor/menu.go: git:b1a025c25af5dd844583bf0e0f5d2095ea5c31a3
+              combined_refactor/proxy.go: git:40db24fd3540e2624c727b54d096aed28917eb89
+              combined_refactor/r2.go: git:aae5306954a6e1f43bc56501a0df1b458f186826
+              combined_refactor/r2_test.go: git:d312dc7743783549e4f10381c1829d393747a2a3
+              combined_refactor/schedule.go: missing
+              combined_refactor/schedule_menu.go: git:1a5a132d201b15f0124e16c55c712689ed5fcdbe
+              combined_refactor/scheduler.go: git:fd02d4e4c6c85e3484192faf78c8e6d175aa31e9
+              combined_refactor/scheduler_test.go: git:4222965ed8966b9224b1aeb80533a205e6795bf0
+              combined_refactor/server.go: git:4e6032f9f56bd017100a2c63573eb6dfd25ed13f
+              docs/docker.md: git:b7f81a7be5ee7afe60576908716cb966ceb7d166
+              substore/README.md: git:36d6feab450d747ceaf9101dcc0686767d2f9498
+              substore/cloudflare-targets.js: git:f71d488c633f84345659919d24c3dcabd30c5c3d
+              substore/cloudflare-targets.test.js: git:e3851102a5515f03a0bbaa615958bb07828a6db8
+            environment: d158050549f6e5c353252135d05d7d5aea9cfd911dd3d59d53e51f0f260f351e
+            exitCode: 0
+            inputAfter: 05a0dc4c27e081eef7ada2a47b019d11a6427bd5ecf20a19d8653afb3d3ae62d
+            inputBefore: 05a0dc4c27e081eef7ada2a47b019d11a6427bd5ecf20a19d8653afb3d3ae62d
+            manifestHash: 6ae1ed12da63bca186e4a75c20892cbe2afd3880d7d0f188110b48c6b3c34d9b
+            manifestRef: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/3fa6d018-b83d-41b3-926f-55813cd2f046.manifest
+            receiptRef: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/7aa6c969-d8eb-4095-bea2-be57c70b78b2.log
+            reusable: true
+            reused: false
+            scope: verify
+            tier: full
+            timeoutMs: 300000
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 3f1d8442a7d5f4ddec90c39e8754f0d7df2d5525e10c2978c50e058eb887a5d6
+            outcomeId: 7c7a4a96-20df-4f44-8174-8c48b2fbbf25
+        reconciliations: []
+        ref: classic-check
+        requiredCapabilities: []
+        retry: manual
+        runId: scheduled-scan-r2-substore
+        status: succeeded
+        stepId: full.verify.check
+        type: call_tool
+      - attempt: 1
+        claim:
+          executorId: comet-classic-state
+          token: portable-c169992be0cb04f0eda6d9a1752ec0130c88f7a51542067e19835fce2d17802e
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: scheduled-scan-r2-substore:34
+        input:
+          input:
+            change: scheduled-scan-r2-substore
+            changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+          outputs: {}
+        inputHash: 29d85646f463660edcefdcf8c314bf695f25e3b777456e46924249ce7e9681c6
+        outcome:
+          actionId: scheduled-scan-r2-substore:34
+          attempt: 1
+          claimToken: portable-c169992be0cb04f0eda6d9a1752ec0130c88f7a51542067e19835fce2d17802e
+          inputHash: 29d85646f463660edcefdcf8c314bf695f25e3b777456e46924249ce7e9681c6
+          outcomeId: 9ae9763f-a66c-4087-8e21-160585ac03ec
+          output:
+            summary: 目标：以进程内调度替换 systemd，新增 CF Worker 兼容 R2 上传与重试、Sub-Store 目标列表导出及 operator
+              脚本，并优化两侧脚本。归档影响：按 delta 语义合并
+              scan-scheduling、r2-worker-upload、substore-integration 三份规格到主
+              spec，标注 design doc 与 plan，将 change
+              移入归档目录，并创建唯一归档提交。交付：仅本地归档（local），目标分支
+              comet/scheduled-scan-r2-substore；不推送、不创建 PR，main 由用户本人合并。
+            targetBranch: comet/scheduled-scan-r2-substore
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 12fd7ced346faa6c1e7e7d675529682be2ea266d84bbd16824f846efdc3d0377
+            outcomeId: 9ae9763f-a66c-4087-8e21-160585ac03ec
+        reconciliations: []
+        ref: comet-archive
+        requiredCapabilities: []
+        retry: manual
+        runId: scheduled-scan-r2-substore
+        status: succeeded
+        stepId: full.archive.prepare
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-archive-preflight
+          token: portable-02303f3a44a17965d4514356cd97cf4d8fe85608941f925b0f178d5aa39ec335
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: scheduled-scan-r2-substore:36
+        input:
+          input:
+            change: scheduled-scan-r2-substore
+            changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+          outputs: {}
+        inputHash: 68ce7677a52ab990cd8aee438a75e0ac9c29973a2ef8317510f8c106a25f83ac
+        outcome:
+          actionId: scheduled-scan-r2-substore:36
+          attempt: 1
+          claimToken: portable-02303f3a44a17965d4514356cd97cf4d8fe85608941f925b0f178d5aa39ec335
+          inputHash: 68ce7677a52ab990cd8aee438a75e0ac9c29973a2ef8317510f8c106a25f83ac
+          outcomeId: 09350ae5-0404-4ca9-b0e4-f26b77d503c8
+          output:
+            baseCommit: b312c209edf1ca903c53ec0d959118c2c11d3f9b
+            deliveryAction: local
+            targetBranch: comet/scheduled-scan-r2-substore
+            verifiedBranch: comet/scheduled-scan-r2-substore
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: f2d94ffc3b009c585292667af9a41d8119bd166302510c2152b93b2b35e9a7a5
+            outcomeId: 09350ae5-0404-4ca9-b0e4-f26b77d503c8
+        reconciliations: []
+        ref: classic-archive-preflight
+        requiredCapabilities: []
+        retry: manual
+        runId: scheduled-scan-r2-substore
+        status: succeeded
+        stepId: full.archive.preflight
+        type: call_tool
+      - attempt: 1
+        claim:
+          executorId: comet-classic-archive
+          token: portable-7ede109ea3e437b6b582f590effcb71bc20b9e95c4592aa840c2744100733fd3
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: scheduled-scan-r2-substore:37
+        input:
+          input:
+            change: scheduled-scan-r2-substore
+            changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+          outputs: {}
+        inputHash: bdf4e08e6170b76f22c2ba9cc58e4e1aece4bbdeeee42f6fc1fd9408319ec8f6
+        outcome:
+          actionId: scheduled-scan-r2-substore:37
+          attempt: 1
+          claimToken: portable-7ede109ea3e437b6b582f590effcb71bc20b9e95c4592aa840c2744100733fd3
+          inputHash: bdf4e08e6170b76f22c2ba9cc58e4e1aece4bbdeeee42f6fc1fd9408319ec8f6
+          outcomeId: b38c0c79-4bbe-4858-817e-723059f917c9
+          output:
+            archiveDirectory: docs/openspec/changes/archive/2026-10-28-scheduled-scan-r2-substore
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: eeadd5756c5ea71aac22e4e274d554ac93374ab1dac6124f1230cccec9f96221
+            outcomeId: b38c0c79-4bbe-4858-817e-723059f917c9
+        reconciliations: []
+        ref: classic-archive
+        requiredCapabilities: []
+        retry: manual
+        runId: scheduled-scan-r2-substore
+        status: succeeded
+        stepId: full.archive.execute
+        type: call_tool
+      - attempt: 1
+        claim:
+          executorId: comet-classic-delivery
+          token: portable-4dc3349bf5e479e73ce9a5f2dfbf93c20b5082dbf40d4028672cec058b2100fb
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: scheduled-scan-r2-substore:38
+        input:
+          input:
+            change: scheduled-scan-r2-substore
+            changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+          outputs: {}
+        inputHash: a129f893edfd0aea1b84349f1495b510e27dca6be8acd6fd4ae8219f1772b9e7
+        outcome:
+          actionId: scheduled-scan-r2-substore:38
+          attempt: 1
+          claimToken: portable-4dc3349bf5e479e73ce9a5f2dfbf93c20b5082dbf40d4028672cec058b2100fb
+          inputHash: a129f893edfd0aea1b84349f1495b510e27dca6be8acd6fd4ae8219f1772b9e7
+          outcomeId: d5732b0c-e738-46b8-b879-e68b8bde8cf2
+          output:
+            action: local
+            commit: 35a6e4bdbf9acf97ab5186b5e3b715df6da01764
+            targetBranch: comet/scheduled-scan-r2-substore
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: f4698d803dd7213f2f8eb54d559bc81592902f626429f54662af8467fcfe20dd
+            outcomeId: d5732b0c-e738-46b8-b879-e68b8bde8cf2
+        reconciliations: []
+        ref: comet-archive
+        requiredCapabilities: []
+        retry: manual
+        runId: scheduled-scan-r2-substore
+        status: succeeded
+        stepId: full.archive.deliver
+        type: invoke_skill
+    actionContexts:
+      scheduled-scan-r2-substore:1:
+        results: {}
+        sequence: 1
+      scheduled-scan-r2-substore:11:
+        results: {}
+        sequence: 11
+      scheduled-scan-r2-substore:13:
+        results: {}
+        sequence: 13
+      scheduled-scan-r2-substore:14:
+        results: {}
+        sequence: 14
+      scheduled-scan-r2-substore:16:
+        results: {}
+        sequence: 16
+      scheduled-scan-r2-substore:17:
+        results: {}
+        sequence: 17
+      scheduled-scan-r2-substore:19:
+        results: {}
+        sequence: 19
+      scheduled-scan-r2-substore:20:
+        results: {}
+        sequence: 20
+      scheduled-scan-r2-substore:21:
+        results: {}
+        sequence: 21
+      scheduled-scan-r2-substore:22:
+        results: {}
+        sequence: 22
+      scheduled-scan-r2-substore:24:
+        results: {}
+        sequence: 24
+      scheduled-scan-r2-substore:25:
+        results: {}
+        sequence: 25
+      scheduled-scan-r2-substore:27:
+        results: {}
+        sequence: 27
+      scheduled-scan-r2-substore:28:
+        results: {}
+        sequence: 28
+      scheduled-scan-r2-substore:30:
+        results: {}
+        sequence: 30
+      scheduled-scan-r2-substore:32:
+        results: {}
+        sequence: 32
+      scheduled-scan-r2-substore:34:
+        results: {}
+        sequence: 34
+      scheduled-scan-r2-substore:36:
+        results: {}
+        sequence: 36
+      scheduled-scan-r2-substore:37:
+        results: {}
+        sequence: 37
+      scheduled-scan-r2-substore:38:
+        results: {}
+        sequence: 38
+      scheduled-scan-r2-substore:4:
+        results: {}
+        sequence: 4
+      scheduled-scan-r2-substore:5:
+        results: {}
+        sequence: 5
+      scheduled-scan-r2-substore:7:
+        results: {}
+        sequence: 7
+      scheduled-scan-r2-substore:9:
+        results: {}
+        sequence: 9
+    waits:
+      - id: scheduled-scan-r2-substore:3
+        stepId: full.open.confirm
+        sequence: 3
+        status: resolved
+        proposal:
+          input:
+            change: scheduled-scan-r2-substore
+            changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+          outputs:
+            full.open:
+              event: open-complete
+            full.open.evidence:
+              contentHash: 769bbc3d192fd7c7176698ef5d15ef0db3117d6d8d6b62a78049432f92fda176
+              ref: docs/openspec/changes/scheduled-scan-r2-substore
+        proposalHash: fe8cf8fc0ded850a0b4a409f0b98245ef8b699fd6b6114b73800913f37b96511
+        choices:
+          - approved
+          - rejected
+        results: {}
+        decision:
+          id: classic-open-769bbc3d192fd7c7176698ef5d15ef0db3117d6d8d6b62a78049432f92fda176
+          choice: approved
+          proposalHash: fe8cf8fc0ded850a0b4a409f0b98245ef8b699fd6b6114b73800913f37b96511
+      - id: scheduled-scan-r2-substore:6
+        stepId: full.design.confirm
+        sequence: 6
+        status: resolved
+        proposal:
+          input:
+            change: scheduled-scan-r2-substore
+            changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+          outputs:
+            full.design.handoff:
+              handoffContext: docs/openspec/changes/scheduled-scan-r2-substore/.comet/handoff/design-context.json
+              handoffHash: 034d13f6a4e572d5239d0f2c7c6f1dc338cb2d2beb47a3c30415152256a122a6
+              proposal: |-
+                # Brainstorm Summary
+
+                - Change: scheduled-scan-r2-substore
+                - Date: 2026-10-28
+
+                ## 确认的技术方案
+
+                状态：已确认（2026-10-28）
+
+                ### 1. 调度器（进程内，替换 systemd）
+
+                - 新增 `scheduler.go`：`robfig/cron/v3` + `time.Ticker`，由全局单例 `scanScheduler` 管理。
+                - 配置归一化（`normalizeSchedulePlan`，纯函数可测）：
+                  - `schedule-enabled=false` → 不调度（新增显式开关，默认 false）。
+                  - `cron-expression` 非空且可解析 → cron 模式，优先于间隔。
+                  - cron 非法 → 记录错误并回退间隔模式。
+                  - `check-interval <= 0 → 2880`，`< 60 → 60`。
+                - 启动行为：cron 模式不立即执行（按表达式下一次触发）；间隔模式进程启动即执行一次，然后按 ticker。
+                - 热更新：读取配置文件 mtime 轮询（10s）+ Web 保存后立即 `Reload`。Reload 只替换计划，不立即扫描、不打断进行中的扫描。
+                - 并发保护：扫描入口先 `anyTaskRunning()` 跳过（记录日志）；实际执行用 `runTaskSync` 持有全局任务计数，与手动 Web/CLI 任务互斥。另加原子 `running` 标志防止 ticker 重入。
+                - 流水线复用：从 `runOfficialCLI` / `runNSBCLI` 抽取 `runOfficialPipeline(cfg, session)` / `runNSBPipeline(cfg, session)`；官方流水线在同一个 `runTaskSync` 内完成扫描→DetailedIPs 检测→测速→导出，消除现有两段任务之间的并发空窗。
+                - 定时任务使用 headless session（`newCLISession`）复用 CLI 输出通道，由调度器包装为静默日志。
+                - Web：启动时（`initLocations()` 之后、HTTP 监听之前）启动调度器；新增 WS `get_schedule_config` / `set_schedule_config`，读改写配置文件嵌套 `config` 对象，保留未知字段，使用 `storage.go` 的 `atomicWriteFile` 原子写入，写后立即 `Reload`。
+                - CLI：删除 `schedule.go` 的 systemd 实现，替换为 `schedule_menu.go`（启用/停用、cron 表达式、检测间隔、保存并常驻运行、Ctrl+C 退出）。`menu.go` 菜单项 4 文案改为「自动调度」。
+                - 时区：cron 使用进程本地时区；启动日志打印当前时区与计划描述。
+
+                ### 2. R2 上传（CF Worker 兼容协议）
+
+                - 新增 `r2.go`：
+                  - URL 校验：仅 http/https，base 拼接 `/storage`；token 通过 `url.Values` 编码进查询串。
+                  - 请求体：JSON `{"filename": ..., "value": ...}`，`Content-Type: application/json`。
+                  - 成功判定：HTTP 2xx。
+                  - 重试：最多 3 次，固定间隔 2s（间隔与客户端可注入以便测试）；4xx 中 401/403 视为配置错误直接失败，其余按重试处理。
+                  - 超时：30s。
+                  - 空内容保护：内容为空或导出 0 行时跳过上传并记录错误，绝不覆盖 R2 旧文件。
+                  - 代理：复用管理面代理传输（`applyManagementProxy`），但**不套 debug 包装**，避免 `?token=` 写入 debug 日志；错误日志只打印脱敏 URL（去掉 query）。
+                  - 上传集成进 `writeCLIExportAndMaybeUpload`：手动 CLI、Web 导出、定时任务统一生效；上传失败只记录，不阻断导出与后续流程。
+                - 配置字段（嵌套 `config`）：`r2enabled`、`r2workerurl`、`r2workertoken`、`r2filename`（默认 `cfdata-targets.txt`）。
+                - 上传内容：始终为 Sub-Store 目标列表格式（不论本地导出格式）。
+
+                ### 3. Sub-Store 目标列表导出
+
+                - 新导出格式 `substore`（TXT 扩展名）：
+                  - 每行 `host[:port]#alias`；IPv6 始终输出 `[v6]:port#alias`（不受 `outv6bracket=false` 影响）。
+                  - alias 默认 `dc-city`，回退顺序 dc → loc → ip；清洗 `#`、换行、多余空白，空 alias 回退到地址本身。
+                  - 复用现有 IP 类型/合格筛选、起止行限制。
+                  - 端口为空或 0 时不追加 `:port`。
+                - CLI/Web 增加 substore 格式选项；Web 端在 `index.html` 中镜像实现 `buildSubstoreContent`（服务端 `formatCLIResults` 与前端各自维护格式），并提供「复制 Sub-Store 列表」按钮。
+                - GitHub/edgetunnel 上传配置默认文件名相应为 `results/ip.txt` 场景，不强制。
+
+                ### 4. Operator 脚本入库
+
+                - 新增 `substore/cloudflare-targets.js`：基于 Untitled.js 加固：
+                  - 静态目标逐行解析，非法行跳过并告警，不再整脚本抛错。
+                  - alias 清洗（`#`、换行、空白）。
+                  - `fetch` 回退路径增加 `AbortController` 超时（与 `urlTimeout` 一致）。
+                  - 完全重复目标去重；保留 `dedupAliases` 上标逻辑。
+                  - 守卫式 `module.exports`（存在 `module` 时导出纯函数）便于 Node 测试，Sub-Store 环境不受影响。
+                - 新增 `substore/README.md`：输入格式、urls 示例、R2 公网地址接入、常见问题。
+
+                ## 关键取舍与风险
+
+                - 不引入状态持久化：定时任务重启后不补跑；间隔模式启动即跑一次，cron 模式等下一次触发。
+                - 单实例假设：进程内调度无法跨副本协调；文档明确同一配置目录只运行一个实例。
+                - 配置迁移：新增字段会被 `migrateConfigFileToLatest` 识别为缺失并触发一次性重写（生成 `.bak`）；文档说明。
+                - Web 导出为客户端实现，与服务端格式化存在两份代码；通过相同用例的单元/手动验证降低漂移风险。
+                - 移除 systemd 后不自动删除既有 unit 文件，文档给出迁移与清理命令。
+                - R2 令牌保护：不用 debug 传输；错误日志脱敏。
+                - 4xx 非鉴权错误重试意义有限，但保持与参考实现一致（3 次），避免复杂分类。
+
+                ## 测试策略
+
+                - Go 单元测试：
+                  - `normalizeSchedulePlan` 表驱动（关闭、cron 优先、非法 cron 回退、间隔钳制）。
+                  - 调度器：间隔模式立即触发一次；cron 模式启动不立即触发；Reload 后不立即触发且新计划生效；运行中跳过。
+                  - R2：httptest 成功、失败两次后成功、全部失败、空内容跳过、token 不出现在日志。
+                  - Sub-Store 格式：IPv4/IPv6、端口省略、alias 回退/清洗、筛选与行数限制。
+                - Node 脚本测试：`node --test` 或临时 harness 校验解析、去重、非法行跳过。
+                - 集成验证：`go vet ./...`、`go test ./...`、linux/amd64 构建；本地 Web 用 `cron-expression: "* * * * *"` + 本地 R2 mock 端点跑通一次定时流水线。
+                - 手动：CLI 菜单启用/保存/常驻；Web 设置保存后刷新页面状态一致；禁用调度后不再触发。
+
+                ## Spec Patch
+
+                将回写 delta spec（不重写需求结构，只补边界与场景）：
+
+                1. `specs/scan-scheduling/spec.md`
+                   - 新增「调度开关」需求：`schedule-enabled` 默认 false；场景「未启用时不调度」「启用为 cron 模式」「启用为间隔模式」。
+                   - 启动行为场景限定为「已启用且为间隔模式」；补充「cron 模式启动不立即扫描」。
+                   - 热更新场景补充：保存/重载不立即触发扫描、不中断进行中的扫描。
+                2. `specs/substore-integration/spec.md`
+                   - 新增场景：alias 清洗（`#`、换行、空白）与空 alias 回退。
+                   - 新增场景：`outv6bracket=false` 时 substore 格式仍输出 `[v6]:port`。
+                3. `specs/r2-worker-upload/spec.md`
+                   - 补充场景：令牌不得出现在日志/debug 输出；URL 非法时跳过并报错。
+              requirementsEvidence:
+                contentHash: 6106ec2bf939fa82792f18bde6c9ba4742dda02b36bb681f004e85ca823dd4b0
+                ref: docs/openspec/changes/scheduled-scan-r2-substore
+              sourceEvidence:
+                contentHash: ba37bedaf5484f7af4ce7045917f813ed56212b1bca6b39ae4959d5d9fc74020
+                ref: docs/openspec/changes/scheduled-scan-r2-substore
+        proposalHash: 3cfd0c10e81cceb5abe86ead23b09bfa27b822b8beda9d769c7c43dda6ca10fa
+        choices:
+          - approved
+          - rejected
+        results: {}
+        decision:
+          id: classic-design-3cfd0c10e81cceb5abe86ead23b09bfa27b822b8beda9d769c7c43dda6ca10fa-approved
+          choice: approved
+          proposalHash: 3cfd0c10e81cceb5abe86ead23b09bfa27b822b8beda9d769c7c43dda6ca10fa
+      - id: scheduled-scan-r2-substore:10
+        stepId: full.build.confirm
+        sequence: 10
+        status: resolved
+        proposal:
+          input:
+            change: scheduled-scan-r2-substore
+            changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+          outputs:
+            full.build.configure:
+              boundBranch: comet/scheduled-scan-r2-substore
+              buildMode: autonomous
+              directOverride: false
+              isolation: branch
+              reviewMode: standard
+              subagentDispatch: null
+              tddMode: tdd
+        proposalHash: 783a33fab38c6b0df5b6c04fe2606aec569e5c8b8c7812cdafcb9b4691649af8
+        choices:
+          - approved
+          - rejected
+        results: {}
+        decision:
+          id: aedd90aa-aa04-44a0-8733-1e9c7443c696
+          choice: approved
+          proposalHash: 783a33fab38c6b0df5b6c04fe2606aec569e5c8b8c7812cdafcb9b4691649af8
+      - id: scheduled-scan-r2-substore:35
+        stepId: full.archive.confirm
+        sequence: 35
+        status: resolved
+        proposal:
+          input:
+            change: scheduled-scan-r2-substore
+            changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+          outputs:
+            full.archive.prepare:
+              summary: 目标：以进程内调度替换 systemd，新增 CF Worker 兼容 R2 上传与重试、Sub-Store 目标列表导出及 operator
+                脚本，并优化两侧脚本。归档影响：按 delta 语义合并
+                scan-scheduling、r2-worker-upload、substore-integration 三份规格到主
+                spec，标注 design doc 与 plan，将 change
+                移入归档目录，并创建唯一归档提交。交付：仅本地归档（local），目标分支
+                comet/scheduled-scan-r2-substore；不推送、不创建 PR，main 由用户本人合并。
+              targetBranch: comet/scheduled-scan-r2-substore
+        proposalHash: 50a38d50d1dc98429ef6b348519cad0974495eb019595a3fb88bad23e41638cb
+        choices:
+          - local
+          - push
+          - pr
+          - reverify
+          - later
+        results: {}
+        decision:
+          id: classic-archive-50a38d50d1dc98429ef6b348519cad0974495eb019595a3fb88bad23e41638cb-local
+          choice: local
+          proposalHash: 50a38d50d1dc98429ef6b348519cad0974495eb019595a3fb88bad23e41638cb
+    evidenceWaits:
+      - id: scheduled-scan-r2-substore:2
+        stepId: full.open.evidence
+        sequence: 2
+        kind: classic-open-artifacts
+        status: resolved
+        results: {}
+        receipt:
+          ref: docs/openspec/changes/scheduled-scan-r2-substore
+          contentHash: 769bbc3d192fd7c7176698ef5d15ef0db3117d6d8d6b62a78049432f92fda176
+          submissionId: 17a07e94-cbd4-4389-84df-bb3cd524bcae
+      - id: scheduled-scan-r2-substore:8
+        stepId: full.design.evidence
+        sequence: 8
+        kind: classic-design-document
+        status: resolved
+        results: {}
+        receipt:
+          ref: docs/openspec/changes/scheduled-scan-r2-substore/design.md
+          contentHash: 10a2283bb5da72296c5b850341449e79a91ea4e11612b0f42c70623b99ff10c5
+          submissionId: cf2a234a-5022-43c4-a3ae-e40cd387d101
+      - id: scheduled-scan-r2-substore:12
+        stepId: full.build.plan.evidence
+        sequence: 12
+        kind: classic-build-plan
+        status: resolved
+        results: {}
+        receipt:
+          ref: docs/superpowers/plans/2026-10-28-scheduled-scan-r2-substore.md
+          contentHash: 5232a1dc02043ae0d40043e99c19f56a10d20850b36d6fd7eb48dd33500e82f0
+          submissionId: d769dd39-3901-4092-ae8c-c01d07a98dcf
+      - id: scheduled-scan-r2-substore:15
+        stepId: full.build.check.evidence
+        sequence: 15
+        kind: classic-build-check
+        status: resolved
+        results: {}
+        receipt:
+          ref: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/eb9501c5-5eed-4525-be63-6adf8b10c4fa.log
+          contentHash: 590b2a5d5bfb61d4d269058509b3ee106992b299d97bebbcf953bba21a7463c3
+          submissionId: 52cd0909-7114-4233-b3f8-42d57681df32
+      - id: scheduled-scan-r2-substore:18
+        stepId: full.build.plan.evidence
+        sequence: 18
+        kind: classic-build-plan
+        status: resolved
+        results: {}
+        receipt:
+          ref: docs/superpowers/plans/2026-10-28-scheduled-scan-r2-substore.md
+          contentHash: 5232a1dc02043ae0d40043e99c19f56a10d20850b36d6fd7eb48dd33500e82f0
+          submissionId: 2c4ee56a-6a46-426d-9034-49f3773a48b1
+      - id: scheduled-scan-r2-substore:23
+        stepId: full.build.check.evidence
+        sequence: 23
+        kind: classic-build-check
+        status: resolved
+        results: {}
+        receipt:
+          ref: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/b23efbfa-c53c-46e5-8a70-e206fb21ef52.log
+          contentHash: c5d184669a409fdf910a4e188f2dfc01bb5b17cb919a8817ffe3a82b4fa556bf
+          submissionId: aa8a6bb9-17e0-49b8-b570-8abab1b54f5f
+      - id: scheduled-scan-r2-substore:26
+        stepId: full.build.plan.evidence
+        sequence: 26
+        kind: classic-build-plan
+        status: resolved
+        results: {}
+        receipt:
+          ref: docs/superpowers/plans/2026-10-28-scheduled-scan-r2-substore.md
+          contentHash: 6c075dab16cab8088966878c63a7b298163968cd0f363a8664c6a8df829f5290
+          submissionId: 886dd775-b20f-4753-ac1b-ad54de32a8b9
+      - id: scheduled-scan-r2-substore:29
+        stepId: full.build.check.evidence
+        sequence: 29
+        kind: classic-build-check
+        status: resolved
+        results: {}
+        receipt:
+          ref: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/02b61eb9-b5eb-4447-9e4a-be27465448b6.log
+          contentHash: 7fa0b58252dd38e222da8a0842599b0cea55e890f6303748bd4bd5e83c295696
+          submissionId: 6097728a-7094-41a9-b9fa-0a1dbcf02fc6
+      - id: scheduled-scan-r2-substore:31
+        stepId: full.verify.report.evidence
+        sequence: 31
+        kind: classic-verification-report
+        status: resolved
+        results: {}
+        receipt:
+          ref: docs/superpowers/reports/2026-10-28-scheduled-scan-r2-substore-verify.md
+          contentHash: fe0706ca72f42071993c415d765df547a16c29c84e1e4b081e99dde0c97d8b75
+          submissionId: 166affcf-47a1-46dd-9e3e-8e189e5b0576
+      - id: scheduled-scan-r2-substore:33
+        stepId: full.verify.check.evidence
+        sequence: 33
+        kind: classic-verify-check
+        status: resolved
+        results: {}
+        receipt:
+          ref: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/7aa6c969-d8eb-4095-bea2-be57c70b78b2.log
+          contentHash: 2a02ce614bb2e06d3a1e8a2f978b122d30de6f0d28a92afce82a23713ce603e3
+          submissionId: cf6041e3-1c91-49d5-8f5f-21178fa6649b
+    ready: []
+    joins: {}
+    outputs: {}
+    children: []
+    lineage: []
+  sourceRevision: 63
+  sourceHash: 24333027e54fddbeb55ee7b14daf88a8feba8d0fa3274d8db6d1ee6e1ddce263
+  pool:
+    version: 3
+    values:
+      - event: open-complete
+      - choice: approved
+        proposal:
+          input:
+            change: scheduled-scan-r2-substore
+            changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+          outputs:
+            full.open:
+              event: open-complete
+            full.open.evidence:
+              contentHash: 769bbc3d192fd7c7176698ef5d15ef0db3117d6d8d6b62a78049432f92fda176
+              ref: docs/openspec/changes/scheduled-scan-r2-substore
+      - contentHash: 769bbc3d192fd7c7176698ef5d15ef0db3117d6d8d6b62a78049432f92fda176
+        ref: docs/openspec/changes/scheduled-scan-r2-substore
+      - contentHash: 769bbc3d192fd7c7176698ef5d15ef0db3117d6d8d6b62a78049432f92fda176
+      - choice: approved
+        proposal:
+          input:
+            change: scheduled-scan-r2-substore
+            changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+          outputs:
+            full.design.handoff:
+              handoffContext: docs/openspec/changes/scheduled-scan-r2-substore/.comet/handoff/design-context.json
+              handoffHash: 034d13f6a4e572d5239d0f2c7c6f1dc338cb2d2beb47a3c30415152256a122a6
+              proposal: |-
+                # Brainstorm Summary
+
+                - Change: scheduled-scan-r2-substore
+                - Date: 2026-10-28
+
+                ## 确认的技术方案
+
+                状态：已确认（2026-10-28）
+
+                ### 1. 调度器（进程内，替换 systemd）
+
+                - 新增 `scheduler.go`：`robfig/cron/v3` + `time.Ticker`，由全局单例 `scanScheduler` 管理。
+                - 配置归一化（`normalizeSchedulePlan`，纯函数可测）：
+                  - `schedule-enabled=false` → 不调度（新增显式开关，默认 false）。
+                  - `cron-expression` 非空且可解析 → cron 模式，优先于间隔。
+                  - cron 非法 → 记录错误并回退间隔模式。
+                  - `check-interval <= 0 → 2880`，`< 60 → 60`。
+                - 启动行为：cron 模式不立即执行（按表达式下一次触发）；间隔模式进程启动即执行一次，然后按 ticker。
+                - 热更新：读取配置文件 mtime 轮询（10s）+ Web 保存后立即 `Reload`。Reload 只替换计划，不立即扫描、不打断进行中的扫描。
+                - 并发保护：扫描入口先 `anyTaskRunning()` 跳过（记录日志）；实际执行用 `runTaskSync` 持有全局任务计数，与手动 Web/CLI 任务互斥。另加原子 `running` 标志防止 ticker 重入。
+                - 流水线复用：从 `runOfficialCLI` / `runNSBCLI` 抽取 `runOfficialPipeline(cfg, session)` / `runNSBPipeline(cfg, session)`；官方流水线在同一个 `runTaskSync` 内完成扫描→DetailedIPs 检测→测速→导出，消除现有两段任务之间的并发空窗。
+                - 定时任务使用 headless session（`newCLISession`）复用 CLI 输出通道，由调度器包装为静默日志。
+                - Web：启动时（`initLocations()` 之后、HTTP 监听之前）启动调度器；新增 WS `get_schedule_config` / `set_schedule_config`，读改写配置文件嵌套 `config` 对象，保留未知字段，使用 `storage.go` 的 `atomicWriteFile` 原子写入，写后立即 `Reload`。
+                - CLI：删除 `schedule.go` 的 systemd 实现，替换为 `schedule_menu.go`（启用/停用、cron 表达式、检测间隔、保存并常驻运行、Ctrl+C 退出）。`menu.go` 菜单项 4 文案改为「自动调度」。
+                - 时区：cron 使用进程本地时区；启动日志打印当前时区与计划描述。
+
+                ### 2. R2 上传（CF Worker 兼容协议）
+
+                - 新增 `r2.go`：
+                  - URL 校验：仅 http/https，base 拼接 `/storage`；token 通过 `url.Values` 编码进查询串。
+                  - 请求体：JSON `{"filename": ..., "value": ...}`，`Content-Type: application/json`。
+                  - 成功判定：HTTP 2xx。
+                  - 重试：最多 3 次，固定间隔 2s（间隔与客户端可注入以便测试）；4xx 中 401/403 视为配置错误直接失败，其余按重试处理。
+                  - 超时：30s。
+                  - 空内容保护：内容为空或导出 0 行时跳过上传并记录错误，绝不覆盖 R2 旧文件。
+                  - 代理：复用管理面代理传输（`applyManagementProxy`），但**不套 debug 包装**，避免 `?token=` 写入 debug 日志；错误日志只打印脱敏 URL（去掉 query）。
+                  - 上传集成进 `writeCLIExportAndMaybeUpload`：手动 CLI、Web 导出、定时任务统一生效；上传失败只记录，不阻断导出与后续流程。
+                - 配置字段（嵌套 `config`）：`r2enabled`、`r2workerurl`、`r2workertoken`、`r2filename`（默认 `cfdata-targets.txt`）。
+                - 上传内容：始终为 Sub-Store 目标列表格式（不论本地导出格式）。
+
+                ### 3. Sub-Store 目标列表导出
+
+                - 新导出格式 `substore`（TXT 扩展名）：
+                  - 每行 `host[:port]#alias`；IPv6 始终输出 `[v6]:port#alias`（不受 `outv6bracket=false` 影响）。
+                  - alias 默认 `dc-city`，回退顺序 dc → loc → ip；清洗 `#`、换行、多余空白，空 alias 回退到地址本身。
+                  - 复用现有 IP 类型/合格筛选、起止行限制。
+                  - 端口为空或 0 时不追加 `:port`。
+                - CLI/Web 增加 substore 格式选项；Web 端在 `index.html` 中镜像实现 `buildSubstoreContent`（服务端 `formatCLIResults` 与前端各自维护格式），并提供「复制 Sub-Store 列表」按钮。
+                - GitHub/edgetunnel 上传配置默认文件名相应为 `results/ip.txt` 场景，不强制。
+
+                ### 4. Operator 脚本入库
+
+                - 新增 `substore/cloudflare-targets.js`：基于 Untitled.js 加固：
+                  - 静态目标逐行解析，非法行跳过并告警，不再整脚本抛错。
+                  - alias 清洗（`#`、换行、空白）。
+                  - `fetch` 回退路径增加 `AbortController` 超时（与 `urlTimeout` 一致）。
+                  - 完全重复目标去重；保留 `dedupAliases` 上标逻辑。
+                  - 守卫式 `module.exports`（存在 `module` 时导出纯函数）便于 Node 测试，Sub-Store 环境不受影响。
+                - 新增 `substore/README.md`：输入格式、urls 示例、R2 公网地址接入、常见问题。
+
+                ## 关键取舍与风险
+
+                - 不引入状态持久化：定时任务重启后不补跑；间隔模式启动即跑一次，cron 模式等下一次触发。
+                - 单实例假设：进程内调度无法跨副本协调；文档明确同一配置目录只运行一个实例。
+                - 配置迁移：新增字段会被 `migrateConfigFileToLatest` 识别为缺失并触发一次性重写（生成 `.bak`）；文档说明。
+                - Web 导出为客户端实现，与服务端格式化存在两份代码；通过相同用例的单元/手动验证降低漂移风险。
+                - 移除 systemd 后不自动删除既有 unit 文件，文档给出迁移与清理命令。
+                - R2 令牌保护：不用 debug 传输；错误日志脱敏。
+                - 4xx 非鉴权错误重试意义有限，但保持与参考实现一致（3 次），避免复杂分类。
+
+                ## 测试策略
+
+                - Go 单元测试：
+                  - `normalizeSchedulePlan` 表驱动（关闭、cron 优先、非法 cron 回退、间隔钳制）。
+                  - 调度器：间隔模式立即触发一次；cron 模式启动不立即触发；Reload 后不立即触发且新计划生效；运行中跳过。
+                  - R2：httptest 成功、失败两次后成功、全部失败、空内容跳过、token 不出现在日志。
+                  - Sub-Store 格式：IPv4/IPv6、端口省略、alias 回退/清洗、筛选与行数限制。
+                - Node 脚本测试：`node --test` 或临时 harness 校验解析、去重、非法行跳过。
+                - 集成验证：`go vet ./...`、`go test ./...`、linux/amd64 构建；本地 Web 用 `cron-expression: "* * * * *"` + 本地 R2 mock 端点跑通一次定时流水线。
+                - 手动：CLI 菜单启用/保存/常驻；Web 设置保存后刷新页面状态一致；禁用调度后不再触发。
+
+                ## Spec Patch
+
+                将回写 delta spec（不重写需求结构，只补边界与场景）：
+
+                1. `specs/scan-scheduling/spec.md`
+                   - 新增「调度开关」需求：`schedule-enabled` 默认 false；场景「未启用时不调度」「启用为 cron 模式」「启用为间隔模式」。
+                   - 启动行为场景限定为「已启用且为间隔模式」；补充「cron 模式启动不立即扫描」。
+                   - 热更新场景补充：保存/重载不立即触发扫描、不中断进行中的扫描。
+                2. `specs/substore-integration/spec.md`
+                   - 新增场景：alias 清洗（`#`、换行、空白）与空 alias 回退。
+                   - 新增场景：`outv6bracket=false` 时 substore 格式仍输出 `[v6]:port`。
+                3. `specs/r2-worker-upload/spec.md`
+                   - 补充场景：令牌不得出现在日志/debug 输出；URL 非法时跳过并报错。
+              requirementsEvidence:
+                contentHash: 6106ec2bf939fa82792f18bde6c9ba4742dda02b36bb681f004e85ca823dd4b0
+                ref: docs/openspec/changes/scheduled-scan-r2-substore
+              sourceEvidence:
+                contentHash: ba37bedaf5484f7af4ce7045917f813ed56212b1bca6b39ae4959d5d9fc74020
+                ref: docs/openspec/changes/scheduled-scan-r2-substore
+      - handoffContext: docs/openspec/changes/scheduled-scan-r2-substore/.comet/handoff/design-context.json
+        handoffHash: 034d13f6a4e572d5239d0f2c7c6f1dc338cb2d2beb47a3c30415152256a122a6
+        proposal: >-
+          # Brainstorm Summary
+
+
+          - Change: scheduled-scan-r2-substore
+
+          - Date: 2026-10-28
+
+
+          ## 确认的技术方案
+
+
+          状态：已确认（2026-10-28）
+
+
+          ### 1. 调度器（进程内，替换 systemd）
+
+
+          - 新增 `scheduler.go`：`robfig/cron/v3` + `time.Ticker`，由全局单例
+          `scanScheduler` 管理。
+
+          - 配置归一化（`normalizeSchedulePlan`，纯函数可测）：
+            - `schedule-enabled=false` → 不调度（新增显式开关，默认 false）。
+            - `cron-expression` 非空且可解析 → cron 模式，优先于间隔。
+            - cron 非法 → 记录错误并回退间隔模式。
+            - `check-interval <= 0 → 2880`，`< 60 → 60`。
+          - 启动行为：cron 模式不立即执行（按表达式下一次触发）；间隔模式进程启动即执行一次，然后按 ticker。
+
+          - 热更新：读取配置文件 mtime 轮询（10s）+ Web 保存后立即 `Reload`。Reload
+          只替换计划，不立即扫描、不打断进行中的扫描。
+
+          - 并发保护：扫描入口先 `anyTaskRunning()` 跳过（记录日志）；实际执行用 `runTaskSync`
+          持有全局任务计数，与手动 Web/CLI 任务互斥。另加原子 `running` 标志防止 ticker 重入。
+
+          - 流水线复用：从 `runOfficialCLI` / `runNSBCLI` 抽取 `runOfficialPipeline(cfg,
+          session)` / `runNSBPipeline(cfg, session)`；官方流水线在同一个 `runTaskSync`
+          内完成扫描→DetailedIPs 检测→测速→导出，消除现有两段任务之间的并发空窗。
+
+          - 定时任务使用 headless session（`newCLISession`）复用 CLI 输出通道，由调度器包装为静默日志。
+
+          - Web：启动时（`initLocations()` 之后、HTTP 监听之前）启动调度器；新增 WS
+          `get_schedule_config` / `set_schedule_config`，读改写配置文件嵌套 `config`
+          对象，保留未知字段，使用 `storage.go` 的 `atomicWriteFile` 原子写入，写后立即 `Reload`。
+
+          - CLI：删除 `schedule.go` 的 systemd 实现，替换为 `schedule_menu.go`（启用/停用、cron
+          表达式、检测间隔、保存并常驻运行、Ctrl+C 退出）。`menu.go` 菜单项 4 文案改为「自动调度」。
+
+          - 时区：cron 使用进程本地时区；启动日志打印当前时区与计划描述。
+
+
+          ### 2. R2 上传（CF Worker 兼容协议）
+
+
+          - 新增 `r2.go`：
+            - URL 校验：仅 http/https，base 拼接 `/storage`；token 通过 `url.Values` 编码进查询串。
+            - 请求体：JSON `{"filename": ..., "value": ...}`，`Content-Type: application/json`。
+            - 成功判定：HTTP 2xx。
+            - 重试：最多 3 次，固定间隔 2s（间隔与客户端可注入以便测试）；4xx 中 401/403 视为配置错误直接失败，其余按重试处理。
+            - 超时：30s。
+            - 空内容保护：内容为空或导出 0 行时跳过上传并记录错误，绝不覆盖 R2 旧文件。
+            - 代理：复用管理面代理传输（`applyManagementProxy`），但**不套 debug 包装**，避免 `?token=` 写入 debug 日志；错误日志只打印脱敏 URL（去掉 query）。
+            - 上传集成进 `writeCLIExportAndMaybeUpload`：手动 CLI、Web 导出、定时任务统一生效；上传失败只记录，不阻断导出与后续流程。
+          - 配置字段（嵌套
+          `config`）：`r2enabled`、`r2workerurl`、`r2workertoken`、`r2filename`（默认
+          `cfdata-targets.txt`）。
+
+          - 上传内容：始终为 Sub-Store 目标列表格式（不论本地导出格式）。
+
+
+          ### 3. Sub-Store 目标列表导出
+
+
+          - 新导出格式 `substore`（TXT 扩展名）：
+            - 每行 `host[:port]#alias`；IPv6 始终输出 `[v6]:port#alias`（不受 `outv6bracket=false` 影响）。
+            - alias 默认 `dc-city`，回退顺序 dc → loc → ip；清洗 `#`、换行、多余空白，空 alias 回退到地址本身。
+            - 复用现有 IP 类型/合格筛选、起止行限制。
+            - 端口为空或 0 时不追加 `:port`。
+          - CLI/Web 增加 substore 格式选项；Web 端在 `index.html` 中镜像实现
+          `buildSubstoreContent`（服务端 `formatCLIResults` 与前端各自维护格式），并提供「复制
+          Sub-Store 列表」按钮。
+
+          - GitHub/edgetunnel 上传配置默认文件名相应为 `results/ip.txt` 场景，不强制。
+
+
+          ### 4. Operator 脚本入库
+
+
+          - 新增 `substore/cloudflare-targets.js`：基于 Untitled.js 加固：
+            - 静态目标逐行解析，非法行跳过并告警，不再整脚本抛错。
+            - alias 清洗（`#`、换行、空白）。
+            - `fetch` 回退路径增加 `AbortController` 超时（与 `urlTimeout` 一致）。
+            - 完全重复目标去重；保留 `dedupAliases` 上标逻辑。
+            - 守卫式 `module.exports`（存在 `module` 时导出纯函数）便于 Node 测试，Sub-Store 环境不受影响。
+          - 新增 `substore/README.md`：输入格式、urls 示例、R2 公网地址接入、常见问题。
+
+
+          ## 关键取舍与风险
+
+
+          - 不引入状态持久化：定时任务重启后不补跑；间隔模式启动即跑一次，cron 模式等下一次触发。
+
+          - 单实例假设：进程内调度无法跨副本协调；文档明确同一配置目录只运行一个实例。
+
+          - 配置迁移：新增字段会被 `migrateConfigFileToLatest` 识别为缺失并触发一次性重写（生成
+          `.bak`）；文档说明。
+
+          - Web 导出为客户端实现，与服务端格式化存在两份代码；通过相同用例的单元/手动验证降低漂移风险。
+
+          - 移除 systemd 后不自动删除既有 unit 文件，文档给出迁移与清理命令。
+
+          - R2 令牌保护：不用 debug 传输；错误日志脱敏。
+
+          - 4xx 非鉴权错误重试意义有限，但保持与参考实现一致（3 次），避免复杂分类。
+
+
+          ## 测试策略
+
+
+          - Go 单元测试：
+            - `normalizeSchedulePlan` 表驱动（关闭、cron 优先、非法 cron 回退、间隔钳制）。
+            - 调度器：间隔模式立即触发一次；cron 模式启动不立即触发；Reload 后不立即触发且新计划生效；运行中跳过。
+            - R2：httptest 成功、失败两次后成功、全部失败、空内容跳过、token 不出现在日志。
+            - Sub-Store 格式：IPv4/IPv6、端口省略、alias 回退/清洗、筛选与行数限制。
+          - Node 脚本测试：`node --test` 或临时 harness 校验解析、去重、非法行跳过。
+
+          - 集成验证：`go vet ./...`、`go test ./...`、linux/amd64 构建；本地 Web 用
+          `cron-expression: "* * * * *"` + 本地 R2 mock 端点跑通一次定时流水线。
+
+          - 手动：CLI 菜单启用/保存/常驻；Web 设置保存后刷新页面状态一致；禁用调度后不再触发。
+
+
+          ## Spec Patch
+
+
+          将回写 delta spec（不重写需求结构，只补边界与场景）：
+
+
+          1. `specs/scan-scheduling/spec.md`
+             - 新增「调度开关」需求：`schedule-enabled` 默认 false；场景「未启用时不调度」「启用为 cron 模式」「启用为间隔模式」。
+             - 启动行为场景限定为「已启用且为间隔模式」；补充「cron 模式启动不立即扫描」。
+             - 热更新场景补充：保存/重载不立即触发扫描、不中断进行中的扫描。
+          2. `specs/substore-integration/spec.md`
+             - 新增场景：alias 清洗（`#`、换行、空白）与空 alias 回退。
+             - 新增场景：`outv6bracket=false` 时 substore 格式仍输出 `[v6]:port`。
+          3. `specs/r2-worker-upload/spec.md`
+             - 补充场景：令牌不得出现在日志/debug 输出；URL 非法时跳过并报错。
+        requirementsEvidence:
+          contentHash: 6106ec2bf939fa82792f18bde6c9ba4742dda02b36bb681f004e85ca823dd4b0
+          ref: docs/openspec/changes/scheduled-scan-r2-substore
+        sourceEvidence:
+          contentHash: ba37bedaf5484f7af4ce7045917f813ed56212b1bca6b39ae4959d5d9fc74020
+          ref: docs/openspec/changes/scheduled-scan-r2-substore
+      - designDoc: docs/openspec/changes/scheduled-scan-r2-substore/design.md
+      - contentHash: 10a2283bb5da72296c5b850341449e79a91ea4e11612b0f42c70623b99ff10c5
+        ref: docs/openspec/changes/scheduled-scan-r2-substore/design.md
+      - boundBranch: comet/scheduled-scan-r2-substore
+        buildMode: autonomous
+        directOverride: false
+        isolation: branch
+        reviewMode: standard
+        subagentDispatch: null
+        tddMode: tdd
+      - choice: approved
+        proposal:
+          input:
+            change: scheduled-scan-r2-substore
+            changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+          outputs:
+            full.build.configure:
+              boundBranch: comet/scheduled-scan-r2-substore
+              buildMode: autonomous
+              directOverride: false
+              isolation: branch
+              reviewMode: standard
+              subagentDispatch: null
+              tddMode: tdd
+      - designEvidence:
+          contentHash: 10a2283bb5da72296c5b850341449e79a91ea4e11612b0f42c70623b99ff10c5
+          ref: docs/openspec/changes/scheduled-scan-r2-substore/design.md
+        plan: docs/superpowers/plans/2026-10-28-scheduled-scan-r2-substore.md
+        planEvidence:
+          contentHash: 5232a1dc02043ae0d40043e99c19f56a10d20850b36d6fd7eb48dd33500e82f0
+          ref: docs/superpowers/plans/2026-10-28-scheduled-scan-r2-substore.md
+        taskRevision: 1193f9776698d378107bb0f2bd098c2bbe4f5487d5fa2cbe88934b73603107ed
+      - contentHash: 5232a1dc02043ae0d40043e99c19f56a10d20850b36d6fd7eb48dd33500e82f0
+        ref: docs/superpowers/plans/2026-10-28-scheduled-scan-r2-substore.md
+      - event: build-complete
+      - argv:
+          - go
+          - -C
+          - combined_refactor
+          - test
+          - -count=1
+          - ./...
+        changedDuringExecution: []
+        checkEpoch: 2
+        contentHash: 590b2a5d5bfb61d4d269058509b3ee106992b299d97bebbcf953bba21a7463c3
+        cwd: .
+        environment: d158050549f6e5c353252135d05d7d5aea9cfd911dd3d59d53e51f0f260f351e
+        exitCode: 0
+        inputAfter: cb95043fa2a9c0d31f294b1098562fac137c6a90080979d6fa3f74d4761c17a2
+        inputBefore: cb95043fa2a9c0d31f294b1098562fac137c6a90080979d6fa3f74d4761c17a2
+        manifestHash: da810f5ffda3d5ea8443cdc069df00e0514e869f5202974cf7998bc80f7a52a4
+        manifestRef: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/51fbf8ae-5b0c-412a-b8c3-1f42bb3dd4c7.manifest
+        receiptRef: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/eb9501c5-5eed-4525-be63-6adf8b10c4fa.log
+        reusable: true
+        reused: false
+        scope: build
+        tier: full
+        timeoutMs: 300000
+      - contentHash: 590b2a5d5bfb61d4d269058509b3ee106992b299d97bebbcf953bba21a7463c3
+        ref: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/eb9501c5-5eed-4525-be63-6adf8b10c4fa.log
+      - event: verify-fail
+        reason: "IMPORTANT: scheduled runs mutate process globals; mtime TOCTOU; R2
+          token exposed via WS; substore ipport unbracketed/invalid"
+      - argv:
+          - go
+          - -C
+          - combined_refactor
+          - test
+          - -count=1
+          - ./...
+        changedDuringExecution: []
+        checkEpoch: 4
+        contentHash: 48ed84e9fa77fbe500004a0dd5dc8942a4d6baebe5d620ae2f55f9523cb7a695
+        cwd: .
+        environment: d158050549f6e5c353252135d05d7d5aea9cfd911dd3d59d53e51f0f260f351e
+        exitCode: 1
+        inputAfter: f793d42bb34b4ab98f4a9a20c444415ac09d4b50e47f503f872f22c1ff4c8ef6
+        inputBefore: f793d42bb34b4ab98f4a9a20c444415ac09d4b50e47f503f872f22c1ff4c8ef6
+        manifestHash: e7470a173ce66414e86f4dbee3feb1b6d82d3ac1a982e74c21188c85cdd4e138
+        manifestRef: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/893b8614-0e94-4ae5-9e70-bd2bfd1d7d9d.manifest
+        receiptRef: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/9dd8f321-9cf8-4a24-87eb-99f71c1eb81f.log
+        reusable: true
+        reused: false
+        scope: build
+        tier: full
+        timeoutMs: 600000
+      - argv:
+          - go
+          - -C
+          - combined_refactor
+          - test
+          - -count=1
+          - ./...
+        changedDuringExecution: []
+        checkEpoch: 4
+        contentHash: c5d184669a409fdf910a4e188f2dfc01bb5b17cb919a8817ffe3a82b4fa556bf
+        cwd: .
+        environment: d158050549f6e5c353252135d05d7d5aea9cfd911dd3d59d53e51f0f260f351e
+        exitCode: 0
+        inputAfter: f793d42bb34b4ab98f4a9a20c444415ac09d4b50e47f503f872f22c1ff4c8ef6
+        inputBefore: f793d42bb34b4ab98f4a9a20c444415ac09d4b50e47f503f872f22c1ff4c8ef6
+        manifestHash: e7470a173ce66414e86f4dbee3feb1b6d82d3ac1a982e74c21188c85cdd4e138
+        manifestRef: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/d5238a92-3813-44eb-a876-1d1c9972a71f.manifest
+        receiptRef: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/b23efbfa-c53c-46e5-8a70-e206fb21ef52.log
+        reusable: true
+        reused: false
+        scope: build
+        tier: full
+        timeoutMs: 600000
+      - contentHash: c5d184669a409fdf910a4e188f2dfc01bb5b17cb919a8817ffe3a82b4fa556bf
+        ref: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/b23efbfa-c53c-46e5-8a70-e206fb21ef52.log
+      - event: verify-fail
+        reason: 集成审查发现：get_config 明文返回
+          r2workertoken（IMPORTANT）；调度保存与代理保存无共享写锁且代理保存非原子（WARNING）；reload
+          缺少时区/下次触发日志（design §8）；substore 导出未应用自定义字段与服务端/客户端不一致（WARNING）；cron
+          表达式未 trim（SUGGESTION）。返回 build 修复。
+      - designEvidence:
+          contentHash: 10a2283bb5da72296c5b850341449e79a91ea4e11612b0f42c70623b99ff10c5
+          ref: docs/openspec/changes/scheduled-scan-r2-substore/design.md
+        plan: docs/superpowers/plans/2026-10-28-scheduled-scan-r2-substore.md
+        planEvidence:
+          contentHash: 6c075dab16cab8088966878c63a7b298163968cd0f363a8664c6a8df829f5290
+          ref: docs/superpowers/plans/2026-10-28-scheduled-scan-r2-substore.md
+        taskRevision: 1193f9776698d378107bb0f2bd098c2bbe4f5487d5fa2cbe88934b73603107ed
+      - contentHash: 6c075dab16cab8088966878c63a7b298163968cd0f363a8664c6a8df829f5290
+        ref: docs/superpowers/plans/2026-10-28-scheduled-scan-r2-substore.md
+      - argv:
+          - go
+          - -C
+          - combined_refactor
+          - test
+          - -count=1
+          - ./...
+        changedDuringExecution: []
+        checkEpoch: 6
+        contentHash: 7fa0b58252dd38e222da8a0842599b0cea55e890f6303748bd4bd5e83c295696
+        cwd: .
+        environment: d158050549f6e5c353252135d05d7d5aea9cfd911dd3d59d53e51f0f260f351e
+        exitCode: 0
+        inputAfter: 7126ccf5955b7deede958bb27eaeab0ea537e28dab5a7fb3f4443309650dda77
+        inputBefore: 7126ccf5955b7deede958bb27eaeab0ea537e28dab5a7fb3f4443309650dda77
+        manifestHash: 8c0fb9fdffdd5c882adcfe8de71b46156df47f5cf462cba835ae3e25e9552bdd
+        manifestRef: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/af63ed75-6c5b-4197-a521-365190b1cfe9.manifest
+        receiptRef: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/02b61eb9-b5eb-4447-9e4a-be27465448b6.log
+        reusable: true
+        reused: false
+        scope: build
+        tier: full
+        timeoutMs: 600000
+      - contentHash: 7fa0b58252dd38e222da8a0842599b0cea55e890f6303748bd4bd5e83c295696
+        ref: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/02b61eb9-b5eb-4447-9e4a-be27465448b6.log
+      - contentHash: fe0706ca72f42071993c415d765df547a16c29c84e1e4b081e99dde0c97d8b75
+        ref: docs/superpowers/reports/2026-10-28-scheduled-scan-r2-substore-verify.md
+      - event: verification-ready
+        verificationReport: docs/superpowers/reports/2026-10-28-scheduled-scan-r2-substore-verify.md
+      - argv:
+          - go
+          - -C
+          - combined_refactor
+          - test
+          - -count=1
+          - ./...
+        changedDuringExecution: []
+        checkEpoch: 7
+        contentHash: 2a02ce614bb2e06d3a1e8a2f978b122d30de6f0d28a92afce82a23713ce603e3
+        cwd: .
+        deliveryInputs:
+          README.md: git:c0936680f1f1e17f27a7ab4604a2964f77c9e6ed
+          combined_refactor/cli.go: git:9bbd2f8acd3c787a92e539ab9efeaca400fdf9f9
+          combined_refactor/cli_export_test.go: git:131119e2f06a8cc4eb8693dfed74f490cfb28f92
+          combined_refactor/go.mod: git:0678cac33fa5cb48596d502cd7975578ca1b00e9
+          combined_refactor/go.sum: git:f648c2afe6948617c1ce7e59499cfec25ce45095
+          combined_refactor/index.html: git:6c1738a3860b9c3d555aedb57d61f4d155ee25dd
+          combined_refactor/main.go: git:44e786b147a70b7cdea93444a779a3487210fbbc
+          combined_refactor/menu.go: git:b1a025c25af5dd844583bf0e0f5d2095ea5c31a3
+          combined_refactor/proxy.go: git:40db24fd3540e2624c727b54d096aed28917eb89
+          combined_refactor/r2.go: git:aae5306954a6e1f43bc56501a0df1b458f186826
+          combined_refactor/r2_test.go: git:d312dc7743783549e4f10381c1829d393747a2a3
+          combined_refactor/schedule.go: missing
+          combined_refactor/schedule_menu.go: git:1a5a132d201b15f0124e16c55c712689ed5fcdbe
+          combined_refactor/scheduler.go: git:fd02d4e4c6c85e3484192faf78c8e6d175aa31e9
+          combined_refactor/scheduler_test.go: git:4222965ed8966b9224b1aeb80533a205e6795bf0
+          combined_refactor/server.go: git:4e6032f9f56bd017100a2c63573eb6dfd25ed13f
+          docs/docker.md: git:b7f81a7be5ee7afe60576908716cb966ceb7d166
+          substore/README.md: git:36d6feab450d747ceaf9101dcc0686767d2f9498
+          substore/cloudflare-targets.js: git:f71d488c633f84345659919d24c3dcabd30c5c3d
+          substore/cloudflare-targets.test.js: git:e3851102a5515f03a0bbaa615958bb07828a6db8
+        environment: d158050549f6e5c353252135d05d7d5aea9cfd911dd3d59d53e51f0f260f351e
+        exitCode: 0
+        inputAfter: 05a0dc4c27e081eef7ada2a47b019d11a6427bd5ecf20a19d8653afb3d3ae62d
+        inputBefore: 05a0dc4c27e081eef7ada2a47b019d11a6427bd5ecf20a19d8653afb3d3ae62d
+        manifestHash: 6ae1ed12da63bca186e4a75c20892cbe2afd3880d7d0f188110b48c6b3c34d9b
+        manifestRef: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/3fa6d018-b83d-41b3-926f-55813cd2f046.manifest
+        receiptRef: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/7aa6c969-d8eb-4095-bea2-be57c70b78b2.log
+        reusable: true
+        reused: false
+        scope: verify
+        tier: full
+        timeoutMs: 300000
+      - contentHash: 2a02ce614bb2e06d3a1e8a2f978b122d30de6f0d28a92afce82a23713ce603e3
+        ref: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/7aa6c969-d8eb-4095-bea2-be57c70b78b2.log
+      - choice: local
+        proposal:
+          input:
+            change: scheduled-scan-r2-substore
+            changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+          outputs:
+            full.archive.prepare:
+              summary: 目标：以进程内调度替换 systemd，新增 CF Worker 兼容 R2 上传与重试、Sub-Store 目标列表导出及 operator
+                脚本，并优化两侧脚本。归档影响：按 delta 语义合并
+                scan-scheduling、r2-worker-upload、substore-integration 三份规格到主
+                spec，标注 design doc 与 plan，将 change
+                移入归档目录，并创建唯一归档提交。交付：仅本地归档（local），目标分支
+                comet/scheduled-scan-r2-substore；不推送、不创建 PR，main 由用户本人合并。
+              targetBranch: comet/scheduled-scan-r2-substore
+      - summary: 目标：以进程内调度替换 systemd，新增 CF Worker 兼容 R2 上传与重试、Sub-Store 目标列表导出及 operator
+          脚本，并优化两侧脚本。归档影响：按 delta 语义合并
+          scan-scheduling、r2-worker-upload、substore-integration 三份规格到主 spec，标注
+          design doc 与 plan，将 change 移入归档目录，并创建唯一归档提交。交付：仅本地归档（local），目标分支
+          comet/scheduled-scan-r2-substore；不推送、不创建 PR，main 由用户本人合并。
+        targetBranch: comet/scheduled-scan-r2-substore
+      - baseCommit: b312c209edf1ca903c53ec0d959118c2c11d3f9b
+        deliveryAction: local
+        targetBranch: comet/scheduled-scan-r2-substore
+        verifiedBranch: comet/scheduled-scan-r2-substore
+      - archiveDirectory: docs/openspec/changes/archive/2026-10-28-scheduled-scan-r2-substore
+      - sequence: 9
+        value:
+          boundBranch: comet/scheduled-scan-r2-substore
+          buildMode: autonomous
+          directOverride: false
+          isolation: branch
+          reviewMode: standard
+          subagentDispatch: null
+          tddMode: tdd
+      - sequence: 10
+        value:
+          choice: approved
+          proposal:
+            input:
+              change: scheduled-scan-r2-substore
+              changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+            outputs:
+              full.build.configure:
+                boundBranch: comet/scheduled-scan-r2-substore
+                buildMode: autonomous
+                directOverride: false
+                isolation: branch
+                reviewMode: standard
+                subagentDispatch: null
+                tddMode: tdd
+      - sequence: 6
+        value:
+          choice: approved
+          proposal:
+            input:
+              change: scheduled-scan-r2-substore
+              changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+            outputs:
+              full.design.handoff:
+                handoffContext: docs/openspec/changes/scheduled-scan-r2-substore/.comet/handoff/design-context.json
+                handoffHash: 034d13f6a4e572d5239d0f2c7c6f1dc338cb2d2beb47a3c30415152256a122a6
+                proposal: |-
+                  # Brainstorm Summary
+
+                  - Change: scheduled-scan-r2-substore
+                  - Date: 2026-10-28
+
+                  ## 确认的技术方案
+
+                  状态：已确认（2026-10-28）
+
+                  ### 1. 调度器（进程内，替换 systemd）
+
+                  - 新增 `scheduler.go`：`robfig/cron/v3` + `time.Ticker`，由全局单例 `scanScheduler` 管理。
+                  - 配置归一化（`normalizeSchedulePlan`，纯函数可测）：
+                    - `schedule-enabled=false` → 不调度（新增显式开关，默认 false）。
+                    - `cron-expression` 非空且可解析 → cron 模式，优先于间隔。
+                    - cron 非法 → 记录错误并回退间隔模式。
+                    - `check-interval <= 0 → 2880`，`< 60 → 60`。
+                  - 启动行为：cron 模式不立即执行（按表达式下一次触发）；间隔模式进程启动即执行一次，然后按 ticker。
+                  - 热更新：读取配置文件 mtime 轮询（10s）+ Web 保存后立即 `Reload`。Reload 只替换计划，不立即扫描、不打断进行中的扫描。
+                  - 并发保护：扫描入口先 `anyTaskRunning()` 跳过（记录日志）；实际执行用 `runTaskSync` 持有全局任务计数，与手动 Web/CLI 任务互斥。另加原子 `running` 标志防止 ticker 重入。
+                  - 流水线复用：从 `runOfficialCLI` / `runNSBCLI` 抽取 `runOfficialPipeline(cfg, session)` / `runNSBPipeline(cfg, session)`；官方流水线在同一个 `runTaskSync` 内完成扫描→DetailedIPs 检测→测速→导出，消除现有两段任务之间的并发空窗。
+                  - 定时任务使用 headless session（`newCLISession`）复用 CLI 输出通道，由调度器包装为静默日志。
+                  - Web：启动时（`initLocations()` 之后、HTTP 监听之前）启动调度器；新增 WS `get_schedule_config` / `set_schedule_config`，读改写配置文件嵌套 `config` 对象，保留未知字段，使用 `storage.go` 的 `atomicWriteFile` 原子写入，写后立即 `Reload`。
+                  - CLI：删除 `schedule.go` 的 systemd 实现，替换为 `schedule_menu.go`（启用/停用、cron 表达式、检测间隔、保存并常驻运行、Ctrl+C 退出）。`menu.go` 菜单项 4 文案改为「自动调度」。
+                  - 时区：cron 使用进程本地时区；启动日志打印当前时区与计划描述。
+
+                  ### 2. R2 上传（CF Worker 兼容协议）
+
+                  - 新增 `r2.go`：
+                    - URL 校验：仅 http/https，base 拼接 `/storage`；token 通过 `url.Values` 编码进查询串。
+                    - 请求体：JSON `{"filename": ..., "value": ...}`，`Content-Type: application/json`。
+                    - 成功判定：HTTP 2xx。
+                    - 重试：最多 3 次，固定间隔 2s（间隔与客户端可注入以便测试）；4xx 中 401/403 视为配置错误直接失败，其余按重试处理。
+                    - 超时：30s。
+                    - 空内容保护：内容为空或导出 0 行时跳过上传并记录错误，绝不覆盖 R2 旧文件。
+                    - 代理：复用管理面代理传输（`applyManagementProxy`），但**不套 debug 包装**，避免 `?token=` 写入 debug 日志；错误日志只打印脱敏 URL（去掉 query）。
+                    - 上传集成进 `writeCLIExportAndMaybeUpload`：手动 CLI、Web 导出、定时任务统一生效；上传失败只记录，不阻断导出与后续流程。
+                  - 配置字段（嵌套 `config`）：`r2enabled`、`r2workerurl`、`r2workertoken`、`r2filename`（默认 `cfdata-targets.txt`）。
+                  - 上传内容：始终为 Sub-Store 目标列表格式（不论本地导出格式）。
+
+                  ### 3. Sub-Store 目标列表导出
+
+                  - 新导出格式 `substore`（TXT 扩展名）：
+                    - 每行 `host[:port]#alias`；IPv6 始终输出 `[v6]:port#alias`（不受 `outv6bracket=false` 影响）。
+                    - alias 默认 `dc-city`，回退顺序 dc → loc → ip；清洗 `#`、换行、多余空白，空 alias 回退到地址本身。
+                    - 复用现有 IP 类型/合格筛选、起止行限制。
+                    - 端口为空或 0 时不追加 `:port`。
+                  - CLI/Web 增加 substore 格式选项；Web 端在 `index.html` 中镜像实现 `buildSubstoreContent`（服务端 `formatCLIResults` 与前端各自维护格式），并提供「复制 Sub-Store 列表」按钮。
+                  - GitHub/edgetunnel 上传配置默认文件名相应为 `results/ip.txt` 场景，不强制。
+
+                  ### 4. Operator 脚本入库
+
+                  - 新增 `substore/cloudflare-targets.js`：基于 Untitled.js 加固：
+                    - 静态目标逐行解析，非法行跳过并告警，不再整脚本抛错。
+                    - alias 清洗（`#`、换行、空白）。
+                    - `fetch` 回退路径增加 `AbortController` 超时（与 `urlTimeout` 一致）。
+                    - 完全重复目标去重；保留 `dedupAliases` 上标逻辑。
+                    - 守卫式 `module.exports`（存在 `module` 时导出纯函数）便于 Node 测试，Sub-Store 环境不受影响。
+                  - 新增 `substore/README.md`：输入格式、urls 示例、R2 公网地址接入、常见问题。
+
+                  ## 关键取舍与风险
+
+                  - 不引入状态持久化：定时任务重启后不补跑；间隔模式启动即跑一次，cron 模式等下一次触发。
+                  - 单实例假设：进程内调度无法跨副本协调；文档明确同一配置目录只运行一个实例。
+                  - 配置迁移：新增字段会被 `migrateConfigFileToLatest` 识别为缺失并触发一次性重写（生成 `.bak`）；文档说明。
+                  - Web 导出为客户端实现，与服务端格式化存在两份代码；通过相同用例的单元/手动验证降低漂移风险。
+                  - 移除 systemd 后不自动删除既有 unit 文件，文档给出迁移与清理命令。
+                  - R2 令牌保护：不用 debug 传输；错误日志脱敏。
+                  - 4xx 非鉴权错误重试意义有限，但保持与参考实现一致（3 次），避免复杂分类。
+
+                  ## 测试策略
+
+                  - Go 单元测试：
+                    - `normalizeSchedulePlan` 表驱动（关闭、cron 优先、非法 cron 回退、间隔钳制）。
+                    - 调度器：间隔模式立即触发一次；cron 模式启动不立即触发；Reload 后不立即触发且新计划生效；运行中跳过。
+                    - R2：httptest 成功、失败两次后成功、全部失败、空内容跳过、token 不出现在日志。
+                    - Sub-Store 格式：IPv4/IPv6、端口省略、alias 回退/清洗、筛选与行数限制。
+                  - Node 脚本测试：`node --test` 或临时 harness 校验解析、去重、非法行跳过。
+                  - 集成验证：`go vet ./...`、`go test ./...`、linux/amd64 构建；本地 Web 用 `cron-expression: "* * * * *"` + 本地 R2 mock 端点跑通一次定时流水线。
+                  - 手动：CLI 菜单启用/保存/常驻；Web 设置保存后刷新页面状态一致；禁用调度后不再触发。
+
+                  ## Spec Patch
+
+                  将回写 delta spec（不重写需求结构，只补边界与场景）：
+
+                  1. `specs/scan-scheduling/spec.md`
+                     - 新增「调度开关」需求：`schedule-enabled` 默认 false；场景「未启用时不调度」「启用为 cron 模式」「启用为间隔模式」。
+                     - 启动行为场景限定为「已启用且为间隔模式」；补充「cron 模式启动不立即扫描」。
+                     - 热更新场景补充：保存/重载不立即触发扫描、不中断进行中的扫描。
+                  2. `specs/substore-integration/spec.md`
+                     - 新增场景：alias 清洗（`#`、换行、空白）与空 alias 回退。
+                     - 新增场景：`outv6bracket=false` 时 substore 格式仍输出 `[v6]:port`。
+                  3. `specs/r2-worker-upload/spec.md`
+                     - 补充场景：令牌不得出现在日志/debug 输出；URL 非法时跳过并报错。
+                requirementsEvidence:
+                  contentHash: 6106ec2bf939fa82792f18bde6c9ba4742dda02b36bb681f004e85ca823dd4b0
+                  ref: docs/openspec/changes/scheduled-scan-r2-substore
+                sourceEvidence:
+                  contentHash: ba37bedaf5484f7af4ce7045917f813ed56212b1bca6b39ae4959d5d9fc74020
+                  ref: docs/openspec/changes/scheduled-scan-r2-substore
+      - sequence: 7
+        value:
+          designDoc: docs/openspec/changes/scheduled-scan-r2-substore/design.md
+      - sequence: 8
+        value:
+          contentHash: 10a2283bb5da72296c5b850341449e79a91ea4e11612b0f42c70623b99ff10c5
+          ref: docs/openspec/changes/scheduled-scan-r2-substore/design.md
+      - sequence: 5
+        value:
+          handoffContext: docs/openspec/changes/scheduled-scan-r2-substore/.comet/handoff/design-context.json
+          handoffHash: 034d13f6a4e572d5239d0f2c7c6f1dc338cb2d2beb47a3c30415152256a122a6
+          proposal: >-
+            # Brainstorm Summary
+
+
+            - Change: scheduled-scan-r2-substore
+
+            - Date: 2026-10-28
+
+
+            ## 确认的技术方案
+
+
+            状态：已确认（2026-10-28）
+
+
+            ### 1. 调度器（进程内，替换 systemd）
+
+
+            - 新增 `scheduler.go`：`robfig/cron/v3` + `time.Ticker`，由全局单例
+            `scanScheduler` 管理。
+
+            - 配置归一化（`normalizeSchedulePlan`，纯函数可测）：
+              - `schedule-enabled=false` → 不调度（新增显式开关，默认 false）。
+              - `cron-expression` 非空且可解析 → cron 模式，优先于间隔。
+              - cron 非法 → 记录错误并回退间隔模式。
+              - `check-interval <= 0 → 2880`，`< 60 → 60`。
+            - 启动行为：cron 模式不立即执行（按表达式下一次触发）；间隔模式进程启动即执行一次，然后按 ticker。
+
+            - 热更新：读取配置文件 mtime 轮询（10s）+ Web 保存后立即 `Reload`。Reload
+            只替换计划，不立即扫描、不打断进行中的扫描。
+
+            - 并发保护：扫描入口先 `anyTaskRunning()` 跳过（记录日志）；实际执行用 `runTaskSync`
+            持有全局任务计数，与手动 Web/CLI 任务互斥。另加原子 `running` 标志防止 ticker 重入。
+
+            - 流水线复用：从 `runOfficialCLI` / `runNSBCLI` 抽取
+            `runOfficialPipeline(cfg, session)` / `runNSBPipeline(cfg,
+            session)`；官方流水线在同一个 `runTaskSync` 内完成扫描→DetailedIPs
+            检测→测速→导出，消除现有两段任务之间的并发空窗。
+
+            - 定时任务使用 headless session（`newCLISession`）复用 CLI 输出通道，由调度器包装为静默日志。
+
+            - Web：启动时（`initLocations()` 之后、HTTP 监听之前）启动调度器；新增 WS
+            `get_schedule_config` / `set_schedule_config`，读改写配置文件嵌套 `config`
+            对象，保留未知字段，使用 `storage.go` 的 `atomicWriteFile` 原子写入，写后立即 `Reload`。
+
+            - CLI：删除 `schedule.go` 的 systemd 实现，替换为
+            `schedule_menu.go`（启用/停用、cron 表达式、检测间隔、保存并常驻运行、Ctrl+C 退出）。`menu.go`
+            菜单项 4 文案改为「自动调度」。
+
+            - 时区：cron 使用进程本地时区；启动日志打印当前时区与计划描述。
+
+
+            ### 2. R2 上传（CF Worker 兼容协议）
+
+
+            - 新增 `r2.go`：
+              - URL 校验：仅 http/https，base 拼接 `/storage`；token 通过 `url.Values` 编码进查询串。
+              - 请求体：JSON `{"filename": ..., "value": ...}`，`Content-Type: application/json`。
+              - 成功判定：HTTP 2xx。
+              - 重试：最多 3 次，固定间隔 2s（间隔与客户端可注入以便测试）；4xx 中 401/403 视为配置错误直接失败，其余按重试处理。
+              - 超时：30s。
+              - 空内容保护：内容为空或导出 0 行时跳过上传并记录错误，绝不覆盖 R2 旧文件。
+              - 代理：复用管理面代理传输（`applyManagementProxy`），但**不套 debug 包装**，避免 `?token=` 写入 debug 日志；错误日志只打印脱敏 URL（去掉 query）。
+              - 上传集成进 `writeCLIExportAndMaybeUpload`：手动 CLI、Web 导出、定时任务统一生效；上传失败只记录，不阻断导出与后续流程。
+            - 配置字段（嵌套
+            `config`）：`r2enabled`、`r2workerurl`、`r2workertoken`、`r2filename`（默认
+            `cfdata-targets.txt`）。
+
+            - 上传内容：始终为 Sub-Store 目标列表格式（不论本地导出格式）。
+
+
+            ### 3. Sub-Store 目标列表导出
+
+
+            - 新导出格式 `substore`（TXT 扩展名）：
+              - 每行 `host[:port]#alias`；IPv6 始终输出 `[v6]:port#alias`（不受 `outv6bracket=false` 影响）。
+              - alias 默认 `dc-city`，回退顺序 dc → loc → ip；清洗 `#`、换行、多余空白，空 alias 回退到地址本身。
+              - 复用现有 IP 类型/合格筛选、起止行限制。
+              - 端口为空或 0 时不追加 `:port`。
+            - CLI/Web 增加 substore 格式选项；Web 端在 `index.html` 中镜像实现
+            `buildSubstoreContent`（服务端 `formatCLIResults` 与前端各自维护格式），并提供「复制
+            Sub-Store 列表」按钮。
+
+            - GitHub/edgetunnel 上传配置默认文件名相应为 `results/ip.txt` 场景，不强制。
+
+
+            ### 4. Operator 脚本入库
+
+
+            - 新增 `substore/cloudflare-targets.js`：基于 Untitled.js 加固：
+              - 静态目标逐行解析，非法行跳过并告警，不再整脚本抛错。
+              - alias 清洗（`#`、换行、空白）。
+              - `fetch` 回退路径增加 `AbortController` 超时（与 `urlTimeout` 一致）。
+              - 完全重复目标去重；保留 `dedupAliases` 上标逻辑。
+              - 守卫式 `module.exports`（存在 `module` 时导出纯函数）便于 Node 测试，Sub-Store 环境不受影响。
+            - 新增 `substore/README.md`：输入格式、urls 示例、R2 公网地址接入、常见问题。
+
+
+            ## 关键取舍与风险
+
+
+            - 不引入状态持久化：定时任务重启后不补跑；间隔模式启动即跑一次，cron 模式等下一次触发。
+
+            - 单实例假设：进程内调度无法跨副本协调；文档明确同一配置目录只运行一个实例。
+
+            - 配置迁移：新增字段会被 `migrateConfigFileToLatest` 识别为缺失并触发一次性重写（生成
+            `.bak`）；文档说明。
+
+            - Web 导出为客户端实现，与服务端格式化存在两份代码；通过相同用例的单元/手动验证降低漂移风险。
+
+            - 移除 systemd 后不自动删除既有 unit 文件，文档给出迁移与清理命令。
+
+            - R2 令牌保护：不用 debug 传输；错误日志脱敏。
+
+            - 4xx 非鉴权错误重试意义有限，但保持与参考实现一致（3 次），避免复杂分类。
+
+
+            ## 测试策略
+
+
+            - Go 单元测试：
+              - `normalizeSchedulePlan` 表驱动（关闭、cron 优先、非法 cron 回退、间隔钳制）。
+              - 调度器：间隔模式立即触发一次；cron 模式启动不立即触发；Reload 后不立即触发且新计划生效；运行中跳过。
+              - R2：httptest 成功、失败两次后成功、全部失败、空内容跳过、token 不出现在日志。
+              - Sub-Store 格式：IPv4/IPv6、端口省略、alias 回退/清洗、筛选与行数限制。
+            - Node 脚本测试：`node --test` 或临时 harness 校验解析、去重、非法行跳过。
+
+            - 集成验证：`go vet ./...`、`go test ./...`、linux/amd64 构建；本地 Web 用
+            `cron-expression: "* * * * *"` + 本地 R2 mock 端点跑通一次定时流水线。
+
+            - 手动：CLI 菜单启用/保存/常驻；Web 设置保存后刷新页面状态一致；禁用调度后不再触发。
+
+
+            ## Spec Patch
+
+
+            将回写 delta spec（不重写需求结构，只补边界与场景）：
+
+
+            1. `specs/scan-scheduling/spec.md`
+               - 新增「调度开关」需求：`schedule-enabled` 默认 false；场景「未启用时不调度」「启用为 cron 模式」「启用为间隔模式」。
+               - 启动行为场景限定为「已启用且为间隔模式」；补充「cron 模式启动不立即扫描」。
+               - 热更新场景补充：保存/重载不立即触发扫描、不中断进行中的扫描。
+            2. `specs/substore-integration/spec.md`
+               - 新增场景：alias 清洗（`#`、换行、空白）与空 alias 回退。
+               - 新增场景：`outv6bracket=false` 时 substore 格式仍输出 `[v6]:port`。
+            3. `specs/r2-worker-upload/spec.md`
+               - 补充场景：令牌不得出现在日志/debug 输出；URL 非法时跳过并报错。
+          requirementsEvidence:
+            contentHash: 6106ec2bf939fa82792f18bde6c9ba4742dda02b36bb681f004e85ca823dd4b0
+            ref: docs/openspec/changes/scheduled-scan-r2-substore
+          sourceEvidence:
+            contentHash: ba37bedaf5484f7af4ce7045917f813ed56212b1bca6b39ae4959d5d9fc74020
+            ref: docs/openspec/changes/scheduled-scan-r2-substore
+      - sequence: 1
+        value:
+          event: open-complete
+      - sequence: 3
+        value:
+          choice: approved
+          proposal:
+            input:
+              change: scheduled-scan-r2-substore
+              changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+            outputs:
+              full.open:
+                event: open-complete
+              full.open.evidence:
+                contentHash: 769bbc3d192fd7c7176698ef5d15ef0db3117d6d8d6b62a78049432f92fda176
+                ref: docs/openspec/changes/scheduled-scan-r2-substore
+      - sequence: 2
+        value:
+          contentHash: 769bbc3d192fd7c7176698ef5d15ef0db3117d6d8d6b62a78049432f92fda176
+          ref: docs/openspec/changes/scheduled-scan-r2-substore
+      - sequence: 4
+        value:
+          contentHash: 769bbc3d192fd7c7176698ef5d15ef0db3117d6d8d6b62a78049432f92fda176
+      - sequence: 11
+        value:
+          designEvidence:
+            contentHash: 10a2283bb5da72296c5b850341449e79a91ea4e11612b0f42c70623b99ff10c5
+            ref: docs/openspec/changes/scheduled-scan-r2-substore/design.md
+          plan: docs/superpowers/plans/2026-10-28-scheduled-scan-r2-substore.md
+          planEvidence:
+            contentHash: 5232a1dc02043ae0d40043e99c19f56a10d20850b36d6fd7eb48dd33500e82f0
+            ref: docs/superpowers/plans/2026-10-28-scheduled-scan-r2-substore.md
+          taskRevision: 1193f9776698d378107bb0f2bd098c2bbe4f5487d5fa2cbe88934b73603107ed
+      - sequence: 12
+        value:
+          contentHash: 5232a1dc02043ae0d40043e99c19f56a10d20850b36d6fd7eb48dd33500e82f0
+          ref: docs/superpowers/plans/2026-10-28-scheduled-scan-r2-substore.md
+      - sequence: 13
+        value:
+          event: build-complete
+      - sequence: 14
+        value:
+          argv:
+            - go
+            - -C
+            - combined_refactor
+            - test
+            - -count=1
+            - ./...
+          changedDuringExecution: []
+          checkEpoch: 2
+          contentHash: 590b2a5d5bfb61d4d269058509b3ee106992b299d97bebbcf953bba21a7463c3
+          cwd: .
+          environment: d158050549f6e5c353252135d05d7d5aea9cfd911dd3d59d53e51f0f260f351e
+          exitCode: 0
+          inputAfter: cb95043fa2a9c0d31f294b1098562fac137c6a90080979d6fa3f74d4761c17a2
+          inputBefore: cb95043fa2a9c0d31f294b1098562fac137c6a90080979d6fa3f74d4761c17a2
+          manifestHash: da810f5ffda3d5ea8443cdc069df00e0514e869f5202974cf7998bc80f7a52a4
+          manifestRef: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/51fbf8ae-5b0c-412a-b8c3-1f42bb3dd4c7.manifest
+          receiptRef: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/eb9501c5-5eed-4525-be63-6adf8b10c4fa.log
+          reusable: true
+          reused: false
+          scope: build
+          tier: full
+          timeoutMs: 300000
+      - sequence: 15
+        value:
+          contentHash: 590b2a5d5bfb61d4d269058509b3ee106992b299d97bebbcf953bba21a7463c3
+          ref: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/eb9501c5-5eed-4525-be63-6adf8b10c4fa.log
+      - sequence: 16
+        value:
+          event: verify-fail
+          reason: "IMPORTANT: scheduled runs mutate process globals; mtime TOCTOU; R2
+            token exposed via WS; substore ipport unbracketed/invalid"
+      - sequence: 17
+        value:
+          designEvidence:
+            contentHash: 10a2283bb5da72296c5b850341449e79a91ea4e11612b0f42c70623b99ff10c5
+            ref: docs/openspec/changes/scheduled-scan-r2-substore/design.md
+          plan: docs/superpowers/plans/2026-10-28-scheduled-scan-r2-substore.md
+          planEvidence:
+            contentHash: 5232a1dc02043ae0d40043e99c19f56a10d20850b36d6fd7eb48dd33500e82f0
+            ref: docs/superpowers/plans/2026-10-28-scheduled-scan-r2-substore.md
+          taskRevision: 1193f9776698d378107bb0f2bd098c2bbe4f5487d5fa2cbe88934b73603107ed
+      - sequence: 18
+        value:
+          contentHash: 5232a1dc02043ae0d40043e99c19f56a10d20850b36d6fd7eb48dd33500e82f0
+          ref: docs/superpowers/plans/2026-10-28-scheduled-scan-r2-substore.md
+      - sequence: 19
+        value:
+          event: build-complete
+      - sequence: 20
+        value:
+          argv:
+            - go
+            - -C
+            - combined_refactor
+            - test
+            - -count=1
+            - ./...
+          changedDuringExecution: []
+          checkEpoch: 4
+          contentHash: 48ed84e9fa77fbe500004a0dd5dc8942a4d6baebe5d620ae2f55f9523cb7a695
+          cwd: .
+          environment: d158050549f6e5c353252135d05d7d5aea9cfd911dd3d59d53e51f0f260f351e
+          exitCode: 1
+          inputAfter: f793d42bb34b4ab98f4a9a20c444415ac09d4b50e47f503f872f22c1ff4c8ef6
+          inputBefore: f793d42bb34b4ab98f4a9a20c444415ac09d4b50e47f503f872f22c1ff4c8ef6
+          manifestHash: e7470a173ce66414e86f4dbee3feb1b6d82d3ac1a982e74c21188c85cdd4e138
+          manifestRef: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/893b8614-0e94-4ae5-9e70-bd2bfd1d7d9d.manifest
+          receiptRef: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/9dd8f321-9cf8-4a24-87eb-99f71c1eb81f.log
+          reusable: true
+          reused: false
+          scope: build
+          tier: full
+          timeoutMs: 600000
+      - sequence: 21
+        value:
+          event: build-complete
+      - sequence: 22
+        value:
+          argv:
+            - go
+            - -C
+            - combined_refactor
+            - test
+            - -count=1
+            - ./...
+          changedDuringExecution: []
+          checkEpoch: 4
+          contentHash: c5d184669a409fdf910a4e188f2dfc01bb5b17cb919a8817ffe3a82b4fa556bf
+          cwd: .
+          environment: d158050549f6e5c353252135d05d7d5aea9cfd911dd3d59d53e51f0f260f351e
+          exitCode: 0
+          inputAfter: f793d42bb34b4ab98f4a9a20c444415ac09d4b50e47f503f872f22c1ff4c8ef6
+          inputBefore: f793d42bb34b4ab98f4a9a20c444415ac09d4b50e47f503f872f22c1ff4c8ef6
+          manifestHash: e7470a173ce66414e86f4dbee3feb1b6d82d3ac1a982e74c21188c85cdd4e138
+          manifestRef: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/d5238a92-3813-44eb-a876-1d1c9972a71f.manifest
+          receiptRef: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/b23efbfa-c53c-46e5-8a70-e206fb21ef52.log
+          reusable: true
+          reused: false
+          scope: build
+          tier: full
+          timeoutMs: 600000
+      - sequence: 23
+        value:
+          contentHash: c5d184669a409fdf910a4e188f2dfc01bb5b17cb919a8817ffe3a82b4fa556bf
+          ref: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/b23efbfa-c53c-46e5-8a70-e206fb21ef52.log
+      - sequence: 24
+        value:
+          event: verify-fail
+          reason: 集成审查发现：get_config 明文返回
+            r2workertoken（IMPORTANT）；调度保存与代理保存无共享写锁且代理保存非原子（WARNING）；reload
+            缺少时区/下次触发日志（design §8）；substore 导出未应用自定义字段与服务端/客户端不一致（WARNING）；cron
+            表达式未 trim（SUGGESTION）。返回 build 修复。
+      - sequence: 25
+        value:
+          designEvidence:
+            contentHash: 10a2283bb5da72296c5b850341449e79a91ea4e11612b0f42c70623b99ff10c5
+            ref: docs/openspec/changes/scheduled-scan-r2-substore/design.md
+          plan: docs/superpowers/plans/2026-10-28-scheduled-scan-r2-substore.md
+          planEvidence:
+            contentHash: 6c075dab16cab8088966878c63a7b298163968cd0f363a8664c6a8df829f5290
+            ref: docs/superpowers/plans/2026-10-28-scheduled-scan-r2-substore.md
+          taskRevision: 1193f9776698d378107bb0f2bd098c2bbe4f5487d5fa2cbe88934b73603107ed
+      - sequence: 26
+        value:
+          contentHash: 6c075dab16cab8088966878c63a7b298163968cd0f363a8664c6a8df829f5290
+          ref: docs/superpowers/plans/2026-10-28-scheduled-scan-r2-substore.md
+      - sequence: 27
+        value:
+          event: build-complete
+      - sequence: 28
+        value:
+          argv:
+            - go
+            - -C
+            - combined_refactor
+            - test
+            - -count=1
+            - ./...
+          changedDuringExecution: []
+          checkEpoch: 6
+          contentHash: 7fa0b58252dd38e222da8a0842599b0cea55e890f6303748bd4bd5e83c295696
+          cwd: .
+          environment: d158050549f6e5c353252135d05d7d5aea9cfd911dd3d59d53e51f0f260f351e
+          exitCode: 0
+          inputAfter: 7126ccf5955b7deede958bb27eaeab0ea537e28dab5a7fb3f4443309650dda77
+          inputBefore: 7126ccf5955b7deede958bb27eaeab0ea537e28dab5a7fb3f4443309650dda77
+          manifestHash: 8c0fb9fdffdd5c882adcfe8de71b46156df47f5cf462cba835ae3e25e9552bdd
+          manifestRef: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/af63ed75-6c5b-4197-a521-365190b1cfe9.manifest
+          receiptRef: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/02b61eb9-b5eb-4447-9e4a-be27465448b6.log
+          reusable: true
+          reused: false
+          scope: build
+          tier: full
+          timeoutMs: 600000
+      - sequence: 29
+        value:
+          contentHash: 7fa0b58252dd38e222da8a0842599b0cea55e890f6303748bd4bd5e83c295696
+          ref: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/02b61eb9-b5eb-4447-9e4a-be27465448b6.log
+      - sequence: 31
+        value:
+          contentHash: fe0706ca72f42071993c415d765df547a16c29c84e1e4b081e99dde0c97d8b75
+          ref: docs/superpowers/reports/2026-10-28-scheduled-scan-r2-substore-verify.md
+      - sequence: 30
+        value:
+          event: verification-ready
+          verificationReport: docs/superpowers/reports/2026-10-28-scheduled-scan-r2-substore-verify.md
+      - sequence: 32
+        value:
+          argv:
+            - go
+            - -C
+            - combined_refactor
+            - test
+            - -count=1
+            - ./...
+          changedDuringExecution: []
+          checkEpoch: 7
+          contentHash: 2a02ce614bb2e06d3a1e8a2f978b122d30de6f0d28a92afce82a23713ce603e3
+          cwd: .
+          deliveryInputs:
+            README.md: git:c0936680f1f1e17f27a7ab4604a2964f77c9e6ed
+            combined_refactor/cli.go: git:9bbd2f8acd3c787a92e539ab9efeaca400fdf9f9
+            combined_refactor/cli_export_test.go: git:131119e2f06a8cc4eb8693dfed74f490cfb28f92
+            combined_refactor/go.mod: git:0678cac33fa5cb48596d502cd7975578ca1b00e9
+            combined_refactor/go.sum: git:f648c2afe6948617c1ce7e59499cfec25ce45095
+            combined_refactor/index.html: git:6c1738a3860b9c3d555aedb57d61f4d155ee25dd
+            combined_refactor/main.go: git:44e786b147a70b7cdea93444a779a3487210fbbc
+            combined_refactor/menu.go: git:b1a025c25af5dd844583bf0e0f5d2095ea5c31a3
+            combined_refactor/proxy.go: git:40db24fd3540e2624c727b54d096aed28917eb89
+            combined_refactor/r2.go: git:aae5306954a6e1f43bc56501a0df1b458f186826
+            combined_refactor/r2_test.go: git:d312dc7743783549e4f10381c1829d393747a2a3
+            combined_refactor/schedule.go: missing
+            combined_refactor/schedule_menu.go: git:1a5a132d201b15f0124e16c55c712689ed5fcdbe
+            combined_refactor/scheduler.go: git:fd02d4e4c6c85e3484192faf78c8e6d175aa31e9
+            combined_refactor/scheduler_test.go: git:4222965ed8966b9224b1aeb80533a205e6795bf0
+            combined_refactor/server.go: git:4e6032f9f56bd017100a2c63573eb6dfd25ed13f
+            docs/docker.md: git:b7f81a7be5ee7afe60576908716cb966ceb7d166
+            substore/README.md: git:36d6feab450d747ceaf9101dcc0686767d2f9498
+            substore/cloudflare-targets.js: git:f71d488c633f84345659919d24c3dcabd30c5c3d
+            substore/cloudflare-targets.test.js: git:e3851102a5515f03a0bbaa615958bb07828a6db8
+          environment: d158050549f6e5c353252135d05d7d5aea9cfd911dd3d59d53e51f0f260f351e
+          exitCode: 0
+          inputAfter: 05a0dc4c27e081eef7ada2a47b019d11a6427bd5ecf20a19d8653afb3d3ae62d
+          inputBefore: 05a0dc4c27e081eef7ada2a47b019d11a6427bd5ecf20a19d8653afb3d3ae62d
+          manifestHash: 6ae1ed12da63bca186e4a75c20892cbe2afd3880d7d0f188110b48c6b3c34d9b
+          manifestRef: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/3fa6d018-b83d-41b3-926f-55813cd2f046.manifest
+          receiptRef: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/7aa6c969-d8eb-4095-bea2-be57c70b78b2.log
+          reusable: true
+          reused: false
+          scope: verify
+          tier: full
+          timeoutMs: 300000
+      - sequence: 33
+        value:
+          contentHash: 2a02ce614bb2e06d3a1e8a2f978b122d30de6f0d28a92afce82a23713ce603e3
+          ref: .comet/runtime/classic-sdk-checks/39661ef437be04ef1e70941c1a720e06236874949cdc3a7843870c4bbc206f23/7aa6c969-d8eb-4095-bea2-be57c70b78b2.log
+      - sequence: 35
+        value:
+          choice: local
+          proposal:
+            input:
+              change: scheduled-scan-r2-substore
+              changeDir: docs/openspec/changes/scheduled-scan-r2-substore
+            outputs:
+              full.archive.prepare:
+                summary: 目标：以进程内调度替换 systemd，新增 CF Worker 兼容 R2 上传与重试、Sub-Store 目标列表导出及 operator
+                  脚本，并优化两侧脚本。归档影响：按 delta 语义合并
+                  scan-scheduling、r2-worker-upload、substore-integration 三份规格到主
+                  spec，标注 design doc 与 plan，将 change
+                  移入归档目录，并创建唯一归档提交。交付：仅本地归档（local），目标分支
+                  comet/scheduled-scan-r2-substore；不推送、不创建 PR，main 由用户本人合并。
+                targetBranch: comet/scheduled-scan-r2-substore
+      - sequence: 34
+        value:
+          summary: 目标：以进程内调度替换 systemd，新增 CF Worker 兼容 R2 上传与重试、Sub-Store 目标列表导出及 operator
+            脚本，并优化两侧脚本。归档影响：按 delta 语义合并
+            scan-scheduling、r2-worker-upload、substore-integration 三份规格到主 spec，标注
+            design doc 与 plan，将 change 移入归档目录，并创建唯一归档提交。交付：仅本地归档（local），目标分支
+            comet/scheduled-scan-r2-substore；不推送、不创建 PR，main 由用户本人合并。
+          targetBranch: comet/scheduled-scan-r2-substore
+      - sequence: 36
+        value:
+          baseCommit: b312c209edf1ca903c53ec0d959118c2c11d3f9b
+          deliveryAction: local
+          targetBranch: comet/scheduled-scan-r2-substore
+          verifiedBranch: comet/scheduled-scan-r2-substore
+      - sequence: 37
+        value:
+          archiveDirectory: docs/openspec/changes/archive/2026-10-28-scheduled-scan-r2-substore
+      - sequence: 38
+        value:
+          action: local
+          commit: 35a6e4bdbf9acf97ab5186b5e3b715df6da01764
+          targetBranch: comet/scheduled-scan-r2-substore
+    nodes:
+      - key: full.open
+        value: 0
+        left: null
+        right: null
+        height: 1
+      - key: full.open.evidence
+        value: 2
+        left: null
+        right: null
+        height: 1
+      - key: full.open.confirm
+        value: 1
+        left: 0
+        right: 1
+        height: 2
+      - key: full.open.revalidate
+        value: 3
+        left: null
+        right: null
+        height: 1
+      - key: full.open.evidence
+        value: 2
+        left: null
+        right: 3
+        height: 2
+      - key: full.open.confirm
+        value: 1
+        left: 0
+        right: 4
+        height: 3
+      - key: full.design.confirm
+        value: 4
+        left: null
+        right: null
+        height: 1
+      - key: full.open
+        value: 0
+        left: null
+        right: null
+        height: 1
+      - key: full.design.handoff
+        value: 5
+        left: 6
+        right: 7
+        height: 2
+      - key: full.open.confirm
+        value: 1
+        left: 8
+        right: 4
+        height: 3
+      - key: full.design.confirm
+        value: 4
+        left: null
+        right: null
+        height: 1
+      - key: full.design.evidence
+        value: 7
+        left: null
+        right: null
+        height: 1
+      - key: full.design.document
+        value: 6
+        left: 10
+        right: 11
+        height: 2
+      - key: full.design.handoff
+        value: 5
+        left: 12
+        right: 7
+        height: 3
+      - key: full.open.confirm
+        value: 1
+        left: 13
+        right: 4
+        height: 4
+      - key: full.build.configure
+        value: 8
+        left: null
+        right: null
+        height: 1
+      - key: full.design.confirm
+        value: 4
+        left: null
+        right: null
+        height: 1
+      - key: full.build.confirm
+        value: 9
+        left: 15
+        right: 16
+        height: 2
+      - key: full.design.handoff
+        value: 5
+        left: 11
+        right: 7
+        height: 2
+      - key: full.design.document
+        value: 6
+        left: 17
+        right: 18
+        height: 3
+      - key: full.open.confirm
+        value: 1
+        left: 19
+        right: 4
+        height: 4
+      - key: full.build.plan
+        value: 10
+        left: null
+        right: null
+        height: 1
+      - key: full.design.confirm
+        value: 4
+        left: null
+        right: null
+        height: 1
+      - key: full.build.plan.evidence
+        value: 11
+        left: 21
+        right: 22
+        height: 2
+      - key: full.build.confirm
+        value: 9
+        left: 15
+        right: 23
+        height: 3
+      - key: full.open.confirm
+        value: 1
+        left: 18
+        right: 4
+        height: 3
+      - key: full.design.document
+        value: 6
+        left: 24
+        right: 25
+        height: 4
+      - key: full.build.execute
+        value: 12
+        left: null
+        right: null
+        height: 1
+      - key: full.build.confirm
+        value: 9
+        left: 15
+        right: 27
+        height: 2
+      - key: full.build.plan.evidence
+        value: 11
+        left: null
+        right: 22
+        height: 2
+      - key: full.build.plan
+        value: 10
+        left: 28
+        right: 29
+        height: 3
+      - key: full.design.document
+        value: 6
+        left: 30
+        right: 25
+        height: 4
+      - key: full.build.check
+        value: 13
+        left: null
+        right: null
+        height: 1
+      - key: full.build.configure
+        value: 8
+        left: null
+        right: null
+        height: 1
+      - key: full.build.check.evidence
+        value: 14
+        left: 32
+        right: 33
+        height: 2
+      - key: full.build.confirm
+        value: 9
+        left: 34
+        right: 27
+        height: 3
+      - key: full.build.plan
+        value: 10
+        left: 35
+        right: 29
+        height: 4
+      - key: full.design.document
+        value: 6
+        left: 36
+        right: 25
+        height: 5
+      - key: full.open.evidence
+        value: 2
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.run
+        value: 15
+        left: null
+        right: null
+        height: 1
+      - key: full.open.revalidate
+        value: 3
+        left: 38
+        right: 39
+        height: 2
+      - key: full.open.confirm
+        value: 1
+        left: 18
+        right: 40
+        height: 3
+      - key: full.design.document
+        value: 6
+        left: 36
+        right: 41
+        height: 5
+      - key: full.build.check
+        value: 16
+        left: null
+        right: null
+        height: 1
+      - key: full.build.check.evidence
+        value: 14
+        left: 43
+        right: 33
+        height: 2
+      - key: full.build.confirm
+        value: 9
+        left: 44
+        right: 27
+        height: 3
+      - key: full.build.plan
+        value: 10
+        left: 45
+        right: 29
+        height: 4
+      - key: full.design.document
+        value: 6
+        left: 46
+        right: 41
+        height: 5
+      - key: full.build.check
+        value: 17
+        left: null
+        right: null
+        height: 1
+      - key: full.build.check.evidence
+        value: 18
+        left: 48
+        right: 33
+        height: 2
+      - key: full.build.confirm
+        value: 9
+        left: 49
+        right: 27
+        height: 3
+      - key: full.build.plan
+        value: 10
+        left: 50
+        right: 29
+        height: 4
+      - key: full.design.document
+        value: 6
+        left: 51
+        right: 41
+        height: 5
+      - key: full.verify.run
+        value: 19
+        left: null
+        right: null
+        height: 1
+      - key: full.open.revalidate
+        value: 3
+        left: 38
+        right: 53
+        height: 2
+      - key: full.open.confirm
+        value: 1
+        left: 18
+        right: 54
+        height: 3
+      - key: full.design.document
+        value: 6
+        left: 51
+        right: 55
+        height: 5
+      - key: full.build.plan.evidence
+        value: 21
+        left: null
+        right: 22
+        height: 2
+      - key: full.build.plan
+        value: 20
+        left: 50
+        right: 57
+        height: 4
+      - key: full.design.document
+        value: 6
+        left: 58
+        right: 55
+        height: 5
+      - key: full.build.check
+        value: 22
+        left: null
+        right: null
+        height: 1
+      - key: full.build.check.evidence
+        value: 23
+        left: 60
+        right: 33
+        height: 2
+      - key: full.build.confirm
+        value: 9
+        left: 61
+        right: 27
+        height: 3
+      - key: full.build.plan
+        value: 20
+        left: 62
+        right: 57
+        height: 4
+      - key: full.design.document
+        value: 6
+        left: 63
+        right: 55
+        height: 5
+      - key: full.verify.report.evidence
+        value: 24
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.run
+        value: 25
+        left: 65
+        right: null
+        height: 2
+      - key: full.open.revalidate
+        value: 3
+        left: 38
+        right: 66
+        height: 3
+      - key: full.open.confirm
+        value: 1
+        left: 18
+        right: 67
+        height: 4
+      - key: full.design.document
+        value: 6
+        left: 63
+        right: 68
+        height: 5
+      - key: full.open.revalidate
+        value: 3
+        left: 38
+        right: null
+        height: 2
+      - key: full.verify.check.evidence
+        value: 27
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.run
+        value: 25
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.report.evidence
+        value: 24
+        left: 71
+        right: 72
+        height: 2
+      - key: full.verify.check
+        value: 26
+        left: 70
+        right: 73
+        height: 3
+      - key: full.open.confirm
+        value: 1
+        left: 18
+        right: 74
+        height: 4
+      - key: full.design.document
+        value: 6
+        left: 63
+        right: 75
+        height: 5
+      - key: full.archive.confirm
+        value: 28
+        left: null
+        right: null
+        height: 1
+      - key: full.build.check
+        value: 22
+        left: null
+        right: null
+        height: 1
+      - key: full.archive.prepare
+        value: 29
+        left: 77
+        right: 78
+        height: 2
+      - key: full.build.confirm
+        value: 9
+        left: 33
+        right: 27
+        height: 2
+      - key: full.build.check.evidence
+        value: 23
+        left: 79
+        right: 80
+        height: 3
+      - key: full.build.plan
+        value: 20
+        left: 81
+        right: 57
+        height: 4
+      - key: full.design.document
+        value: 6
+        left: 82
+        right: 75
+        height: 5
+      - key: full.archive.preflight
+        value: 30
+        left: null
+        right: null
+        height: 1
+      - key: full.archive.confirm
+        value: 28
+        left: null
+        right: 84
+        height: 2
+      - key: full.archive.prepare
+        value: 29
+        left: 85
+        right: 78
+        height: 3
+      - key: full.build.plan
+        value: 20
+        left: 80
+        right: 57
+        height: 3
+      - key: full.build.check.evidence
+        value: 23
+        left: 86
+        right: 87
+        height: 4
+      - key: full.design.document
+        value: 6
+        left: 88
+        right: 75
+        height: 5
+      - key: full.archive.confirm
+        value: 28
+        left: null
+        right: null
+        height: 1
+      - key: full.archive.preflight
+        value: 30
+        left: null
+        right: null
+        height: 1
+      - key: full.archive.execute
+        value: 31
+        left: 90
+        right: 91
+        height: 2
+      - key: full.archive.prepare
+        value: 29
+        left: 92
+        right: 78
+        height: 3
+      - key: full.build.check.evidence
+        value: 23
+        left: 93
+        right: 87
+        height: 4
+      - key: full.design.document
+        value: 6
+        left: 94
+        right: 75
+        height: 5
+      - key: full.build.configure
+        value: 32
+        left: null
+        right: null
+        height: 1
+      - key: full.design.confirm
+        value: 34
+        left: null
+        right: null
+        height: 1
+      - key: full.build.confirm
+        value: 33
+        left: 96
+        right: 97
+        height: 2
+      - key: full.design.evidence
+        value: 36
+        left: null
+        right: null
+        height: 1
+      - key: full.open
+        value: 38
+        left: null
+        right: null
+        height: 1
+      - key: full.design.handoff
+        value: 37
+        left: 99
+        right: 100
+        height: 2
+      - key: full.open.revalidate
+        value: 41
+        left: null
+        right: null
+        height: 1
+      - key: full.open.evidence
+        value: 40
+        left: null
+        right: 102
+        height: 2
+      - key: full.open.confirm
+        value: 39
+        left: 101
+        right: 103
+        height: 3
+      - key: full.design.document
+        value: 35
+        left: 98
+        right: 104
+        height: 4
+      - key: full.build.plan
+        value: 42
+        left: null
+        right: null
+        height: 1
+      - key: full.design.confirm
+        value: 34
+        left: null
+        right: null
+        height: 1
+      - key: full.build.plan.evidence
+        value: 43
+        left: 106
+        right: 107
+        height: 2
+      - key: full.build.confirm
+        value: 33
+        left: 96
+        right: 108
+        height: 3
+      - key: full.design.document
+        value: 35
+        left: 109
+        right: 104
+        height: 4
+      - key: full.build.execute
+        value: 44
+        left: null
+        right: null
+        height: 1
+      - key: full.build.confirm
+        value: 33
+        left: 96
+        right: 111
+        height: 2
+      - key: full.build.plan.evidence
+        value: 43
+        left: null
+        right: 107
+        height: 2
+      - key: full.build.plan
+        value: 42
+        left: 112
+        right: 113
+        height: 3
+      - key: full.design.document
+        value: 35
+        left: 114
+        right: 104
+        height: 4
+      - key: full.build.check
+        value: 45
+        left: null
+        right: null
+        height: 1
+      - key: full.build.configure
+        value: 32
+        left: null
+        right: null
+        height: 1
+      - key: full.build.check.evidence
+        value: 46
+        left: 116
+        right: 117
+        height: 2
+      - key: full.build.confirm
+        value: 33
+        left: 118
+        right: 111
+        height: 3
+      - key: full.build.plan
+        value: 42
+        left: 119
+        right: 113
+        height: 4
+      - key: full.design.document
+        value: 35
+        left: 120
+        right: 104
+        height: 5
+      - key: full.open.evidence
+        value: 40
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.run
+        value: 47
+        left: null
+        right: null
+        height: 1
+      - key: full.open.revalidate
+        value: 41
+        left: 122
+        right: 123
+        height: 2
+      - key: full.open.confirm
+        value: 39
+        left: 101
+        right: 124
+        height: 3
+      - key: full.design.document
+        value: 35
+        left: 120
+        right: 125
+        height: 5
+      - key: full.build.plan.evidence
+        value: 49
+        left: null
+        right: 107
+        height: 2
+      - key: full.build.plan
+        value: 48
+        left: 119
+        right: 127
+        height: 4
+      - key: full.design.document
+        value: 35
+        left: 128
+        right: 125
+        height: 5
+      - key: full.build.execute
+        value: 50
+        left: null
+        right: null
+        height: 1
+      - key: full.build.confirm
+        value: 33
+        left: 118
+        right: 130
+        height: 3
+      - key: full.build.plan
+        value: 48
+        left: 131
+        right: 127
+        height: 4
+      - key: full.design.document
+        value: 35
+        left: 132
+        right: 125
+        height: 5
+      - key: full.build.check
+        value: 51
+        left: null
+        right: null
+        height: 1
+      - key: full.build.check.evidence
+        value: 46
+        left: 134
+        right: 117
+        height: 2
+      - key: full.build.confirm
+        value: 33
+        left: 135
+        right: 130
+        height: 3
+      - key: full.build.plan
+        value: 48
+        left: 136
+        right: 127
+        height: 4
+      - key: full.design.document
+        value: 35
+        left: 137
+        right: 125
+        height: 5
+      - key: full.build.execute
+        value: 52
+        left: null
+        right: null
+        height: 1
+      - key: full.build.confirm
+        value: 33
+        left: 135
+        right: 139
+        height: 3
+      - key: full.build.plan
+        value: 48
+        left: 140
+        right: 127
+        height: 4
+      - key: full.design.document
+        value: 35
+        left: 141
+        right: 125
+        height: 5
+      - key: full.build.check
+        value: 53
+        left: null
+        right: null
+        height: 1
+      - key: full.build.check.evidence
+        value: 54
+        left: 143
+        right: 117
+        height: 2
+      - key: full.build.confirm
+        value: 33
+        left: 144
+        right: 139
+        height: 3
+      - key: full.build.plan
+        value: 48
+        left: 145
+        right: 127
+        height: 4
+      - key: full.design.document
+        value: 35
+        left: 146
+        right: 125
+        height: 5
+      - key: full.verify.run
+        value: 55
+        left: null
+        right: null
+        height: 1
+      - key: full.open.revalidate
+        value: 41
+        left: 122
+        right: 148
+        height: 2
+      - key: full.open.confirm
+        value: 39
+        left: 101
+        right: 149
+        height: 3
+      - key: full.design.document
+        value: 35
+        left: 146
+        right: 150
+        height: 5
+      - key: full.build.plan.evidence
+        value: 57
+        left: null
+        right: 107
+        height: 2
+      - key: full.build.plan
+        value: 56
+        left: 145
+        right: 152
+        height: 4
+      - key: full.design.document
+        value: 35
+        left: 153
+        right: 150
+        height: 5
+      - key: full.build.execute
+        value: 58
+        left: null
+        right: null
+        height: 1
+      - key: full.build.confirm
+        value: 33
+        left: 144
+        right: 155
+        height: 3
+      - key: full.build.plan
+        value: 56
+        left: 156
+        right: 152
+        height: 4
+      - key: full.design.document
+        value: 35
+        left: 157
+        right: 150
+        height: 5
+      - key: full.build.check
+        value: 59
+        left: null
+        right: null
+        height: 1
+      - key: full.build.check.evidence
+        value: 60
+        left: 159
+        right: 117
+        height: 2
+      - key: full.build.confirm
+        value: 33
+        left: 160
+        right: 155
+        height: 3
+      - key: full.build.plan
+        value: 56
+        left: 161
+        right: 152
+        height: 4
+      - key: full.design.document
+        value: 35
+        left: 162
+        right: 150
+        height: 5
+      - key: full.verify.report.evidence
+        value: 61
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.run
+        value: 62
+        left: 164
+        right: null
+        height: 2
+      - key: full.open.revalidate
+        value: 41
+        left: 122
+        right: 165
+        height: 3
+      - key: full.open.confirm
+        value: 39
+        left: 101
+        right: 166
+        height: 4
+      - key: full.design.document
+        value: 35
+        left: 162
+        right: 167
+        height: 5
+      - key: full.open.revalidate
+        value: 41
+        left: 122
+        right: null
+        height: 2
+      - key: full.verify.check.evidence
+        value: 64
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.run
+        value: 62
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.report.evidence
+        value: 61
+        left: 170
+        right: 171
+        height: 2
+      - key: full.verify.check
+        value: 63
+        left: 169
+        right: 172
+        height: 3
+      - key: full.open.confirm
+        value: 39
+        left: 101
+        right: 173
+        height: 4
+      - key: full.design.document
+        value: 35
+        left: 162
+        right: 174
+        height: 5
+      - key: full.archive.confirm
+        value: 65
+        left: null
+        right: null
+        height: 1
+      - key: full.build.check
+        value: 59
+        left: null
+        right: null
+        height: 1
+      - key: full.archive.prepare
+        value: 66
+        left: 176
+        right: 177
+        height: 2
+      - key: full.build.confirm
+        value: 33
+        left: 117
+        right: 155
+        height: 2
+      - key: full.build.check.evidence
+        value: 60
+        left: 178
+        right: 179
+        height: 3
+      - key: full.build.plan
+        value: 56
+        left: 180
+        right: 152
+        height: 4
+      - key: full.design.document
+        value: 35
+        left: 181
+        right: 174
+        height: 5
+      - key: full.archive.preflight
+        value: 67
+        left: null
+        right: null
+        height: 1
+      - key: full.archive.confirm
+        value: 65
+        left: null
+        right: 183
+        height: 2
+      - key: full.archive.prepare
+        value: 66
+        left: 184
+        right: 177
+        height: 3
+      - key: full.build.plan
+        value: 56
+        left: 179
+        right: 152
+        height: 3
+      - key: full.build.check.evidence
+        value: 60
+        left: 185
+        right: 186
+        height: 4
+      - key: full.design.document
+        value: 35
+        left: 187
+        right: 174
+        height: 5
+      - key: full.archive.confirm
+        value: 65
+        left: null
+        right: null
+        height: 1
+      - key: full.archive.preflight
+        value: 67
+        left: null
+        right: null
+        height: 1
+      - key: full.archive.execute
+        value: 68
+        left: 189
+        right: 190
+        height: 2
+      - key: full.archive.prepare
+        value: 66
+        left: 191
+        right: 177
+        height: 3
+      - key: full.build.check.evidence
+        value: 60
+        left: 192
+        right: 186
+        height: 4
+      - key: full.design.document
+        value: 35
+        left: 193
+        right: 174
+        height: 5
+      - key: full.open
+        value: 38
+        left: null
+        right: null
+        height: 1
+      - key: full.open.evidence
+        value: 40
+        left: null
+        right: null
+        height: 1
+      - key: full.open.confirm
+        value: 39
+        left: 195
+        right: 196
+        height: 2
+      - key: full.open.revalidate
+        value: 41
+        left: null
+        right: null
+        height: 1
+      - key: full.open.evidence
+        value: 40
+        left: null
+        right: 198
+        height: 2
+      - key: full.open.confirm
+        value: 39
+        left: 195
+        right: 199
+        height: 3
+      - key: full.design.confirm
+        value: 34
+        left: null
+        right: null
+        height: 1
+      - key: full.open
+        value: 38
+        left: null
+        right: null
+        height: 1
+      - key: full.design.handoff
+        value: 37
+        left: 201
+        right: 202
+        height: 2
+      - key: full.open.confirm
+        value: 39
+        left: 203
+        right: 199
+        height: 3
+      - key: full.design.confirm
+        value: 34
+        left: null
+        right: null
+        height: 1
+      - key: full.design.evidence
+        value: 36
+        left: null
+        right: null
+        height: 1
+      - key: full.design.document
+        value: 35
+        left: 205
+        right: 206
+        height: 2
+      - key: full.design.handoff
+        value: 37
+        left: 207
+        right: 202
+        height: 3
+      - key: full.open.confirm
+        value: 39
+        left: 208
+        right: 199
+        height: 4
+      - key: full.archive.confirm
+        value: 65
+        left: null
+        right: null
+        height: 1
+      - key: full.archive.execute
+        value: 68
+        left: null
+        right: null
+        height: 1
+      - key: full.archive.deliver
+        value: 69
+        left: 210
+        right: 211
+        height: 2
+      - key: full.archive.prepare
+        value: 66
+        left: null
+        right: null
+        height: 1
+      - key: full.build.check.evidence
+        value: 60
+        left: null
+        right: null
+        height: 1
+      - key: full.build.check
+        value: 59
+        left: 213
+        right: 214
+        height: 2
+      - key: full.archive.preflight
+        value: 67
+        left: 212
+        right: 215
+        height: 3
+      - key: full.build.confirm
+        value: 33
+        left: null
+        right: null
+        height: 1
+      - key: full.build.plan
+        value: 56
+        left: null
+        right: null
+        height: 1
+      - key: full.design.confirm
+        value: 34
+        left: null
+        right: null
+        height: 1
+      - key: full.build.plan.evidence
+        value: 57
+        left: 218
+        right: 219
+        height: 2
+      - key: full.build.execute
+        value: 58
+        left: 217
+        right: 220
+        height: 3
+      - key: full.build.configure
+        value: 32
+        left: 216
+        right: 221
+        height: 4
+      - key: full.design.handoff
+        value: 37
+        left: 206
+        right: 202
+        height: 2
+      - key: full.open.evidence
+        value: 40
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.check
+        value: 63
+        left: null
+        right: null
+        height: 1
+      - key: full.open.revalidate
+        value: 41
+        left: 224
+        right: 225
+        height: 2
+      - key: full.verify.run
+        value: 62
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.report.evidence
+        value: 61
+        left: null
+        right: 227
+        height: 2
+      - key: full.verify.check.evidence
+        value: 64
+        left: 226
+        right: 228
+        height: 3
+      - key: full.open.confirm
+        value: 39
+        left: 223
+        right: 229
+        height: 4
+      - key: full.design.document
+        value: 35
+        left: 222
+        right: 230
+        height: 5
+      - key: full.open.evidence
+        value: 40
+        left: null
+        right: null
+        height: 1
+      - key: full.open
+        value: 38
+        left: null
+        right: 232
+        height: 2
+      - key: full.design.handoff
+        value: 37
+        left: null
+        right: null
+        height: 1
+      - key: full.open.confirm
+        value: 39
+        left: null
+        right: null
+        height: 1
+      - key: full.open.revalidate
+        value: 41
+        left: null
+        right: null
+        height: 1
+      - key: full.open.evidence
+        value: 40
+        left: 235
+        right: 236
+        height: 2
+      - key: full.open
+        value: 38
+        left: 234
+        right: 237
+        height: 3
+      - key: full.build.configure
+        value: 32
+        left: null
+        right: null
+        height: 1
+      - key: full.design.document
+        value: 35
+        left: null
+        right: null
+        height: 1
+      - key: full.design.handoff
+        value: 37
+        left: null
+        right: null
+        height: 1
+      - key: full.design.evidence
+        value: 36
+        left: 240
+        right: 241
+        height: 2
+      - key: full.design.confirm
+        value: 34
+        left: 239
+        right: 242
+        height: 3
+      - key: full.open
+        value: 38
+        left: 243
+        right: 237
+        height: 4
+      - key: full.archive.prepare
+        value: 66
+        left: null
+        right: null
+        height: 1
+      - key: full.build.check.evidence
+        value: 60
+        left: null
+        right: null
+        height: 1
+      - key: full.build.check
+        value: 59
+        left: 245
+        right: 246
+        height: 2
+      - key: full.build.confirm
+        value: 33
+        left: null
+        right: null
+        height: 1
+      - key: full.build.plan.evidence
+        value: 57
+        left: null
+        right: null
+        height: 1
+      - key: full.build.plan
+        value: 56
+        left: null
+        right: 249
+        height: 2
+      - key: full.build.execute
+        value: 58
+        left: 248
+        right: 250
+        height: 3
+      - key: full.build.configure
+        value: 32
+        left: 247
+        right: 251
+        height: 4
+      - key: full.open.revalidate
+        value: 41
+        left: null
+        right: null
+        height: 1
+      - key: full.open.evidence
+        value: 40
+        left: 235
+        right: 253
+        height: 2
+      - key: full.verify.check.evidence
+        value: 64
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.run
+        value: 62
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.report.evidence
+        value: 61
+        left: 255
+        right: 256
+        height: 2
+      - key: full.verify.check
+        value: 63
+        left: 254
+        right: 257
+        height: 3
+      - key: full.open
+        value: 38
+        left: 242
+        right: 258
+        height: 4
+      - key: full.design.confirm
+        value: 34
+        left: 252
+        right: 259
+        height: 5
+      - key: full.open
+        value: 38
+        left: null
+        right: null
+        height: 1
+      - key: full.design.confirm
+        value: 34
+        left: null
+        right: null
+        height: 1
+      - key: full.design.handoff
+        value: 37
+        left: null
+        right: null
+        height: 1
+      - key: full.design.document
+        value: 35
+        left: 262
+        right: 263
+        height: 2
+      - key: full.open.confirm
+        value: 39
+        left: null
+        right: null
+        height: 1
+      - key: full.open.revalidate
+        value: 41
+        left: null
+        right: null
+        height: 1
+      - key: full.open.evidence
+        value: 40
+        left: 265
+        right: 266
+        height: 2
+      - key: full.open
+        value: 38
+        left: 264
+        right: 267
+        height: 3
+      - key: full.build.configure
+        value: 32
+        left: null
+        right: null
+        height: 1
+      - key: full.build.plan
+        value: 42
+        left: null
+        right: null
+        height: 1
+      - key: full.build.confirm
+        value: 33
+        left: 269
+        right: 270
+        height: 2
+      - key: full.design.document
+        value: 35
+        left: null
+        right: null
+        height: 1
+      - key: full.design.handoff
+        value: 37
+        left: null
+        right: null
+        height: 1
+      - key: full.design.evidence
+        value: 36
+        left: 272
+        right: 273
+        height: 2
+      - key: full.design.confirm
+        value: 34
+        left: 271
+        right: 274
+        height: 3
+      - key: full.open
+        value: 38
+        left: 275
+        right: 267
+        height: 4
+      - key: full.build.check
+        value: 45
+        left: null
+        right: null
+        height: 1
+      - key: full.build.configure
+        value: 32
+        left: 277
+        right: null
+        height: 2
+      - key: full.build.execute
+        value: 44
+        left: null
+        right: null
+        height: 1
+      - key: full.build.plan.evidence
+        value: 43
+        left: null
+        right: null
+        height: 1
+      - key: full.build.plan
+        value: 42
+        left: 279
+        right: 280
+        height: 2
+      - key: full.build.confirm
+        value: 33
+        left: 278
+        right: 281
+        height: 3
+      - key: full.open
+        value: 38
+        left: 274
+        right: 267
+        height: 3
+      - key: full.design.confirm
+        value: 34
+        left: 282
+        right: 283
+        height: 4
+      - key: full.build.check
+        value: 45
+        left: null
+        right: null
+        height: 1
+      - key: full.build.configure
+        value: 32
+        left: null
+        right: null
+        height: 1
+      - key: full.build.check.evidence
+        value: 46
+        left: 285
+        right: 286
+        height: 2
+      - key: full.build.plan
+        value: 48
+        left: 279
+        right: 280
+        height: 2
+      - key: full.build.confirm
+        value: 33
+        left: 287
+        right: 288
+        height: 3
+      - key: full.verify.run
+        value: 47
+        left: null
+        right: null
+        height: 1
+      - key: full.open.revalidate
+        value: 41
+        left: null
+        right: 290
+        height: 2
+      - key: full.open.evidence
+        value: 40
+        left: 265
+        right: 291
+        height: 3
+      - key: full.open
+        value: 38
+        left: 274
+        right: 292
+        height: 4
+      - key: full.design.confirm
+        value: 34
+        left: 289
+        right: 293
+        height: 5
+      - key: full.build.check
+        value: 53
+        left: null
+        right: null
+        height: 1
+      - key: full.build.check.evidence
+        value: 46
+        left: 295
+        right: 286
+        height: 2
+      - key: full.build.execute
+        value: 52
+        left: null
+        right: null
+        height: 1
+      - key: full.build.plan.evidence
+        value: 49
+        left: null
+        right: null
+        height: 1
+      - key: full.build.plan
+        value: 48
+        left: 297
+        right: 298
+        height: 2
+      - key: full.build.confirm
+        value: 33
+        left: 296
+        right: 299
+        height: 3
+      - key: full.design.confirm
+        value: 34
+        left: 300
+        right: 293
+        height: 5
+      - key: full.build.check.evidence
+        value: 54
+        left: 295
+        right: 286
+        height: 2
+      - key: full.build.plan
+        value: 56
+        left: 297
+        right: 298
+        height: 2
+      - key: full.build.confirm
+        value: 33
+        left: 302
+        right: 303
+        height: 3
+      - key: full.verify.run
+        value: 55
+        left: null
+        right: null
+        height: 1
+      - key: full.open.revalidate
+        value: 41
+        left: null
+        right: 305
+        height: 2
+      - key: full.open.evidence
+        value: 40
+        left: 265
+        right: 306
+        height: 3
+      - key: full.open
+        value: 38
+        left: 274
+        right: 307
+        height: 4
+      - key: full.design.confirm
+        value: 34
+        left: 304
+        right: 308
+        height: 5
+      - key: full.build.check
+        value: 59
+        left: null
+        right: null
+        height: 1
+      - key: full.build.check.evidence
+        value: 54
+        left: 310
+        right: 286
+        height: 2
+      - key: full.build.execute
+        value: 58
+        left: null
+        right: null
+        height: 1
+      - key: full.build.plan.evidence
+        value: 57
+        left: null
+        right: null
+        height: 1
+      - key: full.build.plan
+        value: 56
+        left: 312
+        right: 313
+        height: 2
+      - key: full.build.confirm
+        value: 33
+        left: 311
+        right: 314
+        height: 3
+      - key: full.design.confirm
+        value: 34
+        left: 315
+        right: 308
+        height: 5
+      - key: full.build.check.evidence
+        value: 60
+        left: 310
+        right: 286
+        height: 2
+      - key: full.build.confirm
+        value: 33
+        left: 317
+        right: 314
+        height: 3
+      - key: full.verify.run
+        value: 62
+        left: null
+        right: null
+        height: 1
+      - key: full.open.revalidate
+        value: 41
+        left: null
+        right: 319
+        height: 2
+      - key: full.open.evidence
+        value: 40
+        left: 265
+        right: 320
+        height: 3
+      - key: full.open
+        value: 38
+        left: 274
+        right: 321
+        height: 4
+      - key: full.design.confirm
+        value: 34
+        left: 318
+        right: 322
+        height: 5
+      - key: full.open.revalidate
+        value: 41
+        left: null
+        right: null
+        height: 1
+      - key: full.open.evidence
+        value: 40
+        left: 265
+        right: 324
+        height: 2
+      - key: full.verify.report.evidence
+        value: 61
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.run
+        value: 62
+        left: 326
+        right: null
+        height: 2
+      - key: full.verify.check
+        value: 63
+        left: 325
+        right: 327
+        height: 3
+      - key: full.open
+        value: 38
+        left: 274
+        right: 328
+        height: 4
+      - key: full.design.confirm
+        value: 34
+        left: 318
+        right: 329
+        height: 5
+    maps:
+      - null
+      - 2
+      - 5
+      - 9
+      - 14
+      - 20
+      - 26
+      - 31
+      - 37
+      - 42
+      - 47
+      - 52
+      - 56
+      - 59
+      - 64
+      - 69
+      - 76
+      - 83
+      - 89
+      - 95
+      - 105
+      - 110
+      - 115
+      - 121
+      - 126
+      - 129
+      - 133
+      - 138
+      - 142
+      - 147
+      - 151
+      - 154
+      - 158
+      - 163
+      - 168
+      - 175
+      - 182
+      - 188
+      - 194
+      - 197
+      - 200
+      - 204
+      - 209
+      - 231
+      - 233
+      - 238
+      - 244
+      - 260
+      - 261
+      - 268
+      - 276
+      - 284
+      - 294
+      - 301
+      - 309
+      - 316
+      - 323
+      - 330
+    bindings:
+      - path:
+          - actions
+          - "0"
+          - input
+          - outputs
+        map: 0
+      - path:
+          - actions
+          - "1"
+          - input
+          - outputs
+        map: 1
+      - path:
+          - actions
+          - "2"
+          - input
+          - outputs
+        map: 2
+      - path:
+          - actions
+          - "3"
+          - input
+          - outputs
+        map: 3
+      - path:
+          - actions
+          - "4"
+          - input
+          - outputs
+        map: 4
+      - path:
+          - actions
+          - "5"
+          - input
+          - outputs
+        map: 5
+      - path:
+          - actions
+          - "6"
+          - input
+          - outputs
+        map: 6
+      - path:
+          - actions
+          - "7"
+          - input
+          - outputs
+        map: 7
+      - path:
+          - actions
+          - "8"
+          - input
+          - outputs
+        map: 8
+      - path:
+          - actions
+          - "9"
+          - input
+          - outputs
+        map: 9
+      - path:
+          - actions
+          - "10"
+          - input
+          - outputs
+        map: 9
+      - path:
+          - actions
+          - "11"
+          - input
+          - outputs
+        map: 9
+      - path:
+          - actions
+          - "12"
+          - input
+          - outputs
+        map: 10
+      - path:
+          - actions
+          - "13"
+          - input
+          - outputs
+        map: 10
+      - path:
+          - actions
+          - "14"
+          - input
+          - outputs
+        map: 11
+      - path:
+          - actions
+          - "15"
+          - input
+          - outputs
+        map: 12
+      - path:
+          - actions
+          - "16"
+          - input
+          - outputs
+        map: 13
+      - path:
+          - actions
+          - "17"
+          - input
+          - outputs
+        map: 13
+      - path:
+          - actions
+          - "18"
+          - input
+          - outputs
+        map: 14
+      - path:
+          - actions
+          - "19"
+          - input
+          - outputs
+        map: 15
+      - path:
+          - actions
+          - "20"
+          - input
+          - outputs
+        map: 16
+      - path:
+          - actions
+          - "21"
+          - input
+          - outputs
+        map: 17
+      - path:
+          - actions
+          - "22"
+          - input
+          - outputs
+        map: 18
+      - path:
+          - actions
+          - "23"
+          - input
+          - outputs
+        map: 19
+      - path:
+          - actionContexts
+          - scheduled-scan-r2-substore:1
+          - results
+        map: 0
+      - path:
+          - actionContexts
+          - scheduled-scan-r2-substore:11
+          - results
+        map: 20
+      - path:
+          - actionContexts
+          - scheduled-scan-r2-substore:13
+          - results
+        map: 21
+      - path:
+          - actionContexts
+          - scheduled-scan-r2-substore:14
+          - results
+        map: 22
+      - path:
+          - actionContexts
+          - scheduled-scan-r2-substore:16
+          - results
+        map: 23
+      - path:
+          - actionContexts
+          - scheduled-scan-r2-substore:17
+          - results
+        map: 24
+      - path:
+          - actionContexts
+          - scheduled-scan-r2-substore:19
+          - results
+        map: 25
+      - path:
+          - actionContexts
+          - scheduled-scan-r2-substore:20
+          - results
+        map: 26
+      - path:
+          - actionContexts
+          - scheduled-scan-r2-substore:21
+          - results
+        map: 27
+      - path:
+          - actionContexts
+          - scheduled-scan-r2-substore:22
+          - results
+        map: 28
+      - path:
+          - actionContexts
+          - scheduled-scan-r2-substore:24
+          - results
+        map: 29
+      - path:
+          - actionContexts
+          - scheduled-scan-r2-substore:25
+          - results
+        map: 30
+      - path:
+          - actionContexts
+          - scheduled-scan-r2-substore:27
+          - results
+        map: 31
+      - path:
+          - actionContexts
+          - scheduled-scan-r2-substore:28
+          - results
+        map: 32
+      - path:
+          - actionContexts
+          - scheduled-scan-r2-substore:30
+          - results
+        map: 33
+      - path:
+          - actionContexts
+          - scheduled-scan-r2-substore:32
+          - results
+        map: 34
+      - path:
+          - actionContexts
+          - scheduled-scan-r2-substore:34
+          - results
+        map: 35
+      - path:
+          - actionContexts
+          - scheduled-scan-r2-substore:36
+          - results
+        map: 36
+      - path:
+          - actionContexts
+          - scheduled-scan-r2-substore:37
+          - results
+        map: 37
+      - path:
+          - actionContexts
+          - scheduled-scan-r2-substore:38
+          - results
+        map: 38
+      - path:
+          - actionContexts
+          - scheduled-scan-r2-substore:4
+          - results
+        map: 39
+      - path:
+          - actionContexts
+          - scheduled-scan-r2-substore:5
+          - results
+        map: 40
+      - path:
+          - actionContexts
+          - scheduled-scan-r2-substore:7
+          - results
+        map: 41
+      - path:
+          - actionContexts
+          - scheduled-scan-r2-substore:9
+          - results
+        map: 42
+      - path:
+          - outputs
+        map: 43
+      - path:
+          - waits
+          - "0"
+          - results
+        map: 44
+      - path:
+          - waits
+          - "1"
+          - results
+        map: 45
+      - path:
+          - waits
+          - "2"
+          - results
+        map: 46
+      - path:
+          - waits
+          - "3"
+          - results
+        map: 47
+      - path:
+          - evidenceWaits
+          - "0"
+          - results
+        map: 48
+      - path:
+          - evidenceWaits
+          - "1"
+          - results
+        map: 49
+      - path:
+          - evidenceWaits
+          - "2"
+          - results
+        map: 50
+      - path:
+          - evidenceWaits
+          - "3"
+          - results
+        map: 51
+      - path:
+          - evidenceWaits
+          - "4"
+          - results
+        map: 52
+      - path:
+          - evidenceWaits
+          - "5"
+          - results
+        map: 53
+      - path:
+          - evidenceWaits
+          - "6"
+          - results
+        map: 54
+      - path:
+          - evidenceWaits
+          - "7"
+          - results
+        map: 55
+      - path:
+          - evidenceWaits
+          - "8"
+          - results
+        map: 56
+      - path:
+          - evidenceWaits
+          - "9"
+          - results
+        map: 57
+  storageHash: c48840263a4e509e8a7fac985f38cb267f19b62a824315f732ad107803a7af90
+check_epoch: 10
