@@ -56,6 +56,16 @@ app/src/main/jniLibs/*/libcfdata.so
 # Windows alternate data stream artifacts copied into archives
 *.Zone.Identifier
 *Zone.Identifier*
+.agents
+.claude
+.codegraph
+.qoder
+.comet
+skills-lock.json
+CLAUDE.md
+AGENTS.md
+docs
+/data/
 # >>> Comet managed project state >>>
 !/.comet/
 /.comet/*
@@ -80,13 +90,3 @@ app/src/main/jniLibs/*/libcfdata.so
 .comet-state.lock
 .comet-state-transaction.json
 # <<< Comet managed project state <<<
-.agents
-.claude
-.codegraph
-.qoder
-.comet
-skills-lock.json
-CLAUDE.md
-AGENTS.md
-docs
-/data/
