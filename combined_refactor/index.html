@@ -1783,14 +1783,18 @@
                 </div>
                 <div class="option-item">
                     <span class="label" title="扫描完成后自动进行详细测试和测速">🧪 自动测速</span>
-                    <select id="officialAutoSpeed" onchange="updateOfficialAutoSpeedControls()">
+                    <select id="officialAutoSpeed">
                         <option value="off" selected>关闭</option>
                         <option value="on">开启</option>
                     </select>
                 </div>
                 <div class="option-item">
-                    <span class="label" title="指定数据中心，留空自动选择">🏢 数据中心</span>
-                    <input id="officialTargetDC" type="text" value="" placeholder="留空自动选择" disabled>
+                    <span class="label" title="指定目标数据中心（例如 HKG）；扫描时仅保留该数据中心的结果，留空扫描全部">🏢 数据中心</span>
+                    <input id="officialTargetDC" type="text" value="" placeholder="留空自动选择">
+                </div>
+                <div class="option-item">
+                    <span class="label" title="达到该数量的目标数据中心 IP 后提前结束扫描；0 表示扫描全部候选">⏹️ 提前结束数量</span>
+                    <input id="officialStopCount" type="number" value="20" min="0" placeholder="默认 20，0 不早停">
                 </div>
                 <div class="option-item full-width">
                     <span class="label">📡 扫描方式</span>
@@ -2710,16 +2714,7 @@
 
         function initializeUI() {
             updateNSBSpeedControls();
-            updateOfficialAutoSpeedControls();
             updateBatchSpeedButton();
-        }
-
-        function updateOfficialAutoSpeedControls() {
-            const autoSpeed = document.getElementById('officialAutoSpeed');
-            const targetDC = document.getElementById('officialTargetDC');
-            if (!autoSpeed || !targetDC) return;
-            targetDC.disabled = String(autoSpeed.value || 'off').toLowerCase() !== 'on';
-            if (targetDC.disabled) targetDC.value = '';
         }
 
         function updateNSBSpeedControls() {
@@ -2982,6 +2977,7 @@
                     speedLimit: val('officialSpeedLimit'),
                     autoSpeed: selVal('officialAutoSpeed'),
                     targetDC: val('officialTargetDC'),
+                    stopCount: val('officialStopCount'),
                     speedUrl: resolveSpeedTestUrl('officialSpeedUrl', 'officialSpeedUrlPreset'),
                 },
                 nsb: {
@@ -3022,6 +3018,7 @@
             setValue('officialSpeedLimit', o.speedLimit);
             setValue('officialAutoSpeed', o.autoSpeed);
             setValue('officialTargetDC', o.targetDC);
+            setValue('officialStopCount', o.stopCount);
             setValue('nsbScanMode', n.scanMode);
             setValue('nsbThreads', n.threads);
             setValue('nsbDelay', n.delay);
@@ -3045,7 +3042,6 @@
             if (n.speedUrl) applySpeedUrlConfig('nsbSpeedUrl', 'nsbSpeedUrlPreset', n.speedUrl);
             syncOfficialSpeedConfigState();
             syncNSBSpeedConfigState();
-            updateOfficialAutoSpeedControls();
             updateNSBSpeedControls();
             updateNSBCompactToggle();
         }
@@ -3104,6 +3100,7 @@
             result.official.speedLimit = pick(c, ['offspeedlimit', 'speedlimit']);
             result.nsb.speedLimit = pick(c, ['nsbspeedlimit']);
             result.official.targetDC = pick(c, ['offdc', 'dc']);
+            result.official.stopCount = pick(c, ['offstop']);
             result.nsb.targetDC = pick(c, ['nsbdc']);
             result.official.speedUrl = pick(c, ['offurl', 'url']);
             result.nsb.speedUrl = pick(c, ['nsburl']);
@@ -3835,7 +3832,6 @@
             if (params.enableTLS !== undefined) setValue('nsbTls', params.enableTLS ? 'on' : 'off');
             syncOfficialSpeedConfigState();
             syncNSBSpeedConfigState();
-            updateOfficialAutoSpeedControls();
             updateNSBSpeedControls();
             updateNSBCompactToggle();
         }
@@ -5040,6 +5036,9 @@
             const delay = parseInt(document.getElementById('officialDelay').value) || 0;
             const officialSpeedConfig = syncOfficialSpeedConfigState();
             const autoSpeed = String(document.getElementById('officialAutoSpeed')?.value || 'off').toLowerCase() === 'on';
+            const stopCountRaw = document.getElementById('officialStopCount')?.value?.trim() || '';
+            const parsedStopCount = stopCountRaw === '' ? 20 : parseInt(stopCountRaw, 10);
+            const officialStopCount = Number.isFinite(parsedStopCount) && parsedStopCount >= 0 ? parsedStopCount : 20;
             officialSpeedEnabledForResults = autoSpeed && officialSpeedConfig.speedLimit > 0;
             officialAutoSpeedPending = autoSpeed;
             officialAutoStage = autoSpeed ? 'scan' : '';
@@ -5082,6 +5081,7 @@
                 ipType, threads, port, delay, scanMode: getScanMode(),
                 autoSpeed: autoSpeed,
                 officialTargetDC: document.getElementById('officialTargetDC')?.value?.trim() || '',
+                officialStopCount: officialStopCount,
                 officialSpeedPort: officialSpeedConfig.port,
                 officialSpeedURL: officialSpeedConfig.url,
                 officialSpeedMin: officialSpeedConfig.speedMin,

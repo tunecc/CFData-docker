@@ -11,8 +11,14 @@ import (
 const progressEmitInterval = 250 * time.Millisecond
 
 func runBoundedWorkers(ctx context.Context, total, maxWorkers, progressEvery int, onProgress func(current, total int), work func(idx int)) bool {
+	wasCanceled, _ := runBoundedWorkersUntil(ctx, total, maxWorkers, progressEvery, onProgress, nil, work)
+	return wasCanceled
+}
+
+// runBoundedWorkersUntil 在调度新任务前检查 shouldStop；返回时仍会等待已在途任务结束
+func runBoundedWorkersUntil(ctx context.Context, total, maxWorkers, progressEvery int, onProgress func(current, total int), shouldStop func() bool, work func(idx int)) (bool, bool) {
 	if total <= 0 {
-		return false
+		return false, false
 	}
 	if maxWorkers <= 0 {
 		maxWorkers = 1
@@ -23,13 +29,16 @@ func runBoundedWorkers(ctx context.Context, total, maxWorkers, progressEvery int
 	var count int
 	var countMutex sync.Mutex
 	var lastEmit time.Time
-	wasCanceled := false
+	stoppedEarly := false
 
 	for i := 0; i < total; i++ {
+		if shouldStop != nil && shouldStop() {
+			stoppedEarly = true
+			break
+		}
 		select {
 		case <-ctx.Done():
-			wasCanceled = true
-			return wasCanceled
+			return true, stoppedEarly
 		case slots <- struct{}{}:
 		}
 
@@ -82,7 +91,7 @@ func runBoundedWorkers(ctx context.Context, total, maxWorkers, progressEvery int
 	}
 
 	wg.Wait()
-	return wasCanceled
+	return false, stoppedEarly
 }
 
 func reportNSBProgress(session *appSession, phase string, current, total int, text string) {

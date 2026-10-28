@@ -35,6 +35,7 @@ type cliConfig struct {
 	nsbDelay        int
 	resultLimit     int
 	dc              string
+	offStop         int
 	file            string
 	sourceURL       string
 	offURL          string
@@ -110,6 +111,7 @@ type cliFileConfig struct {
 	Delay           int     `json:"offdelay"`
 	NSBDelay        int     `json:"nsbdelay"`
 	DC              string  `json:"offdc"`
+	OffStop         *int    `json:"offstop"`
 	SpeedLimit      int     `json:"offspeedlimit"`
 	SpeedMin        float64 `json:"offspeedmin"`
 	File            string  `json:"nsbfile"`
@@ -259,6 +261,7 @@ var (
 		{name: "offport", description: "官方模式详细测试与测速端口", defaultValue: "443"},
 		{name: "offdelay", description: "官方模式延迟阈值（毫秒）", defaultValue: "500"},
 		{name: "offdc", description: "指定数据中心；不填时自动选择最低延迟数据中心", defaultValue: ""},
+		{name: "offstop", description: "指定数据中心时，收集到该数量的目标 IP 后提前结束扫描；0 表示不早停", defaultValue: "20"},
 		{name: "offspeedlimit", description: "官方模式测速达标结果上限；0 表示关闭官方测速", defaultValue: "5"},
 		{name: "offspeedmin", description: "官方模式测速达标下限，单位 MB/s", defaultValue: "0.1"},
 		{name: "offurl", description: "官方模式测速下载地址；auto 表示由后端自动选择内置测速源", defaultValue: autoSpeedURLValue},
@@ -301,6 +304,7 @@ func registerCLIFlags() *cliConfig {
 	flag.IntVar(&cfg.offDelay, "offdelay", 500, "官方延迟阈值（毫秒）")
 	flag.IntVar(&cfg.nsbDelay, "nsbdelay", 0, "非标延迟阈值（毫秒）；0 表示不筛延迟")
 	flag.StringVar(&cfg.dc, "offdc", "", "官方模式指定数据中心，不填则自动选择最低延迟数据中心")
+	flag.IntVar(&cfg.offStop, "offstop", defaultOfficialStopCount, "官方模式指定数据中心时，收集到该数量目标 IP 后提前结束扫描；0 表示不早停")
 	flag.StringVar(&cfg.file, "nsbfile", "", "非标模式输入文件路径")
 	flag.StringVar(&cfg.sourceURL, "nsbsourceurl", "", "非标模式网络输入 URL")
 	flag.IntVar(&cfg.nsbFallbackPort, "nsbfallbackport", 0, "非标输入缺省端口；不填时随 TLS 自动使用 443/80")
@@ -534,7 +538,8 @@ func defaultCLIExportConfig() cliExportConfig {
 }
 
 func defaultCLIFileConfig() cliFileConfig {
-	return cliFileConfig{CLI: false, Mode: "official", ScanMode: "tcping", IPType: 4, Threads: 100, NSBThreads: 100, Out: "cfdata-results", SpeedTest: 0, Progress: true, NoColor: false, URL: autoSpeedURLValue, NSBURL: autoSpeedURLValue, DNS: defaultDNSServers, Debug: false, CompactIPv4: false, TestPort: 443, Delay: 500, NSBDelay: 0, DC: "", SpeedLimit: 5, SpeedMin: 0.1, File: "", SourceURL: "", NSBFallbackPort: 0, OutIPType: "all", OutQualified: "all", NSBDC: "", Relink: true, RelinkHost: "probe.609909.xyz", TLS: true, Compact: true, ResultLimit: 1000, NSBSpeedMin: 0.1, NSBSpeedLimit: 5, Format: "txt", Fields: "compact", Custom: "", V6Bracket: true, Separator: "-", OutStartRow: 1, OutEndRow: 20, GitHub: false, GHBranch: "main", GHPath: "", GHMessage: "update cfdata results", EdgeTunnel: false, ETMode: "overwrite", ScheduleEnabled: false, CronExpression: "", CheckInterval: 0, R2Enabled: false, R2WorkerURL: "", R2WorkerToken: "", R2Filename: "cfdata-targets.txt"}
+	offStop := defaultOfficialStopCount
+	return cliFileConfig{CLI: false, Mode: "official", ScanMode: "tcping", IPType: 4, Threads: 100, NSBThreads: 100, Out: "cfdata-results", SpeedTest: 0, Progress: true, NoColor: false, URL: autoSpeedURLValue, NSBURL: autoSpeedURLValue, DNS: defaultDNSServers, Debug: false, CompactIPv4: false, TestPort: 443, Delay: 500, NSBDelay: 0, DC: "", OffStop: &offStop, SpeedLimit: 5, SpeedMin: 0.1, File: "", SourceURL: "", NSBFallbackPort: 0, OutIPType: "all", OutQualified: "all", NSBDC: "", Relink: true, RelinkHost: "probe.609909.xyz", TLS: true, Compact: true, ResultLimit: 1000, NSBSpeedMin: 0.1, NSBSpeedLimit: 5, Format: "txt", Fields: "compact", Custom: "", V6Bracket: true, Separator: "-", OutStartRow: 1, OutEndRow: 20, GitHub: false, GHBranch: "main", GHPath: "", GHMessage: "update cfdata results", EdgeTunnel: false, ETMode: "overwrite", ScheduleEnabled: false, CronExpression: "", CheckInterval: 0, R2Enabled: false, R2WorkerURL: "", R2WorkerToken: "", R2Filename: "cfdata-targets.txt"}
 }
 
 func (c cliFileConfig) Export() cliExportConfig {
@@ -801,6 +806,7 @@ func buildCLIConfigHelp() []cliConfigHelp {
 		{Name: "offdelay", Description: "官方延迟阈值，单位毫秒", Default: "500"},
 		{Name: "nsbdelay", Description: "非标延迟阈值，单位毫秒；0=不筛延迟", Default: "0"},
 		{Name: "offdc", Description: "官方模式指定数据中心；留空自动选择最低延迟数据中心", Default: ""},
+		{Name: "offstop", Description: "官方模式指定数据中心时，收集到该数量的目标 IP 后提前结束扫描；0 表示不早停", Default: "20"},
 		{Name: "offspeedlimit", Description: "官方模式测速达标结果上限；0 表示关闭官方测速", Default: "5"},
 		{Name: "offspeedmin", Description: "官方模式测速达标下限，单位 MB/s", Default: "0.1"},
 		{Name: "nsbfile", Description: "非标模式输入文件路径", Default: ""},
@@ -916,6 +922,9 @@ func applyCLIFileConfigFields(cfg *cliConfig, fileCfg cliFileConfig, provided ma
 	}
 	if !provided["offdc"] {
 		cfg.dc = fileCfg.DC
+	}
+	if !provided["offstop"] {
+		cfg.offStop = resolveOfficialStopCount(fileCfg.OffStop)
 	}
 	setInt("offspeedlimit", &cfg.speedLimit, fileCfg.SpeedLimit)
 	setFloat("offspeedmin", &cfg.speedMin, fileCfg.SpeedMin)
@@ -1203,6 +1212,9 @@ func prepareOfficialCLIConfig(cfg *cliConfig) error {
 	if cfg.delay < 0 {
 		cfg.delay = 0
 	}
+	if cfg.offStop < 0 {
+		cfg.offStop = defaultOfficialStopCount
+	}
 	if cfg.speedLimit < 0 {
 		cfg.speedLimit = 0
 	}
@@ -1232,7 +1244,7 @@ func runOfficialPipeline(ctx context.Context, session *appSession, cfg *cliConfi
 	if scanMode == "" {
 		scanMode = scanModeTCPing
 	}
-	runOfficialTask(ctx, session, cfg.ipType, cfg.threads, cfg.port, cfg.delay, scanMode)
+	runOfficialTask(ctx, session, cfg.ipType, cfg.threads, cfg.port, cfg.delay, scanMode, cfg.dc, cfg.offStop)
 	if ctx.Err() != nil {
 		return ctx.Err()
 	}
@@ -1244,7 +1256,7 @@ func runOfficialPipeline(ctx context.Context, session *appSession, cfg *cliConfi
 		return errors.New("官方模式未发现有效 IP")
 	}
 
-	dc := strings.TrimSpace(cfg.dc)
+	dc := normalizeOfficialTargetDC(cfg.dc)
 	if dc == "" {
 		dc = pickBestDataCenter(scanResults)
 		if dc == "" {
@@ -1516,6 +1528,13 @@ func printCLIConfig(cfg *cliConfig) {
 			dcLabel = "自动"
 		}
 		line("数据中心", dcLabel)
+		if dcLabel != "自动" {
+			stopLabel := "关闭"
+			if cfg.offStop > 0 {
+				stopLabel = fmt.Sprintf("%d 个", cfg.offStop)
+			}
+			line("扫描早停数量", stopLabel)
+		}
 		line("测速网址", speedURLLabel)
 		line("自动测速", boolLabel(cfg.speedLimit > 0))
 		line("测速结果数量", strconv.Itoa(cfg.speedLimit))

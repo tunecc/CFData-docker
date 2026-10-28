@@ -150,12 +150,14 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 				scanMode = scanModeTCPing
 			}
 			autoSpeed := params.AutoSpeed && params.OfficialSpeedLimit > 0
-			session.startTaskNamed("官方优选扫描", "official", map[string]interface{}{"ipType": params.IPType, "threads": params.Threads, "port": params.Port, "delay": params.Delay, "scanMode": scanMode, "autoSpeed": autoSpeed}, func(ctx context.Context, session *appSession) {
-				runOfficialTask(ctx, session, params.IPType, params.Threads, params.Port, params.Delay, scanMode)
+			targetDC := normalizeOfficialTargetDC(params.OfficialTargetDC)
+			stopCount := resolveOfficialStopCount(params.OfficialStopCount)
+			session.startTaskNamed("官方优选扫描", "official", map[string]interface{}{"ipType": params.IPType, "threads": params.Threads, "port": params.Port, "delay": params.Delay, "scanMode": scanMode, "autoSpeed": autoSpeed, "targetDC": targetDC, "stopCount": stopCount}, func(ctx context.Context, session *appSession) {
+				runOfficialTask(ctx, session, params.IPType, params.Threads, params.Port, params.Delay, scanMode, targetDC, stopCount)
 				if ctx.Err() != nil || !autoSpeed || !session.isBackgroundTask() {
 					return
 				}
-				dc := strings.TrimSpace(params.OfficialTargetDC)
+				dc := targetDC
 				if dc == "" {
 					session.scanMutex.Lock()
 					copy := append([]ScanResult(nil), session.scanResults...)

@@ -10,8 +10,27 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 )
+
+const defaultOfficialStopCount = 20
+
+type officialScanFunc func(ctx context.Context, ip string, port int, delay int) (*ScanResult, string, string)
+
+func normalizeOfficialTargetDC(value string) string {
+	return strings.ToUpper(strings.TrimSpace(value))
+}
+
+func resolveOfficialStopCount(value *int) int {
+	if value == nil {
+		return defaultOfficialStopCount
+	}
+	if *value < 0 {
+		return defaultOfficialStopCount
+	}
+	return *value
+}
 
 func scanOfficialIP(ctx context.Context, ip string, port int, delay int) (*ScanResult, string, string) {
 	dialer := &net.Dialer{Timeout: timeout}
@@ -310,7 +329,7 @@ func measureHTTPTTFB(ctx context.Context, ip string, port int, effectiveDelay in
 	return ttfb, ""
 }
 
-func runOfficialTask(ctx context.Context, session *appSession, ipType int, scanMaxThreads int, port int, delay int, scanMode string) {
+func runOfficialTask(ctx context.Context, session *appSession, ipType int, scanMaxThreads int, port int, delay int, scanMode string, targetDC string, stopCount int) {
 	filename := "ips-v4.txt"
 	apiURL := "https://www.baipiao.eu.org/cloudflare/ips-v4"
 	if ipType == 6 {
@@ -334,7 +353,31 @@ func runOfficialTask(ctx context.Context, session *appSession, ipType int, scanM
 	} else {
 		ipList = getRandomIPv4s(ipList)
 	}
-	session.sendWSMessage("log", fmt.Sprintf("开始扫描：%d 条记录", len(ipList)))
+
+	targetDC = normalizeOfficialTargetDC(targetDC)
+	if stopCount < 0 {
+		stopCount = 0
+	}
+	if targetDC == "" {
+		session.sendWSMessage("log", fmt.Sprintf("开始扫描：%d 条记录", len(ipList)))
+	} else if stopCount > 0 {
+		session.sendWSMessage("log", fmt.Sprintf("开始扫描：%d 条记录（目标数据中心 %s，收集 %d 个后提前结束）", len(ipList), targetDC, stopCount))
+	} else {
+		session.sendWSMessage("log", fmt.Sprintf("开始扫描：%d 条记录（目标数据中心 %s，不提前结束）", len(ipList), targetDC))
+	}
+
+	scanner := officialScanFunc(scanOfficialIP)
+	if scanMode == scanModeHTTPing {
+		scanner = scanOfficialHTTP
+	}
+	runOfficialScanCandidates(ctx, session, ipList, scanMaxThreads, port, delay, targetDC, stopCount, scanner)
+}
+
+func runOfficialScanCandidates(ctx context.Context, session *appSession, ipList []string, scanMaxThreads int, port int, delay int, targetDC string, stopCount int, scanner officialScanFunc) (bool, bool) {
+	targetDC = normalizeOfficialTargetDC(targetDC)
+	if stopCount < 0 {
+		stopCount = 0
+	}
 
 	session.scanMutex.Lock()
 	session.scanResults = []ScanResult{}
@@ -355,30 +398,34 @@ func runOfficialTask(ctx context.Context, session *appSession, ipType int, scanM
 			failureSamples[category] = detail
 		}
 	}
+	var matched int64
+	shouldStop := func() bool {
+		if targetDC == "" || stopCount <= 0 {
+			return false
+		}
+		return atomic.LoadInt64(&matched) >= int64(stopCount)
+	}
 	session.sendWSMessage("scan_progress", map[string]interface{}{
 		"current": 0,
 		"total":   total,
 	})
-	wasCanceled := runBoundedWorkers(ctx, total, scanMaxThreads, 10, func(current, total int) {
+	wasCanceled, stoppedEarly := runBoundedWorkersUntil(ctx, total, scanMaxThreads, 10, func(current, total int) {
 		session.sendWSMessage("scan_progress", map[string]interface{}{
 			"current": current,
 			"total":   total,
 		})
-	}, func(idx int) {
+	}, shouldStop, func(idx int) {
 		ip := ipList[idx]
 		select {
 		case <-ctx.Done():
 			return
 		default:
 		}
-
-		var res *ScanResult
-		var failureCategory, failureDetail string
-		if scanMode == scanModeHTTPing {
-			res, failureCategory, failureDetail = scanOfficialHTTP(ctx, ip, port, delay)
-		} else {
-			res, failureCategory, failureDetail = scanOfficialIP(ctx, ip, port, delay)
+		if shouldStop() {
+			return
 		}
+
+		res, failureCategory, failureDetail := scanner(ctx, ip, port, delay)
 		if res == nil {
 			recordFailure(failureCategory, failureDetail)
 			return
@@ -388,16 +435,23 @@ func runOfficialTask(ctx context.Context, session *appSession, ipType int, scanM
 			return
 		default:
 		}
+		if targetDC != "" && !strings.EqualFold(strings.TrimSpace(res.DataCenter), targetDC) {
+			return
+		}
 
 		session.scanMutex.Lock()
 		session.scanResults = append(session.scanResults, *res)
 		session.scanMutex.Unlock()
+		atomic.AddInt64(&matched, 1)
 
 		session.sendWSMessage("scan_result", *res)
 	})
 
-	if wasCanceled || ctx.Err() != nil {
+	canceled := wasCanceled || ctx.Err() != nil
+	if canceled {
 		session.sendWSMessage("log", "扫描任务已终止，正在整理已扫描到的数据...")
+	} else if stoppedEarly {
+		session.sendWSMessage("log", fmt.Sprintf("已收集到 %d 个 %s 数据中心的 IP，提前结束扫描", atomic.LoadInt64(&matched), targetDC))
 	}
 
 	session.scanMutex.Lock()
@@ -405,12 +459,16 @@ func runOfficialTask(ctx context.Context, session *appSession, ipType int, scanM
 	session.scanMutex.Unlock()
 
 	if resultsCount == 0 {
-		if wasCanceled || ctx.Err() != nil {
+		if canceled {
 			session.sendWSMessage("log", "扫描任务已终止，当前没有可整理的有效 IP。")
-			return
+			return wasCanceled, stoppedEarly
+		}
+		if targetDC != "" {
+			session.sendWSMessage("error", fmt.Sprintf("未在数据中心 %s 找到可用 IP，请更换数据中心后重试。", targetDC))
+			return wasCanceled, stoppedEarly
 		}
 		session.sendWSMessage("error", "扫描结束或被终止，但未发现任何有效IP。")
-		return
+		return wasCanceled, stoppedEarly
 	}
 
 	session.scanMutex.Lock()
@@ -448,6 +506,7 @@ func runOfficialTask(ctx context.Context, session *appSession, ipType int, scanM
 	})
 
 	session.sendWSMessage("scan_complete_wait_dc", dcList)
+	return wasCanceled, stoppedEarly
 }
 
 func runDetailedTest(ctx context.Context, session *appSession, selectedDC string, port int, delay int, scanMode string) {
