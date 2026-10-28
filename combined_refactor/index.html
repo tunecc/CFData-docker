@@ -274,6 +274,41 @@
             padding: 20px;
         }
 
+        .automation-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+            margin-top: 12px;
+        }
+
+        .automation-column {
+            min-width: 0;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            background: var(--bg-color);
+            padding: 14px 16px;
+        }
+
+        .automation-column .form-group {
+            margin-top: 10px;
+        }
+
+        .automation-column .form-group input {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .automation-save-btn {
+            width: 100%;
+            margin-top: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .automation-grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
         @media (max-width: 768px) {
             h1 {
                 margin: 56px 0 16px;
@@ -1658,17 +1693,6 @@
             <div style="font-size:11px;line-height:1.5;color:var(--text-secondary);margin-top:6px;">
                 仅作用于下载 ASN 库/locations、版本检查、GitHub/订阅上传等管理操作；扫描与测速保持直连。程序配置优先生效，未配置时使用系统环境变量代理。
             </div>
-
-            <div class="settings-title" style="margin-top:12px;">⏱️ 自动调度 / R2 上传</div>
-            <div class="upload-status" id="scheduleStatusText">调度未启用</div>
-            <label class="inline-check" style="margin-top:4px;"><input type="checkbox" id="scheduleEnabled"> 启用自动调度</label>
-            <input id="scheduleCron" type="text" placeholder="Cron 表达式（优先），例如 0 4 * * *" style="width:100%;margin-top:6px;">
-            <input id="scheduleInterval" type="number" min="0" placeholder="检测间隔（分钟），默认 2880" style="width:100%;margin-top:6px;">
-            <label class="inline-check" style="margin-top:6px;"><input type="checkbox" id="r2Enabled"> 启用 R2 上传</label>
-            <input id="r2WorkerUrl" type="text" placeholder="Worker 地址，例如 https://r2.example.com" style="width:100%;margin-top:6px;">
-            <input id="r2WorkerToken" type="password" placeholder="Worker token" style="width:100%;margin-top:6px;">
-            <input id="r2Filename" type="text" placeholder="文件名，默认 cfdata-targets.txt" style="width:100%;margin-top:6px;">
-            <button class="menu-btn" style="width:100%;margin-top:6px;" onclick="saveScheduleConfig()">保存调度设置</button>
         </div>
 
         <div id="configMenu" class="settings-menu hidden">
@@ -1939,6 +1963,42 @@
                     <button class="action-btn" onclick="hideBackgroundConfirmCard()">取消</button>
                 </div>
             </div>
+        </div>
+
+        <div class="section-box" id="automationSection">
+            <h3>⏱️ 自动化</h3>
+            <div class="upload-status" id="scheduleStatusText">调度未启用</div>
+            <div class="automation-grid">
+                <div class="automation-column">
+                    <div class="settings-title">自动调度</div>
+                    <label class="inline-check"><input type="checkbox" id="scheduleEnabled"> 启用自动调度</label>
+                    <div class="form-group">
+                        <label for="scheduleCron">Cron 表达式</label>
+                        <input id="scheduleCron" type="text" placeholder="优先于检测间隔，例如 0 4 * * *">
+                    </div>
+                    <div class="form-group">
+                        <label for="scheduleInterval">检测间隔（分钟）</label>
+                        <input id="scheduleInterval" type="number" min="0" placeholder="默认 2880">
+                    </div>
+                </div>
+                <div class="automation-column">
+                    <div class="settings-title">R2 上传</div>
+                    <label class="inline-check"><input type="checkbox" id="r2Enabled"> 启用 R2 上传</label>
+                    <div class="form-group">
+                        <label for="r2WorkerUrl">Worker 地址</label>
+                        <input id="r2WorkerUrl" type="text" placeholder="例如 https://r2.example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="r2WorkerToken">Worker token</label>
+                        <input id="r2WorkerToken" type="password" autocomplete="off" placeholder="Worker token">
+                    </div>
+                    <div class="form-group">
+                        <label for="r2Filename">文件名</label>
+                        <input id="r2Filename" type="text" placeholder="默认 cfdata-targets.txt">
+                    </div>
+                </div>
+            </div>
+            <button class="menu-btn automation-save-btn" onclick="saveScheduleConfig()">保存自动化设置</button>
         </div>
 
         <div class="progress-container" id="progressBox">
@@ -2424,6 +2484,7 @@
     <script>
         let ws;
         let defaultSpeedTestUrl = "speed.okl.abrdns.com";
+        let scheduleConfigLoaded = false;
         let isTaskRunning = false;
         let isStoppingTask = false;
         let nsbReallinkRunning = false;
@@ -2599,7 +2660,6 @@
                 menu.classList.add('no-transition');
                 setTimeout(() => menu.classList.remove('no-transition'), 0);
                 wsSend({ type: 'get_management_proxy' });
-                wsSend({ type: 'get_schedule_config' });
             }
         }
 
@@ -2618,7 +2678,11 @@
             const btn = document.getElementById('settingsToggle');
             if (!menu || !btn) return;
             if (!menu.contains(event.target) && !btn.contains(event.target)) {
-                menu.classList.add('hidden');
+                const proxyInput = document.getElementById('proxyInput');
+                // 未保存的手动输入不能因误点空白区域而丢失
+                if (!proxyInput || !proxyInput.value.trim()) {
+                    menu.classList.add('hidden');
+                }
             }
             const configMenu = document.getElementById('configMenu');
             const configBtn = document.getElementById('btnConfigMenu');
@@ -6471,6 +6535,10 @@
                     applyProxyStatus(msg.data.proxyStatus);
                     renderVersionInfo(msg.data || {});
                     autoLoadConfig();
+                    if (!scheduleConfigLoaded) {
+                        scheduleConfigLoaded = true;
+                        wsSend({ type: 'get_schedule_config' });
+                    }
                     break;
                 case 'speed_url_status':
                     applySpeedURLStatus(msg.data || {});
@@ -6485,7 +6553,11 @@
                 case 'proxy_updated':
                     applyProxyStatus(msg.data || {}); {
                         const input = document.getElementById('proxyInput');
-                        if (input && (msg.data?.saved !== false)) input.value = '';
+                        if (input && (msg.data?.saved !== false)) {
+                            input.value = '';
+                            const menu = document.getElementById('settingsMenu');
+                            if (menu) menu.classList.add('hidden');
+                        }
                     }
                     showNoticeCard((msg.data && msg.data.message) || '代理设置已保存并生效');
                     break;
