@@ -296,6 +296,10 @@ func runOfficialSpeedBatch(ctx context.Context, session *appSession, port int, c
 	}
 	if ctx.Err() == nil {
 		session.sendWSMessage("official_speed_complete", map[string]interface{}{"qualified": len(qualified), "totalQualified": totalQualified, "limit": speedLimit, "rateLimited": rateLimited})
+		session.testMutex.Lock()
+		rows := officialResultRows(nil, append([]TestResult(nil), session.testResults...), "")
+		session.testMutex.Unlock()
+		triggerManualR2Upload(session, rows)
 	}
 }
 

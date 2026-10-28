@@ -303,6 +303,13 @@
             margin-top: 12px;
         }
 
+        .automation-hint {
+            margin-top: 10px;
+            font-size: 12px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
         @media (max-width: 768px) {
             .automation-grid {
                 grid-template-columns: minmax(0, 1fr);
@@ -1995,6 +2002,9 @@
                     <div class="form-group">
                         <label for="r2Filename">文件名</label>
                         <input id="r2Filename" type="text" placeholder="默认 cfdata-targets.txt">
+                    </div>
+                    <div class="automation-hint">
+                        启用后，自动调度与手动任务完成时都会把全部结果按 Sub-Store 目标列表自动上传到该文件名。结果页「⬆ 自动上传」下拉框仅用于 GitHub 账户（在结果页「导出」弹窗中配置），与此开关互不影响。
                     </div>
                 </div>
             </div>

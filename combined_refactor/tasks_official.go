@@ -547,6 +547,7 @@ func runDetailedTest(ctx context.Context, session *appSession, selectedDC string
 	session.testMutex.Unlock()
 
 	session.sendWSMessage("test_complete", results)
+	triggerManualR2Upload(session, officialResultRows(nil, results, scanMode))
 }
 
 func formatFailureSummary(title string, counts map[string]int, samples map[string]string) string {
