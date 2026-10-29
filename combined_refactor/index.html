@@ -1849,7 +1849,7 @@
                 </div>
                 <div class="option-item full-width">
                     <span class="label">⬆ 自动上传</span>
-                    <select id="officialAutoUploadAccount"></select>
+                    <select id="officialAutoUploadAccount" onchange="markAutoUploadTouched('officialAutoUploadAccount')"></select>
                 </div>
             </div>
 
@@ -1970,7 +1970,7 @@
                 </div>
                 <div class="option-item full-width">
                     <span class="label">⬆ 自动上传</span>
-                    <select id="nsbAutoUploadAccount"></select>
+                    <select id="nsbAutoUploadAccount" onchange="markAutoUploadTouched('nsbAutoUploadAccount')"></select>
                 </div>
             </div>
 
@@ -2024,7 +2024,7 @@
                         <input id="r2Filename" type="text" placeholder="默认 cfdata-targets.txt">
                     </div>
                     <div class="automation-hint">
-                        启用后，自动调度与手动任务完成时都会把全部结果按 Sub-Store 目标列表自动上传到该文件名。结果页「⬆ 自动上传」下拉框仅用于 GitHub 账户（在结果页「导出」弹窗中配置），与此开关互不影响。
+                        自动调度扫描按规则上传：开启测速只上传测速达标行，未开启测速只上传通过延迟筛选的结果行，与导出文件的筛选和行数设置无关。手动任务需在结果页「⬆ 自动上传」下拉框选择「R2 上传」，同样按该规则筛选；选择 GitHub 账户或关闭时不会上传 R2。
                     </div>
                 </div>
             </div>
@@ -2893,6 +2893,8 @@
                 tokenInput.placeholder = payload.r2WorkerTokenSet ? '已保存，留空保持不变' : 'Worker token';
             }
             setValue('r2Filename', payload.r2Filename || '');
+            r2AutoUploadReady = !!(payload.r2Enabled && payload.r2WorkerUrl && payload.r2WorkerTokenSet);
+            syncAutoUploadSelection();
             renderScheduleStatus(payload);
         }
 
@@ -4129,6 +4131,7 @@
                     speedLimit: speedCfg.speedLimit,
                     compact: nsbCompactView,
                     scanMode: getScanMode(),
+                    r2AutoUpload: isR2AutoUploadSelected('nsbAutoUploadAccount'),
                 } })) {
                     nsbReallinkRunning = false;
                     isTaskRunning = false;
@@ -4696,7 +4699,7 @@
             resetProgress();
             progressBox.style.display = 'block';
             showDCSelection(dcList);
-            if (!wsSend({ type: 'start_test', data: { dc, port, delay, scanMode: getScanMode() } })) {
+            if (!wsSend({ type: 'start_test', data: { dc, port, delay, scanMode: getScanMode(), deferR2Upload: officialAutoSpeedPending && officialSpeedLimitForAuto() > 0, r2AutoUpload: isR2AutoUploadSelected('officialAutoUploadAccount') } })) {
                 currentTestingDC = '';
                 isTaskRunning = false;
                 showDCSelection(dcList);
@@ -4838,6 +4841,12 @@
             updateBatchSpeedButton();
         }
 
+        // 自动测速只有在上限大于 0 时才会真正执行；上限为 0 时详细测试就是本次任务的终点，
+        // 不能延后 R2 上传，否则该场景不会有任何上传。
+        function officialSpeedLimitForAuto() {
+            return parseInt(document.getElementById('officialSpeedLimit')?.value || '0', 10) || 0;
+        }
+
         function getOfficialSpeedConfig() {
             const port = parseInt(document.getElementById('officialTestPort')?.value || '443', 10) || 443;
             const url = resolveSpeedTestUrl('officialSpeedUrl', 'officialSpeedUrlPreset');
@@ -4895,7 +4904,7 @@
             resetProgress();
             progressBox.style.display = 'block';
             updateBatchSpeedButton();
-            if (!wsSend({ type: 'start_official_speed_batch', data: { ...cfg, skipTested: continued } })) {
+            if (!wsSend({ type: 'start_official_speed_batch', data: { ...cfg, skipTested: continued, r2AutoUpload: isR2AutoUploadSelected('officialAutoUploadAccount') } })) {
                 officialBatchSpeedRunning = false;
                 finishRunningTask('✨ 开始扫描与测试');
                 updateBatchSpeedButton();
@@ -4947,7 +4956,7 @@
             resetProgress();
             progressBox.style.display = 'block';
             updateNSBSpeedButtons();
-            if (!wsSend({ type: 'start_nsb_speed_batch', data: { results: rows, speedTest: cfg.speedTest, speedURL: cfg.speedURL, enableTLS: cfg.enableTLS, speedMin: cfg.speedMin, speedLimit: cfg.speedLimit, skipTested: continued, compact: nsbCompactView } })) {
+            if (!wsSend({ type: 'start_nsb_speed_batch', data: { results: rows, speedTest: cfg.speedTest, speedURL: cfg.speedURL, enableTLS: cfg.enableTLS, speedMin: cfg.speedMin, speedLimit: cfg.speedLimit, skipTested: continued, compact: nsbCompactView, r2AutoUpload: isR2AutoUploadSelected('nsbAutoUploadAccount') } })) {
                 nsbBatchSpeedRunning = false;
                 finishRunningTask('✨ 开始扫描与测试');
                 updateNSBSpeedButtons();
@@ -5255,6 +5264,7 @@
                 officialSpeedURL: officialSpeedConfig.url,
                 officialSpeedMin: officialSpeedConfig.speedMin,
                 officialSpeedLimit: officialSpeedConfig.speedLimit,
+                r2AutoUpload: isR2AutoUploadSelected('officialAutoUploadAccount'),
             } })) {
                 officialAutoSpeedPending = false;
                 officialAutoStage = '';
@@ -5375,6 +5385,7 @@
                     compact,
                     scanMode: getScanMode(),
                     relinkHost: getNSBRelinkHost(speedTest > 0),
+                    r2AutoUpload: isR2AutoUploadSelected('nsbAutoUploadAccount'),
                 }
             })) {
                 finishRunningTask('✨ 开始扫描与测试');
@@ -5700,15 +5711,49 @@
             localStorage.setItem(githubAccountStorageKey, JSON.stringify(accounts));
         }
 
+        let r2AutoUploadReady = false;
+        const autoUploadTouched = new Set();
+
+        function markAutoUploadTouched(id) {
+            autoUploadTouched.add(id);
+        }
+
+        function isR2AutoUploadSelected(id) {
+            return document.getElementById(id)?.value === 'r2';
+        }
+
+        function renderAutoUploadSelect(id, accounts) {
+            const select = document.getElementById(id);
+            if (!select) return;
+            const prev = select.value;
+            select.innerHTML = '<option value="">关闭自动上传</option><option value="r2">R2 上传</option>' + accounts.map((a, i) => `<option value="${i}:txt">${escapeHTML(a.name || a.repo || 'GitHub账户')} - TXT</option><option value="${i}:csv">${escapeHTML(a.name || a.repo || 'GitHub账户')} - CSV</option>`).join('');
+            const hasPrev = prev && Array.from(select.options).some((opt) => opt.value === prev);
+            if (hasPrev) {
+                select.value = prev;
+            } else if (r2AutoUploadReady && !autoUploadTouched.has(id)) {
+                select.value = 'r2';
+            }
+        }
+
+        function syncAutoUploadSelection() {
+            for (const id of ['nsbAutoUploadAccount', 'officialAutoUploadAccount']) {
+                const select = document.getElementById(id);
+                if (!select || autoUploadTouched.has(id)) continue;
+                if (r2AutoUploadReady) {
+                    select.value = 'r2';
+                } else if (select.value === 'r2') {
+                    select.value = '';
+                }
+            }
+        }
+
         function renderGitHubAccounts() {
             const select = document.getElementById('githubAccountSelect');
             const accounts = getGitHubAccounts();
             const accountOptions = '<option value="">新账户/不使用保存配置</option>' + accounts.map((a, i) => `<option value="${i}">${escapeHTML(a.name || a.repo || 'GitHub账户')} ${a.tokenHash ? '(' + escapeHTML(a.tokenHash.slice(0, 10)) + ')' : ''}</option>`).join('');
             if (select) select.innerHTML = accountOptions;
-            const autoSelect = document.getElementById('nsbAutoUploadAccount');
-            if (autoSelect) autoSelect.innerHTML = '<option value="">关闭自动上传</option>' + accounts.map((a, i) => `<option value="${i}:txt">${escapeHTML(a.name || a.repo || 'GitHub账户')} - TXT</option><option value="${i}:csv">${escapeHTML(a.name || a.repo || 'GitHub账户')} - CSV</option>`).join('');
-            const officialAutoSelect = document.getElementById('officialAutoUploadAccount');
-            if (officialAutoSelect) officialAutoSelect.innerHTML = '<option value="">关闭自动上传</option>' + accounts.map((a, i) => `<option value="${i}:txt">${escapeHTML(a.name || a.repo || 'GitHub账户')} - TXT</option><option value="${i}:csv">${escapeHTML(a.name || a.repo || 'GitHub账户')} - CSV</option>`).join('');
+            renderAutoUploadSelect('nsbAutoUploadAccount', accounts);
+            renderAutoUploadSelect('officialAutoUploadAccount', accounts);
         }
 
         function normalizeGitHubAccountKey(account) {
@@ -6641,7 +6686,7 @@
         }
 
         async function autoUploadResults(value, mode, logPrefix) {
-            if (!value) return;
+            if (!value || value === 'r2') return;
             const [idxText, format] = value.split(':');
             const idx = parseInt(idxText, 10);
             const account = getGitHubAccounts()[idx];

@@ -14,7 +14,7 @@ var (
 
 // 手动任务的 R2 上传只由 Web 会话触发；CLI/调度会话由 writeCLIExportAndMaybeUpload 负责
 func triggerManualR2Upload(session *appSession, rows []cliResultRow) {
-	if session == nil || session.emit != nil || len(rows) == 0 {
+	if session == nil || session.emit != nil || !session.r2AutoUpload || len(rows) == 0 {
 		return
 	}
 	content := formatSubstoreResults(rows)
@@ -35,6 +35,7 @@ func uploadManualRowsToR2(session *appSession, content string) {
 		return
 	}
 	if !cfg.R2Enabled {
+		session.sendWSMessage("log", "R2 上传未启用，已跳过手动结果上传")
 		return
 	}
 	workerURL := strings.TrimSpace(cfg.R2WorkerURL)
@@ -52,6 +53,10 @@ func uploadManualRowsToR2(session *appSession, content string) {
 		return
 	}
 	session.sendWSMessage("log", fmt.Sprintf("R2 上传完成：%d 条结果已上传到 %s", countSubstoreEntries(content), filename))
+}
+
+func filterR2QualifiedRows(rows []cliResultRow, speedMin float64) []cliResultRow {
+	return filterCLIResultRowsByQualified(rows, "qualified", speedMin)
 }
 
 func countSubstoreEntries(content string) int {

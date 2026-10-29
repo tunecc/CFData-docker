@@ -91,7 +91,7 @@ func TestTriggerManualR2UploadWebSession(t *testing.T) {
 		"r2workertoken": "secret",
 		"r2filename":    "targets.txt",
 	})
-	session := &appSession{}
+	session := &appSession{r2AutoUpload: true}
 	rows := []cliResultRow{{"ip": "1.2.3.4", "port": "443", "dc": "LAX", "city": "洛杉矶"}}
 
 	triggerManualR2Upload(session, rows)
@@ -142,7 +142,7 @@ func TestTriggerManualR2UploadSkipsCLISession(t *testing.T) {
 		"r2workerurl":   server.URL,
 		"r2workertoken": "secret",
 	})
-	session := &appSession{emit: func(string, interface{}) {}}
+	session := &appSession{r2AutoUpload: true, emit: func(string, interface{}) {}}
 	triggerManualR2Upload(session, []cliResultRow{{"ip": "1.2.3.4", "port": "443"}})
 	if got := atomic.LoadInt32(&calls); got != 0 {
 		t.Fatalf("CLI 会话不应触发手动上传，请求次数 = %d", got)
@@ -169,8 +169,8 @@ func TestManualR2UploadDisabledSkips(t *testing.T) {
 	if got := atomic.LoadInt32(&calls); got != 0 {
 		t.Fatalf("未启用 R2 时不应发起请求，请求次数 = %d", got)
 	}
-	if logs.text() != "" {
-		t.Fatalf("未启用 R2 时不应输出上传日志: %s", logs.text())
+	if !strings.Contains(logs.text(), "R2 上传未启用") {
+		t.Fatalf("缺少未启用跳过提示: %s", logs.text())
 	}
 }
 
@@ -282,6 +282,7 @@ func TestTriggerManualR2UploadEmptyRowsSkips(t *testing.T) {
 	})
 	logs := &manualR2LogCapture{}
 	session := newManualR2Session(logs)
+	session.r2AutoUpload = true
 	triggerManualR2Upload(session, nil)
 	triggerManualR2Upload(session, []cliResultRow{{"ip": ""}})
 	if got := atomic.LoadInt32(&calls); got != 0 {
@@ -379,7 +380,7 @@ func TestRunDetailedTestTriggersManualR2Upload(t *testing.T) {
 		"r2workertoken": "secret",
 		"r2filename":    "targets.txt",
 	})
-	session := &appSession{}
+	session := &appSession{r2AutoUpload: true}
 	session.scanResults = []ScanResult{{
 		IP:          "127.0.0.1",
 		Port:        port,
@@ -388,7 +389,7 @@ func TestRunDetailedTestTriggersManualR2Upload(t *testing.T) {
 		LatencyStr:  "1ms",
 		TCPDuration: time.Millisecond,
 	}}
-	runDetailedTest(context.Background(), session, "LAX", port, 0, scanModeTCPing)
+	runDetailedTest(context.Background(), session, "LAX", port, 0, scanModeTCPing, false)
 
 	select {
 	case <-done:
@@ -436,7 +437,7 @@ func TestRunNSBTaskTriggersManualR2Upload(t *testing.T) {
 		"r2filename":    "targets.txt",
 	})
 	t.Chdir(t.TempDir())
-	session := &appSession{}
+	session := &appSession{r2AutoUpload: true}
 	input := "127.0.0.1 " + tracePort + "\n"
 	runNSBTask(context.Background(), session, "local.txt", input, filepath.Join(t.TempDir(), "out.csv"), 1, 443, 0, "", false, 0, 10, "", 0.1, 0, false, scanModeTCPing, "")
 
@@ -454,6 +455,27 @@ func TestRunNSBTaskTriggersManualR2Upload(t *testing.T) {
 	}
 }
 
+// 自动测速开启但测速上限为 0 时，批量测速不会启动，详细测试阶段必须自己上传，
+// 否则该任务不会有任何 R2 上传（A2 的「未执行测速」场景）。
+func TestOfficialAutoSpeedWithoutLimitKeepsDetailedUpload(t *testing.T) {
+	data, err := os.ReadFile("index.html")
+	if err != nil {
+		t.Fatalf("read index.html: %v", err)
+	}
+	html := string(data)
+	want := "deferR2Upload: officialAutoSpeedPending && officialSpeedLimitForAuto() > 0"
+	if !strings.Contains(html, want) {
+		t.Fatalf("start_test 的 deferR2Upload 必须受测速上限约束，缺少: %q", want)
+	}
+	if strings.Contains(html, "deferR2Upload: officialAutoSpeedPending,") {
+		t.Fatal("start_test 不应在测速上限为 0 时延后 R2 上传")
+	}
+	helper := "function officialSpeedLimitForAuto()"
+	if !strings.Contains(html, helper) {
+		t.Fatalf("缺少测速上限读取函数: %q", helper)
+	}
+}
+
 func TestAutomationSectionExplainsGitHubAndR2Upload(t *testing.T) {
 	data, err := os.ReadFile("index.html")
 	if err != nil {
@@ -461,11 +483,218 @@ func TestAutomationSectionExplainsGitHubAndR2Upload(t *testing.T) {
 	}
 	html := string(data)
 	for _, want := range []string{
-		"自动调度与手动任务完成时都会把全部结果按 Sub-Store 目标列表自动上传",
-		"「⬆ 自动上传」下拉框仅用于 GitHub 账户",
+		"自动调度扫描按规则上传：开启测速只上传测速达标行，未开启测速只上传通过延迟筛选的结果行",
+		"手动任务需在结果页「⬆ 自动上传」下拉框选择「R2 上传」",
 	} {
 		if !strings.Contains(html, want) {
 			t.Fatalf("自动化区块缺少说明文案: %q", want)
 		}
+	}
+}
+
+func TestTriggerManualR2UploadRequiresSelection(t *testing.T) {
+	var calls int32
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		atomic.AddInt32(&calls, 1)
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer server.Close()
+
+	withR2TestHooks(t, server.Client())
+	writeManualR2Config(t, map[string]any{
+		"r2enabled":     true,
+		"r2workerurl":   server.URL,
+		"r2workertoken": "secret",
+	})
+	session := &appSession{}
+	triggerManualR2Upload(session, []cliResultRow{{"ip": "1.2.3.4", "port": "443"}})
+	if got := atomic.LoadInt32(&calls); got != 0 {
+		t.Fatalf("未选择 R2 时不应发起请求，请求次数 = %d", got)
+	}
+}
+
+// 后台自动测速在详细测试完成之后、测速开始之前被取消时，测速阶段因 ctx 已取消不上传，
+// 调用方必须补传一次延迟筛选结果，否则该窗口 R2 完全收不到内容。
+func TestOfficialSpeedBatchCanceledBeforeStartSkipsUpload(t *testing.T) {
+	var calls int32
+	worker := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		atomic.AddInt32(&calls, 1)
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer worker.Close()
+
+	withR2TestHooks(t, worker.Client())
+	writeManualR2Config(t, map[string]any{
+		"r2enabled":     true,
+		"r2workerurl":   worker.URL,
+		"r2workertoken": "secret",
+		"r2filename":    "targets.txt",
+	})
+	session := &appSession{r2AutoUpload: true}
+	session.testResults = []TestResult{{IP: "1.2.3.4", Port: 443, DataCenter: "LAX", City: "洛杉矶", Speed: ""}}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	runOfficialSpeedBatch(ctx, session, 443, "http://example.invalid/speed", 5, 0.1, nil, false)
+	time.Sleep(300 * time.Millisecond)
+	if got := atomic.LoadInt32(&calls); got != 0 {
+		t.Fatalf("测速开始前取消不应由测速阶段上传，请求次数 = %d", got)
+	}
+}
+
+func TestOfficialSpeedAttemptedDetectsPartialResults(t *testing.T) {
+	session := &appSession{}
+	session.testResults = []TestResult{
+		{IP: "1.2.3.4", Speed: ""},
+		{IP: "5.6.7.8", Speed: "未测速"},
+	}
+	if officialSpeedAttempted(session) {
+		t.Fatal("空速度与未测速不应视为已测速")
+	}
+	session.testResults[0].Speed = "1.20MB/s"
+	if !officialSpeedAttempted(session) {
+		t.Fatal("已有测速结果应视为已测速")
+	}
+	session.testResults[0].Speed = "测速失败"
+	if !officialSpeedAttempted(session) {
+		t.Fatal("测速失败也应视为已测速，取消后不再补传")
+	}
+}
+
+func TestRunDetailedTestDeferR2UploadSkipsUpload(t *testing.T) {
+	var calls int32
+	worker := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		atomic.AddInt32(&calls, 1)
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer worker.Close()
+
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatalf("listen: %v", err)
+	}
+	defer listener.Close()
+	go func() {
+		for {
+			conn, err := listener.Accept()
+			if err != nil {
+				return
+			}
+			conn.Close()
+		}
+	}()
+	port := listener.Addr().(*net.TCPAddr).Port
+
+	withR2TestHooks(t, worker.Client())
+	writeManualR2Config(t, map[string]any{
+		"r2enabled":     true,
+		"r2workerurl":   worker.URL,
+		"r2workertoken": "secret",
+		"r2filename":    "targets.txt",
+	})
+	session := &appSession{r2AutoUpload: true}
+	session.scanResults = []ScanResult{{
+		IP:          "127.0.0.1",
+		Port:        port,
+		DataCenter:  "LAX",
+		City:        "洛杉矶",
+		LatencyStr:  "1ms",
+		TCPDuration: time.Millisecond,
+	}}
+	runDetailedTest(context.Background(), session, "LAX", port, 0, scanModeTCPing, true)
+	time.Sleep(300 * time.Millisecond)
+	if got := atomic.LoadInt32(&calls); got != 0 {
+		t.Fatalf("自动测速流程的详细测试阶段不应上传 R2，请求次数 = %d", got)
+	}
+}
+
+func TestScheduledR2RowsFollowSpeedRule(t *testing.T) {
+	rows := []cliResultRow{
+		{"ip": "1.2.3.4", "port": "443", "dc": "LAX", "speed": "5.00MB/s"},
+		{"ip": "5.6.7.8", "port": "443", "dc": "HKG", "speed": "0.05MB/s"},
+		{"ip": "9.9.9.9", "port": "443", "dc": "NRT", "speed": ""},
+	}
+	if got := scheduledR2Rows(rows, false, 0.1); len(got) != 3 {
+		t.Fatalf("未开启测速应保留全部行，实际 %d", len(got))
+	}
+	got := scheduledR2Rows(rows, true, 0.1)
+	if len(got) != 1 || got[0]["ip"] != "1.2.3.4" {
+		t.Fatalf("开启测速只应保留达标行，实际 %#v", got)
+	}
+}
+
+func TestScheduledR2UploadIgnoresExportFilters(t *testing.T) {
+	var stored map[string]string
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		body, _ := io.ReadAll(r.Body)
+		stored = nil
+		if err := json.Unmarshal(body, &stored); err != nil {
+			t.Errorf("bad payload: %v", err)
+		}
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer server.Close()
+
+	withR2TestHooks(t, server.Client())
+	t.Chdir(t.TempDir())
+	exportRows := []cliResultRow{{"ip": "1.2.3.4", "port": "443", "dc": "LAX"}}
+	r2Rows := []cliResultRow{
+		{"ip": "1.2.3.4", "port": "443", "dc": "LAX"},
+		{"ip": "5.6.7.8", "port": "443", "dc": "HKG"},
+	}
+	cfg := &cliConfig{
+		outFile:       "export.txt",
+		export:        cliExportConfig{Format: "substore"},
+		r2Enabled:     true,
+		r2WorkerURL:   server.URL,
+		r2WorkerToken: "token",
+		r2Filename:    "targets.txt",
+	}
+	if err := writeCLIExportAndMaybeUpload(cfg, exportRows, r2Rows, "schedule"); err != nil {
+		t.Fatalf("writeCLIExportAndMaybeUpload: %v", err)
+	}
+	if got, want := stored["value"], "1.2.3.4:443#LAX\n5.6.7.8:443#HKG\n"; got != want {
+		t.Fatalf("R2 内容 = %q，期望 %q", got, want)
+	}
+	local, err := os.ReadFile("export.txt")
+	if err != nil {
+		t.Fatalf("read export: %v", err)
+	}
+	if strings.Contains(string(local), "5.6.7.8") {
+		t.Fatalf("导出文件不应包含被筛选掉的行: %q", local)
+	}
+}
+
+func TestScheduledR2UploadsWithoutExportFile(t *testing.T) {
+	var stored map[string]string
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		body, _ := io.ReadAll(r.Body)
+		stored = nil
+		if err := json.Unmarshal(body, &stored); err != nil {
+			t.Errorf("bad payload: %v", err)
+		}
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer server.Close()
+
+	withR2TestHooks(t, server.Client())
+	t.Chdir(t.TempDir())
+	cfg := &cliConfig{
+		outFile:       "export.txt",
+		export:        cliExportConfig{Format: "substore"},
+		r2Enabled:     true,
+		r2WorkerURL:   server.URL,
+		r2WorkerToken: "token",
+		r2Filename:    "targets.txt",
+	}
+	r2Rows := []cliResultRow{{"ip": "1.2.3.4", "port": "443", "dc": "LAX"}}
+	if err := writeCLIExportAndMaybeUpload(cfg, nil, r2Rows, "schedule"); err != nil {
+		t.Fatalf("writeCLIExportAndMaybeUpload: %v", err)
+	}
+	if got, want := stored["value"], "1.2.3.4:443#LAX\n"; got != want {
+		t.Fatalf("R2 内容 = %q，期望 %q", got, want)
+	}
+	if _, err := os.Stat("export.txt"); !os.IsNotExist(err) {
+		t.Fatalf("没有导出行时不应创建导出文件，stat err = %v", err)
 	}
 }

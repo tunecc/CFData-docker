@@ -144,6 +144,7 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 			targetDC := normalizeOfficialTargetDC(params.OfficialTargetDC)
 			stopCount := resolveOfficialStopCount(params.OfficialStopCount)
 			fromLibrary := params.OfficialDCFromLib
+			session.r2AutoUpload = params.R2AutoUpload
 			session.startTaskNamed("官方优选扫描", "official", map[string]interface{}{"ipType": params.IPType, "threads": params.Threads, "port": params.Port, "delay": params.Delay, "scanMode": scanMode, "autoSpeed": autoSpeed, "targetDC": targetDC, "stopCount": stopCount, "fromLibrary": fromLibrary}, func(ctx context.Context, session *appSession) {
 				if fromLibrary {
 					if targetDC == "" {
@@ -173,7 +174,7 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 				if dc == "" || ctx.Err() != nil {
 					return
 				}
-				runDetailedTest(ctx, session, dc, params.OfficialSpeedPort, params.Delay, scanMode)
+				runDetailedTest(ctx, session, dc, params.OfficialSpeedPort, params.Delay, scanMode, true)
 				if ctx.Err() != nil || !session.isBackgroundTask() || params.OfficialSpeedLimit <= 0 {
 					return
 				}
@@ -184,8 +185,18 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 				session.testMutex.Lock()
 				results := append([]TestResult(nil), session.testResults...)
 				session.testMutex.Unlock()
-				if len(results) > 0 {
-					runOfficialSpeedBatch(ctx, session, params.OfficialSpeedPort, speedURL, params.OfficialSpeedLimit, params.OfficialSpeedMin, results, false)
+				if len(results) == 0 {
+					return
+				}
+				runOfficialSpeedBatch(ctx, session, params.OfficialSpeedPort, speedURL, params.OfficialSpeedLimit, params.OfficialSpeedMin, results, false)
+				// 测速在产出任何结果之前被取消时，测速阶段不会上传（tasks_speed.go 仅在 ctx 未取消时上传），
+				// 而详细测试阶段已延后上传。只在一条测速结果都没有时补传延迟筛选结果，
+				// 避免与测速中途取消时已写回的部分结果重复上传。
+				if ctx.Err() != nil && !officialSpeedAttempted(session) {
+					session.testMutex.Lock()
+					fallback := append([]TestResult(nil), session.testResults...)
+					session.testMutex.Unlock()
+					triggerManualR2Upload(session, officialResultRows(nil, fallback, scanMode))
 				}
 			})
 		},
@@ -205,8 +216,9 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 			if scanMode == "" {
 				scanMode = scanModeTCPing
 			}
+			session.r2AutoUpload = params.R2AutoUpload
 			session.startTaskNamed("官方详细测试", "official", map[string]interface{}{"dc": params.DC, "port": params.Port, "delay": params.Delay, "scanMode": scanMode}, func(ctx context.Context, session *appSession) {
-				runDetailedTest(ctx, session, params.DC, params.Port, params.Delay, scanMode)
+				runDetailedTest(ctx, session, params.DC, params.Port, params.Delay, scanMode, params.DeferR2Upload)
 			})
 		},
 		"start_speed_test": func(data json.RawMessage) {
@@ -240,6 +252,7 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 			if strings.TrimSpace(params.URL) == "" {
 				params.URL = speedTestURL
 			}
+			session.r2AutoUpload = params.R2AutoUpload
 			session.startTaskNamed("官方批量测速", "official", map[string]interface{}{"port": params.Port, "url": params.URL, "speedLimit": params.SpeedLimit, "speedMin": params.SpeedMin, "skipTested": params.SkipTested}, func(ctx context.Context, session *appSession) {
 				runOfficialSpeedBatch(ctx, session, params.Port, params.URL, params.SpeedLimit, params.SpeedMin, params.Results, params.SkipTested)
 			})
@@ -291,6 +304,7 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 			if scanMode == "" {
 				scanMode = scanModeTCPing
 			}
+			session.r2AutoUpload = params.R2AutoUpload
 			session.startTaskNamed("非标优选", "nsb", map[string]interface{}{"fileName": params.FileName, "sourceURL": params.SourceURL, "outFile": params.OutFile, "maxThreads": params.MaxThreads, "fallbackPort": params.FallbackPort, "speedTest": params.SpeedTest, "speedURL": params.SpeedURL, "enableTLS": params.EnableTLS, "delay": params.Delay, "resultLimit": params.ResultLimit, "dc": params.DC, "speedMin": params.SpeedMin, "speedLimit": params.SpeedLimit, "compact": params.Compact, "scanMode": scanMode}, func(ctx context.Context, session *appSession) {
 				fileName := params.FileName
 				fileContent := params.FileContent
@@ -344,6 +358,7 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 			if scanMode == "" {
 				scanMode = scanModeTCPing
 			}
+			session.r2AutoUpload = params.R2AutoUpload
 			session.startTaskNamed("链路复验", "nsb", map[string]interface{}{"outFile": params.OutFile, "speedTest": params.SpeedTest, "speedLimit": params.SpeedLimit}, func(ctx context.Context, session *appSession) {
 				runNSBReallinkTask(ctx, session, params.Results, params.RelinkHost, params.SpeedTest, params.SpeedURL, params.EnableTLS, params.SpeedMin, params.SpeedLimit, params.Compact, scanMode, params.OutFile)
 			})
@@ -370,6 +385,7 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 				session.sendWSMessage("error", "没有可测速的非标结果")
 				return
 			}
+			session.r2AutoUpload = params.R2AutoUpload
 			session.startTaskNamed("非标批量测速", "nsb", map[string]interface{}{"speedTest": params.SpeedTest, "speedURL": params.SpeedURL, "enableTLS": params.EnableTLS, "speedMin": params.SpeedMin, "speedLimit": params.SpeedLimit, "skipTested": params.SkipTested, "compact": params.Compact}, func(ctx context.Context, session *appSession) {
 				runNSBSpeedBatch(ctx, session, params.Results, params.SpeedTest, params.SpeedURL, params.EnableTLS, params.SpeedMin, params.SpeedLimit, params.SkipTested, params.Compact)
 			})

@@ -236,6 +236,7 @@ type appSession struct {
 	taskMutex            sync.Mutex
 	isTaskRunning        bool
 	taskCancel           context.CancelFunc
+	r2AutoUpload         bool
 	backgroundTask       bool
 	backgroundSnapshot   backgroundTaskSnapshot
 	wsClosed             bool

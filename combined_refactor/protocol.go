@@ -21,6 +21,7 @@ type startTaskRequest struct {
 	OfficialSpeedURL   string  `json:"officialSpeedURL"`
 	OfficialSpeedMin   float64 `json:"officialSpeedMin"`
 	OfficialSpeedLimit int     `json:"officialSpeedLimit"`
+	R2AutoUpload       bool    `json:"r2AutoUpload"`
 }
 
 type startDCLibraryScanRequest struct {
@@ -32,10 +33,12 @@ type startDCLibraryScanRequest struct {
 }
 
 type startTestRequest struct {
-	DC       string `json:"dc"`
-	Port     int    `json:"port"`
-	Delay    int    `json:"delay"`
-	ScanMode string `json:"scanMode"`
+	DC            string `json:"dc"`
+	Port          int    `json:"port"`
+	Delay         int    `json:"delay"`
+	ScanMode      string `json:"scanMode"`
+	DeferR2Upload bool   `json:"deferR2Upload"`
+	R2AutoUpload  bool   `json:"r2AutoUpload"`
 }
 
 type startSpeedTestRequest struct {
@@ -45,12 +48,13 @@ type startSpeedTestRequest struct {
 }
 
 type startOfficialSpeedBatchRequest struct {
-	Port       int          `json:"port"`
-	URL        string       `json:"url"`
-	SpeedMin   float64      `json:"speedMin"`
-	SpeedLimit int          `json:"speedLimit"`
-	Results    []TestResult `json:"results"`
-	SkipTested bool         `json:"skipTested"`
+	Port         int          `json:"port"`
+	URL          string       `json:"url"`
+	SpeedMin     float64      `json:"speedMin"`
+	SpeedLimit   int          `json:"speedLimit"`
+	Results      []TestResult `json:"results"`
+	SkipTested   bool         `json:"skipTested"`
+	R2AutoUpload bool         `json:"r2AutoUpload"`
 }
 
 type startNSBTaskRequest struct {
@@ -71,30 +75,33 @@ type startNSBTaskRequest struct {
 	Compact      bool    `json:"compact"`
 	ScanMode     string  `json:"scanMode"`
 	RelinkHost   string  `json:"relinkHost"`
+	R2AutoUpload bool    `json:"r2AutoUpload"`
 }
 
 type startNSBReallinkRequest struct {
-	Results    []nsbScanMessage `json:"results"`
-	RelinkHost string           `json:"relinkHost"`
-	OutFile    string           `json:"outFile"`
-	SpeedTest  int              `json:"speedTest"`
-	SpeedURL   string           `json:"speedURL"`
-	EnableTLS  bool             `json:"enableTLS"`
-	SpeedMin   float64          `json:"speedMin"`
-	SpeedLimit int              `json:"speedLimit"`
-	Compact    bool             `json:"compact"`
-	ScanMode   string           `json:"scanMode"`
+	Results      []nsbScanMessage `json:"results"`
+	RelinkHost   string           `json:"relinkHost"`
+	OutFile      string           `json:"outFile"`
+	SpeedTest    int              `json:"speedTest"`
+	SpeedURL     string           `json:"speedURL"`
+	EnableTLS    bool             `json:"enableTLS"`
+	SpeedMin     float64          `json:"speedMin"`
+	SpeedLimit   int              `json:"speedLimit"`
+	Compact      bool             `json:"compact"`
+	ScanMode     string           `json:"scanMode"`
+	R2AutoUpload bool             `json:"r2AutoUpload"`
 }
 
 type startNSBSpeedBatchRequest struct {
-	Results    []nsbScanMessage `json:"results"`
-	SpeedTest  int              `json:"speedTest"`
-	SpeedURL   string           `json:"speedURL"`
-	EnableTLS  bool             `json:"enableTLS"`
-	SpeedMin   float64          `json:"speedMin"`
-	SpeedLimit int              `json:"speedLimit"`
-	SkipTested bool             `json:"skipTested"`
-	Compact    bool             `json:"compact"`
+	Results      []nsbScanMessage `json:"results"`
+	SpeedTest    int              `json:"speedTest"`
+	SpeedURL     string           `json:"speedURL"`
+	EnableTLS    bool             `json:"enableTLS"`
+	SpeedMin     float64          `json:"speedMin"`
+	SpeedLimit   int              `json:"speedLimit"`
+	SkipTested   bool             `json:"skipTested"`
+	Compact      bool             `json:"compact"`
+	R2AutoUpload bool             `json:"r2AutoUpload"`
 }
 
 type edgetunnelUploadRequest struct {

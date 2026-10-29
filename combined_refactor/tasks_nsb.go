@@ -901,7 +901,11 @@ func runNSBTask(ctx context.Context, session *appSession, fileName, fileContent,
 
 	session.sendWSMessage("nsb_csv_complete", nsbCSVCompletePayload{Headers: headers, Rows: rows, File: outFile, Status: completionStatus, Message: completionMessage, QualifiedCount: qualifiedCount})
 	session.sendWSMessage("log", fmt.Sprintf("非标优选完成，结果文件: %s", outFile))
-	triggerManualR2Upload(session, nsbPayloadRows(headers, rows))
+	uploadRows := nsbPayloadRows(headers, rows)
+	if speedTest > 0 && speedLimit > 0 {
+		uploadRows = filterR2QualifiedRows(uploadRows, speedMin)
+	}
+	triggerManualR2Upload(session, uploadRows)
 }
 
 func checkReallinkCandidate(ctx context.Context, ipAddr string, port int, probeHost string) (bool, string, string) {
@@ -1111,7 +1115,11 @@ func runNSBReallinkTask(ctx context.Context, session *appSession, rows []nsbScan
 	csvRows := nsbCSVRows(results, speedTest > 0, compact, scanMode)
 	session.sendWSMessage("nsb_csv_complete", nsbCSVCompletePayload{Headers: headers, Rows: csvRows, File: outFile, Status: completionStatus, Message: completionMessage, QualifiedCount: qualifiedCount})
 	session.sendWSMessage("log", fmt.Sprintf("链路复验完成，结果文件: %s", outFile))
-	triggerManualR2Upload(session, nsbPayloadRows(headers, csvRows))
+	uploadRows := nsbPayloadRows(headers, csvRows)
+	if speedTest > 0 && speedLimit > 0 {
+		uploadRows = filterR2QualifiedRows(uploadRows, speedMin)
+	}
+	triggerManualR2Upload(session, uploadRows)
 }
 
 func runNSBSpeedBatch(ctx context.Context, session *appSession, rows []nsbScanMessage, maxWorkers int, speedURL string, enableTLS bool, speedMin float64, speedLimit int, skipTested bool, compact bool) {
@@ -1179,7 +1187,7 @@ func runNSBSpeedBatch(ctx context.Context, session *appSession, rows []nsbScanMe
 	totalQualified := countNSBTotalQualified(rows, results, speedMin)
 	session.sendWSMessage("log", fmt.Sprintf("非标批量测速完成，达标 %d/%d，总达标 %d", qualifiedCount, speedLimit, totalQualified))
 	session.sendWSMessage("nsb_speed_complete", map[string]interface{}{"qualified": qualifiedCount, "totalQualified": totalQualified, "limit": speedLimit})
-	triggerManualR2Upload(session, nsbSpeedResultRows(rows, results))
+	triggerManualR2Upload(session, filterR2QualifiedRows(nsbSpeedResultRows(rows, results), speedMin))
 }
 
 func countNSBTotalQualified(rows []nsbScanMessage, updated []iptestResult, speedMin float64) int {

@@ -207,7 +207,7 @@ func TestWriteExportUploadsSubstoreRegardlessOfLocalFormat(t *testing.T) {
 		r2WorkerToken: "token",
 		r2Filename:    "targets.txt",
 	}
-	if err := writeCLIExportAndMaybeUpload(cfg, rows, "test"); err != nil {
+	if err := writeCLIExportAndMaybeUpload(cfg, rows, rows, "test"); err != nil {
 		t.Fatalf("writeCLIExportAndMaybeUpload: %v", err)
 	}
 	want := "1.2.3.4:443#LAX-洛杉矶\n[2606:4700::1]:443#HKG-香港\n"
@@ -256,7 +256,7 @@ func TestWriteExportR2FailureKeepsOldContent(t *testing.T) {
 		r2WorkerURL:   server.URL,
 		r2WorkerToken: "token",
 	}
-	if err := writeCLIExportAndMaybeUpload(cfg, rows, "test"); err != nil {
+	if err := writeCLIExportAndMaybeUpload(cfg, rows, rows, "test"); err != nil {
 		t.Fatalf("upload failure must not fail export: %v", err)
 	}
 	if got := atomic.LoadInt32(&attempts); got != 3 {
@@ -326,7 +326,7 @@ func TestScheduledExportEmptyResultsSkipsR2(t *testing.T) {
 	if err != nil {
 		t.Fatalf("loadScheduledCLIConfig: %v", err)
 	}
-	if err := writeCLIExportAndMaybeUpload(cfg, nil, "schedule"); err != nil {
+	if err := writeCLIExportAndMaybeUpload(cfg, nil, nil, "schedule"); err != nil {
 		t.Fatalf("writeCLIExportAndMaybeUpload: %v", err)
 	}
 	if got := atomic.LoadInt32(&attempts); got != 0 {
@@ -359,7 +359,7 @@ func TestScheduledExportUploadsSubstoreContent(t *testing.T) {
 		{"ip": "1.2.3.4", "port": "443", "dc": "LAX", "city": "洛杉矶"},
 		{"ip": "2606:4700::1", "port": "443", "dc": "HKG", "city": "香港"},
 	}
-	if err := writeCLIExportAndMaybeUpload(cfg, rows, "schedule"); err != nil {
+	if err := writeCLIExportAndMaybeUpload(cfg, rows, rows, "schedule"); err != nil {
 		t.Fatalf("writeCLIExportAndMaybeUpload: %v", err)
 	}
 	want := "1.2.3.4:443#LAX-洛杉矶\n[2606:4700::1]:443#HKG-香港\n"
@@ -593,7 +593,7 @@ func TestExportAttemptsR2WhenGitHubUploadFails(t *testing.T) {
 		r2WorkerToken: "token",
 		r2Filename:    "targets.txt",
 	}
-	err := writeCLIExportAndMaybeUpload(cfg, rows, "test")
+	err := writeCLIExportAndMaybeUpload(cfg, rows, rows, "test")
 	if err == nil || !strings.Contains(err.Error(), "ghtoken") {
 		t.Fatalf("expected GitHub token error, got %v", err)
 	}

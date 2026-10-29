@@ -1261,7 +1261,7 @@ func runOfficialPipeline(ctx context.Context, session *appSession, cfg *cliConfi
 		dc = pickBestDataCenter(scanResults)
 		if dc == "" {
 			fmt.Printf("%s[official]%s 无法确定数据中心，仅输出扫描结果\n", ansiYellow, ansiReset)
-			return writeCLIExportAndMaybeUpload(cfg, applyCLIExportFilters(cfg, officialScanRows(scanResults, scanMode), cfg.speedMin), "official-scan")
+			return writeCLIExportAndMaybeUpload(cfg, applyCLIExportFilters(cfg, officialScanRows(scanResults, scanMode), cfg.speedMin), nil, "official-scan")
 		}
 		fmt.Printf("%s[official]%s 自动选择数据中心: %s\n", ansiGreen, ansiReset, colorize(dc, ansiBold+ansiGreen))
 	}
@@ -1272,7 +1272,7 @@ func runOfficialPipeline(ctx context.Context, session *appSession, cfg *cliConfi
 	session.testMutex.Lock()
 	session.testResults = nil
 	session.testMutex.Unlock()
-	runDetailedTest(ctx, session, dc, cfg.port, cfg.delay, scanMode)
+	runDetailedTest(ctx, session, dc, cfg.port, cfg.delay, scanMode, false)
 	if ctx.Err() != nil {
 		return ctx.Err()
 	}
@@ -1290,7 +1290,12 @@ func runOfficialPipeline(ctx context.Context, session *appSession, cfg *cliConfi
 		fmt.Printf("%s[official]%s 开始测速：目标上限=%d，测速阈值=%.2fMB/s\n", ansiGreen, ansiReset, cfg.speedLimit, cfg.speedMin)
 		results = runOfficialSpeedTests(ctx, session, results, cfg.port, cfg.speedLimit, cfg.speedMin, speedURL)
 	}
-	return writeCLIExportAndMaybeUpload(cfg, applyCLIExportFilters(cfg, officialResultRows(scanResults, results, scanMode), cfg.speedMin), "official")
+	allRows := officialResultRows(scanResults, results, scanMode)
+	var r2Rows []cliResultRow
+	if len(results) > 0 {
+		r2Rows = scheduledR2Rows(allRows, cfg.speedLimit > 0, cfg.speedMin)
+	}
+	return writeCLIExportAndMaybeUpload(cfg, applyCLIExportFilters(cfg, allRows, cfg.speedMin), r2Rows, "official")
 }
 
 func prepareNSBCLIConfig(cfg *cliConfig) error {
@@ -1382,12 +1387,14 @@ func runNSBPipeline(ctx context.Context, session *appSession, cfg *cliConfig, sp
 	session.nsbMutex.Lock()
 	rows := nsbPayloadRows(session.nsbHeaders, session.nsbRows)
 	session.nsbMutex.Unlock()
+	speedRan := cfg.speedTest > 0 && cfg.nsbSpeedLimit > 0
+	r2Rows := scheduledR2Rows(rows, speedRan, cfg.nsbSpeedMin)
 	rows = applyCLIExportFilters(cfg, rows, cfg.nsbSpeedMin)
-	if len(rows) == 0 {
+	if len(rows) == 0 && len(r2Rows) == 0 {
 		fmt.Printf("%s[nsb]%s 没有符合导出条件的结果\n", ansiYellow, ansiReset)
 		return nil
 	}
-	return writeCLIExportAndMaybeUpload(cfg, rows, "nsb")
+	return writeCLIExportAndMaybeUpload(cfg, rows, r2Rows, "nsb")
 }
 
 func cliTaskError(err error) error {
@@ -1779,38 +1786,14 @@ func cliExportFileExtension(format string) string {
 	return format
 }
 
-func writeCLIExportAndMaybeUpload(cfg *cliConfig, rows []cliResultRow, mode string) error {
-	if len(rows) == 0 {
-		return nil
+func scheduledR2Rows(rows []cliResultRow, speedEnabled bool, speedMin float64) []cliResultRow {
+	if !speedEnabled {
+		return rows
 	}
-	content, err := formatCLIResults(rows, cfg.export)
-	if err != nil {
-		return err
-	}
-	ext := cliExportFileExtension(cfg.export.Format)
-	filename := cfg.outFile
-	if strings.TrimSpace(filename) == "" {
-		filename = "cfdata-results." + ext
-	}
-	if suffix := "." + ext; !strings.HasSuffix(strings.ToLower(filename), suffix) {
-		filename = strings.TrimSuffix(filename, filepath.Ext(filename)) + suffix
-	}
-	filename = safeFilename(filename)
-	file, err := os.Create(filename)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-	if err := writeUTF8BOM(file); err != nil {
-		os.Remove(filename)
-		return err
-	}
+	return filterCLIResultRowsByQualified(rows, "qualified", speedMin)
+}
 
-	if _, err := io.WriteString(file, content); err != nil {
-		return err
-	}
-	fmt.Printf("[%s-output] %s (%d rows, %s)\n", mode, filename, len(rows), cfg.export.Format)
-	// 各上传目标互不阻塞：都尝试后返回首个错误，其余错误就地记录
+func writeCLIExportAndMaybeUpload(cfg *cliConfig, rows []cliResultRow, r2Rows []cliResultRow, mode string) error {
 	var firstErr error
 	recordErr := func(name string, err error) {
 		if err == nil {
@@ -1822,19 +1805,48 @@ func writeCLIExportAndMaybeUpload(cfg *cliConfig, rows []cliResultRow, mode stri
 		}
 		fmt.Printf("[%s] 上传失败: %v\n", name, err)
 	}
-	if cfg.export.GitHub {
-		recordErr("github", uploadCLIExportToGitHub(cfg, content))
-	}
-	if cfg.export.EdgeTunnel {
-		recordErr("edgetunnel", uploadCLIExportToEdgetunnel(cfg, content))
-	}
-	if cfg.r2Enabled {
-		substoreContent := content
-		if cfg.export.Format != "substore" {
-			substoreContent = formatSubstoreResults(rows)
+	if len(rows) > 0 {
+		content, err := formatCLIResults(rows, cfg.export)
+		if err != nil {
+			return err
 		}
-		if err := uploadR2Content(cfg.r2WorkerURL, cfg.r2WorkerToken, cfg.r2Filename, substoreContent); err != nil {
-			fmt.Printf("[r2] 上传失败，保留 R2 上的旧内容: %v\n", err)
+		ext := cliExportFileExtension(cfg.export.Format)
+		filename := cfg.outFile
+		if strings.TrimSpace(filename) == "" {
+			filename = "cfdata-results." + ext
+		}
+		if suffix := "." + ext; !strings.HasSuffix(strings.ToLower(filename), suffix) {
+			filename = strings.TrimSuffix(filename, filepath.Ext(filename)) + suffix
+		}
+		filename = safeFilename(filename)
+		file, err := os.Create(filename)
+		if err != nil {
+			return err
+		}
+		defer file.Close()
+		if err := writeUTF8BOM(file); err != nil {
+			os.Remove(filename)
+			return err
+		}
+
+		if _, err := io.WriteString(file, content); err != nil {
+			return err
+		}
+		fmt.Printf("[%s-output] %s (%d rows, %s)\n", mode, filename, len(rows), cfg.export.Format)
+		// 各上传目标互不阻塞：都尝试后返回首个错误，其余错误就地记录
+		if cfg.export.GitHub {
+			recordErr("github", uploadCLIExportToGitHub(cfg, content))
+		}
+		if cfg.export.EdgeTunnel {
+			recordErr("edgetunnel", uploadCLIExportToEdgetunnel(cfg, content))
+		}
+	}
+	// R2 内容按测速/延迟筛选规则单独计算，与导出文件的过滤条件解耦
+	if cfg.r2Enabled && len(r2Rows) > 0 {
+		if substoreContent := formatSubstoreResults(r2Rows); strings.TrimSpace(substoreContent) != "" {
+			if err := uploadR2Content(cfg.r2WorkerURL, cfg.r2WorkerToken, cfg.r2Filename, substoreContent); err != nil {
+				fmt.Printf("[r2] 上传失败，保留 R2 上的旧内容: %v\n", err)
+			}
 		}
 	}
 	return firstErr

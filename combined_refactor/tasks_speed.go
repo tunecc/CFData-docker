@@ -299,8 +299,22 @@ func runOfficialSpeedBatch(ctx context.Context, session *appSession, port int, c
 		session.testMutex.Lock()
 		rows := officialResultRows(nil, append([]TestResult(nil), session.testResults...), "")
 		session.testMutex.Unlock()
-		triggerManualR2Upload(session, rows)
+		triggerManualR2Upload(session, filterR2QualifiedRows(rows, speedMin))
 	}
+}
+
+// officialSpeedAttempted 判断本次批量测速是否已经产出过任何测速结果。
+// 速度字段为空或「未测速」表示尚未测速；一旦有结果（含失败），取消后不再由调用方补传。
+func officialSpeedAttempted(session *appSession) bool {
+	session.testMutex.Lock()
+	defer session.testMutex.Unlock()
+	for _, result := range session.testResults {
+		text := strings.TrimSpace(result.Speed)
+		if text != "" && text != "未测速" {
+			return true
+		}
+	}
+	return false
 }
 
 func countOfficialQualifiedResults(results []TestResult, speedMin float64) int {
