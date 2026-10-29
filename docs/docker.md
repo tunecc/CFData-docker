@@ -132,15 +132,23 @@ docker run -d --name cfdata \
 在仓库根目录执行：
 
 ```bash
-docker build -t cfdata-web:dev .
+docker build \
+  --build-arg VERSION=dev \
+  --build-arg REVISION=$(git rev-parse HEAD) \
+  -t cfdata-web:dev .
 docker run --rm -p 13335:13335 cfdata-web:dev
 ```
 
-指定版本号（会显示在启动日志与 Web 界面）：
+传入 `REVISION` 后，启动日志与 Web 界面会显示 `sha-<短哈希>`，与 GHCR 的 `sha-<短哈希>` 镜像标签一致，便于确认实际运行版本；未传时显示 `dev`。指定发布版本号时同样建议带上提交：
 
 ```bash
-docker build --build-arg VERSION=v1.2.3 -t cfdata-web:v1.2.3 .
+docker build \
+  --build-arg VERSION=v1.2.3 \
+  --build-arg REVISION=$(git rev-parse HEAD) \
+  -t cfdata-web:v1.2.3 .
 ```
+
+此时界面显示 `v1.2.3 (sha-<短哈希>)`。
 
 同时构建两种架构（需要 buildx）：
 
@@ -148,6 +156,7 @@ docker build --build-arg VERSION=v1.2.3 -t cfdata-web:v1.2.3 .
 docker buildx build \
   --platform linux/amd64,linux/arm64 \
   --build-arg VERSION=v1.2.3 \
+  --build-arg REVISION=$(git rev-parse HEAD) \
   -t cfdata-web:v1.2.3 \
   --output type=oci,dest=/tmp/cfdata-multi.tar .
 ```

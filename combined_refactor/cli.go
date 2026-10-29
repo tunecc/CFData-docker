@@ -1434,7 +1434,7 @@ func runOfficialSpeedTests(ctx context.Context, session *appSession, results []T
 }
 
 func printCLIConfig(cfg *cliConfig) {
-	fmt.Printf("%s %s\n", colorize("CFData-WEB 版本:", ansiBold+ansiGreen), appVersion)
+	fmt.Printf("%s %s\n", colorize("CFData-WEB 版本:", ansiBold+ansiGreen), appVersionLabel())
 	fmt.Printf("%s %s\n", colorize("调试等级:", ansiBold+ansiGreen), debugFlagValue{}.String())
 	checkAndPrintUpdate("")
 
@@ -1546,7 +1546,7 @@ func printCLIConfig(cfg *cliConfig) {
 func printCLIUsage() {
 	printBanner()
 	fmt.Fprintf(flag.CommandLine.Output(), "%s\n", colorize("CFData 命令行帮助", ansiBold+ansiGreen))
-	fmt.Fprintf(flag.CommandLine.Output(), "版本: %s\n", appVersion)
+	fmt.Fprintf(flag.CommandLine.Output(), "版本: %s\n", appVersionLabel())
 	checkAndPrintUpdate("")
 	fmt.Fprintf(flag.CommandLine.Output(), "\n")
 	fmt.Fprintf(flag.CommandLine.Output(), "默认行为: 不带 -cli 时启动 Web 服务；-cli 进入交互菜单；-cli qs 按配置快速启动\n")

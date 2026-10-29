@@ -6,13 +6,14 @@ FROM --platform=$BUILDPLATFORM ${GO_IMAGE} AS builder
 ARG TARGETOS=linux
 ARG TARGETARCH
 ARG VERSION=dev
+ARG REVISION=unknown
 
 WORKDIR /src
 COPY combined_refactor/go.mod combined_refactor/go.sum ./
 RUN go mod download
 COPY combined_refactor/ ./
 RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH:-$(go env GOARCH)} \
-    go build -trimpath -ldflags "-s -w -X main.appVersion=${VERSION}" -o /out/cfdata .
+    go build -trimpath -ldflags "-s -w -X main.appVersion=${VERSION} -X main.appRevision=${REVISION}" -o /out/cfdata .
 
 FROM ${RUNTIME_IMAGE}
 ARG VERSION=dev

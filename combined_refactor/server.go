@@ -87,7 +87,7 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 		"speedTestDefault": defaultSpeedURL,
 		"speedTestWorkers": speedTestWorkers,
 		"debug":            debugMode,
-		"version":          appVersion,
+		"version":          appVersionLabel(),
 		"releaseURL":       releaseLatestURL,
 		"cfCountry":        cfCountry,
 		"proxyWarning":     !skipGeoCheck && (!cfCountryOK || shouldWarnProxyCountry(cfCountry)),
@@ -114,7 +114,7 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 		if link == "" {
 			link = releaseLatestURL
 		}
-		session.sendWSMessage("version_info", map[string]interface{}{"version": appVersion, "latest": info.TagName, "releaseURL": link, "hasUpdate": versionIsOlder(appVersion, info.TagName)})
+		session.sendWSMessage("version_info", map[string]interface{}{"version": appVersionLabel(), "latest": info.TagName, "releaseURL": link, "hasUpdate": versionIsOlder(appVersion, info.TagName)})
 	})
 
 	safeHandler := func(name string, fn func(json.RawMessage), data json.RawMessage) {

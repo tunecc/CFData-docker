@@ -8,7 +8,34 @@ const (
 	releaseLatestURL = "https://github.com/" + updateRepo + "/releases/latest"
 )
 
-var appVersion = "dev"
+var (
+	appVersion  = "dev"
+	appRevision = "unknown"
+)
+
+func shortAppRevision() string {
+	rev := strings.TrimSpace(appRevision)
+	rev = strings.TrimPrefix(rev, "sha-")
+	if rev == "" || rev == "unknown" {
+		return ""
+	}
+	if len(rev) > 7 {
+		rev = rev[:7]
+	}
+	return rev
+}
+
+// appVersionLabel 优先展示与镜像 sha-<commit> 标签一致的标识
+func appVersionLabel() string {
+	rev := shortAppRevision()
+	if rev == "" {
+		return appVersion
+	}
+	if isStableVersionTag(appVersion) {
+		return appVersion + " (sha-" + rev + ")"
+	}
+	return "sha-" + rev
+}
 
 func isStableVersionTag(tag string) bool {
 	if len(tag) < 2 || tag[0] != 'v' {

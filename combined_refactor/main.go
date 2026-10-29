@@ -314,7 +314,7 @@ func main() {
 		addr = fmt.Sprintf("%s:%d", strings.TrimSpace(listenHost), listenPort)
 		displayHost = strings.TrimSpace(listenHost)
 	}
-	fmt.Printf("CFData-WEB 版本: %s\n", appVersion)
+	fmt.Printf("CFData-WEB 版本: %s\n", appVersionLabel())
 	go checkAndPrintUpdate("")
 	displayURL := fmt.Sprintf("http://%s:%d", displayHost, listenPort)
 	if webUser != "" && webPassword != "" {
