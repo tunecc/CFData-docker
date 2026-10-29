@@ -330,6 +330,15 @@ func measureHTTPTTFB(ctx context.Context, ip string, port int, effectiveDelay in
 }
 
 func runOfficialTask(ctx context.Context, session *appSession, ipType int, scanMaxThreads int, port int, delay int, scanMode string, targetDC string, stopCount int) {
+	ipList, err := officialCandidatePool(ipType)
+	if err != nil {
+		session.sendWSMessage("error", err.Error())
+		return
+	}
+	runOfficialTaskWithPool(ctx, session, ipList, scanMaxThreads, port, delay, scanMode, targetDC, stopCount, false)
+}
+
+func officialCandidatePool(ipType int) ([]string, error) {
 	filename := "ips-v4.txt"
 	apiURL := "https://www.baipiao.eu.org/cloudflare/ips-v4"
 	if ipType == 6 {
@@ -339,21 +348,19 @@ func runOfficialTask(ctx context.Context, session *appSession, ipType int, scanM
 
 	content, err := getIPListContent(filename, apiURL)
 	if err != nil {
-		session.sendWSMessage("error", err.Error())
-		return
+		return nil, err
 	}
-
 	ipList, err := parseIPList(content)
 	if err != nil {
-		session.sendWSMessage("error", "解析 IP 列表失败: "+err.Error())
-		return
+		return nil, fmt.Errorf("解析 IP 列表失败: %w", err)
 	}
 	if ipType == 6 {
-		ipList = getRandomIPv6s(ipList)
-	} else {
-		ipList = getRandomIPv4s(ipList)
+		return getRandomIPv6s(ipList), nil
 	}
+	return getRandomIPv4s(ipList), nil
+}
 
+func runOfficialTaskWithPool(ctx context.Context, session *appSession, ipList []string, scanMaxThreads int, port int, delay int, scanMode string, targetDC string, stopCount int, fromLibrary bool) {
 	targetDC = normalizeOfficialTargetDC(targetDC)
 	if stopCount < 0 {
 		stopCount = 0
@@ -370,10 +377,14 @@ func runOfficialTask(ctx context.Context, session *appSession, ipType int, scanM
 	if scanMode == scanModeHTTPing {
 		scanner = scanOfficialHTTP
 	}
-	runOfficialScanCandidates(ctx, session, ipList, scanMaxThreads, port, delay, targetDC, stopCount, scanner)
+	runOfficialScanCandidatesWithSource(ctx, session, ipList, scanMaxThreads, port, delay, targetDC, stopCount, scanner, fromLibrary)
 }
 
 func runOfficialScanCandidates(ctx context.Context, session *appSession, ipList []string, scanMaxThreads int, port int, delay int, targetDC string, stopCount int, scanner officialScanFunc) (bool, bool) {
+	return runOfficialScanCandidatesWithSource(ctx, session, ipList, scanMaxThreads, port, delay, targetDC, stopCount, scanner, false)
+}
+
+func runOfficialScanCandidatesWithSource(ctx context.Context, session *appSession, ipList []string, scanMaxThreads int, port int, delay int, targetDC string, stopCount int, scanner officialScanFunc, fromLibrary bool) (bool, bool) {
 	targetDC = normalizeOfficialTargetDC(targetDC)
 	if stopCount < 0 {
 		stopCount = 0
@@ -464,7 +475,11 @@ func runOfficialScanCandidates(ctx context.Context, session *appSession, ipList 
 			return wasCanceled, stoppedEarly
 		}
 		if targetDC != "" {
-			session.sendWSMessage("error", fmt.Sprintf("未在数据中心 %s 找到可用 IP，请更换数据中心后重试。", targetDC))
+			if fromLibrary {
+				session.sendWSMessage("error", fmt.Sprintf("数据中心库中 %s 的 IP 均不可用，请更新数据中心库后重试。", targetDC))
+			} else {
+				session.sendWSMessage("error", fmt.Sprintf("未在数据中心 %s 找到可用 IP，请更换数据中心后重试。", targetDC))
+			}
 			return wasCanceled, stoppedEarly
 		}
 		session.sendWSMessage("error", "扫描结束或被终止，但未发现任何有效IP。")

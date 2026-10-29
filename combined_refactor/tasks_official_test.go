@@ -294,6 +294,30 @@ func TestOfficialScanZeroMatchesReportsTargetDC(t *testing.T) {
 	}
 }
 
+func TestOfficialScanZeroMatchesFromLibraryHintsUpdate(t *testing.T) {
+	ips := officialCandidateIPs(5)
+	dcByIP := make(map[string]string, len(ips))
+	for _, ip := range ips {
+		dcByIP[ip] = "LAX"
+	}
+	var calls int64
+	session, capture := newOfficialTestSession()
+
+	wasCanceled, stoppedEarly := runOfficialScanCandidatesWithSource(context.Background(), session, ips, 3, 443, 500, "HKG", 20, officialMixedScanner(dcByIP, &calls), true)
+	if wasCanceled || stoppedEarly {
+		t.Fatalf("wasCanceled=%v stoppedEarly=%v, want false/false", wasCanceled, stoppedEarly)
+	}
+	if results := officialSessionResults(session); len(results) != 0 {
+		t.Fatalf("结果数量 = %d, want 0", len(results))
+	}
+	if !capture.contains("error", "数据中心库中 HKG 的 IP 均不可用，请更新数据中心库后重试") {
+		t.Fatalf("缺少更新数据中心库提示: %#v", capture.ofType("error"))
+	}
+	if capture.contains("error", "请更换数据中心") {
+		t.Fatalf("库模式不应提示更换数据中心: %#v", capture.ofType("error"))
+	}
+}
+
 func TestOfficialScanCanceledAtStart(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()

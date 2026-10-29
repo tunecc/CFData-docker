@@ -1738,7 +1738,7 @@
                 </div>
                 <div class="option-item">
                     <span class="label">🌐 IP 类型</span>
-                    <select id="officialIpType">
+                    <select id="officialIpType" onchange="renderOfficialDcLibrary()">
                         <option value="4">IPv4</option>
                         <option value="6">IPv6</option>
                     </select>
@@ -1789,8 +1789,24 @@
                     </select>
                 </div>
                 <div class="option-item">
-                    <span class="label" title="指定目标数据中心（例如 HKG）；扫描时仅保留该数据中心的结果，留空扫描全部">🏢 数据中心</span>
-                    <input id="officialTargetDC" type="text" value="" placeholder="留空自动选择">
+                    <span class="label" title="从数据中心库选择只扫描某个地区；「全部」扫描全部候选">🏢 数据中心</span>
+                    <select id="officialDcSelect" onchange="syncOfficialDcSelection()">
+                        <option value="">全部</option>
+                        <option value="__manual__">手动输入其他代码</option>
+                    </select>
+                </div>
+                <div class="option-item hidden" id="officialDcManualRow">
+                    <span class="label" title="手动输入数据中心代码（例如 HKG），仍使用全量候选池并按该数据中心过滤">✏️ 数据中心代码</span>
+                    <input id="officialTargetDC" type="text" value="" placeholder="例如 HKG">
+                </div>
+                <div class="option-item full-width">
+                    <span class="label" title="数据中心库保存在 /data，重建容器后仍保留">📚 数据中心库</span>
+                    <div class="field-with-action">
+                        <input id="officialDcLibraryStatus" type="text" value="尚未扫描" readonly>
+                        <button id="btnUpdateDcLibrary" class="mini-action-btn"
+                            title="使用当前 IP 类型、端口、并发、扫描合格延迟和扫描方式更新数据中心库"
+                            onclick="startDcLibraryScan()">🔄</button>
+                    </div>
                 </div>
                 <div class="option-item">
                     <span class="label" title="达到该数量的目标数据中心 IP 后提前结束扫描；0 表示扫描全部候选">⏹️ 提前结束数量</span>
@@ -2550,6 +2566,9 @@
         let runningTaskLabel = '';
         let runningTaskMode = '';
         let runningTaskTab = 'scan';
+        let dcLibraryStatusMap = {};
+        let officialDcSelection = '';
+        let dcLibraryScanning = false;
         let stopWatchdogTimer = null;
         let cfCountry = '检测失败';
         let proxyWarningRequired = false;
@@ -2976,7 +2995,7 @@
                     speedMin: val('officialSpeedMin'),
                     speedLimit: val('officialSpeedLimit'),
                     autoSpeed: selVal('officialAutoSpeed'),
-                    targetDC: val('officialTargetDC'),
+                    targetDC: getOfficialTargetDC(),
                     stopCount: val('officialStopCount'),
                     speedUrl: resolveSpeedTestUrl('officialSpeedUrl', 'officialSpeedUrlPreset'),
                 },
@@ -3017,7 +3036,7 @@
             setValue('officialSpeedMin', o.speedMin);
             setValue('officialSpeedLimit', o.speedLimit);
             setValue('officialAutoSpeed', o.autoSpeed);
-            setValue('officialTargetDC', o.targetDC);
+            if (o.targetDC !== undefined && o.targetDC !== null) applyOfficialTargetDCSelection(o.targetDC);
             setValue('officialStopCount', o.stopCount);
             setValue('nsbScanMode', n.scanMode);
             setValue('nsbThreads', n.threads);
@@ -3820,7 +3839,7 @@
             setValue('officialDelay', params.delay);
             setValue('officialSpeedLimit', params.speedLimit);
             setValue('officialSpeedMin', params.speedMin);
-            setValue('officialTargetDC', params.dc);
+            applyOfficialTargetDCSelection(params.dc);
             setValue('nsbThreads', params.maxThreads);
             setValue('nsbFallbackPort', params.fallbackPort);
             setValue('nsbResultLimit', params.resultLimit);
@@ -3874,6 +3893,9 @@
             const wasBackgroundTask = backgroundTaskActive;
             isTaskRunning = false;
             isStoppingTask = false;
+            dcLibraryScanning = false;
+            const dcLibraryBtn = document.getElementById('btnUpdateDcLibrary');
+            if (dcLibraryBtn) dcLibraryBtn.disabled = false;
             if (!wasBackgroundTask) {
                 backgroundTaskActive = false;
             }
@@ -5029,6 +5051,152 @@
             startStopWatchdog();
         }
 
+        function getOfficialIpType() {
+            return String(document.getElementById('officialIpType')?.value) === '6' ? 6 : 4;
+        }
+
+        function currentDcLibraryStatus() {
+            const ipType = getOfficialIpType();
+            return dcLibraryStatusMap[String(ipType)] || { ipType, exists: false, updatedAt: 0, ipCount: 0, dcCount: 0, dataCenters: [] };
+        }
+
+        function applyDcLibraryStatus(libraries) {
+            if (libraries && typeof libraries === 'object') dcLibraryStatusMap = libraries;
+            renderOfficialDcLibrary();
+        }
+
+        function formatDcLibraryTime(ts) {
+            const value = Number(ts) || 0;
+            if (!value) return '未知时间';
+            const date = new Date(value * 1000);
+            return Number.isNaN(date.getTime()) ? '未知时间' : date.toLocaleString();
+        }
+
+        function formatDcLibraryLabel(dc) {
+            const place = [dc.city, dc.country].filter(v => v && String(v).trim()).join(' / ');
+            return place ? `${dc.colo} · ${place} (${dc.ipCount || 0})` : `${dc.colo} (${dc.ipCount || 0})`;
+        }
+
+        function renderOfficialDcLibrary() {
+            const select = document.getElementById('officialDcSelect');
+            if (!select) return;
+            const manualRow = document.getElementById('officialDcManualRow');
+            const statusInput = document.getElementById('officialDcLibraryStatus');
+            const status = currentDcLibraryStatus();
+            const dataCenters = Array.isArray(status.dataCenters) ? status.dataCenters : [];
+            const hasLibrary = Number(status.ipCount || 0) > 0;
+            const previous = officialDcSelection;
+
+            select.innerHTML = '';
+            const allOption = document.createElement('option');
+            allOption.value = '';
+            allOption.textContent = '全部';
+            select.appendChild(allOption);
+            dataCenters.forEach(dc => {
+                if (!dc || !dc.colo) return;
+                const option = document.createElement('option');
+                option.value = String(dc.colo).toUpperCase();
+                option.textContent = formatDcLibraryLabel(dc);
+                select.appendChild(option);
+            });
+            const manualOption = document.createElement('option');
+            manualOption.value = '__manual__';
+            manualOption.textContent = '手动输入其他代码';
+            select.appendChild(manualOption);
+
+            if (!hasLibrary) {
+                officialDcSelection = '';
+                select.value = '';
+                select.disabled = true;
+                if (manualRow) manualRow.classList.add('hidden');
+                if (statusInput) statusInput.value = '尚无数据中心库，请点击右侧按钮更新；「全部」仍可直接扫描';
+                return;
+            }
+
+            select.disabled = false;
+            const validValues = Array.from(select.options).map(option => option.value);
+            if (previous && validValues.includes(previous)) {
+                select.value = previous;
+                officialDcSelection = previous;
+            } else if (previous && previous !== '__manual__') {
+                const manualInput = document.getElementById('officialTargetDC');
+                if (manualInput && !manualInput.value.trim()) manualInput.value = previous;
+                select.value = '__manual__';
+                officialDcSelection = '__manual__';
+            } else {
+                select.value = previous === '__manual__' ? '__manual__' : '';
+                officialDcSelection = select.value;
+            }
+            if (manualRow) manualRow.classList.toggle('hidden', officialDcSelection !== '__manual__');
+            if (statusInput) {
+                statusInput.value = `更新于 ${formatDcLibraryTime(status.updatedAt)} · ${status.dcCount || dataCenters.length} 个数据中心 · ${status.ipCount || 0} 个 IP`;
+            }
+        }
+
+        function syncOfficialDcSelection() {
+            const select = document.getElementById('officialDcSelect');
+            if (!select) return;
+            officialDcSelection = select.value || '';
+            const manualRow = document.getElementById('officialDcManualRow');
+            if (manualRow) manualRow.classList.toggle('hidden', officialDcSelection !== '__manual__');
+            if (officialDcSelection === '__manual__') {
+                document.getElementById('officialTargetDC')?.focus();
+            }
+        }
+
+        function applyOfficialTargetDCSelection(value) {
+            const raw = String(value || '').trim().toUpperCase();
+            const manualInput = document.getElementById('officialTargetDC');
+            if (manualInput) manualInput.value = raw;
+            officialDcSelection = '';
+            if (raw) {
+                const status = currentDcLibraryStatus();
+                const inLibrary = (status.dataCenters || []).some(dc => String(dc.colo || '').toUpperCase() === raw);
+                officialDcSelection = inLibrary ? raw : '__manual__';
+            }
+            renderOfficialDcLibrary();
+        }
+
+        function getOfficialTargetDC() {
+            if (officialDcSelection === '__manual__') {
+                return String(document.getElementById('officialTargetDC')?.value || '').trim().toUpperCase();
+            }
+            return officialDcSelection || '';
+        }
+
+        function isOfficialDcFromLibrary() {
+            return !!officialDcSelection && officialDcSelection !== '__manual__';
+        }
+
+        function startDcLibraryScan() {
+            if (isTaskRunning) {
+                showNoticeCard('已有任务正在运行，请等待完成后再更新数据中心库');
+                return;
+            }
+            if (requireProxyWarning(() => startDcLibraryScan())) return;
+            const ipType = getOfficialIpType();
+            const threads = parseInt(document.getElementById('officialThreads').value) || 100;
+            const port = parseInt(document.getElementById('officialTestPort').value) || 443;
+            const delay = parseInt(document.getElementById('officialDelay').value) || 0;
+            const scanMode = getScanMode();
+            dcLibraryScanning = true;
+            isTaskRunning = true;
+            isStoppingTask = false;
+            runningTaskLabel = '更新数据中心库';
+            runningTaskMode = 'official';
+            runningTaskTab = 'scan';
+            setStartLoading(getRunningButtonText());
+            resetProgress();
+            progressBox.style.display = 'block';
+            const updateBtn = document.getElementById('btnUpdateDcLibrary');
+            if (updateBtn) updateBtn.disabled = true;
+            if (!wsSend({ type: 'start_dc_library_scan', data: { ipType, threads, port, delay, scanMode } })) {
+                dcLibraryScanning = false;
+                finishRunningTask('✨ 开始扫描与测试');
+                showNoticeCard('连接未就绪，请等待重连后再试');
+            }
+        }
+
         function startOfficialTask() {
             const ipType = parseInt(document.getElementById('officialIpType').value);
             const threads = parseInt(document.getElementById('officialThreads').value) || 100;
@@ -5080,7 +5248,8 @@
             if (!wsSend({ type: 'start_task', data: {
                 ipType, threads, port, delay, scanMode: getScanMode(),
                 autoSpeed: autoSpeed,
-                officialTargetDC: document.getElementById('officialTargetDC')?.value?.trim() || '',
+                officialTargetDC: getOfficialTargetDC(),
+                officialDcFromLibrary: isOfficialDcFromLibrary(),
                 officialStopCount: officialStopCount,
                 officialSpeedPort: officialSpeedConfig.port,
                 officialSpeedURL: officialSpeedConfig.url,
@@ -5098,7 +5267,7 @@
 
         function maybeStartOfficialAutoTest() {
             if (!officialAutoSpeedPending || officialAutoStage !== 'scan') return false;
-            const targetDC = document.getElementById('officialTargetDC')?.value.trim().toUpperCase() || '';
+            const targetDC = getOfficialTargetDC();
             const selected = targetDC ? dcList.find((dc) => String(dc.DataCenter || '').toUpperCase() === targetDC) : dcList[0];
             if (!selected) {
                 log(targetDC ? `官方自动测速未找到数据中心: ${targetDC}` : '官方自动测速没有可用数据中心');
@@ -6543,6 +6712,7 @@
                     applySpeedUrlConfig('nsbSpeedUrl', 'nsbSpeedUrlPreset', speedDefault);
                     applySpeedURLStatus(msg.data.speedURLStatus);
                     applyProxyStatus(msg.data.proxyStatus);
+                    applyDcLibraryStatus(msg.data.dcLibraries);
                     renderVersionInfo(msg.data || {});
                     autoLoadConfig();
                     if (!scheduleConfigLoaded) {
@@ -6573,6 +6743,14 @@
                     break;
                 case 'version_info':
                     renderVersionInfo(msg.data || {});
+                    break;
+                case 'dc_library_status':
+                    applyDcLibraryStatus(msg.data || {});
+                    if (dcLibraryScanning) showNoticeCard('数据中心库已更新');
+                    break;
+                case 'dc_library_progress':
+                    if (isStoppingTask) break;
+                    updateProgress(msg.data.current || 0, msg.data.total || 0, '更新数据中心库');
                     break;
                 case 'proxy_country_result':
                     handleProxyCountryResult(msg.data || {});

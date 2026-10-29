@@ -88,6 +88,7 @@ docker inspect --format '{{.State.Health.Status}}' cfdata
 
 - 宿主机目录（Compose 默认挂载 `./data`）：`-v ./data:/data`，入口会自动把目录属主修正为 `10001`（或 `PUID`/`PGID` 指定的用户），无需手动 `chown`。
 - 命名卷：`-v cfdata-data:/data`，属主自动继承镜像内的 `10001:10001`，无需手工授权。
+- 数据卷还保存官方扫描的「数据中心库」：`dc-library-v4.json` / `dc-library-v6.json`。库由 Web 页面手动扫描更新，记录 IP 与实测 `colo`，重建容器或升级镜像后仍保留；「恢复全部默认配置」不会删除库文件。
 
 入口脚本以 root 启动仅用于修正数据目录属主，随后立即降权，应用进程始终以非 root 用户运行。若运行环境禁止容器以 root 启动（如 Kubernetes `runAsNonRoot`），可设置 `user: "10001:10001"`，并确保挂载目录已可写。
 

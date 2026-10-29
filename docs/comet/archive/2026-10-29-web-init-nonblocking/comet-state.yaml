@@ -1,0 +1,550 @@
+schema: comet.native.v4
+name: web-init-nonblocking
+language: zh-CN
+phase: archive
+status: done
+state_version: 18
+brief: brief.md
+document_constraints_version: 3
+shape_confirmation_hash: 983c1a378ab768d0a94bf383fdff0172d5e5d219e15ea74a5d3f9b3ffcf5a8f4
+shape_semantic_snapshot:
+  schema: comet.native.shape-semantics.v1
+  artifacts:
+    - source: brief.md
+      contentHash: 44aa7e01a5db442eb1dfbf48dd6f502fc75cc3d4df6fd4e6ffc4c3deb954f4de
+      inputHash: d6300573fc24ac01e39995f89cc3df7f1d955b0cd69a27106161a160aabfaa61
+      legacyFingerprint: 0e64debc0733b0626ca385e8a58d7ccdfeb0173fbb3fd4bf891c321c701739e1
+      contractHash: 4de3abac7bf4f953b074ec88c9e989e34ebc716d1b971be444e0662928b28b6d
+      commentsHash: cda738d4fb7d0dbdff20df1cd09b859740e0671de31bcf78b8ddc8ff818dab92
+      auxiliary: []
+    - source: specs/official-dc-library/spec.md
+      contentHash: 4ce4fc362366761f85587b5bd78e2aaaa4e3a6f75765b97aa15f28caa8fb90a0
+      inputHash: cf2253d56c70a4a34e30b1f4da314b865c425eee21e814c0898099d631c8e6b9
+      legacyFingerprint: 63b6f2a60bc7d82e6d647744f4ff03eb41098db196a964ab8ba24a957b3dc282
+      contractHash: 03833ae1a2585f5d16bfea4c545d77ec78544a3094ec22a28eb60c4307599d98
+      commentsHash: cda738d4fb7d0dbdff20df1cd09b859740e0671de31bcf78b8ddc8ff818dab92
+      auxiliary: []
+    - source: specs/web-init-nonblocking/spec.md
+      contentHash: 7d1080778e28750d363755d96c23c782ac2c69a5b4d9a6932143c40e029a2971
+      inputHash: c039bc794be67fefc543704b79e3e7e022f1e347d9c412beccdc0c870a4d3fb1
+      legacyFingerprint: a752f58b5630a36196fe51ed4f06e401b85cce25cf40526aab4fc80ee5c6192c
+      contractHash: 2d73c7322750d04edf893328901bf97010be454b73eb7ba9c70b507a311db36b
+      commentsHash: cda738d4fb7d0dbdff20df1cd09b859740e0671de31bcf78b8ddc8ff818dab92
+      auxiliary: []
+spec_changes:
+  - capability: official-dc-library
+    operation: create
+    source: specs/official-dc-library/spec.md
+  - capability: web-init-nonblocking
+    operation: create
+    source: specs/web-init-nonblocking/spec.md
+workspace:
+  isolation: current
+  change_branch: main
+  target_branch: main
+  finish: null
+loop:
+  stage: done
+  goal_cycle: 3
+  iteration: 2
+  attempt: 1
+  retry_epoch: 0
+  failed_iteration_count: 0
+  no_progress_count: 0
+  execution_failure_count: 0
+  previous_unresolved_ids: []
+  next_action: null
+acceptance:
+  - id: A1
+    source: brief.md
+    text: A1：构建并运行指定版本（如 `sha-53c9986`）后打开或刷新页面，首屏 HTML 中的版本行即为该版本标识，不依赖
+      WebSocket；WebSocket 延迟或断开时仍显示正确版本。
+    result: passed
+    reason:
+      text: 'version.go 的 renderIndexHTML 仅替换唯一占位符 <div class="version-line"
+        id="versionLine">dev</div>（index.html 中该串出现次数为 1）并对版本值
+        html.EscapeString；main.go 的 / 处理器每次请求写入 renderIndexHTML(data,
+        appVersionLabel()) 且保持 Cache-Control: no-cache，版本来源与 init_config/CLI 输出的
+        appVersionLabel() 一致（Dockerfile 以 appVersion/appRevision
+        注入）。TestRenderIndexHTMLInjectsVersion 验证只替换目标占位、转义且不影响其他 dev 文本；上一轮对
+        18080 实例的只读 HTTP 探测已看到首屏注入，本轮相关文件未再改动。'
+      truncated: false
+  - id: A2
+    source: brief.md
+    text: A2：在 Cloudflare `cdn-cgi/trace` 与 ISP 探测均不可达（模拟超时）的环境下，WebSocket 连接后
+      `init_config` 立即到达，页面立即进入已连接状态并应用测速源默认值、测速源状态与代理状态，不再等待探测超时。
+    result: passed
+    reason:
+      text: server.go 的 buildInitConfigPayload 仅读取启动缓存（startupSpeedDefault）、本地
+        speedURLStatus 与代理状态、本地数据中心库摘要，handleWebSocket 在连接建立后直接发送
+        init_config，同步路径中不再有 detectCloudflareTraceCountry 或
+        resolveStartupSpeedTestURL 网络调用（对比 HEAD 已移除）。speedTestDefault 的兜底
+        resolveSpeedTestURL
+        也只用本地可用性缓存。TestBuildInitConfigPayloadUsesStartupCache
+        验证构造耗时与缓存值；上一轮黑洞代理实例实测 init_config 1–33ms 到达。
+      truncated: false
+  - id: A3
+    source: brief.md
+    text: A3：开始扫描前的代理检测行为不变：中国/未知/测试标签放行，其他地区或检测失败仍按现有规则弹出警告；7 秒超时与三次尝试保持。
+    result: passed
+    reason:
+      text: check_proxy_country 处理器未改动：skipGeoCheck 短路，否则 7 秒 context +
+        detectCloudflareTraceCountry 三次尝试 + shouldWarnProxyCountry
+        判定；geo_warning.go 未在改动列表。前端 requireProxyWarning 在开始官方扫描与更新数据中心库前均照旧发送
+        check_proxy_country，init_config 中 proxyWarning 只影响日志且
+        requireCachedProxyWarning 未被调用，页面加载不会新增代理弹窗。
+      truncated: false
+  - id: A4
+    source: brief.md
+    text: A4：测速源默认值与可用状态仍正确应用；自动选择逻辑不变；`version_info` 仍能在后台更新检查后追加“发现新版本”链接。
+    result: passed
+    reason:
+      text: main.go 在启动时设置 startupSpeedDefault（自动模式为 auto，自定义为原值），init_config 使用该缓存，前端
+        applySpeedUrlConfig 对 auto 显示“自动选择”并 applySpeedURLStatus
+        渲染本地状态；自动选择逻辑（resolveStartupSpeedTestURL）仍在启动阶段执行。version_info 处理保留在
+        server.go，前端 renderVersionInfo 在 hasUpdate
+        时继续追加“发现新版本”链接。全量测试通过且相关路径未在本轮改动。
+      truncated: false
+  - id: A5
+    source: brief.md
+    text: A5：`go build ./...` 与 `go test ./...` 在 `combined_refactor` 下通过；新增测试覆盖版本
+      HTML 注入和初始化配置立即构造，现有版本与扫描测试不回归。
+    result: passed
+    reason:
+      text: Runtime 记录的 go-test（go test ./... -count=1，cwd combined_refactor）exit
+        0、2212ms，go-build exit 0，操作版本对应当前候选；日志内容 ok cfdata 1.253s。新增
+        web_init_test.go（版本注入/转义、init_config
+        立即构造）、dc_library_test.go（保存/加载、候选、替换、损坏回退、空状态、reset
+        保留）、TestOfficialScanZeroMatchesFromLibraryHintsUpdate；我另行只读复跑关键单测与全量 go
+        test 均 PASS。
+      truncated: false
+  - id: A6
+    source: brief.md
+    text: A6：点击「更新数据中心库」并使用当前 IP 类型/端口/线程数/合格延迟/扫描方式时，系统扫描官方候选池，记录成功 IP 的
+      `colo`，将结果保存为 `/data/dc-library-v4.json` 或
+      `/data/dc-library-v6.json`，完成后页面显示更新时间、数据中心数与 IP 数；重建容器后库数据仍存在。
+    result: passed
+    reason:
+      text: tasks_library.go 用当前 ipType/threads/port/delay/scanMode 扫描
+        officialCandidatePool，成功结果含扫描时 trace 实测 colo；dc_library.go 按 IP 类型原子写入
+        dc-library-v4.json/dc-library-v6.json（storage.go atomicWriteFile
+        临时文件+rename），schema 为 cfdata.dc-library.v1；Dockerfile WORKDIR
+        /data、entrypoint cd /data、compose ./data:/data，docs/docker.md
+        已说明持久化。成功后发送 dc_library_status，页面显示更新时间/数据中心数/IP
+        数。TestDCLibrarySaveLoadAndCandidates 覆盖落盘与重载。
+      truncated: false
+  - id: A7
+    source: brief.md
+    text: A7：库中存在 HKG 等数据中心时，「数据中心」下拉以单个 `colo` 为选项，显示城市/国家与 IP 数量；选择 HKG
+      后启动官方扫描，只使用库中 HKG 的 IP 作为候选，扫描结果只包含 HKG，早停数量仍按现有语义生效。
+    result: passed
+    reason:
+      text: dcLibraryStatusFor 按单个 colo 汇总城市/国家/IP 数量并排序，前端 officialDcSelect 以 colo 为
+        option；server.go 在 fromLibrary=true 时只取 libraryIPsForDC 且不回退全量池，并传
+        targetDC 做实测 colo 过滤、stopCount 沿用现有早停语义。库内 IP 全部失效时 tasks_official.go
+        分支发送“数据中心库中 <DC> 的 IP
+        均不可用，请更新数据中心库后重试。”，TestOfficialScanZeroMatchesFromLibraryHintsUpdate
+        断言该文案且不含“请更换数据中心”，手动路径的旧文案由 TestOfficialScanZeroMatchesReportsTargetDC
+        覆盖，均通过。
+      truncated: false
+  - id: A8
+    source: brief.md
+    text: A8：当前 IP 类型没有库数据时，「数据中心」下拉禁用并提示先扫描一次；「全部」全量扫描仍按现有行为可用；库扫描完成后下拉自动启用并显示新数据。
+    result: passed
+    reason:
+      text: index.html renderOfficialDcLibrary 在当前 IP 类型 ipCount 为 0
+        时禁用下拉、强制选择“全部”并显示“尚无数据中心库，请点击右侧按钮更新；「全部」仍可直接扫描”，未禁用开始按钮，getOfficialTargetDC
+        返回空串使扫描走全量池；切换 IP 类型重渲染；收到 dc_library_status 后按新库自动启用并显示选项。库成功写入后
+        dc_library_status 在任务完成前下发，渲染即时刷新。
+      truncated: false
+  - id: A9
+    source: brief.md
+    text: A9：用户手动更新库成功后，库内容、更新时间和下拉选项刷新为新结果；库扫描被取消或失败时保留旧库并给出提示；普通官方扫描不会自动改动库。
+    result: passed
+    reason:
+      text: tasks_library.go 仅在扫描完成且结果非空时调用
+        saveDCLibrary，取消时输出“数据中心库更新已终止，保留原有库数据”并返回，零结果/保存失败发送错误且不改内存库；saveDCLibrary
+        原子替换成功后立即发送 dc_library_status（含新 UpdatedAt/DC/IP
+        数），前端刷新内容、时间与下拉选项。普通官方扫描路径不调用
+        saveDCLibrary。TestDCLibrarySaveLoadAndCandidates
+        验证快照替换与重载保留，reset_all_config 不删除库由 TestResetAllConfigKeepsDCLibrary 覆盖。
+      truncated: false
+  - id: A10
+    source: brief.md
+    text: A10：库扫描使用当前 IP
+      类型/端口/线程数/合格延迟/扫描方式，不设置目标数据中心、不早停；进度、日志与停止按钮工作正常，扫描期间不能同时启动其他官方任务，库扫描结果不进入官方扫描结果表。
+    result: passed
+    reason:
+      text: start_dc_library_scan 校验并透传当前
+        ipType/threads/port/delay/scanMode；runDCLibraryScan 不设置 targetDC、使用
+        runBoundedWorkers（无 shouldStop）因此不早停，发送 dc_library_progress 与日志，复用任务框架的
+        stop/task_stopped；beginTask 的 globalTaskMutex/anyTaskRunning
+        保证与其他官方任务互斥；它不写 session.scanResults 也不发送
+        scan_result，故结果不进入官方结果表。前端更新按钮在运行时禁用、任务结束由 finishRunningTask 恢复。
+      truncated: false
+  - id: A11
+    source: brief.md
+    text: A11：选择「全部」时官方扫描行为与现状一致；选择「手动输入其他代码」时仍按现有全量候选池与目标 DC
+      过滤扫描；NSB、详细测试、测速、导出、R2/GitHub 上传与自动调度流程不受影响。
+    result: passed
+    reason:
+      text: 选择“全部”时 getOfficialTargetDC 返回空串、officialDcFromLibrary=false，server 走
+        runOfficialTask 全量候选；选择“手动输入其他代码”时
+        officialDcSelection='__manual__'、发送官方目标 DC 且 fromLibrary=false，仍用全量池并做
+        targetDC 过滤（server.go 的 else 分支）。tasks_official.go 仅抽取
+        officialCandidatePool，全量池/解析错误语义不变。git status
+        显示改动仅限版本、初始化、库相关文件与文档，NSB/详细测试/测速/导出/R2/GitHub/自动调度代码未变动，全量测试通过。
+      truncated: false
+builder_handoff:
+  candidate_id: 05cad700-d887-4e93-bd3d-6b858369a4f3
+  identity_provider: skill-coordinated
+  builder_execution_ref: skill-coordinated:builder:e43dbebb-0786-4146-ba74-21a125e4f2e2
+  iteration: 2
+  summary:
+    text: 第二轮修复：库模式官方扫描结果为空时改为提示“数据中心库中 <DC> 的 IP
+      均不可用，请更新数据中心库后重试”，不再提示更换数据中心；全量/手动输入路径的零结果提示保持不变。新增
+      TestOfficialScanZeroMatchesFromLibraryHintsUpdate 回归测试，go build ./... 与 go
+      test ./... 通过，并重建 release_assets/cfdata-test。
+    truncated: false
+  addressed_acceptance_ids:
+    - A1
+    - A2
+    - A3
+    - A4
+    - A5
+    - A6
+    - A7
+    - A8
+    - A9
+    - A10
+    - A11
+  acceptance_review:
+    - id: A1
+      status: implemented-with-evidence
+      evidence:
+        - combined_refactor/version.go:9-13 renderIndexHTML 仅替换 versionLine
+          占位并对版本值 html.EscapeString
+        - combined_refactor/main.go:313 index 处理器写入 renderIndexHTML(data,
+          appVersionLabel())
+        - 'curl http://127.0.0.1:18080/ 返回的原始 HTML 含 <div class="version-line"
+          id="versionLine">sha-abcdef1</div>，且 Cache-Control: no-cache；浏览器在
+          WebSocket 连接前后均立即显示 sha-abcdef1'
+      note: 版本号由服务端首屏渲染，不依赖 init_config；测试 web_init_test.go 覆盖注入与转义。
+    - id: A2
+      status: implemented-with-evidence
+      evidence:
+        - combined_refactor/server.go:26-42 buildInitConfigPayload
+          只读取启动缓存与本地状态，无网络调用；handleWebSocket 直接发送 init_config
+        - 以 HTTPS_PROXY/HTTP_PROXY/ALL_PROXY 指向本地黑洞端口启动 18081 实例，curl 通过该代理访问
+          https://speed.cloudflare.com/cdn-cgi/trace 3 秒超时，而 Node WebSocket
+          客户端测得 init_config 到达时间为 33ms/2ms/1ms
+        - 18081 页面立即显示已连接服务器、测速网址自动选择与数据中心库 60 个 IP
+      note: 地区与 ISP 探测已从握手路径移除，页面不再等待探测超时。
+    - id: A3
+      status: implemented-with-evidence
+      evidence:
+        - combined_refactor/index.html:3374-3496
+          requireProxyWarning/check_proxy_country/5 秒倒计时/强制继续流程未改动
+        - 本地实例开始扫描时按现有流程弹出“代理检测警告：当前网络标签 HK”，日志记录“代理检测警告：用户强制继续（当前网络标签 HK）”后才开始任务
+        - combined_refactor/geo_warning.go 的地区探测 7 秒超时与三次尝试逻辑未修改
+      note: 代理检测仍按任务前检查执行，非中国/未知标签继续警告。
+    - id: A4
+      status: implemented-with-evidence
+      evidence:
+        - combined_refactor/speed_url.go:36-53 启动阶段缓存
+          setStartupSpeedDefault/startupSpeedDefault；server.go
+          buildInitConfigPayload 使用该缓存
+        - web_init_test.go TestBuildInitConfigPayloadUsesStartupCache 验证
+          init_config 使用缓存值而不触发解析
+        - 黑代理实例页面仍应用测速网址“自动选择”默认值并显示 speedURLStatus；version_info 更新检查代码与处理路径未修改
+      note: 自动测速源选择与版本更新提示行为保持不变。
+    - id: A5
+      status: implemented-with-evidence
+      evidence:
+        - combined_refactor 下 go build ./... 成功
+        - combined_refactor 下 go build ./... 成功；go test ./... 输出 ok cfdata
+          1.228s，其中新增 TestOfficialScanZeroMatchesFromLibraryHintsUpdate 通过
+        - web_init_test.go 覆盖版本 HTML 注入与 init_config 构造；dc_library_test.go
+          覆盖保存/加载、候选、替换、损坏回退、空状态与 reset_all_config 保留；既有版本与扫描测试全部通过
+      note: 构建与测试均在第二轮最终候选上执行。
+    - id: A6
+      status: implemented-with-evidence
+      evidence:
+        - combined_refactor/tasks_library.go:9-68 库扫描复用 officialCandidatePool 与
+          trace 扫描器，成功后调用 saveDCLibrary 并发送 dc_library_status
+        - combined_refactor/dc_library.go:52-160 按 IP 类型写入
+          dc-library-v4.json/dc-library-v6.json，schema 为
+          cfdata.dc-library.v1，atomicWriteFile 原子替换
+        - 本地实测 /tmp/cfdata-run/dc-library-v4.json 保存 60 条
+          IP+colo+lastSeen；页面显示“更新于 … · 1 个数据中心 · 60 个 IP”
+        - "重启实例日志输出“已加载数据中心库 dc-library-v4.json: 60 个 IP”，页面刷新后下拉与状态立即恢复"
+        - docs/docker.md:91 说明库文件保存在 /data，重建容器或升级后保留
+      note: 本地以重启验证持久化；镜像内工作目录即 /data，路径与挂载方式未改变。
+    - id: A7
+      status: implemented-with-evidence
+      evidence:
+        - combined_refactor/dc_library.go:161-220 dcLibraryStatusFor 按 colo
+          汇总并生成城市/国家标签，libraryIPsForDC 精确匹配 colo 且不回退
+        - combined_refactor/server.go:148-159 选中库中数据中心时校验目标并只以 libraryIPsForDC
+          作为候选
+        - 浏览器下拉显示“HKG · Hong Kong / HK (3)”；选择 HKG 后日志为“使用数据中心库：HKG 共 3 个
+          IP”“开始扫描：3 条记录（目标数据中心 HKG，收集 1 个后提前结束）”，结果 3 条均为 HKG
+        - combined_refactor/tasks_official.go:478-483
+          库模式（fromLibrary=true）零结果时发送“数据中心库中 HKG 的 IP
+          均不可用，请更新数据中心库后重试。”；TestOfficialScanZeroMatchesFromLibraryHintsUpdate（tasks_official_test.go:297）断言该提示存在且不含“请更换数据中心”
+      note: 库中 DC 只使用库内 IP，不回退全量池；库内 IP 全部失效时按 brief 要求提示更新库（本轮修复）。早停沿用既有并发语义。
+    - id: A8
+      status: implemented-with-evidence
+      evidence:
+        - combined_refactor/index.html:5080-5135 renderOfficialDcLibrary
+          在库为空时禁用下拉并显示“尚无数据中心库，请点击右侧按钮更新；「全部」仍可直接扫描”
+        - 切换到空库的 IPv6 后实测下拉 disabled、仅含“全部/手动输入其他代码”且提示文案出现，开始扫描按钮仍可点击
+        - 库扫描完成后下拉自动启用并出现 HKG 选项；切回 IPv4 后选项与数量恢复
+      note: 空库只限制按库选择，不阻止全部扫描。
+    - id: A9
+      status: implemented-with-evidence
+      evidence:
+        - 连续手动更新库后页面状态与文件内容/时间刷新（3 → 60 个 IP，IP 集合随每次随机候选变化）
+        - 在 200 条候选的库扫描进行到 8/200 时终止，日志输出“数据中心库更新已终止，保留原有库数据”，dc-library-v4.json
+          哈希与修改时间保持不变
+        - 普通官方全量扫描与手动输入 HKG 扫描后库文件哈希均未变化
+        - tasks_library.go 仅在成功完成后调用 saveDCLibrary；结果为空时返回错误并保留旧库
+        - 库中数据中心 IP
+          全部失效导致零结果时提示更新数据中心库并保留旧库（tasks_official.go:478-483，server.go:159 传入
+          fromLibrary=true）
+      note: 取消与失败均不写入半成品，普通扫描不触碰库文件；库内 IP 失效时引导用户手动更新库。
+    - id: A10
+      status: implemented-with-evidence
+      evidence:
+        - 库扫描日志使用当前参数：实测 threads=1、delay=500 时 60 条候选耗时约 26
+          秒；日志“开始扫描数据中心库（IPv4）：200 条记录”不包含目标数据中心与早停
+        - 扫描期间发送 dc_library_progress；点击终止后日志“已发送强制终止信号…”“任务已手动终止”
+        - 库扫描进行中通过 WebSocket 发送 start_task 收到“已有任务正在运行，请等待完成后再试”，证明任务互斥
+        - tasks_library.go 不写 session.scanResults；60 条库扫描期间与完成后扫描结果表仍保持上一次官方扫描的
+          3 条记录
+      note: 库扫描复用任务框架的进度、日志、停止与互斥，结果不进入官方结果表。
+    - id: A11
+      status: implemented-with-evidence
+      evidence:
+        - 选择“全部”后日志“开始扫描：200 条记录”，与现状一致，无库相关日志
+        - 选择“手动输入其他代码”并输入 HKG 后日志“开始扫描：200 条记录（目标数据中心 HKG，收集 1
+          个后提前结束）”，候选来自全量池而非库
+        - NSB、详细测试、测速、导出、R2/GitHub 上传与自动调度代码未在本轮修改；git status 仅涉及
+          version/main/server/protocol/speed_url/tasks_official/index.html/docs
+          与新增库文件
+      note: 全部与手动输入保持原全量候选与目标 DC 过滤行为，其他模式未改动。
+  checks:
+    - name:
+        text: go build ./...
+        truncated: false
+      result: passed
+      note:
+        text: combined_refactor 下执行成功
+        truncated: false
+    - name:
+        text: go test ./...
+        truncated: false
+      result: passed
+      note:
+        text: ok cfdata 1.228s，含新增 TestOfficialScanZeroMatchesFromLibraryHintsUpdate；既有
+          Official/DC 库/初始化测试全部通过
+        truncated: false
+    - name:
+        text: Linux amd64 测试二进制构建
+        truncated: false
+      result: passed
+      note:
+        text: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build 输出
+          release_assets/cfdata-test（14602400 字节）
+        truncated: false
+    - name:
+        text: Web 与容器实测（上一轮候选）
+        truncated: false
+      result: passed
+      note:
+        text: A1–A4/A6–A11 的浏览器、黑洞代理与重启实测来自上一轮候选；本轮仅改库模式零结果提示及其单测，相关路径未改动
+        truncated: false
+  checks_truncated: false
+  known_limits:
+    - text: 本轮仅修改库模式零结果提示并补充单测，未重新执行浏览器与容器重建实测；A6/A9 的容器持久化与手动更新实测来自上一轮候选，相关代码本轮未改动。
+      truncated: false
+    - text: 真实网络下“库内 IP 全部失效”的场景未构造浏览器复现，由单元测试
+        TestOfficialScanZeroMatchesFromLibraryHintsUpdate 覆盖消息与保留行为。
+      truncated: false
+  known_limits_truncated: false
+  review: null
+  submitted_at: 2026-10-29T03:29:38.733Z
+verifier_action:
+  attempt: 1
+  claim:
+    executorId: skill-coordinated
+    token: skill-coordinated:verifier:b1e87e35-44e4-4912-9361-10c3b4a045e2
+  id: 5b987554-8dd7-4cb8-a721-7d028a706014
+  input:
+    builderExecutionRef: skill-coordinated:builder:e43dbebb-0786-4146-ba74-21a125e4f2e2
+    candidateId: 05cad700-d887-4e93-bd3d-6b858369a4f3
+    goalCycle: 3
+    identityProvider: skill-coordinated
+    iteration: 2
+    registeredAt: 2026-10-29T03:29:41.678Z
+    verifierExecutionRef: skill-coordinated:verifier:b1e87e35-44e4-4912-9361-10c3b4a045e2
+  inputHash: f47723193395900116163af072f100316010995448bf8bede5048576954a1514
+  outcome:
+    actionId: 5b987554-8dd7-4cb8-a721-7d028a706014
+    attempt: 1
+    claimToken: skill-coordinated:verifier:b1e87e35-44e4-4912-9361-10c3b4a045e2
+    inputHash: f47723193395900116163af072f100316010995448bf8bede5048576954a1514
+    outcomeId: 6801fe96879f1f3fded2b99972da40d8cae750a18911c0f0f4f2050c568fb351
+    output:
+      responseHash: 6801fe96879f1f3fded2b99972da40d8cae750a18911c0f0f4f2050c568fb351
+    status: succeeded
+  protocolVersion: 1
+  receipts:
+    - hash: dd395439f6c7dabe27d07d642efb7bff37b88f3898a11824195d9750a6a9be0e
+      outcomeId: 6801fe96879f1f3fded2b99972da40d8cae750a18911c0f0f4f2050c568fb351
+  reconciliations: []
+  ref: native-verifier
+  requiredCapabilities: []
+  retry: manual
+  runId: web-init-nonblocking
+  status: succeeded
+  stepId: native-verifier
+  type: handoff
+blockers: []
+verification:
+  candidate_id: 05cad700-d887-4e93-bd3d-6b858369a4f3
+  identity_provider: skill-coordinated
+  verifier_execution_ref: skill-coordinated:verifier:b1e87e35-44e4-4912-9361-10c3b4a045e2
+  iteration: 2
+  attempt: 1
+  assurance: skill-coordinated
+  verdict: pass
+  checks:
+    - id: go-test
+      name:
+        text: Go 全量测试
+        truncated: false
+      argv_display:
+        - text: test
+          truncated: false
+        - text: ./...
+          truncated: false
+        - text: -count=1
+          truncated: false
+      argv_truncated: false
+      cwd_ref: combined_refactor
+      status: passed
+      exit_code: 0
+      duration_ms: 2212
+    - id: go-build
+      name:
+        text: Go 全量构建
+        truncated: false
+      argv_display:
+        - text: build
+          truncated: false
+        - text: ./...
+          truncated: false
+      argv_truncated: false
+      cwd_ref: combined_refactor
+      status: passed
+      exit_code: 0
+      duration_ms: 215
+  summary:
+    text: 独立复核 A1–A11 全部通过。本轮库选择模式零结果提示已核实：server.go 在 fromLibrary 时把标志传入
+      tasks_official.go，库模式发送“数据中心库中 <DC> 的 IP
+      均不可用，请更新数据中心库后重试。”且手动/全量路径保持原提示，TestOfficialScanZeroMatchesFromLibraryHintsUpdate
+      通过。Runtime 的 go-test/go-build 对应当前候选并通过，关键单测与全量 go test 独立复跑通过；A6/A9
+      容器级持久化与真实零结果场景未重测，已作为残余风险列出。
+    truncated: false
+  risks:
+    - text: A6/A9 的容器重建持久化未在本轮重新实测；依据 /data WORKDIR、entrypoint cd /data、compose
+        挂载、启动加载与上一轮重启/库文件哈希实测及本轮未改相关代码判断通过。
+      truncated: false
+    - text: A7 的城市/国家标签依赖 locations.json；缺失时只显示 colo 与数量，且当前 locations.json
+        无中文国家名，国家列展示 cca2 代码（如 HK）。
+      truncated: false
+    - text: A11 仍存在配置还原歧义：localStorage/配置文件保存的 targetDC 在加载配置或跟随后台任务时经
+        applyOfficialTargetDCSelection 还原，若该 colo 已在库中会被静默切为库模式，候选来源由全量池变为库内
+        IP；当场手动选择仍走全量池。
+      truncated: false
+    - text: 库模式零结果的新提示仅由单测覆盖，未在真实网络下构造“库内 IP 全部失效”的浏览器复现。
+      truncated: false
+    - text: A1 注入依赖 index.html 中版本行占位字符串完全一致，后续改动该 HTML 结构会使注入静默失效并回退 dev。
+      truncated: false
+    - text: 测速源默认值缓存固定在进程启动时（D3/D4 设计），运行期 ISP/网络变化不再逐连接重新探测，页面默认值可能与当前网络条件不完全一致。
+      truncated: false
+  risks_truncated: false
+  completed_at: 2026-10-29T03:36:02.476Z
+history:
+  - goal_cycle: 1
+    iteration: 0
+    attempt: 0
+    outcome: recovery
+    unresolved_ids: []
+    summary:
+      text: Native target specification declarations changed
+      truncated: false
+    completed_at: 2026-10-29T02:42:37.482Z
+  - goal_cycle: 2
+    iteration: 0
+    attempt: 0
+    outcome: recovery
+    unresolved_ids: []
+    summary:
+      text: Native confirmed acceptance criteria changed; restore the approved
+        documents, or reconcile any running Builder with its original Action and
+        claim before using the latest continuation to revise-requirements on
+        this change and confirm the current Shape. A legacy flattened acceptance
+        snapshot cannot safely establish Markdown boundaries after an edit.
+      truncated: false
+    completed_at: 2026-10-29T02:42:56.712Z
+  - goal_cycle: 3
+    iteration: 1
+    attempt: 1
+    outcome: pass
+    unresolved_ids: []
+    summary:
+      text: 独立复核 A1–A11 全部通过。独立执行 go build ./... 与 go test ./... 通过；对 127.0.0.1:18080
+        测试实例做只读 WebSocket/HTTP 探测：首屏版本已服务端注入且 no-cache，init_config 1ms
+        到达并携带版本/测速源缓存/库摘要，代理检测对 HK 返回警告；按库 HKG 扫描使用 60 个库 IP、结果仅 HKG 并按既有语义早停；手动
+        DC 路径使用 200
+        条全量候选；库扫描可观测进度、可停止，取消后库文件哈希不变，扫描期间启动官方任务被拒绝，普通扫描不修改库。未重跑完整成功库扫描与容器重建，已按真实库文件、重启加载、单测与部署路径核验，并在风险中列出。
+      truncated: false
+    completed_at: 2026-10-29T03:12:12.513Z
+  - goal_cycle: 3
+    iteration: 1
+    attempt: 1
+    outcome: recovery
+    unresolved_ids: []
+    summary:
+      text: 修复库中数据中心扫描空结果提示：库选择模式提示更新数据中心库，手动输入模式保持原提示；补充测试后重新提交验收。
+      truncated: false
+    completed_at: 2026-10-29T03:26:24.680Z
+  - goal_cycle: 3
+    iteration: 2
+    attempt: 1
+    outcome: pass
+    unresolved_ids: []
+    summary:
+      text: 独立复核 A1–A11 全部通过。本轮库选择模式零结果提示已核实：server.go 在 fromLibrary 时把标志传入
+        tasks_official.go，库模式发送“数据中心库中 <DC> 的 IP
+        均不可用，请更新数据中心库后重试。”且手动/全量路径保持原提示，TestOfficialScanZeroMatchesFromLibraryHintsUpdate
+        通过。Runtime 的 go-test/go-build 对应当前候选并通过，关键单测与全量 go test 独立复跑通过；A6/A9
+        容器级持久化与真实零结果场景未重测，已作为残余风险列出。
+      truncated: false
+    completed_at: 2026-10-29T03:36:02.476Z
+history_overflow:
+  dropped_entries: 0
+  first_dropped_at: null
+  last_dropped_at: null
+  outcome_counts:
+    pass: 0
+    fail: 0
+    blocked: 0
+    execution-error: 0
+    recovery: 0
+verification_result: pass
+verification_report: verification.md
+archived: true
+created_at: 2026-10-29T02:31:30.276Z

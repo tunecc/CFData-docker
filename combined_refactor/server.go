@@ -23,6 +23,24 @@ const (
 	wsReadDeadline  = 90 * time.Second
 )
 
+func buildInitConfigPayload() map[string]interface{} {
+	return map[string]interface{}{
+		"speedTestURL":     speedTestURL,
+		"speedTestDefault": startupSpeedDefault(),
+		"speedTestWorkers": speedTestWorkers,
+		"debug":            debugMode,
+		"version":          appVersionLabel(),
+		"releaseURL":       releaseLatestURL,
+		"cfCountry":        "",
+		"proxyWarning":     false,
+		"geoCheckOK":       false,
+		"skipGeoCheck":     skipGeoCheck,
+		"speedURLStatus":   speedURLStatusPayload(),
+		"proxyStatus":      map[string]interface{}{"configured": managementProxyConfigured(), "source": proxySourceLabel()},
+		"dcLibraries":      dcLibrariesPayload(),
+	}
+}
+
 func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -68,34 +86,7 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 		}
 	})
 
-	cfCountry := ""
-	cfCountryOK := false
-	if !skipGeoCheck {
-		ctx, cancel := context.WithTimeout(r.Context(), 7*time.Second)
-		cfCountry, cfCountryOK = detectCloudflareTraceCountry(ctx)
-		cancel()
-	}
-	defaultSpeedURL, speedISP, speedISPErr := resolveStartupSpeedTestURL(r.Context(), speedTestURL)
-	if speedISPErr != nil {
-		recordDebugError("speed_isp_check", speedISPErr.Error())
-	}
-	if speedISPErr == nil {
-		recordDebugByLevel("all", "speed_isp_check", fmt.Sprintf("asn=%d org=%s mobile=%v selected=%s", speedISP.ASN, speedISP.ASOrganization, isChinaMobileISP(speedISP), currentAutoSpeedURLDefault()))
-	}
-	session.sendWSMessage("init_config", map[string]interface{}{
-		"speedTestURL":     speedTestURL,
-		"speedTestDefault": defaultSpeedURL,
-		"speedTestWorkers": speedTestWorkers,
-		"debug":            debugMode,
-		"version":          appVersionLabel(),
-		"releaseURL":       releaseLatestURL,
-		"cfCountry":        cfCountry,
-		"proxyWarning":     !skipGeoCheck && (!cfCountryOK || shouldWarnProxyCountry(cfCountry)),
-		"geoCheckOK":       cfCountryOK,
-		"skipGeoCheck":     skipGeoCheck,
-		"speedURLStatus":   speedURLStatusPayload(),
-		"proxyStatus":      map[string]interface{}{"configured": managementProxyConfigured(), "source": proxySourceLabel()},
-	})
+	session.sendWSMessage("init_config", buildInitConfigPayload())
 	if backgroundSession := currentBackgroundTaskSession(); backgroundSession != nil {
 		session.sendWSMessage("background_task_found", backgroundSession.backgroundSummary())
 	}
@@ -152,8 +143,23 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 			autoSpeed := params.AutoSpeed && params.OfficialSpeedLimit > 0
 			targetDC := normalizeOfficialTargetDC(params.OfficialTargetDC)
 			stopCount := resolveOfficialStopCount(params.OfficialStopCount)
-			session.startTaskNamed("官方优选扫描", "official", map[string]interface{}{"ipType": params.IPType, "threads": params.Threads, "port": params.Port, "delay": params.Delay, "scanMode": scanMode, "autoSpeed": autoSpeed, "targetDC": targetDC, "stopCount": stopCount}, func(ctx context.Context, session *appSession) {
-				runOfficialTask(ctx, session, params.IPType, params.Threads, params.Port, params.Delay, scanMode, targetDC, stopCount)
+			fromLibrary := params.OfficialDCFromLib
+			session.startTaskNamed("官方优选扫描", "official", map[string]interface{}{"ipType": params.IPType, "threads": params.Threads, "port": params.Port, "delay": params.Delay, "scanMode": scanMode, "autoSpeed": autoSpeed, "targetDC": targetDC, "stopCount": stopCount, "fromLibrary": fromLibrary}, func(ctx context.Context, session *appSession) {
+				if fromLibrary {
+					if targetDC == "" {
+						session.sendWSMessage("error", "请选择数据中心库中的数据中心")
+						return
+					}
+					libraryIPs := libraryIPsForDC(params.IPType, targetDC)
+					if len(libraryIPs) == 0 {
+						session.sendWSMessage("error", fmt.Sprintf("数据中心库中没有 %s 的可用 IP，请先更新数据中心库", targetDC))
+						return
+					}
+					session.sendWSMessage("log", fmt.Sprintf("使用数据中心库：%s 共 %d 个 IP", targetDC, len(libraryIPs)))
+					runOfficialTaskWithPool(ctx, session, libraryIPs, params.Threads, params.Port, params.Delay, scanMode, targetDC, stopCount, true)
+				} else {
+					runOfficialTask(ctx, session, params.IPType, params.Threads, params.Port, params.Delay, scanMode, targetDC, stopCount)
+				}
 				if ctx.Err() != nil || !autoSpeed || !session.isBackgroundTask() {
 					return
 				}
@@ -443,6 +449,33 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 		},
 		"get_speed_url_status": func(data json.RawMessage) {
 			session.sendWSMessage("speed_url_status", speedURLStatusPayload())
+		},
+		"get_dc_library_status": func(data json.RawMessage) {
+			session.sendWSMessage("dc_library_status", dcLibrariesPayload())
+		},
+		"start_dc_library_scan": func(data json.RawMessage) {
+			var params startDCLibraryScanRequest
+			if err := json.Unmarshal(data, &params); err != nil {
+				session.sendWSMessage("error", "start_dc_library_scan 参数解析失败")
+				return
+			}
+			params.IPType = normalizeDCLibraryIPType(params.IPType)
+			if params.Threads <= 0 {
+				params.Threads = 100
+			}
+			if params.Port <= 0 {
+				params.Port = 443
+			}
+			if params.Delay < 0 {
+				params.Delay = 0
+			}
+			scanMode := params.ScanMode
+			if scanMode == "" {
+				scanMode = scanModeTCPing
+			}
+			session.startTaskNamed("更新数据中心库", "dc_library", map[string]interface{}{"ipType": params.IPType, "threads": params.Threads, "port": params.Port, "delay": params.Delay, "scanMode": scanMode}, func(ctx context.Context, session *appSession) {
+				runDCLibraryScan(ctx, session, params.IPType, params.Threads, params.Port, params.Delay, scanMode)
+			})
 		},
 		"get_management_proxy": func(data json.RawMessage) {
 			session.sendWSMessage("proxy_status", map[string]interface{}{"configured": managementProxyConfigured(), "label": proxyStatusLabel(), "source": proxySourceLabel()})

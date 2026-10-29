@@ -15,11 +15,20 @@ type startTaskRequest struct {
 	ScanMode           string  `json:"scanMode"`
 	AutoSpeed          bool    `json:"autoSpeed"`
 	OfficialTargetDC   string  `json:"officialTargetDC"`
+	OfficialDCFromLib  bool    `json:"officialDcFromLibrary"`
 	OfficialStopCount  *int    `json:"officialStopCount"`
 	OfficialSpeedPort  int     `json:"officialSpeedPort"`
 	OfficialSpeedURL   string  `json:"officialSpeedURL"`
 	OfficialSpeedMin   float64 `json:"officialSpeedMin"`
 	OfficialSpeedLimit int     `json:"officialSpeedLimit"`
+}
+
+type startDCLibraryScanRequest struct {
+	IPType   int    `json:"ipType"`
+	Threads  int    `json:"threads"`
+	Port     int    `json:"port"`
+	Delay    int    `json:"delay"`
+	ScanMode string `json:"scanMode"`
 }
 
 type startTestRequest struct {

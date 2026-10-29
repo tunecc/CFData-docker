@@ -247,6 +247,11 @@ func main() {
 			recordDebugByLevel("all", "speed_isp_check", fmt.Sprintf("startup asn=%d org=%s mobile=%v selected=%s", speedISP.ASN, speedISP.ASOrganization, isChinaMobileISP(speedISP), currentAutoSpeedURLDefault()))
 		}
 	}
+	if isAutoSpeedURL(speedTestURL) {
+		setStartupSpeedDefault(autoSpeedURLValue)
+	} else {
+		setStartupSpeedDefault(strings.TrimSpace(speedTestURL))
+	}
 	if webSessionMinutes <= 0 {
 		webSessionMinutes = 720
 	}
@@ -262,6 +267,7 @@ func main() {
 		applyManagementProxyFromConfigFile(cfgPath)
 	}
 	initLocations()
+	loadDCLibraries()
 	if cliCfg.enabled {
 		if enterMenu {
 			runCLIMenu(cliCfg)
@@ -304,7 +310,7 @@ func main() {
 		}
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.Header().Set("Cache-Control", "no-cache")
-		_, _ = w.Write(data)
+		_, _ = w.Write(renderIndexHTML(data, appVersionLabel()))
 	}))
 	http.HandleFunc("/ws", requireAuth(handleWebSocket))
 

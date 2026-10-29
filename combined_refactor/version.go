@@ -1,6 +1,17 @@
 package main
 
-import "strings"
+import (
+	"bytes"
+	"html"
+	"strings"
+)
+
+const versionLinePlaceholder = `<div class="version-line" id="versionLine">dev</div>`
+
+func renderIndexHTML(page []byte, versionLabel string) []byte {
+	replacement := `<div class="version-line" id="versionLine">` + html.EscapeString(versionLabel) + `</div>`
+	return bytes.Replace(page, []byte(versionLinePlaceholder), []byte(replacement), 1)
+}
 
 const (
 	updateRepo       = "tunecc/CFData-docker"

@@ -33,6 +33,27 @@ var autoSpeedURLState = struct {
 	value string
 }{value: cloudflareSpeedURL}
 
+var startupSpeedDefaultState = struct {
+	sync.RWMutex
+	value string
+}{}
+
+func setStartupSpeedDefault(value string) {
+	startupSpeedDefaultState.Lock()
+	startupSpeedDefaultState.value = strings.TrimSpace(value)
+	startupSpeedDefaultState.Unlock()
+}
+
+func startupSpeedDefault() string {
+	startupSpeedDefaultState.RLock()
+	value := startupSpeedDefaultState.value
+	startupSpeedDefaultState.RUnlock()
+	if value != "" {
+		return value
+	}
+	return resolveSpeedTestURL(speedTestURL)
+}
+
 func resolveSpeedTestURL(rawURL string) string {
 	value := strings.TrimSpace(rawURL)
 	if value == "" {
