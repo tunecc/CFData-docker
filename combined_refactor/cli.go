@@ -63,6 +63,7 @@ type cliConfig struct {
 	r2WorkerURL     string
 	r2WorkerToken   string
 	r2Filename      string
+	r2AliasFormat   string
 	export          cliExportConfig
 }
 
@@ -154,6 +155,7 @@ type cliFileConfig struct {
 	R2WorkerURL     string  `json:"r2workerurl"`
 	R2WorkerToken   string  `json:"r2workertoken"`
 	R2Filename      string  `json:"r2filename"`
+	R2AliasFormat   string  `json:"r2aliasformat"`
 }
 
 type cliResultRow map[string]string
@@ -849,6 +851,7 @@ func buildCLIConfigHelp() []cliConfigHelp {
 		{Name: "r2workerurl", Description: "R2 Worker 基础地址，例如 https://r2.example.com；系统请求其 /storage 端点", Default: ""},
 		{Name: "r2workertoken", Description: "R2 Worker 访问令牌；仅通过查询参数发送，不写入日志", Default: ""},
 		{Name: "r2filename", Description: "上传到 R2 的文件名", Default: "cfdata-targets.txt"},
+		{Name: "r2aliasformat", Description: "上传内容节点别名模板；占位符 {dc} {city} {region} {dcCountry} {ip} {port} {ipport}，留空为默认「数据中心-城市」", Default: ""},
 	}
 }
 
@@ -895,6 +898,9 @@ func applyCLIFileConfigFields(cfg *cliConfig, fileCfg cliFileConfig, provided ma
 	}
 	if !provided["r2filename"] {
 		cfg.r2Filename = fileCfg.R2Filename
+	}
+	if !provided["r2aliasformat"] {
+		cfg.r2AliasFormat = fileCfg.R2AliasFormat
 	}
 	if !provided["progress"] {
 		cfg.showProgress = fileCfg.Progress
@@ -1843,7 +1849,7 @@ func writeCLIExportAndMaybeUpload(cfg *cliConfig, rows []cliResultRow, r2Rows []
 	}
 	// R2 内容按测速/延迟筛选规则单独计算，与导出文件的过滤条件解耦
 	if cfg.r2Enabled && len(r2Rows) > 0 {
-		if substoreContent := formatSubstoreResults(r2Rows); strings.TrimSpace(substoreContent) != "" {
+		if substoreContent := formatSubstoreResultsWithAlias(r2Rows, cfg.r2AliasFormat); strings.TrimSpace(substoreContent) != "" {
 			if err := uploadR2Content(cfg.r2WorkerURL, cfg.r2WorkerToken, cfg.r2Filename, substoreContent); err != nil {
 				fmt.Printf("[r2] 上传失败，保留 R2 上的旧内容: %v\n", err)
 			}
@@ -1929,6 +1935,10 @@ func formatCLIResults(rows []cliResultRow, cfg cliExportConfig) (string, error) 
 }
 
 func formatSubstoreResults(rows []cliResultRow) string {
+	return formatSubstoreResultsWithAlias(rows, "")
+}
+
+func formatSubstoreResultsWithAlias(rows []cliResultRow, aliasTemplate string) string {
 	var b strings.Builder
 	for _, row := range rows {
 		endpoint := substoreEndpoint(row)
@@ -1937,7 +1947,7 @@ func formatSubstoreResults(rows []cliResultRow) string {
 		}
 		b.WriteString(endpoint)
 		b.WriteString("#")
-		b.WriteString(substoreAlias(row))
+		b.WriteString(substoreAliasWithTemplate(row, aliasTemplate))
 		b.WriteString("\n")
 	}
 	return b.String()
@@ -2026,6 +2036,35 @@ func substoreAlias(row cliResultRow) string {
 		return ip
 	}
 	return sanitizeSubstoreAliasPart(row["ipport"])
+}
+
+// applyR2AliasTemplate 按模板生成节点别名：占位符替换为行字段净化值，
+// 未识别占位符按字面保留；模板为空返回空串，由调用方回落默认别名。
+func applyR2AliasTemplate(template string, row cliResultRow) string {
+	if template == "" {
+		return ""
+	}
+	replacer := strings.NewReplacer(
+		"{dc}", sanitizeSubstoreAliasPart(row["dc"]),
+		"{city}", sanitizeSubstoreAliasPart(row["city"]),
+		"{region}", sanitizeSubstoreAliasPart(row["region"]),
+		"{dcCountry}", sanitizeSubstoreAliasPart(row["dcCountry"]),
+		"{ip}", sanitizeSubstoreAliasPart(row["ip"]),
+		"{port}", sanitizeSubstoreAliasPart(row["port"]),
+		"{ipport}", sanitizeSubstoreAliasPart(row["ipport"]),
+	)
+	return strings.TrimSpace(replacer.Replace(template))
+}
+
+// substoreAliasWithTemplate 模板非空时按模板生成别名，替换结果为空或模板为空时回落默认别名。
+func substoreAliasWithTemplate(row cliResultRow, template string) string {
+	if template != "" {
+		// 模板字面量可能携带 #（手工编辑配置绕过校验），最终统一剥离保证别名不含分隔符
+		if alias := strings.ReplaceAll(applyR2AliasTemplate(template, row), "#", ""); alias != "" {
+			return alias
+		}
+	}
+	return substoreAlias(row)
 }
 
 func sanitizeSubstoreAliasPart(value string) string {

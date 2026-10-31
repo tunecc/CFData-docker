@@ -2023,12 +2023,18 @@
                         <label for="r2Filename">文件名</label>
                         <input id="r2Filename" type="text" placeholder="默认 cfdata-targets.txt">
                     </div>
+                    <div class="form-group">
+                        <label for="r2AliasFormat">别名模板</label>
+                        <input id="r2AliasFormat" type="text" maxlength="200" placeholder="留空使用默认「数据中心-城市」">
+                        <div class="automation-hint">上传内容中节点别名按模板生成，支持占位符 {dc} {city} {region} {dcCountry} {ip} {port} {ipport}，例如 {region}-{dc}。修改文件名后 R2 上会写入新文件，旧文件不会被自动删除。</div>
+                    </div>
                     <div class="automation-hint">
                         自动调度扫描按规则上传：开启测速只上传测速达标行，未开启测速只上传通过延迟筛选的结果行，与导出文件的筛选和行数设置无关。手动任务需在结果页「⬆ 自动上传」下拉框选择「R2 上传」，同样按该规则筛选；选择 GitHub 账户或关闭时不会上传 R2。
                     </div>
                 </div>
             </div>
             <button class="menu-btn automation-save-btn" onclick="saveScheduleConfig()">保存自动化设置</button>
+            <div class="automation-hint" id="r2UploadFeedback" style="display:none"></div>
         </div>
 
         <div class="progress-container" id="progressBox">
@@ -2893,9 +2899,25 @@
                 tokenInput.placeholder = payload.r2WorkerTokenSet ? '已保存，留空保持不变' : 'Worker token';
             }
             setValue('r2Filename', payload.r2Filename || '');
+            setValue('r2AliasFormat', payload.r2AliasFormat || '');
             r2AutoUploadReady = !!(payload.r2Enabled && payload.r2WorkerUrl && payload.r2WorkerTokenSet);
             syncAutoUploadSelection();
             renderScheduleStatus(payload);
+            renderR2UploadFeedback(payload);
+        }
+
+        function renderR2UploadFeedback(payload) {
+            const el = document.getElementById('r2UploadFeedback');
+            if (!el) return;
+            const workerUrl = (payload.r2WorkerUrl || '').trim();
+            if (!payload.saved || !payload.r2Enabled || !workerUrl) {
+                el.style.display = 'none';
+                return;
+            }
+            const filename = (payload.r2Filename || '').trim() || 'cfdata-targets.txt';
+            const url = workerUrl.replace(/\/+$/, '') + '/' + filename;
+            el.innerHTML = 'R2 生效地址：<strong>' + escapeHTML(url) + '</strong> —— 旧文件不会被自动删除，下游订阅地址需同步更换。';
+            el.style.display = '';
         }
 
         function formatScheduleTime(value) {
@@ -2937,6 +2959,7 @@
                 r2Enabled: checkedValue('r2Enabled'),
                 r2WorkerUrl: textValue('r2WorkerUrl').trim(),
                 r2Filename: textValue('r2Filename').trim(),
+                r2AliasFormat: textValue('r2AliasFormat').trim(),
             };
             // 留空表示不修改已保存的 token
             const token = textValue('r2WorkerToken').trim();

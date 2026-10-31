@@ -543,6 +543,7 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 				R2WorkerURL     *string `json:"r2WorkerUrl"`
 				R2WorkerToken   *string `json:"r2WorkerToken"`
 				R2Filename      *string `json:"r2Filename"`
+				R2AliasFormat   *string `json:"r2AliasFormat"`
 			}
 			if err := json.Unmarshal(data, &params); err != nil {
 				session.sendWSMessage("error", "set_schedule_config 参数解析失败")
@@ -556,6 +557,7 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 				R2WorkerURL:     params.R2WorkerURL,
 				R2WorkerToken:   params.R2WorkerToken,
 				R2Filename:      params.R2Filename,
+				R2AliasFormat:   params.R2AliasFormat,
 			}
 			if err := validateScheduleConfigUpdate(&update); err != nil {
 				session.sendWSMessage("error", err.Error())

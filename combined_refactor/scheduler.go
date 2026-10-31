@@ -11,6 +11,7 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
+	"unicode/utf8"
 
 	"github.com/robfig/cron/v3"
 )
@@ -180,6 +181,7 @@ type scheduleConfigUpdate struct {
 	R2WorkerURL     *string
 	R2WorkerToken   *string
 	R2Filename      *string
+	R2AliasFormat   *string
 }
 
 func saveScheduleConfigFields(path string, update scheduleConfigUpdate) error {
@@ -228,6 +230,9 @@ func saveScheduleConfigFields(path string, update scheduleConfigUpdate) error {
 	if update.R2Filename != nil {
 		set("r2filename", *update.R2Filename)
 	}
+	if update.R2AliasFormat != nil {
+		set("r2aliasformat", *update.R2AliasFormat)
+	}
 	encoded, err := json.MarshalIndent(root, "", "  ")
 	if err != nil {
 		return err
@@ -272,6 +277,16 @@ func validateScheduleConfigUpdate(update *scheduleConfigUpdate) error {
 		}
 		update.R2Filename = &name
 	}
+	if update.R2AliasFormat != nil {
+		alias := strings.TrimSpace(*update.R2AliasFormat)
+		if utf8.RuneCountInString(alias) > 200 {
+			return fmt.Errorf("R2 别名模板过长（最多 200 字符）")
+		}
+		if strings.Contains(alias, "#") {
+			return fmt.Errorf("R2 别名模板不能包含 # 字符")
+		}
+		update.R2AliasFormat = &alias
+	}
 	return nil
 }
 
@@ -292,6 +307,7 @@ func scheduleConfigPayload(configPath string) (map[string]interface{}, error) {
 		"r2WorkerToken":            "",
 		"r2WorkerTokenSet":         strings.TrimSpace(cfg.R2WorkerToken) != "",
 		"r2Filename":               cfg.R2Filename,
+		"r2AliasFormat":            cfg.R2AliasFormat,
 		"effectiveMode":            string(plan.Mode),
 		"effectiveIntervalMinutes": int(plan.Interval / time.Minute),
 		"warning":                  plan.Warning,

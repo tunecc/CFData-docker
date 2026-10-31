@@ -17,7 +17,12 @@ func triggerManualR2Upload(session *appSession, rows []cliResultRow) {
 	if session == nil || session.emit != nil || !session.r2AutoUpload || len(rows) == 0 {
 		return
 	}
-	content := formatSubstoreResults(rows)
+	// 别名模板取自当前配置；读取失败时按默认别名生成，后续上传阶段会记录读取错误并跳过
+	aliasTemplate := ""
+	if cfg, err := readScheduleConfigFile(manualR2ConfigPath()); err == nil {
+		aliasTemplate = cfg.R2AliasFormat
+	}
+	content := formatSubstoreResultsWithAlias(rows, aliasTemplate)
 	if strings.TrimSpace(content) == "" {
 		return
 	}
