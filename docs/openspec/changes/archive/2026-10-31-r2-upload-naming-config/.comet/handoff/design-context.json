@@ -1,0 +1,16 @@
+{
+  "change": "r2-upload-naming-config",
+  "phase": "design",
+  "mode": "compact",
+  "canonical_spec": "openspec",
+  "task_hash_policy": "task-content-v1",
+  "generated_by": "comet-handoff.sh",
+  "context_hash": "3c3147653da3ae5d424de149a117ab13d01e1c3d8dbb3e33a31279e925277dd4",
+  "files": [
+    { "path": "docs/openspec/changes/r2-upload-naming-config/proposal.md", "sha256": "bba95c1d756e7e0c616a84a52b20ec9675b81a423ac706b5d0a0a7f13d244077" },
+    { "path": "docs/openspec/changes/r2-upload-naming-config/design.md", "sha256": "fb30812f8de7be1654a3a4aed6f112be0fd634ce4fb7bb5538d9e8f4c79a86b2" },
+    { "path": "docs/openspec/changes/r2-upload-naming-config/tasks.md", "sha256": "5a826a671cf4aed13dc34406302d2b4f45d3e3d3a809bab4269556000e4e5736" },
+    { "path": "docs/openspec/changes/r2-upload-naming-config/.openspec.yaml", "sha256": "c6ab3a95d8d0fd469ca8750ef79234025bf4a8356d5d57856e97d7e47fc8b6c2" },
+    { "path": "docs/openspec/changes/r2-upload-naming-config/specs/r2-worker-upload/spec.md", "sha256": "a680425cca70360d572489a4d86eea6465e0e51884ca8e12dbd006fcf2e1068c" }
+  ]
+}

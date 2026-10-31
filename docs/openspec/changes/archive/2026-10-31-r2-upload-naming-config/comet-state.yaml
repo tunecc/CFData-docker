@@ -1,0 +1,2600 @@
+# comet-execution: managed-run
+change_id: 874b205f-6e51-4b51-9ff3-21da2b43984f
+workflow: full
+language: zh-CN
+phase: archive
+context_compression: off
+build_mode: autonomous
+build_pause: null
+subagent_dispatch: null
+tdd_mode: tdd
+review_mode: standard
+isolation: current
+verify_mode: null
+auto_transition: true
+base_ref: 161fa3a42723d2e34114d4aeb09817ed314e3217
+design_doc: docs/openspec/changes/archive/2026-10-31-r2-upload-naming-config/design.md
+plan: docs/superpowers/plans/2026-10-31-r2-upload-naming-config.md
+verify_result: pass
+verify_failures: 0
+verification_report: docs/superpowers/reports/2026-10-31-r2-upload-naming-config-verify.md
+branch_status: pending
+created_at: 2026-10-31
+verified_at: 2026-10-31
+archive_confirmation: confirmed
+archived: true
+bound_branch: main
+direct_override: false
+handoff_context: docs/openspec/changes/archive/2026-10-31-r2-upload-naming-config/.comet/handoff/design-context.json
+handoff_hash: 3c3147653da3ae5d424de149a117ab13d01e1c3d8dbb3e33a31279e925277dd4
+classic_profile: null
+classic_migration: null
+run_checkpoint:
+  schema: comet.workflow-run-checkpoint.v2
+  hash: 43bb121bddcf70c04d9bcb65df2c38297da0b8961f9c29461ff00f7f9e5d1120
+  run:
+    protocolVersion: 1
+    schemaVersion: 1
+    runId: r2-upload-naming-config
+    revision: 1
+    workflow:
+      id: comet-classic-full
+      version: "1"
+      hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+    definitionHashes:
+      '["comet-classic-full","1"]': ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+    initialStateHash: b70fe34e9dfce23de7be01d02b6cd91515b4453aaca9600d96280e5128122aae
+    input:
+      change: r2-upload-naming-config
+      changeDir: docs/openspec/changes/r2-upload-naming-config
+      workspaceBaseline:
+        ref: 80eafe83-99e9-4235-a5b0-e38df6ffae98
+    state:
+      archiveConfirmation: confirmed
+      archived: true
+      autoTransition: true
+      baseRef: 161fa3a42723d2e34114d4aeb09817ed314e3217
+      boundBranch: main
+      branchStatus: pending
+      buildMode: autonomous
+      buildPause: null
+      checkEpoch: 6
+      classicMigration: null
+      classicProfile: null
+      contextCompression: off
+      createdAt: 2026-10-31
+      designDoc: docs/openspec/changes/archive/2026-10-31-r2-upload-naming-config/design.md
+      directOverride: false
+      handoffContext: docs/openspec/changes/archive/2026-10-31-r2-upload-naming-config/.comet/handoff/design-context.json
+      handoffHash: 3c3147653da3ae5d424de149a117ab13d01e1c3d8dbb3e33a31279e925277dd4
+      isolation: current
+      language: zh-CN
+      phase: archive
+      plan: docs/superpowers/plans/2026-10-31-r2-upload-naming-config.md
+      reviewMode: standard
+      subagentDispatch: null
+      tddMode: tdd
+      verificationReport: docs/superpowers/reports/2026-10-31-r2-upload-naming-config-verify.md
+      verifiedAt: 2026-10-31
+      verifyFailures: 0
+      verifyMode: null
+      verifyResult: pass
+      workflow: full
+    status: running
+    sequence: 24
+    actions:
+      - attempt: 1
+        claim:
+          executorId: comet-classic-guard
+          token: portable-89596c3f77ced76591e3b0c1ef6fc9757674516570d737fee8068dbce81ac761
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: r2-upload-naming-config:1
+        input:
+          input:
+            change: r2-upload-naming-config
+            changeDir: docs/openspec/changes/r2-upload-naming-config
+            workspaceBaseline:
+              ref: 80eafe83-99e9-4235-a5b0-e38df6ffae98
+          outputs: {}
+        inputHash: ecbac5b0f6238e39207ae7c708366908e1af4139c1b640efe6d20b85040dbfa2
+        outcome:
+          actionId: r2-upload-naming-config:1
+          attempt: 1
+          claimToken: portable-89596c3f77ced76591e3b0c1ef6fc9757674516570d737fee8068dbce81ac761
+          inputHash: ecbac5b0f6238e39207ae7c708366908e1af4139c1b640efe6d20b85040dbfa2
+          outcomeId: e034ec1d-8147-450d-b65a-a18944d49cc2
+          output:
+            event: open-complete
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 9a6c9738160af268fffeb98b93b3cae29fef0f6e4338810b35c6bbea110f07a7
+            outcomeId: e034ec1d-8147-450d-b65a-a18944d49cc2
+        reconciliations: []
+        ref: comet-open
+        requiredCapabilities: []
+        retry: manual
+        runId: r2-upload-naming-config
+        status: succeeded
+        stepId: full.open
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-open-revalidate
+          token: portable-97921280cdd69526a3ff4a7e4323b15bf011561ff4dfdf874c91a8efc21f4dc9
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: r2-upload-naming-config:4
+        input:
+          input:
+            change: r2-upload-naming-config
+            changeDir: docs/openspec/changes/r2-upload-naming-config
+            workspaceBaseline:
+              ref: 80eafe83-99e9-4235-a5b0-e38df6ffae98
+          outputs: {}
+        inputHash: 503b8ca19a64fa2bec688afa2a169c965ea7feef81d5035fa471eca4c5025b05
+        outcome:
+          actionId: r2-upload-naming-config:4
+          attempt: 1
+          claimToken: portable-97921280cdd69526a3ff4a7e4323b15bf011561ff4dfdf874c91a8efc21f4dc9
+          inputHash: 503b8ca19a64fa2bec688afa2a169c965ea7feef81d5035fa471eca4c5025b05
+          outcomeId: r2-upload-naming-config:4:1:executor-result
+          output:
+            contentHash: 05b74d8e7ce890992128a4aa720d1e0a2786d4bcf3e535096514ad7a92e7cb27
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 96aa7cf8de7b430100fec57423707a9ecfe87a4b7061cd42dcbce14b91843d82
+            outcomeId: r2-upload-naming-config:4:1:executor-result
+        reconciliations: []
+        ref: classic-open-revalidate
+        requiredCapabilities: []
+        retry: manual
+        runId: r2-upload-naming-config
+        status: succeeded
+        stepId: full.open.revalidate
+        type: call_tool
+      - attempt: 1
+        claim:
+          executorId: comet-classic-state
+          token: portable-8ea0f1aea40c3504d1e2bf6b8f70839892a9a77946a582b49ea3acadc6e82ea9
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: r2-upload-naming-config:5
+        input:
+          input:
+            change: r2-upload-naming-config
+            changeDir: docs/openspec/changes/r2-upload-naming-config
+            workspaceBaseline:
+              ref: 80eafe83-99e9-4235-a5b0-e38df6ffae98
+          outputs: {}
+        inputHash: b41ba3e0af8d438dacdd2cccf79d877f74bed5a56a9e17a7aeb8e3c17f899135
+        outcome:
+          actionId: r2-upload-naming-config:5
+          attempt: 1
+          claimToken: portable-8ea0f1aea40c3504d1e2bf6b8f70839892a9a77946a582b49ea3acadc6e82ea9
+          inputHash: b41ba3e0af8d438dacdd2cccf79d877f74bed5a56a9e17a7aeb8e3c17f899135
+          outcomeId: 076f6a35-81e5-40a1-ab08-20d05cf00f53
+          output:
+            handoffContext: docs/openspec/changes/r2-upload-naming-config/.comet/handoff/design-context.json
+            handoffHash: 3c3147653da3ae5d424de149a117ab13d01e1c3d8dbb3e33a31279e925277dd4
+            proposal: |-
+              技术方案：cliFileConfig 新增 R2AliasFormat（JSON 键 r2aliasformat），空值回落现有「数据中心-城市」默认别名，旧配置零迁移。模板引擎用 strings.NewReplacer 简单替换 7 个占位符 {dc} {city} {region} {dcCountry} {ip} {port} {ipport}，未识别占位符按字面保留，不用 text/template（无注入面）。应用点：formatSubstoreResults 参数化别名生成，R2 调度路径（writeCLIExportAndMaybeUpload）与手动路径（uploadManualRowsToR2）传入模板，本地导出弹窗传空维持现行为。替换清洗后别名为空时回落默认 substoreAlias，不产出空别名行。界面：自动化配置区新增别名模板输入框（占位符 hint），保存 R2 配置后显示最终上传地址（worker-url/filename）与旧对象不删除提示。校验：validateScheduleConfigUpdate 长度≤200、拒绝 # 字符。
+              取舍与风险：R2 旧对象不自动删除（破坏性操作不做），UI 文案提示替代；region 等字段个别节点为空时空别名兜底回落；已核实官方与非标结果行均具备全部占位符字段。
+              测试策略：表驱动单元测试覆盖模板渲染各分支；扩展 r2_test.go/r2_manual_test.go 断言两条上传路径按模板命名；scheduler_test.go 覆盖保存/校验/回显往返；手动验收配置模板后上传检查内容。
+              Spec Patch：无，Open 阶段 delta spec 已完整覆盖。
+              用户决定：确认本设计（2026-10-31，AskUserQuestion「确认本设计」）。
+            requirementsEvidence:
+              contentHash: eec74a84459c30fdd288207ab66306cf938282866b7fb61e4d6ff3452e93130e
+              ref: docs/openspec/changes/r2-upload-naming-config
+            sourceEvidence:
+              contentHash: 4c54025c74897815882ef4123d1f32066f2e6f3fff3c89883b5cea4a65ca1780
+              ref: docs/openspec/changes/r2-upload-naming-config
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 1c5911bcdc87fcfb3cb7edf9ac190f9f3cc56258db1bfb4e7a528b65a433b984
+            outcomeId: 076f6a35-81e5-40a1-ab08-20d05cf00f53
+        reconciliations: []
+        ref: comet-design
+        requiredCapabilities: []
+        retry: manual
+        runId: r2-upload-naming-config
+        status: succeeded
+        stepId: full.design.handoff
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-state
+          token: portable-23d2f86e458ae607ed9c55f4e6e81982ee75584b2c76a93b13e31349493454ee
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: r2-upload-naming-config:7
+        input:
+          input:
+            change: r2-upload-naming-config
+            changeDir: docs/openspec/changes/r2-upload-naming-config
+            workspaceBaseline:
+              ref: 80eafe83-99e9-4235-a5b0-e38df6ffae98
+          outputs: {}
+        inputHash: ed94cfd0e1f6e5dc3024caf80ea2a1faaca18b9fb3d05b3f99b98ca549ad8c95
+        outcome:
+          actionId: r2-upload-naming-config:7
+          attempt: 1
+          claimToken: portable-23d2f86e458ae607ed9c55f4e6e81982ee75584b2c76a93b13e31349493454ee
+          inputHash: ed94cfd0e1f6e5dc3024caf80ea2a1faaca18b9fb3d05b3f99b98ca549ad8c95
+          outcomeId: d45e93bb-0bce-4b93-b3ab-a8904bff89e9
+          output:
+            designDoc: docs/openspec/changes/r2-upload-naming-config/design.md
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: aa8fe1fd2f85ac26e44088841fdab9eeb6c12d12fb80ae83a6f511a024d6dd4e
+            outcomeId: d45e93bb-0bce-4b93-b3ab-a8904bff89e9
+        reconciliations: []
+        ref: comet-design
+        requiredCapabilities: []
+        retry: manual
+        runId: r2-upload-naming-config
+        status: succeeded
+        stepId: full.design.document
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-state
+          token: portable-60fd23334bb911d1081fd4cb6869bd2445c47ab552ad65862aa5d856a56b6e60
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: r2-upload-naming-config:9
+        input:
+          input:
+            change: r2-upload-naming-config
+            changeDir: docs/openspec/changes/r2-upload-naming-config
+            workspaceBaseline:
+              ref: 80eafe83-99e9-4235-a5b0-e38df6ffae98
+          outputs: {}
+        inputHash: 2dc60c538dfcc97fe63116ad6e860a4c5ab969b7f22e154f021e01509db09a54
+        outcome:
+          actionId: r2-upload-naming-config:9
+          attempt: 1
+          claimToken: portable-60fd23334bb911d1081fd4cb6869bd2445c47ab552ad65862aa5d856a56b6e60
+          inputHash: 2dc60c538dfcc97fe63116ad6e860a4c5ab969b7f22e154f021e01509db09a54
+          outcomeId: a0404d51-1f43-42d6-9445-20928514c6b5
+          output:
+            boundBranch: main
+            buildMode: autonomous
+            directOverride: false
+            isolation: current
+            reviewMode: standard
+            subagentDispatch: null
+            tddMode: tdd
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 68a6374388e31c4443569955e1f9aa1cd84b39b3d38a5dfef41a5352b0900434
+            outcomeId: a0404d51-1f43-42d6-9445-20928514c6b5
+        reconciliations: []
+        ref: comet-build
+        requiredCapabilities: []
+        retry: manual
+        runId: r2-upload-naming-config
+        status: succeeded
+        stepId: full.build.configure
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-state
+          token: portable-c9bf761683ec4fccb7cc144d40b3208fa0f9b2edbff82835a641eb0bc7c9954b
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: r2-upload-naming-config:11
+        input:
+          input:
+            change: r2-upload-naming-config
+            changeDir: docs/openspec/changes/r2-upload-naming-config
+            workspaceBaseline:
+              ref: 80eafe83-99e9-4235-a5b0-e38df6ffae98
+          outputs: {}
+        inputHash: ba93aca1abb53832ef5e3fe28435be5d555eff268f35091966789d20be29d5a7
+        outcome:
+          actionId: r2-upload-naming-config:11
+          attempt: 1
+          claimToken: portable-c9bf761683ec4fccb7cc144d40b3208fa0f9b2edbff82835a641eb0bc7c9954b
+          inputHash: ba93aca1abb53832ef5e3fe28435be5d555eff268f35091966789d20be29d5a7
+          outcomeId: e27c1646-c43b-4023-b316-bbcf7a95a94f
+          output:
+            designEvidence:
+              contentHash: fb30812f8de7be1654a3a4aed6f112be0fd634ce4fb7bb5538d9e8f4c79a86b2
+              ref: docs/openspec/changes/r2-upload-naming-config/design.md
+            plan: docs/superpowers/plans/2026-10-31-r2-upload-naming-config.md
+            planEvidence:
+              contentHash: eb1be2b589a164b340cda377446d5ab51738115cda3d8c314c83015c6ff3c90a
+              ref: docs/superpowers/plans/2026-10-31-r2-upload-naming-config.md
+            taskRevision: 5a826a671cf4aed13dc34406302d2b4f45d3e3d3a809bab4269556000e4e5736
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 7aacc8e5e4b8811654522567087854b2b7431bf5ab53a26b91dd2d953910f45e
+            outcomeId: e27c1646-c43b-4023-b316-bbcf7a95a94f
+        reconciliations: []
+        ref: comet-build
+        requiredCapabilities: []
+        retry: manual
+        runId: r2-upload-naming-config
+        status: succeeded
+        stepId: full.build.plan
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-state
+          sessionId: classic-builder/r2-upload-naming-config:13/1
+          token: portable-3f10985b8c57f2095bba468fc4f4de07cac3f78bc94ed380106b26ae7089e04e
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: r2-upload-naming-config:13
+        input:
+          input:
+            change: r2-upload-naming-config
+            changeDir: docs/openspec/changes/r2-upload-naming-config
+            workspaceBaseline:
+              ref: 80eafe83-99e9-4235-a5b0-e38df6ffae98
+          outputs: {}
+        inputHash: 1b00bad696304b1f11060963c22214830cb23f609c009d8c6d9457eae3d15c84
+        outcome:
+          actionId: r2-upload-naming-config:13
+          attempt: 1
+          claimToken: portable-3f10985b8c57f2095bba468fc4f4de07cac3f78bc94ed380106b26ae7089e04e
+          inputHash: 1b00bad696304b1f11060963c22214830cb23f609c009d8c6d9457eae3d15c84
+          outcomeId: 2f39fc67-be30-4881-bd58-3a7e9f247f8c
+          output:
+            event: build-complete
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: b244dd37e55acb39a6581ab0e17fa1334a1b32cc5a83896e34d5ec3429a1b84a
+            outcomeId: 2f39fc67-be30-4881-bd58-3a7e9f247f8c
+        reconciliations: []
+        ref: comet-build
+        requiredCapabilities: []
+        retry: manual
+        runId: r2-upload-naming-config
+        status: succeeded
+        stepId: full.build.execute
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-check
+          token: portable-892cbc380345cf99e805177e29e376dd5668d17934cadb9453ba9efa3a55ac6f
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: r2-upload-naming-config:14
+        input:
+          input:
+            change: r2-upload-naming-config
+            changeDir: docs/openspec/changes/r2-upload-naming-config
+            workspaceBaseline:
+              ref: 80eafe83-99e9-4235-a5b0-e38df6ffae98
+          outputs: {}
+        inputHash: 90af6a4d4ee67af0fdbbf1b5ba646402485a2757a0e03ee0b352bcbe86304952
+        outcome:
+          actionId: r2-upload-naming-config:14
+          attempt: 1
+          claimToken: portable-892cbc380345cf99e805177e29e376dd5668d17934cadb9453ba9efa3a55ac6f
+          inputHash: 90af6a4d4ee67af0fdbbf1b5ba646402485a2757a0e03ee0b352bcbe86304952
+          outcomeId: 61705726-f1a5-49fc-8f5f-f744ed2996aa
+          output:
+            argv:
+              - go
+              - test
+              - ./...
+            changedDuringExecution: []
+            checkEpoch: 2
+            contentHash: fcbf918030ff00d2f9301604a78125d80b09e340cde93769aa70b295cf179b30
+            cwd: .
+            environment: 6dc5dfd7e646c52e43577f2e62d9b681241c09d0c697abc2e01ee79f7760e8fb
+            exitCode: 0
+            inputAfter: 4743d2fd92d8a92a65b97f151e64da4989e7cfbe669349baf7d74440728a90d0
+            inputBefore: 4743d2fd92d8a92a65b97f151e64da4989e7cfbe669349baf7d74440728a90d0
+            manifestHash: b393e091009e55f4ed818ce260d40eccd74563d9be21f97806cbec7c525f21c3
+            manifestRef: .comet/runtime/classic-sdk-checks/79ff7111c43c275678d21f86863346f8fd9244797cbf49852372911f8e9643c8/1cf485fe-daed-41ca-ae6a-3f19b52210fc.manifest
+            receiptRef: .comet/runtime/classic-sdk-checks/79ff7111c43c275678d21f86863346f8fd9244797cbf49852372911f8e9643c8/00cc2a8a-5984-47ba-ae0e-afa1826c6622.log
+            reusable: false
+            reused: false
+            scope: build
+            tier: full
+            timeoutMs: 300000
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 4aab4f34e79f6b09665e42015ff082f35902b75dafaaae367b5b9e3350421f85
+            outcomeId: 61705726-f1a5-49fc-8f5f-f744ed2996aa
+        reconciliations: []
+        ref: classic-check
+        requiredCapabilities: []
+        retry: manual
+        runId: r2-upload-naming-config
+        status: succeeded
+        stepId: full.build.check
+        type: call_tool
+      - attempt: 1
+        claim:
+          executorId: comet-classic-guard
+          token: portable-b50b663a72856cafd68ef3f069c8c7fec35bfe48b9264953c6eb7083b8f6771d
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: r2-upload-naming-config:16
+        input:
+          input:
+            change: r2-upload-naming-config
+            changeDir: docs/openspec/changes/r2-upload-naming-config
+            workspaceBaseline:
+              ref: 80eafe83-99e9-4235-a5b0-e38df6ffae98
+          outputs: {}
+        inputHash: 145a7de905549620e6d6945b4d32b2e35fbec180773e94ed8992206905ff1f63
+        outcome:
+          actionId: r2-upload-naming-config:16
+          attempt: 1
+          claimToken: portable-b50b663a72856cafd68ef3f069c8c7fec35bfe48b9264953c6eb7083b8f6771d
+          inputHash: 145a7de905549620e6d6945b4d32b2e35fbec180773e94ed8992206905ff1f63
+          outcomeId: 84b8ea59-9bf2-44b5-8deb-208c40ac3811
+          output:
+            event: verification-ready
+            verificationReport: docs/superpowers/reports/2026-10-31-r2-upload-naming-config-verify.md
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 6c492b879d03714e798c5a80141ddd2449123713f14d288d8b6c2904bf08ddce
+            outcomeId: 84b8ea59-9bf2-44b5-8deb-208c40ac3811
+        reconciliations: []
+        ref: comet-verify
+        requiredCapabilities: []
+        retry: manual
+        runId: r2-upload-naming-config
+        status: succeeded
+        stepId: full.verify.run
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-check
+          token: portable-bae40e0438d9a8ebd989264c3d9aaa6fadd1108b9dc7f57e84c94485549a05a9
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: r2-upload-naming-config:18
+        input:
+          input:
+            change: r2-upload-naming-config
+            changeDir: docs/openspec/changes/r2-upload-naming-config
+            workspaceBaseline:
+              ref: 80eafe83-99e9-4235-a5b0-e38df6ffae98
+          outputs: {}
+        inputHash: 2919c0cd810091e4c60d0e4b5b52c214114bc75cace0f6c8c3310a7dac857699
+        outcome:
+          actionId: r2-upload-naming-config:18
+          attempt: 1
+          claimToken: portable-bae40e0438d9a8ebd989264c3d9aaa6fadd1108b9dc7f57e84c94485549a05a9
+          inputHash: 2919c0cd810091e4c60d0e4b5b52c214114bc75cace0f6c8c3310a7dac857699
+          outcomeId: ce2b8882-6236-4a62-93c7-09eb7578eb74
+          output:
+            argv:
+              - go
+              - -C
+              - combined_refactor
+              - test
+              - ./...
+            changedDuringExecution: []
+            checkEpoch: 3
+            contentHash: 0707c539ffc5b020dfdc76dcd850aa8a4a2558aaf32c955994952336376dbb9e
+            cwd: .
+            deliveryInputs: {}
+            environment: 5cdf03293e67f4806ee1616a2d82bf7ecc8874ca90a5c78ab5f0604146387b92
+            exitCode: 0
+            inputAfter: 4743d2fd92d8a92a65b97f151e64da4989e7cfbe669349baf7d74440728a90d0
+            inputBefore: 4743d2fd92d8a92a65b97f151e64da4989e7cfbe669349baf7d74440728a90d0
+            manifestHash: b393e091009e55f4ed818ce260d40eccd74563d9be21f97806cbec7c525f21c3
+            manifestRef: .comet/runtime/classic-sdk-checks/79ff7111c43c275678d21f86863346f8fd9244797cbf49852372911f8e9643c8/1d28cf37-0e89-4e78-9c0a-4db5b1176536.manifest
+            receiptRef: .comet/runtime/classic-sdk-checks/79ff7111c43c275678d21f86863346f8fd9244797cbf49852372911f8e9643c8/3dc14b98-9ede-4a6f-b12d-c1242e4864f6.log
+            reusable: false
+            reused: false
+            scope: verify
+            tier: full
+            timeoutMs: 300000
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 36ade027ca1724ab77480eb3d11eae413e2e6cf0c8589f3c2ba5acf0288dd5c2
+            outcomeId: ce2b8882-6236-4a62-93c7-09eb7578eb74
+        reconciliations: []
+        ref: classic-check
+        requiredCapabilities: []
+        retry: manual
+        runId: r2-upload-naming-config
+        status: succeeded
+        stepId: full.verify.check
+        type: call_tool
+      - attempt: 1
+        claim:
+          executorId: comet-classic-state
+          token: portable-1bad5cd0d4711ee488cb4e8678634c391de57565afd5046af427c4034292c4b5
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: r2-upload-naming-config:20
+        input:
+          input:
+            change: r2-upload-naming-config
+            changeDir: docs/openspec/changes/r2-upload-naming-config
+            workspaceBaseline:
+              ref: 80eafe83-99e9-4235-a5b0-e38df6ffae98
+          outputs: {}
+        inputHash: 08ccf29e11a607b16599ec9a97c452637120d3c894804fdeca14fc4f0a01ee5a
+        outcome:
+          actionId: r2-upload-naming-config:20
+          attempt: 1
+          claimToken: portable-1bad5cd0d4711ee488cb4e8678634c391de57565afd5046af427c4034292c4b5
+          inputHash: 08ccf29e11a607b16599ec9a97c452637120d3c894804fdeca14fc4f0a01ee5a
+          outcomeId: 5c93aedf-0287-4229-afe8-210e4fc44703
+          output:
+            remote: origin
+            summary: R2 上传别名模板配置：r2aliasformat 占位符模板、双上传路径生效、空别名兜底、Web
+              别名模板输入框与最终上传地址反馈。验证全通过（full 模式），最终集成审查 PASS，实现提交 09a43dc。
+            targetBranch: main
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 0a8dea8af9a36b48088f7dbe355e618af0ee02b4fa3ad8e9d939e2acaa577b65
+            outcomeId: 5c93aedf-0287-4229-afe8-210e4fc44703
+        reconciliations: []
+        ref: comet-archive
+        requiredCapabilities: []
+        retry: manual
+        runId: r2-upload-naming-config
+        status: succeeded
+        stepId: full.archive.prepare
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-archive-preflight
+          token: portable-40adbc7a84d2baac6d1aaddf1be266bcacf11536e5c561de92696ced32269e1c
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: r2-upload-naming-config:22
+        input:
+          input:
+            change: r2-upload-naming-config
+            changeDir: docs/openspec/changes/r2-upload-naming-config
+            workspaceBaseline:
+              ref: 80eafe83-99e9-4235-a5b0-e38df6ffae98
+          outputs: {}
+        inputHash: f4686a06972a8dfcd89d2c20d9210027e6add49aeca70eee3ba17451f5531436
+        outcome:
+          actionId: r2-upload-naming-config:22
+          attempt: 1
+          claimToken: portable-40adbc7a84d2baac6d1aaddf1be266bcacf11536e5c561de92696ced32269e1c
+          inputHash: f4686a06972a8dfcd89d2c20d9210027e6add49aeca70eee3ba17451f5531436
+          outcomeId: 8ad5d8eb-ee64-422d-bc11-147314c8591a
+          output:
+            baseCommit: 09a43dc905f8bcc33596540ae3b66dc82778153f
+            deliveryAction: push
+            remote: origin
+            remoteIdentity: f77fd8941c2db1c30d5e8e3438a94109c2534b02c7bc211de17168b469821b65
+            targetBranch: main
+            verifiedBranch: main
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 910b5f30e0f9fc4d4b47841ca69a200316a4cf851d093f1e93e41cfac295a6a6
+            outcomeId: 8ad5d8eb-ee64-422d-bc11-147314c8591a
+        reconciliations: []
+        ref: classic-archive-preflight
+        requiredCapabilities: []
+        retry: manual
+        runId: r2-upload-naming-config
+        status: succeeded
+        stepId: full.archive.preflight
+        type: call_tool
+      - attempt: 1
+        claim:
+          executorId: comet-classic-archive
+          token: portable-97735dab2ff86c883ffa6fb2d532fb2a96417150d58d4f13b0e903c919ec3c9a
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: r2-upload-naming-config:23
+        input:
+          input:
+            change: r2-upload-naming-config
+            changeDir: docs/openspec/changes/r2-upload-naming-config
+            workspaceBaseline:
+              ref: 80eafe83-99e9-4235-a5b0-e38df6ffae98
+          outputs: {}
+        inputHash: dca984de04c89b638ed9e65c5c887ad27d9c4ec7196ff9934f10bb33a0cfda52
+        outcome:
+          actionId: r2-upload-naming-config:23
+          artifacts:
+            - sha256: d1d8a8b1b58ab6f2fb563315dc81251675025b043249d3a362c98151ee539f26
+              uri: docs/openspec/changes/archive/2026-10-31-r2-upload-naming-config/.comet/archive-manifest.json
+          attempt: 1
+          claimToken: portable-97735dab2ff86c883ffa6fb2d532fb2a96417150d58d4f13b0e903c919ec3c9a
+          inputHash: dca984de04c89b638ed9e65c5c887ad27d9c4ec7196ff9934f10bb33a0cfda52
+          outcomeId: d1c7b81e-ea51-49ac-98f9-df0f57e6c32d
+          output:
+            archiveDirectory: docs/openspec/changes/archive/2026-10-31-r2-upload-naming-config
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 72de3f25b4cee990636db88b400a3d20daa277c64a220fd12e08bafc8ff95283
+            outcomeId: d1c7b81e-ea51-49ac-98f9-df0f57e6c32d
+        reconciliations: []
+        ref: classic-archive
+        requiredCapabilities: []
+        retry: manual
+        runId: r2-upload-naming-config
+        status: succeeded
+        stepId: full.archive.execute
+        type: call_tool
+      - attempt: 1
+        id: r2-upload-naming-config:24
+        input:
+          input:
+            change: r2-upload-naming-config
+            changeDir: docs/openspec/changes/r2-upload-naming-config
+            workspaceBaseline:
+              ref: 80eafe83-99e9-4235-a5b0-e38df6ffae98
+          outputs: {}
+        inputHash: 68c77fd2430186fa83edafb3138262ec22ddec8b8355cf74fe6d043e6cf4d006
+        protocolVersion: 1
+        receipts: []
+        reconciliations: []
+        ref: comet-archive
+        requiredCapabilities: []
+        retry: manual
+        runId: r2-upload-naming-config
+        status: pending
+        stepId: full.archive.deliver
+        type: invoke_skill
+    actionContexts:
+      r2-upload-naming-config:1:
+        results: {}
+        sequence: 1
+      r2-upload-naming-config:11:
+        results: {}
+        sequence: 11
+      r2-upload-naming-config:13:
+        results: {}
+        sequence: 13
+      r2-upload-naming-config:14:
+        results: {}
+        sequence: 14
+      r2-upload-naming-config:16:
+        results: {}
+        sequence: 16
+      r2-upload-naming-config:18:
+        results: {}
+        sequence: 18
+      r2-upload-naming-config:20:
+        results: {}
+        sequence: 20
+      r2-upload-naming-config:22:
+        results: {}
+        sequence: 22
+      r2-upload-naming-config:23:
+        results: {}
+        sequence: 23
+      r2-upload-naming-config:24:
+        results: {}
+        sequence: 24
+      r2-upload-naming-config:4:
+        results: {}
+        sequence: 4
+      r2-upload-naming-config:5:
+        results: {}
+        sequence: 5
+      r2-upload-naming-config:7:
+        results: {}
+        sequence: 7
+      r2-upload-naming-config:9:
+        results: {}
+        sequence: 9
+    waits:
+      - id: r2-upload-naming-config:3
+        stepId: full.open.confirm
+        sequence: 3
+        status: resolved
+        proposal:
+          input:
+            change: r2-upload-naming-config
+            changeDir: docs/openspec/changes/r2-upload-naming-config
+            workspaceBaseline:
+              ref: 80eafe83-99e9-4235-a5b0-e38df6ffae98
+          outputs:
+            full.open:
+              event: open-complete
+            full.open.evidence:
+              contentHash: 05b74d8e7ce890992128a4aa720d1e0a2786d4bcf3e535096514ad7a92e7cb27
+              ref: docs/openspec/changes/r2-upload-naming-config
+        proposalHash: d11528c1cf5326d6d3ad3ac2b97a8d3681fc91bc9c01c13b2b4f59bafa1e4892
+        choices:
+          - approved
+          - rejected
+        results: {}
+        decision:
+          id: classic-open-05b74d8e7ce890992128a4aa720d1e0a2786d4bcf3e535096514ad7a92e7cb27
+          choice: approved
+          proposalHash: d11528c1cf5326d6d3ad3ac2b97a8d3681fc91bc9c01c13b2b4f59bafa1e4892
+      - id: r2-upload-naming-config:6
+        stepId: full.design.confirm
+        sequence: 6
+        status: resolved
+        proposal:
+          input:
+            change: r2-upload-naming-config
+            changeDir: docs/openspec/changes/r2-upload-naming-config
+            workspaceBaseline:
+              ref: 80eafe83-99e9-4235-a5b0-e38df6ffae98
+          outputs:
+            full.design.handoff:
+              handoffContext: docs/openspec/changes/r2-upload-naming-config/.comet/handoff/design-context.json
+              handoffHash: 3c3147653da3ae5d424de149a117ab13d01e1c3d8dbb3e33a31279e925277dd4
+              proposal: |-
+                技术方案：cliFileConfig 新增 R2AliasFormat（JSON 键 r2aliasformat），空值回落现有「数据中心-城市」默认别名，旧配置零迁移。模板引擎用 strings.NewReplacer 简单替换 7 个占位符 {dc} {city} {region} {dcCountry} {ip} {port} {ipport}，未识别占位符按字面保留，不用 text/template（无注入面）。应用点：formatSubstoreResults 参数化别名生成，R2 调度路径（writeCLIExportAndMaybeUpload）与手动路径（uploadManualRowsToR2）传入模板，本地导出弹窗传空维持现行为。替换清洗后别名为空时回落默认 substoreAlias，不产出空别名行。界面：自动化配置区新增别名模板输入框（占位符 hint），保存 R2 配置后显示最终上传地址（worker-url/filename）与旧对象不删除提示。校验：validateScheduleConfigUpdate 长度≤200、拒绝 # 字符。
+                取舍与风险：R2 旧对象不自动删除（破坏性操作不做），UI 文案提示替代；region 等字段个别节点为空时空别名兜底回落；已核实官方与非标结果行均具备全部占位符字段。
+                测试策略：表驱动单元测试覆盖模板渲染各分支；扩展 r2_test.go/r2_manual_test.go 断言两条上传路径按模板命名；scheduler_test.go 覆盖保存/校验/回显往返；手动验收配置模板后上传检查内容。
+                Spec Patch：无，Open 阶段 delta spec 已完整覆盖。
+                用户决定：确认本设计（2026-10-31，AskUserQuestion「确认本设计」）。
+              requirementsEvidence:
+                contentHash: eec74a84459c30fdd288207ab66306cf938282866b7fb61e4d6ff3452e93130e
+                ref: docs/openspec/changes/r2-upload-naming-config
+              sourceEvidence:
+                contentHash: 4c54025c74897815882ef4123d1f32066f2e6f3fff3c89883b5cea4a65ca1780
+                ref: docs/openspec/changes/r2-upload-naming-config
+        proposalHash: 13c43afd7cb8d4c57f4096f2c757387ff931b3e8a78f562bf3da42d33093bc44
+        choices:
+          - approved
+          - rejected
+        results: {}
+        decision:
+          id: classic-design-13c43afd7cb8d4c57f4096f2c757387ff931b3e8a78f562bf3da42d33093bc44-approved
+          choice: approved
+          proposalHash: 13c43afd7cb8d4c57f4096f2c757387ff931b3e8a78f562bf3da42d33093bc44
+      - id: r2-upload-naming-config:10
+        stepId: full.build.confirm
+        sequence: 10
+        status: resolved
+        proposal:
+          input:
+            change: r2-upload-naming-config
+            changeDir: docs/openspec/changes/r2-upload-naming-config
+            workspaceBaseline:
+              ref: 80eafe83-99e9-4235-a5b0-e38df6ffae98
+          outputs:
+            full.build.configure:
+              boundBranch: main
+              buildMode: autonomous
+              directOverride: false
+              isolation: current
+              reviewMode: standard
+              subagentDispatch: null
+              tddMode: tdd
+        proposalHash: 72672da548d6b771d5972564bf632cbee5214a1cd9b02b4b29e1d72c1651c487
+        choices:
+          - approved
+          - rejected
+        results: {}
+        decision:
+          id: classic-build-72672da548d6b771d5972564bf632cbee5214a1cd9b02b4b29e1d72c1651c487-approved
+          choice: approved
+          proposalHash: 72672da548d6b771d5972564bf632cbee5214a1cd9b02b4b29e1d72c1651c487
+      - id: r2-upload-naming-config:21
+        stepId: full.archive.confirm
+        sequence: 21
+        status: resolved
+        proposal:
+          input:
+            change: r2-upload-naming-config
+            changeDir: docs/openspec/changes/r2-upload-naming-config
+            workspaceBaseline:
+              ref: 80eafe83-99e9-4235-a5b0-e38df6ffae98
+          outputs:
+            full.archive.prepare:
+              remote: origin
+              summary: R2 上传别名模板配置：r2aliasformat 占位符模板、双上传路径生效、空别名兜底、Web
+                别名模板输入框与最终上传地址反馈。验证全通过（full 模式），最终集成审查 PASS，实现提交 09a43dc。
+              targetBranch: main
+        proposalHash: eaa7506a495faeecfab7e21139227bb3da9235667e6d1b8dd0e88742641d7486
+        choices:
+          - local
+          - push
+          - pr
+          - reverify
+          - later
+        results: {}
+        decision:
+          id: classic-archive-eaa7506a495faeecfab7e21139227bb3da9235667e6d1b8dd0e88742641d7486-push
+          choice: push
+          proposalHash: eaa7506a495faeecfab7e21139227bb3da9235667e6d1b8dd0e88742641d7486
+    evidenceWaits:
+      - id: r2-upload-naming-config:2
+        stepId: full.open.evidence
+        sequence: 2
+        kind: classic-open-artifacts
+        status: resolved
+        results: {}
+        receipt:
+          ref: docs/openspec/changes/r2-upload-naming-config
+          contentHash: 05b74d8e7ce890992128a4aa720d1e0a2786d4bcf3e535096514ad7a92e7cb27
+          submissionId: 253fb81d-b537-4701-a652-353597876280
+      - id: r2-upload-naming-config:8
+        stepId: full.design.evidence
+        sequence: 8
+        kind: classic-design-document
+        status: resolved
+        results: {}
+        receipt:
+          ref: docs/openspec/changes/r2-upload-naming-config/design.md
+          contentHash: fb30812f8de7be1654a3a4aed6f112be0fd634ce4fb7bb5538d9e8f4c79a86b2
+          submissionId: e1a84e34-1b41-4c23-8f4d-748084023b98
+      - id: r2-upload-naming-config:12
+        stepId: full.build.plan.evidence
+        sequence: 12
+        kind: classic-build-plan
+        status: resolved
+        results: {}
+        receipt:
+          ref: docs/superpowers/plans/2026-10-31-r2-upload-naming-config.md
+          contentHash: eb1be2b589a164b340cda377446d5ab51738115cda3d8c314c83015c6ff3c90a
+          submissionId: 2014a753-e2b1-44f7-9f65-6246f16725df
+      - id: r2-upload-naming-config:15
+        stepId: full.build.check.evidence
+        sequence: 15
+        kind: classic-build-check
+        status: resolved
+        results: {}
+        receipt:
+          ref: .comet/runtime/classic-sdk-checks/79ff7111c43c275678d21f86863346f8fd9244797cbf49852372911f8e9643c8/00cc2a8a-5984-47ba-ae0e-afa1826c6622.log
+          contentHash: fcbf918030ff00d2f9301604a78125d80b09e340cde93769aa70b295cf179b30
+          submissionId: 37d545fb-3ed9-46ff-877a-70ff983f5374
+      - id: r2-upload-naming-config:17
+        stepId: full.verify.report.evidence
+        sequence: 17
+        kind: classic-verification-report
+        status: resolved
+        results: {}
+        receipt:
+          ref: docs/superpowers/reports/2026-10-31-r2-upload-naming-config-verify.md
+          contentHash: af8e400eb3d7a18aece09c8d308a43facf85ae3181f8ba323a0656ab0f932a4e
+          submissionId: a0613ced-1fe0-4ef0-b2ec-27247636cbd6
+      - id: r2-upload-naming-config:19
+        stepId: full.verify.check.evidence
+        sequence: 19
+        kind: classic-verify-check
+        status: resolved
+        results: {}
+        receipt:
+          ref: .comet/runtime/classic-sdk-checks/79ff7111c43c275678d21f86863346f8fd9244797cbf49852372911f8e9643c8/3dc14b98-9ede-4a6f-b12d-c1242e4864f6.log
+          contentHash: 0707c539ffc5b020dfdc76dcd850aa8a4a2558aaf32c955994952336376dbb9e
+          submissionId: 3cfd6303-09ea-422c-9e7b-7d3e4d8e2acc
+    ready: []
+    joins: {}
+    outputs: {}
+    children: []
+    lineage: []
+  sourceRevision: 37
+  sourceHash: aec4c4a9df1a60aad848e650bd44333112e8f0f318eed6238e3ae47400806260
+  pool:
+    version: 3
+    values:
+      - event: open-complete
+      - choice: approved
+        proposal:
+          input:
+            change: r2-upload-naming-config
+            changeDir: docs/openspec/changes/r2-upload-naming-config
+            workspaceBaseline:
+              ref: 80eafe83-99e9-4235-a5b0-e38df6ffae98
+          outputs:
+            full.open:
+              event: open-complete
+            full.open.evidence:
+              contentHash: 05b74d8e7ce890992128a4aa720d1e0a2786d4bcf3e535096514ad7a92e7cb27
+              ref: docs/openspec/changes/r2-upload-naming-config
+      - contentHash: 05b74d8e7ce890992128a4aa720d1e0a2786d4bcf3e535096514ad7a92e7cb27
+        ref: docs/openspec/changes/r2-upload-naming-config
+      - contentHash: 05b74d8e7ce890992128a4aa720d1e0a2786d4bcf3e535096514ad7a92e7cb27
+      - choice: approved
+        proposal:
+          input:
+            change: r2-upload-naming-config
+            changeDir: docs/openspec/changes/r2-upload-naming-config
+            workspaceBaseline:
+              ref: 80eafe83-99e9-4235-a5b0-e38df6ffae98
+          outputs:
+            full.design.handoff:
+              handoffContext: docs/openspec/changes/r2-upload-naming-config/.comet/handoff/design-context.json
+              handoffHash: 3c3147653da3ae5d424de149a117ab13d01e1c3d8dbb3e33a31279e925277dd4
+              proposal: |-
+                技术方案：cliFileConfig 新增 R2AliasFormat（JSON 键 r2aliasformat），空值回落现有「数据中心-城市」默认别名，旧配置零迁移。模板引擎用 strings.NewReplacer 简单替换 7 个占位符 {dc} {city} {region} {dcCountry} {ip} {port} {ipport}，未识别占位符按字面保留，不用 text/template（无注入面）。应用点：formatSubstoreResults 参数化别名生成，R2 调度路径（writeCLIExportAndMaybeUpload）与手动路径（uploadManualRowsToR2）传入模板，本地导出弹窗传空维持现行为。替换清洗后别名为空时回落默认 substoreAlias，不产出空别名行。界面：自动化配置区新增别名模板输入框（占位符 hint），保存 R2 配置后显示最终上传地址（worker-url/filename）与旧对象不删除提示。校验：validateScheduleConfigUpdate 长度≤200、拒绝 # 字符。
+                取舍与风险：R2 旧对象不自动删除（破坏性操作不做），UI 文案提示替代；region 等字段个别节点为空时空别名兜底回落；已核实官方与非标结果行均具备全部占位符字段。
+                测试策略：表驱动单元测试覆盖模板渲染各分支；扩展 r2_test.go/r2_manual_test.go 断言两条上传路径按模板命名；scheduler_test.go 覆盖保存/校验/回显往返；手动验收配置模板后上传检查内容。
+                Spec Patch：无，Open 阶段 delta spec 已完整覆盖。
+                用户决定：确认本设计（2026-10-31，AskUserQuestion「确认本设计」）。
+              requirementsEvidence:
+                contentHash: eec74a84459c30fdd288207ab66306cf938282866b7fb61e4d6ff3452e93130e
+                ref: docs/openspec/changes/r2-upload-naming-config
+              sourceEvidence:
+                contentHash: 4c54025c74897815882ef4123d1f32066f2e6f3fff3c89883b5cea4a65ca1780
+                ref: docs/openspec/changes/r2-upload-naming-config
+      - handoffContext: docs/openspec/changes/r2-upload-naming-config/.comet/handoff/design-context.json
+        handoffHash: 3c3147653da3ae5d424de149a117ab13d01e1c3d8dbb3e33a31279e925277dd4
+        proposal: |-
+          技术方案：cliFileConfig 新增 R2AliasFormat（JSON 键 r2aliasformat），空值回落现有「数据中心-城市」默认别名，旧配置零迁移。模板引擎用 strings.NewReplacer 简单替换 7 个占位符 {dc} {city} {region} {dcCountry} {ip} {port} {ipport}，未识别占位符按字面保留，不用 text/template（无注入面）。应用点：formatSubstoreResults 参数化别名生成，R2 调度路径（writeCLIExportAndMaybeUpload）与手动路径（uploadManualRowsToR2）传入模板，本地导出弹窗传空维持现行为。替换清洗后别名为空时回落默认 substoreAlias，不产出空别名行。界面：自动化配置区新增别名模板输入框（占位符 hint），保存 R2 配置后显示最终上传地址（worker-url/filename）与旧对象不删除提示。校验：validateScheduleConfigUpdate 长度≤200、拒绝 # 字符。
+          取舍与风险：R2 旧对象不自动删除（破坏性操作不做），UI 文案提示替代；region 等字段个别节点为空时空别名兜底回落；已核实官方与非标结果行均具备全部占位符字段。
+          测试策略：表驱动单元测试覆盖模板渲染各分支；扩展 r2_test.go/r2_manual_test.go 断言两条上传路径按模板命名；scheduler_test.go 覆盖保存/校验/回显往返；手动验收配置模板后上传检查内容。
+          Spec Patch：无，Open 阶段 delta spec 已完整覆盖。
+          用户决定：确认本设计（2026-10-31，AskUserQuestion「确认本设计」）。
+        requirementsEvidence:
+          contentHash: eec74a84459c30fdd288207ab66306cf938282866b7fb61e4d6ff3452e93130e
+          ref: docs/openspec/changes/r2-upload-naming-config
+        sourceEvidence:
+          contentHash: 4c54025c74897815882ef4123d1f32066f2e6f3fff3c89883b5cea4a65ca1780
+          ref: docs/openspec/changes/r2-upload-naming-config
+      - designDoc: docs/openspec/changes/r2-upload-naming-config/design.md
+      - contentHash: fb30812f8de7be1654a3a4aed6f112be0fd634ce4fb7bb5538d9e8f4c79a86b2
+        ref: docs/openspec/changes/r2-upload-naming-config/design.md
+      - boundBranch: main
+        buildMode: autonomous
+        directOverride: false
+        isolation: current
+        reviewMode: standard
+        subagentDispatch: null
+        tddMode: tdd
+      - choice: approved
+        proposal:
+          input:
+            change: r2-upload-naming-config
+            changeDir: docs/openspec/changes/r2-upload-naming-config
+            workspaceBaseline:
+              ref: 80eafe83-99e9-4235-a5b0-e38df6ffae98
+          outputs:
+            full.build.configure:
+              boundBranch: main
+              buildMode: autonomous
+              directOverride: false
+              isolation: current
+              reviewMode: standard
+              subagentDispatch: null
+              tddMode: tdd
+      - designEvidence:
+          contentHash: fb30812f8de7be1654a3a4aed6f112be0fd634ce4fb7bb5538d9e8f4c79a86b2
+          ref: docs/openspec/changes/r2-upload-naming-config/design.md
+        plan: docs/superpowers/plans/2026-10-31-r2-upload-naming-config.md
+        planEvidence:
+          contentHash: eb1be2b589a164b340cda377446d5ab51738115cda3d8c314c83015c6ff3c90a
+          ref: docs/superpowers/plans/2026-10-31-r2-upload-naming-config.md
+        taskRevision: 5a826a671cf4aed13dc34406302d2b4f45d3e3d3a809bab4269556000e4e5736
+      - contentHash: eb1be2b589a164b340cda377446d5ab51738115cda3d8c314c83015c6ff3c90a
+        ref: docs/superpowers/plans/2026-10-31-r2-upload-naming-config.md
+      - event: build-complete
+      - argv:
+          - go
+          - test
+          - ./...
+        changedDuringExecution: []
+        checkEpoch: 2
+        contentHash: fcbf918030ff00d2f9301604a78125d80b09e340cde93769aa70b295cf179b30
+        cwd: .
+        environment: 6dc5dfd7e646c52e43577f2e62d9b681241c09d0c697abc2e01ee79f7760e8fb
+        exitCode: 0
+        inputAfter: 4743d2fd92d8a92a65b97f151e64da4989e7cfbe669349baf7d74440728a90d0
+        inputBefore: 4743d2fd92d8a92a65b97f151e64da4989e7cfbe669349baf7d74440728a90d0
+        manifestHash: b393e091009e55f4ed818ce260d40eccd74563d9be21f97806cbec7c525f21c3
+        manifestRef: .comet/runtime/classic-sdk-checks/79ff7111c43c275678d21f86863346f8fd9244797cbf49852372911f8e9643c8/1cf485fe-daed-41ca-ae6a-3f19b52210fc.manifest
+        receiptRef: .comet/runtime/classic-sdk-checks/79ff7111c43c275678d21f86863346f8fd9244797cbf49852372911f8e9643c8/00cc2a8a-5984-47ba-ae0e-afa1826c6622.log
+        reusable: false
+        reused: false
+        scope: build
+        tier: full
+        timeoutMs: 300000
+      - contentHash: fcbf918030ff00d2f9301604a78125d80b09e340cde93769aa70b295cf179b30
+        ref: .comet/runtime/classic-sdk-checks/79ff7111c43c275678d21f86863346f8fd9244797cbf49852372911f8e9643c8/00cc2a8a-5984-47ba-ae0e-afa1826c6622.log
+      - contentHash: af8e400eb3d7a18aece09c8d308a43facf85ae3181f8ba323a0656ab0f932a4e
+        ref: docs/superpowers/reports/2026-10-31-r2-upload-naming-config-verify.md
+      - event: verification-ready
+        verificationReport: docs/superpowers/reports/2026-10-31-r2-upload-naming-config-verify.md
+      - argv:
+          - go
+          - -C
+          - combined_refactor
+          - test
+          - ./...
+        changedDuringExecution: []
+        checkEpoch: 3
+        contentHash: 0707c539ffc5b020dfdc76dcd850aa8a4a2558aaf32c955994952336376dbb9e
+        cwd: .
+        deliveryInputs: {}
+        environment: 5cdf03293e67f4806ee1616a2d82bf7ecc8874ca90a5c78ab5f0604146387b92
+        exitCode: 0
+        inputAfter: 4743d2fd92d8a92a65b97f151e64da4989e7cfbe669349baf7d74440728a90d0
+        inputBefore: 4743d2fd92d8a92a65b97f151e64da4989e7cfbe669349baf7d74440728a90d0
+        manifestHash: b393e091009e55f4ed818ce260d40eccd74563d9be21f97806cbec7c525f21c3
+        manifestRef: .comet/runtime/classic-sdk-checks/79ff7111c43c275678d21f86863346f8fd9244797cbf49852372911f8e9643c8/1d28cf37-0e89-4e78-9c0a-4db5b1176536.manifest
+        receiptRef: .comet/runtime/classic-sdk-checks/79ff7111c43c275678d21f86863346f8fd9244797cbf49852372911f8e9643c8/3dc14b98-9ede-4a6f-b12d-c1242e4864f6.log
+        reusable: false
+        reused: false
+        scope: verify
+        tier: full
+        timeoutMs: 300000
+      - contentHash: 0707c539ffc5b020dfdc76dcd850aa8a4a2558aaf32c955994952336376dbb9e
+        ref: .comet/runtime/classic-sdk-checks/79ff7111c43c275678d21f86863346f8fd9244797cbf49852372911f8e9643c8/3dc14b98-9ede-4a6f-b12d-c1242e4864f6.log
+      - choice: push
+        proposal:
+          input:
+            change: r2-upload-naming-config
+            changeDir: docs/openspec/changes/r2-upload-naming-config
+            workspaceBaseline:
+              ref: 80eafe83-99e9-4235-a5b0-e38df6ffae98
+          outputs:
+            full.archive.prepare:
+              remote: origin
+              summary: R2 上传别名模板配置：r2aliasformat 占位符模板、双上传路径生效、空别名兜底、Web
+                别名模板输入框与最终上传地址反馈。验证全通过（full 模式），最终集成审查 PASS，实现提交 09a43dc。
+              targetBranch: main
+      - remote: origin
+        summary: R2 上传别名模板配置：r2aliasformat 占位符模板、双上传路径生效、空别名兜底、Web
+          别名模板输入框与最终上传地址反馈。验证全通过（full 模式），最终集成审查 PASS，实现提交 09a43dc。
+        targetBranch: main
+      - baseCommit: 09a43dc905f8bcc33596540ae3b66dc82778153f
+        deliveryAction: push
+        remote: origin
+        remoteIdentity: f77fd8941c2db1c30d5e8e3438a94109c2534b02c7bc211de17168b469821b65
+        targetBranch: main
+        verifiedBranch: main
+      - archiveDirectory: docs/openspec/changes/archive/2026-10-31-r2-upload-naming-config
+      - sequence: 9
+        value:
+          boundBranch: main
+          buildMode: autonomous
+          directOverride: false
+          isolation: current
+          reviewMode: standard
+          subagentDispatch: null
+          tddMode: tdd
+      - sequence: 10
+        value:
+          choice: approved
+          proposal:
+            input:
+              change: r2-upload-naming-config
+              changeDir: docs/openspec/changes/r2-upload-naming-config
+              workspaceBaseline:
+                ref: 80eafe83-99e9-4235-a5b0-e38df6ffae98
+            outputs:
+              full.build.configure:
+                boundBranch: main
+                buildMode: autonomous
+                directOverride: false
+                isolation: current
+                reviewMode: standard
+                subagentDispatch: null
+                tddMode: tdd
+      - sequence: 6
+        value:
+          choice: approved
+          proposal:
+            input:
+              change: r2-upload-naming-config
+              changeDir: docs/openspec/changes/r2-upload-naming-config
+              workspaceBaseline:
+                ref: 80eafe83-99e9-4235-a5b0-e38df6ffae98
+            outputs:
+              full.design.handoff:
+                handoffContext: docs/openspec/changes/r2-upload-naming-config/.comet/handoff/design-context.json
+                handoffHash: 3c3147653da3ae5d424de149a117ab13d01e1c3d8dbb3e33a31279e925277dd4
+                proposal: |-
+                  技术方案：cliFileConfig 新增 R2AliasFormat（JSON 键 r2aliasformat），空值回落现有「数据中心-城市」默认别名，旧配置零迁移。模板引擎用 strings.NewReplacer 简单替换 7 个占位符 {dc} {city} {region} {dcCountry} {ip} {port} {ipport}，未识别占位符按字面保留，不用 text/template（无注入面）。应用点：formatSubstoreResults 参数化别名生成，R2 调度路径（writeCLIExportAndMaybeUpload）与手动路径（uploadManualRowsToR2）传入模板，本地导出弹窗传空维持现行为。替换清洗后别名为空时回落默认 substoreAlias，不产出空别名行。界面：自动化配置区新增别名模板输入框（占位符 hint），保存 R2 配置后显示最终上传地址（worker-url/filename）与旧对象不删除提示。校验：validateScheduleConfigUpdate 长度≤200、拒绝 # 字符。
+                  取舍与风险：R2 旧对象不自动删除（破坏性操作不做），UI 文案提示替代；region 等字段个别节点为空时空别名兜底回落；已核实官方与非标结果行均具备全部占位符字段。
+                  测试策略：表驱动单元测试覆盖模板渲染各分支；扩展 r2_test.go/r2_manual_test.go 断言两条上传路径按模板命名；scheduler_test.go 覆盖保存/校验/回显往返；手动验收配置模板后上传检查内容。
+                  Spec Patch：无，Open 阶段 delta spec 已完整覆盖。
+                  用户决定：确认本设计（2026-10-31，AskUserQuestion「确认本设计」）。
+                requirementsEvidence:
+                  contentHash: eec74a84459c30fdd288207ab66306cf938282866b7fb61e4d6ff3452e93130e
+                  ref: docs/openspec/changes/r2-upload-naming-config
+                sourceEvidence:
+                  contentHash: 4c54025c74897815882ef4123d1f32066f2e6f3fff3c89883b5cea4a65ca1780
+                  ref: docs/openspec/changes/r2-upload-naming-config
+      - sequence: 7
+        value:
+          designDoc: docs/openspec/changes/r2-upload-naming-config/design.md
+      - sequence: 8
+        value:
+          contentHash: fb30812f8de7be1654a3a4aed6f112be0fd634ce4fb7bb5538d9e8f4c79a86b2
+          ref: docs/openspec/changes/r2-upload-naming-config/design.md
+      - sequence: 5
+        value:
+          handoffContext: docs/openspec/changes/r2-upload-naming-config/.comet/handoff/design-context.json
+          handoffHash: 3c3147653da3ae5d424de149a117ab13d01e1c3d8dbb3e33a31279e925277dd4
+          proposal: |-
+            技术方案：cliFileConfig 新增 R2AliasFormat（JSON 键 r2aliasformat），空值回落现有「数据中心-城市」默认别名，旧配置零迁移。模板引擎用 strings.NewReplacer 简单替换 7 个占位符 {dc} {city} {region} {dcCountry} {ip} {port} {ipport}，未识别占位符按字面保留，不用 text/template（无注入面）。应用点：formatSubstoreResults 参数化别名生成，R2 调度路径（writeCLIExportAndMaybeUpload）与手动路径（uploadManualRowsToR2）传入模板，本地导出弹窗传空维持现行为。替换清洗后别名为空时回落默认 substoreAlias，不产出空别名行。界面：自动化配置区新增别名模板输入框（占位符 hint），保存 R2 配置后显示最终上传地址（worker-url/filename）与旧对象不删除提示。校验：validateScheduleConfigUpdate 长度≤200、拒绝 # 字符。
+            取舍与风险：R2 旧对象不自动删除（破坏性操作不做），UI 文案提示替代；region 等字段个别节点为空时空别名兜底回落；已核实官方与非标结果行均具备全部占位符字段。
+            测试策略：表驱动单元测试覆盖模板渲染各分支；扩展 r2_test.go/r2_manual_test.go 断言两条上传路径按模板命名；scheduler_test.go 覆盖保存/校验/回显往返；手动验收配置模板后上传检查内容。
+            Spec Patch：无，Open 阶段 delta spec 已完整覆盖。
+            用户决定：确认本设计（2026-10-31，AskUserQuestion「确认本设计」）。
+          requirementsEvidence:
+            contentHash: eec74a84459c30fdd288207ab66306cf938282866b7fb61e4d6ff3452e93130e
+            ref: docs/openspec/changes/r2-upload-naming-config
+          sourceEvidence:
+            contentHash: 4c54025c74897815882ef4123d1f32066f2e6f3fff3c89883b5cea4a65ca1780
+            ref: docs/openspec/changes/r2-upload-naming-config
+      - sequence: 1
+        value:
+          event: open-complete
+      - sequence: 3
+        value:
+          choice: approved
+          proposal:
+            input:
+              change: r2-upload-naming-config
+              changeDir: docs/openspec/changes/r2-upload-naming-config
+              workspaceBaseline:
+                ref: 80eafe83-99e9-4235-a5b0-e38df6ffae98
+            outputs:
+              full.open:
+                event: open-complete
+              full.open.evidence:
+                contentHash: 05b74d8e7ce890992128a4aa720d1e0a2786d4bcf3e535096514ad7a92e7cb27
+                ref: docs/openspec/changes/r2-upload-naming-config
+      - sequence: 2
+        value:
+          contentHash: 05b74d8e7ce890992128a4aa720d1e0a2786d4bcf3e535096514ad7a92e7cb27
+          ref: docs/openspec/changes/r2-upload-naming-config
+      - sequence: 4
+        value:
+          contentHash: 05b74d8e7ce890992128a4aa720d1e0a2786d4bcf3e535096514ad7a92e7cb27
+      - sequence: 11
+        value:
+          designEvidence:
+            contentHash: fb30812f8de7be1654a3a4aed6f112be0fd634ce4fb7bb5538d9e8f4c79a86b2
+            ref: docs/openspec/changes/r2-upload-naming-config/design.md
+          plan: docs/superpowers/plans/2026-10-31-r2-upload-naming-config.md
+          planEvidence:
+            contentHash: eb1be2b589a164b340cda377446d5ab51738115cda3d8c314c83015c6ff3c90a
+            ref: docs/superpowers/plans/2026-10-31-r2-upload-naming-config.md
+          taskRevision: 5a826a671cf4aed13dc34406302d2b4f45d3e3d3a809bab4269556000e4e5736
+      - sequence: 12
+        value:
+          contentHash: eb1be2b589a164b340cda377446d5ab51738115cda3d8c314c83015c6ff3c90a
+          ref: docs/superpowers/plans/2026-10-31-r2-upload-naming-config.md
+      - sequence: 13
+        value:
+          event: build-complete
+      - sequence: 14
+        value:
+          argv:
+            - go
+            - test
+            - ./...
+          changedDuringExecution: []
+          checkEpoch: 2
+          contentHash: fcbf918030ff00d2f9301604a78125d80b09e340cde93769aa70b295cf179b30
+          cwd: .
+          environment: 6dc5dfd7e646c52e43577f2e62d9b681241c09d0c697abc2e01ee79f7760e8fb
+          exitCode: 0
+          inputAfter: 4743d2fd92d8a92a65b97f151e64da4989e7cfbe669349baf7d74440728a90d0
+          inputBefore: 4743d2fd92d8a92a65b97f151e64da4989e7cfbe669349baf7d74440728a90d0
+          manifestHash: b393e091009e55f4ed818ce260d40eccd74563d9be21f97806cbec7c525f21c3
+          manifestRef: .comet/runtime/classic-sdk-checks/79ff7111c43c275678d21f86863346f8fd9244797cbf49852372911f8e9643c8/1cf485fe-daed-41ca-ae6a-3f19b52210fc.manifest
+          receiptRef: .comet/runtime/classic-sdk-checks/79ff7111c43c275678d21f86863346f8fd9244797cbf49852372911f8e9643c8/00cc2a8a-5984-47ba-ae0e-afa1826c6622.log
+          reusable: false
+          reused: false
+          scope: build
+          tier: full
+          timeoutMs: 300000
+      - sequence: 15
+        value:
+          contentHash: fcbf918030ff00d2f9301604a78125d80b09e340cde93769aa70b295cf179b30
+          ref: .comet/runtime/classic-sdk-checks/79ff7111c43c275678d21f86863346f8fd9244797cbf49852372911f8e9643c8/00cc2a8a-5984-47ba-ae0e-afa1826c6622.log
+      - sequence: 17
+        value:
+          contentHash: af8e400eb3d7a18aece09c8d308a43facf85ae3181f8ba323a0656ab0f932a4e
+          ref: docs/superpowers/reports/2026-10-31-r2-upload-naming-config-verify.md
+      - sequence: 16
+        value:
+          event: verification-ready
+          verificationReport: docs/superpowers/reports/2026-10-31-r2-upload-naming-config-verify.md
+      - sequence: 18
+        value:
+          argv:
+            - go
+            - -C
+            - combined_refactor
+            - test
+            - ./...
+          changedDuringExecution: []
+          checkEpoch: 3
+          contentHash: 0707c539ffc5b020dfdc76dcd850aa8a4a2558aaf32c955994952336376dbb9e
+          cwd: .
+          deliveryInputs: {}
+          environment: 5cdf03293e67f4806ee1616a2d82bf7ecc8874ca90a5c78ab5f0604146387b92
+          exitCode: 0
+          inputAfter: 4743d2fd92d8a92a65b97f151e64da4989e7cfbe669349baf7d74440728a90d0
+          inputBefore: 4743d2fd92d8a92a65b97f151e64da4989e7cfbe669349baf7d74440728a90d0
+          manifestHash: b393e091009e55f4ed818ce260d40eccd74563d9be21f97806cbec7c525f21c3
+          manifestRef: .comet/runtime/classic-sdk-checks/79ff7111c43c275678d21f86863346f8fd9244797cbf49852372911f8e9643c8/1d28cf37-0e89-4e78-9c0a-4db5b1176536.manifest
+          receiptRef: .comet/runtime/classic-sdk-checks/79ff7111c43c275678d21f86863346f8fd9244797cbf49852372911f8e9643c8/3dc14b98-9ede-4a6f-b12d-c1242e4864f6.log
+          reusable: false
+          reused: false
+          scope: verify
+          tier: full
+          timeoutMs: 300000
+      - sequence: 19
+        value:
+          contentHash: 0707c539ffc5b020dfdc76dcd850aa8a4a2558aaf32c955994952336376dbb9e
+          ref: .comet/runtime/classic-sdk-checks/79ff7111c43c275678d21f86863346f8fd9244797cbf49852372911f8e9643c8/3dc14b98-9ede-4a6f-b12d-c1242e4864f6.log
+      - sequence: 21
+        value:
+          choice: push
+          proposal:
+            input:
+              change: r2-upload-naming-config
+              changeDir: docs/openspec/changes/r2-upload-naming-config
+              workspaceBaseline:
+                ref: 80eafe83-99e9-4235-a5b0-e38df6ffae98
+            outputs:
+              full.archive.prepare:
+                remote: origin
+                summary: R2 上传别名模板配置：r2aliasformat 占位符模板、双上传路径生效、空别名兜底、Web
+                  别名模板输入框与最终上传地址反馈。验证全通过（full 模式），最终集成审查 PASS，实现提交 09a43dc。
+                targetBranch: main
+      - sequence: 20
+        value:
+          remote: origin
+          summary: R2 上传别名模板配置：r2aliasformat 占位符模板、双上传路径生效、空别名兜底、Web
+            别名模板输入框与最终上传地址反馈。验证全通过（full 模式），最终集成审查 PASS，实现提交 09a43dc。
+          targetBranch: main
+      - sequence: 22
+        value:
+          baseCommit: 09a43dc905f8bcc33596540ae3b66dc82778153f
+          deliveryAction: push
+          remote: origin
+          remoteIdentity: f77fd8941c2db1c30d5e8e3438a94109c2534b02c7bc211de17168b469821b65
+          targetBranch: main
+          verifiedBranch: main
+      - sequence: 23
+        value:
+          archiveDirectory: docs/openspec/changes/archive/2026-10-31-r2-upload-naming-config
+    nodes:
+      - key: full.open
+        value: 0
+        left: null
+        right: null
+        height: 1
+      - key: full.open.evidence
+        value: 2
+        left: null
+        right: null
+        height: 1
+      - key: full.open.confirm
+        value: 1
+        left: 0
+        right: 1
+        height: 2
+      - key: full.open.revalidate
+        value: 3
+        left: null
+        right: null
+        height: 1
+      - key: full.open.evidence
+        value: 2
+        left: null
+        right: 3
+        height: 2
+      - key: full.open.confirm
+        value: 1
+        left: 0
+        right: 4
+        height: 3
+      - key: full.design.confirm
+        value: 4
+        left: null
+        right: null
+        height: 1
+      - key: full.open
+        value: 0
+        left: null
+        right: null
+        height: 1
+      - key: full.design.handoff
+        value: 5
+        left: 6
+        right: 7
+        height: 2
+      - key: full.open.confirm
+        value: 1
+        left: 8
+        right: 4
+        height: 3
+      - key: full.design.confirm
+        value: 4
+        left: null
+        right: null
+        height: 1
+      - key: full.design.evidence
+        value: 7
+        left: null
+        right: null
+        height: 1
+      - key: full.design.document
+        value: 6
+        left: 10
+        right: 11
+        height: 2
+      - key: full.design.handoff
+        value: 5
+        left: 12
+        right: 7
+        height: 3
+      - key: full.open.confirm
+        value: 1
+        left: 13
+        right: 4
+        height: 4
+      - key: full.build.configure
+        value: 8
+        left: null
+        right: null
+        height: 1
+      - key: full.design.confirm
+        value: 4
+        left: null
+        right: null
+        height: 1
+      - key: full.build.confirm
+        value: 9
+        left: 15
+        right: 16
+        height: 2
+      - key: full.design.handoff
+        value: 5
+        left: 11
+        right: 7
+        height: 2
+      - key: full.design.document
+        value: 6
+        left: 17
+        right: 18
+        height: 3
+      - key: full.open.confirm
+        value: 1
+        left: 19
+        right: 4
+        height: 4
+      - key: full.build.plan
+        value: 10
+        left: null
+        right: null
+        height: 1
+      - key: full.design.confirm
+        value: 4
+        left: null
+        right: null
+        height: 1
+      - key: full.build.plan.evidence
+        value: 11
+        left: 21
+        right: 22
+        height: 2
+      - key: full.build.confirm
+        value: 9
+        left: 15
+        right: 23
+        height: 3
+      - key: full.open.confirm
+        value: 1
+        left: 18
+        right: 4
+        height: 3
+      - key: full.design.document
+        value: 6
+        left: 24
+        right: 25
+        height: 4
+      - key: full.build.execute
+        value: 12
+        left: null
+        right: null
+        height: 1
+      - key: full.build.confirm
+        value: 9
+        left: 15
+        right: 27
+        height: 2
+      - key: full.build.plan.evidence
+        value: 11
+        left: null
+        right: 22
+        height: 2
+      - key: full.build.plan
+        value: 10
+        left: 28
+        right: 29
+        height: 3
+      - key: full.design.document
+        value: 6
+        left: 30
+        right: 25
+        height: 4
+      - key: full.build.check
+        value: 13
+        left: null
+        right: null
+        height: 1
+      - key: full.build.configure
+        value: 8
+        left: null
+        right: null
+        height: 1
+      - key: full.build.check.evidence
+        value: 14
+        left: 32
+        right: 33
+        height: 2
+      - key: full.build.confirm
+        value: 9
+        left: 34
+        right: 27
+        height: 3
+      - key: full.build.plan
+        value: 10
+        left: 35
+        right: 29
+        height: 4
+      - key: full.design.document
+        value: 6
+        left: 36
+        right: 25
+        height: 5
+      - key: full.open.evidence
+        value: 2
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.run
+        value: 16
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.report.evidence
+        value: 15
+        left: null
+        right: 39
+        height: 2
+      - key: full.open.revalidate
+        value: 3
+        left: 38
+        right: 40
+        height: 3
+      - key: full.open.confirm
+        value: 1
+        left: 18
+        right: 41
+        height: 4
+      - key: full.design.document
+        value: 6
+        left: 36
+        right: 42
+        height: 5
+      - key: full.open.revalidate
+        value: 3
+        left: 38
+        right: null
+        height: 2
+      - key: full.verify.check.evidence
+        value: 18
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.report.evidence
+        value: 15
+        left: 45
+        right: 39
+        height: 2
+      - key: full.verify.check
+        value: 17
+        left: 44
+        right: 46
+        height: 3
+      - key: full.open.confirm
+        value: 1
+        left: 18
+        right: 47
+        height: 4
+      - key: full.design.document
+        value: 6
+        left: 36
+        right: 48
+        height: 5
+      - key: full.archive.confirm
+        value: 19
+        left: null
+        right: null
+        height: 1
+      - key: full.build.check
+        value: 13
+        left: null
+        right: null
+        height: 1
+      - key: full.archive.prepare
+        value: 20
+        left: 50
+        right: 51
+        height: 2
+      - key: full.build.confirm
+        value: 9
+        left: 33
+        right: 27
+        height: 2
+      - key: full.build.check.evidence
+        value: 14
+        left: 52
+        right: 53
+        height: 3
+      - key: full.build.plan
+        value: 10
+        left: 54
+        right: 29
+        height: 4
+      - key: full.design.document
+        value: 6
+        left: 55
+        right: 48
+        height: 5
+      - key: full.archive.preflight
+        value: 21
+        left: null
+        right: null
+        height: 1
+      - key: full.archive.confirm
+        value: 19
+        left: null
+        right: 57
+        height: 2
+      - key: full.archive.prepare
+        value: 20
+        left: 58
+        right: 51
+        height: 3
+      - key: full.build.plan
+        value: 10
+        left: 53
+        right: 29
+        height: 3
+      - key: full.build.check.evidence
+        value: 14
+        left: 59
+        right: 60
+        height: 4
+      - key: full.design.document
+        value: 6
+        left: 61
+        right: 48
+        height: 5
+      - key: full.archive.confirm
+        value: 19
+        left: null
+        right: null
+        height: 1
+      - key: full.archive.preflight
+        value: 21
+        left: null
+        right: null
+        height: 1
+      - key: full.archive.execute
+        value: 22
+        left: 63
+        right: 64
+        height: 2
+      - key: full.archive.prepare
+        value: 20
+        left: 65
+        right: 51
+        height: 3
+      - key: full.build.check.evidence
+        value: 14
+        left: 66
+        right: 60
+        height: 4
+      - key: full.design.document
+        value: 6
+        left: 67
+        right: 48
+        height: 5
+      - key: full.build.configure
+        value: 23
+        left: null
+        right: null
+        height: 1
+      - key: full.design.confirm
+        value: 25
+        left: null
+        right: null
+        height: 1
+      - key: full.build.confirm
+        value: 24
+        left: 69
+        right: 70
+        height: 2
+      - key: full.design.evidence
+        value: 27
+        left: null
+        right: null
+        height: 1
+      - key: full.open
+        value: 29
+        left: null
+        right: null
+        height: 1
+      - key: full.design.handoff
+        value: 28
+        left: 72
+        right: 73
+        height: 2
+      - key: full.open.revalidate
+        value: 32
+        left: null
+        right: null
+        height: 1
+      - key: full.open.evidence
+        value: 31
+        left: null
+        right: 75
+        height: 2
+      - key: full.open.confirm
+        value: 30
+        left: 74
+        right: 76
+        height: 3
+      - key: full.design.document
+        value: 26
+        left: 71
+        right: 77
+        height: 4
+      - key: full.build.plan
+        value: 33
+        left: null
+        right: null
+        height: 1
+      - key: full.design.confirm
+        value: 25
+        left: null
+        right: null
+        height: 1
+      - key: full.build.plan.evidence
+        value: 34
+        left: 79
+        right: 80
+        height: 2
+      - key: full.build.confirm
+        value: 24
+        left: 69
+        right: 81
+        height: 3
+      - key: full.design.document
+        value: 26
+        left: 82
+        right: 77
+        height: 4
+      - key: full.build.execute
+        value: 35
+        left: null
+        right: null
+        height: 1
+      - key: full.build.confirm
+        value: 24
+        left: 69
+        right: 84
+        height: 2
+      - key: full.build.plan.evidence
+        value: 34
+        left: null
+        right: 80
+        height: 2
+      - key: full.build.plan
+        value: 33
+        left: 85
+        right: 86
+        height: 3
+      - key: full.design.document
+        value: 26
+        left: 87
+        right: 77
+        height: 4
+      - key: full.build.check
+        value: 36
+        left: null
+        right: null
+        height: 1
+      - key: full.build.configure
+        value: 23
+        left: null
+        right: null
+        height: 1
+      - key: full.build.check.evidence
+        value: 37
+        left: 89
+        right: 90
+        height: 2
+      - key: full.build.confirm
+        value: 24
+        left: 91
+        right: 84
+        height: 3
+      - key: full.build.plan
+        value: 33
+        left: 92
+        right: 86
+        height: 4
+      - key: full.design.document
+        value: 26
+        left: 93
+        right: 77
+        height: 5
+      - key: full.open.evidence
+        value: 31
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.run
+        value: 39
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.report.evidence
+        value: 38
+        left: null
+        right: 96
+        height: 2
+      - key: full.open.revalidate
+        value: 32
+        left: 95
+        right: 97
+        height: 3
+      - key: full.open.confirm
+        value: 30
+        left: 74
+        right: 98
+        height: 4
+      - key: full.design.document
+        value: 26
+        left: 93
+        right: 99
+        height: 5
+      - key: full.open.revalidate
+        value: 32
+        left: 95
+        right: null
+        height: 2
+      - key: full.verify.check.evidence
+        value: 41
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.report.evidence
+        value: 38
+        left: 102
+        right: 96
+        height: 2
+      - key: full.verify.check
+        value: 40
+        left: 101
+        right: 103
+        height: 3
+      - key: full.open.confirm
+        value: 30
+        left: 74
+        right: 104
+        height: 4
+      - key: full.design.document
+        value: 26
+        left: 93
+        right: 105
+        height: 5
+      - key: full.archive.confirm
+        value: 42
+        left: null
+        right: null
+        height: 1
+      - key: full.build.check
+        value: 36
+        left: null
+        right: null
+        height: 1
+      - key: full.archive.prepare
+        value: 43
+        left: 107
+        right: 108
+        height: 2
+      - key: full.build.confirm
+        value: 24
+        left: 90
+        right: 84
+        height: 2
+      - key: full.build.check.evidence
+        value: 37
+        left: 109
+        right: 110
+        height: 3
+      - key: full.build.plan
+        value: 33
+        left: 111
+        right: 86
+        height: 4
+      - key: full.design.document
+        value: 26
+        left: 112
+        right: 105
+        height: 5
+      - key: full.archive.preflight
+        value: 44
+        left: null
+        right: null
+        height: 1
+      - key: full.archive.confirm
+        value: 42
+        left: null
+        right: 114
+        height: 2
+      - key: full.archive.prepare
+        value: 43
+        left: 115
+        right: 108
+        height: 3
+      - key: full.build.plan
+        value: 33
+        left: 110
+        right: 86
+        height: 3
+      - key: full.build.check.evidence
+        value: 37
+        left: 116
+        right: 117
+        height: 4
+      - key: full.design.document
+        value: 26
+        left: 118
+        right: 105
+        height: 5
+      - key: full.archive.confirm
+        value: 42
+        left: null
+        right: null
+        height: 1
+      - key: full.archive.preflight
+        value: 44
+        left: null
+        right: null
+        height: 1
+      - key: full.archive.execute
+        value: 45
+        left: 120
+        right: 121
+        height: 2
+      - key: full.archive.prepare
+        value: 43
+        left: 122
+        right: 108
+        height: 3
+      - key: full.build.check.evidence
+        value: 37
+        left: 123
+        right: 117
+        height: 4
+      - key: full.design.document
+        value: 26
+        left: 124
+        right: 105
+        height: 5
+      - key: full.open
+        value: 29
+        left: null
+        right: null
+        height: 1
+      - key: full.open.evidence
+        value: 31
+        left: null
+        right: null
+        height: 1
+      - key: full.open.confirm
+        value: 30
+        left: 126
+        right: 127
+        height: 2
+      - key: full.open.revalidate
+        value: 32
+        left: null
+        right: null
+        height: 1
+      - key: full.open.evidence
+        value: 31
+        left: null
+        right: 129
+        height: 2
+      - key: full.open.confirm
+        value: 30
+        left: 126
+        right: 130
+        height: 3
+      - key: full.design.confirm
+        value: 25
+        left: null
+        right: null
+        height: 1
+      - key: full.open
+        value: 29
+        left: null
+        right: null
+        height: 1
+      - key: full.design.handoff
+        value: 28
+        left: 132
+        right: 133
+        height: 2
+      - key: full.open.confirm
+        value: 30
+        left: 134
+        right: 130
+        height: 3
+      - key: full.design.confirm
+        value: 25
+        left: null
+        right: null
+        height: 1
+      - key: full.design.evidence
+        value: 27
+        left: null
+        right: null
+        height: 1
+      - key: full.design.document
+        value: 26
+        left: 136
+        right: 137
+        height: 2
+      - key: full.design.handoff
+        value: 28
+        left: 138
+        right: 133
+        height: 3
+      - key: full.open.confirm
+        value: 30
+        left: 139
+        right: 130
+        height: 4
+      - key: full.open.evidence
+        value: 31
+        left: null
+        right: null
+        height: 1
+      - key: full.open
+        value: 29
+        left: null
+        right: 141
+        height: 2
+      - key: full.design.handoff
+        value: 28
+        left: null
+        right: null
+        height: 1
+      - key: full.open.confirm
+        value: 30
+        left: null
+        right: null
+        height: 1
+      - key: full.open.revalidate
+        value: 32
+        left: null
+        right: null
+        height: 1
+      - key: full.open.evidence
+        value: 31
+        left: 144
+        right: 145
+        height: 2
+      - key: full.open
+        value: 29
+        left: 143
+        right: 146
+        height: 3
+      - key: full.build.configure
+        value: 23
+        left: null
+        right: null
+        height: 1
+      - key: full.design.document
+        value: 26
+        left: null
+        right: null
+        height: 1
+      - key: full.design.handoff
+        value: 28
+        left: null
+        right: null
+        height: 1
+      - key: full.design.evidence
+        value: 27
+        left: 149
+        right: 150
+        height: 2
+      - key: full.design.confirm
+        value: 25
+        left: 148
+        right: 151
+        height: 3
+      - key: full.open
+        value: 29
+        left: 152
+        right: 146
+        height: 4
+      - key: full.archive.prepare
+        value: 43
+        left: null
+        right: null
+        height: 1
+      - key: full.build.check.evidence
+        value: 37
+        left: null
+        right: null
+        height: 1
+      - key: full.build.check
+        value: 36
+        left: 154
+        right: 155
+        height: 2
+      - key: full.build.confirm
+        value: 24
+        left: null
+        right: null
+        height: 1
+      - key: full.build.plan.evidence
+        value: 34
+        left: null
+        right: null
+        height: 1
+      - key: full.build.plan
+        value: 33
+        left: null
+        right: 158
+        height: 2
+      - key: full.build.execute
+        value: 35
+        left: 157
+        right: 159
+        height: 3
+      - key: full.build.configure
+        value: 23
+        left: 156
+        right: 160
+        height: 4
+      - key: full.open.revalidate
+        value: 32
+        left: null
+        right: null
+        height: 1
+      - key: full.open.evidence
+        value: 31
+        left: 144
+        right: 162
+        height: 2
+      - key: full.verify.check.evidence
+        value: 41
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.run
+        value: 39
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.report.evidence
+        value: 38
+        left: 164
+        right: 165
+        height: 2
+      - key: full.verify.check
+        value: 40
+        left: 163
+        right: 166
+        height: 3
+      - key: full.open
+        value: 29
+        left: 151
+        right: 167
+        height: 4
+      - key: full.design.confirm
+        value: 25
+        left: 161
+        right: 168
+        height: 5
+      - key: full.open
+        value: 29
+        left: null
+        right: null
+        height: 1
+      - key: full.design.confirm
+        value: 25
+        left: null
+        right: null
+        height: 1
+      - key: full.design.handoff
+        value: 28
+        left: null
+        right: null
+        height: 1
+      - key: full.design.document
+        value: 26
+        left: 171
+        right: 172
+        height: 2
+      - key: full.open.confirm
+        value: 30
+        left: null
+        right: null
+        height: 1
+      - key: full.open.revalidate
+        value: 32
+        left: null
+        right: null
+        height: 1
+      - key: full.open.evidence
+        value: 31
+        left: 174
+        right: 175
+        height: 2
+      - key: full.open
+        value: 29
+        left: 173
+        right: 176
+        height: 3
+      - key: full.build.configure
+        value: 23
+        left: null
+        right: null
+        height: 1
+      - key: full.build.plan
+        value: 33
+        left: null
+        right: null
+        height: 1
+      - key: full.build.confirm
+        value: 24
+        left: 178
+        right: 179
+        height: 2
+      - key: full.design.document
+        value: 26
+        left: null
+        right: null
+        height: 1
+      - key: full.design.handoff
+        value: 28
+        left: null
+        right: null
+        height: 1
+      - key: full.design.evidence
+        value: 27
+        left: 181
+        right: 182
+        height: 2
+      - key: full.design.confirm
+        value: 25
+        left: 180
+        right: 183
+        height: 3
+      - key: full.open
+        value: 29
+        left: 184
+        right: 176
+        height: 4
+      - key: full.build.check
+        value: 36
+        left: null
+        right: null
+        height: 1
+      - key: full.build.configure
+        value: 23
+        left: 186
+        right: null
+        height: 2
+      - key: full.build.execute
+        value: 35
+        left: null
+        right: null
+        height: 1
+      - key: full.build.plan.evidence
+        value: 34
+        left: null
+        right: null
+        height: 1
+      - key: full.build.plan
+        value: 33
+        left: 188
+        right: 189
+        height: 2
+      - key: full.build.confirm
+        value: 24
+        left: 187
+        right: 190
+        height: 3
+      - key: full.open
+        value: 29
+        left: 183
+        right: 176
+        height: 3
+      - key: full.design.confirm
+        value: 25
+        left: 191
+        right: 192
+        height: 4
+      - key: full.build.check
+        value: 36
+        left: null
+        right: null
+        height: 1
+      - key: full.build.configure
+        value: 23
+        left: null
+        right: null
+        height: 1
+      - key: full.build.check.evidence
+        value: 37
+        left: 194
+        right: 195
+        height: 2
+      - key: full.build.confirm
+        value: 24
+        left: 196
+        right: 190
+        height: 3
+      - key: full.verify.run
+        value: 39
+        left: null
+        right: null
+        height: 1
+      - key: full.open.revalidate
+        value: 32
+        left: null
+        right: 198
+        height: 2
+      - key: full.open.evidence
+        value: 31
+        left: 174
+        right: 199
+        height: 3
+      - key: full.open
+        value: 29
+        left: 183
+        right: 200
+        height: 4
+      - key: full.design.confirm
+        value: 25
+        left: 197
+        right: 201
+        height: 5
+      - key: full.open.revalidate
+        value: 32
+        left: null
+        right: null
+        height: 1
+      - key: full.open.evidence
+        value: 31
+        left: 174
+        right: 203
+        height: 2
+      - key: full.verify.report.evidence
+        value: 38
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.run
+        value: 39
+        left: 205
+        right: null
+        height: 2
+      - key: full.verify.check
+        value: 40
+        left: 204
+        right: 206
+        height: 3
+      - key: full.open
+        value: 29
+        left: 183
+        right: 207
+        height: 4
+      - key: full.design.confirm
+        value: 25
+        left: 197
+        right: 208
+        height: 5
+    maps:
+      - null
+      - 2
+      - 5
+      - 9
+      - 14
+      - 20
+      - 26
+      - 31
+      - 37
+      - 43
+      - 49
+      - 56
+      - 62
+      - 68
+      - 78
+      - 83
+      - 88
+      - 94
+      - 100
+      - 106
+      - 113
+      - 119
+      - 125
+      - 128
+      - 131
+      - 135
+      - 140
+      - 142
+      - 147
+      - 153
+      - 169
+      - 170
+      - 177
+      - 185
+      - 193
+      - 202
+      - 209
+    bindings:
+      - path:
+          - actions
+          - "0"
+          - input
+          - outputs
+        map: 0
+      - path:
+          - actions
+          - "1"
+          - input
+          - outputs
+        map: 1
+      - path:
+          - actions
+          - "2"
+          - input
+          - outputs
+        map: 2
+      - path:
+          - actions
+          - "3"
+          - input
+          - outputs
+        map: 3
+      - path:
+          - actions
+          - "4"
+          - input
+          - outputs
+        map: 4
+      - path:
+          - actions
+          - "5"
+          - input
+          - outputs
+        map: 5
+      - path:
+          - actions
+          - "6"
+          - input
+          - outputs
+        map: 6
+      - path:
+          - actions
+          - "7"
+          - input
+          - outputs
+        map: 7
+      - path:
+          - actions
+          - "8"
+          - input
+          - outputs
+        map: 8
+      - path:
+          - actions
+          - "9"
+          - input
+          - outputs
+        map: 9
+      - path:
+          - actions
+          - "10"
+          - input
+          - outputs
+        map: 10
+      - path:
+          - actions
+          - "11"
+          - input
+          - outputs
+        map: 11
+      - path:
+          - actions
+          - "12"
+          - input
+          - outputs
+        map: 12
+      - path:
+          - actions
+          - "13"
+          - input
+          - outputs
+        map: 13
+      - path:
+          - actionContexts
+          - r2-upload-naming-config:1
+          - results
+        map: 0
+      - path:
+          - actionContexts
+          - r2-upload-naming-config:11
+          - results
+        map: 14
+      - path:
+          - actionContexts
+          - r2-upload-naming-config:13
+          - results
+        map: 15
+      - path:
+          - actionContexts
+          - r2-upload-naming-config:14
+          - results
+        map: 16
+      - path:
+          - actionContexts
+          - r2-upload-naming-config:16
+          - results
+        map: 17
+      - path:
+          - actionContexts
+          - r2-upload-naming-config:18
+          - results
+        map: 18
+      - path:
+          - actionContexts
+          - r2-upload-naming-config:20
+          - results
+        map: 19
+      - path:
+          - actionContexts
+          - r2-upload-naming-config:22
+          - results
+        map: 20
+      - path:
+          - actionContexts
+          - r2-upload-naming-config:23
+          - results
+        map: 21
+      - path:
+          - actionContexts
+          - r2-upload-naming-config:24
+          - results
+        map: 22
+      - path:
+          - actionContexts
+          - r2-upload-naming-config:4
+          - results
+        map: 23
+      - path:
+          - actionContexts
+          - r2-upload-naming-config:5
+          - results
+        map: 24
+      - path:
+          - actionContexts
+          - r2-upload-naming-config:7
+          - results
+        map: 25
+      - path:
+          - actionContexts
+          - r2-upload-naming-config:9
+          - results
+        map: 26
+      - path:
+          - outputs
+        map: 22
+      - path:
+          - waits
+          - "0"
+          - results
+        map: 27
+      - path:
+          - waits
+          - "1"
+          - results
+        map: 28
+      - path:
+          - waits
+          - "2"
+          - results
+        map: 29
+      - path:
+          - waits
+          - "3"
+          - results
+        map: 30
+      - path:
+          - evidenceWaits
+          - "0"
+          - results
+        map: 31
+      - path:
+          - evidenceWaits
+          - "1"
+          - results
+        map: 32
+      - path:
+          - evidenceWaits
+          - "2"
+          - results
+        map: 33
+      - path:
+          - evidenceWaits
+          - "3"
+          - results
+        map: 34
+      - path:
+          - evidenceWaits
+          - "4"
+          - results
+        map: 35
+      - path:
+          - evidenceWaits
+          - "5"
+          - results
+        map: 36
+  storageHash: 1e9a288fc5260f5e7d4299a84838fed504199dbdfc7f6a8fba2eec428a814628
+check_epoch: 6
