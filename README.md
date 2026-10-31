@@ -1,6 +1,6 @@
 # CFData-Web
 
-CFData-Web 是一个基于 Go 的 Cloudflare IP 测试与筛选工具，提供本地 Web 与 CLI 两种使用方式，支持官方 IP 段扫描、非标目标测试、测速、结果筛选、导出和 GitHub 上传。
+CFData-Web 是一个基于 Go 的 Cloudflare IP 测试与筛选工具，提供本地 Web 控制台，支持官方 IP 段扫描、非标目标测试、测速、结果筛选、导出和 GitHub 上传。
 
 [在线演示站](https://cfdata-demo.cce.de5.net/) 仅使用浏览器内虚拟数据，用于预览界面与交互；真实使用请下载正式版本。
 
@@ -15,11 +15,9 @@ CFData-Web 是一个基于 Go 的 Cloudflare IP 测试与筛选工具，提供�
 - 非标链路复验：扫描完成后对候选做真实 TCP+TLS+HTTP 探针验证（Web 支持手动复验按钮），不可用候选自动剔除
 - 测速地址可用性预检：启动时并行探测全部内置与自定义测速地址，自动选择时排除不可用项，全部不可用回退 CF 官方地址；Web 下拉框实时展示可用性
 - 结果区「筛选排序」合一：原独立筛选下拉与一键排序合并进单个弹窗，新增「延迟低于 xx ms」「丢包低于 xx%」筛选，并与复制/导出内容联动
-- 管理面代理：新增 -proxy 参数与配置文件 proxy 键（支持 socks5://、socks5h://、http://、https://），覆盖数据下载、版本检查、GitHub/订阅上传；Web 设置菜单可直接配置，未配置时自动使用系统环境变量代理；扫描与测速保持直连
-- CLI 交互菜单：`-cli` 进入菜单（按配置启动 / 自定义参数启动 / 修改配置参数 / 自动调度 / 帮助），`-cli qs` 按已保存配置快速启动，`-cli -参数…` 直接执行；启动时输出 Banner 与「调试等级」
-- 参数设置向导：分模块逐项设置，提示格式与可选值，可保存为配置文件
-- 自动调度：进程内 Cron/Ticker 调度，支持 Cron 表达式与检测间隔两种计划，Web 设置与 CLI 菜单可直接开关，无需 systemd
-- 官方/非标的扫描并发、延迟阈值、测速网址在命令行与配置文件中完全独立，互不影响
+- 管理面代理：配置文件 proxy 键与 Web 设置菜单可直接配置（支持 socks5://、socks5h://、http://、https://），覆盖数据下载、版本检查、GitHub/订阅上传；未配置时自动使用系统环境变量代理；扫描与测速保持直连
+- 自动调度：进程内 Cron/Ticker 调度，支持 Cron 表达式与检测间隔两种计划，Web 设置可直接开关，无需 systemd
+- 官方/非标的扫描并发、延迟阈值、测速网址在 Web 参数与配置文件中完全独立，互不影响
 - 配置文件自动迁移：键名无变化时静默按新模板迁移；存在旧键名时交互提示（仅迁移同名值），原文件备份为 `.bak`，非交互环境自动跳过
 - 启动输出统一为简洁的「当前配置」单块，版本行下方显示调试等级
 
@@ -31,7 +29,6 @@ CFData-Web 是一个基于 Go 的 Cloudflare IP 测试与筛选工具，提供�
 - 链路复验：扫描完成后对候选做真实 TCP+TLS+HTTP 探针验证，自动剔除不可用项；Web 支持手动复验按钮。
 - 导出：支持 CSV/TXT/Sub-Store 目标列表、自定义字段、IP 类型筛选、合格结果筛选。
 - 上传：支持将导出结果上传到 GitHub 与 R2（Worker 兼容接口）。
-- CLI：交互菜单、参数设置向导、自动调度、配置自动迁移。
 - APK：支持 Android WebView 壳运行内置后端。
 
 ## 快速开始
@@ -47,31 +44,7 @@ CFData-Web 是一个基于 Go 的 Cloudflare IP 测试与筛选工具，提供�
 
 浏览器打开终端中的地址即可使用。
 
-CLI 模式（进入交互菜单）：
-
-```bash
-./cfdata-linux-amd64 -cli
-```
-
-菜单提供：按配置启动（菜单 1，等价 `-cli qs`）、自定义参数启动（向导）、修改配置参数、自动调度、帮助。
-
-首次使用 CLI 配置文件时会生成模板并退出，编辑配置后重新运行即可；也可通过菜单「修改配置参数」逐项设置。升级后启动时若配置键名有变化会提示迁移：同名值保留，原文件备份为 `.bak`，非交互环境自动跳过。
-
-简单示例：
-
-```bash
-# 交互菜单（不带其他参数时默认进入菜单）
-./cfdata-linux-amd64 -cli
-
-# 按已保存配置快速启动（qs 大小写不敏感）
-./cfdata-linux-amd64 -cli qs
-
-# 官方模式直接执行：扫描 IPv4，测试 443 端口，测速地址自动选择
-./cfdata-linux-amd64 -cli -mode official -offiptype 4 -offport 443 -offurl auto
-
-# 非标模式直接执行：读取本地文件，开启 TLS 和 5 个测速线程
-./cfdata-linux-amd64 -cli -mode nsb -nsbfile ip.txt -nsbtls=true -nsbspeedtest 5 -nsburl auto
-```
+配置文件说明：首次启动会生成配置文件模板；升级后若配置键名有变化会提示迁移：同名值保留，原文件备份为 `.bak`，非交互环境自动跳过。
 
 ## Docker
 
@@ -124,7 +97,7 @@ docker run -d --name cfdata -p 13335:13335 -v cfdata-data:/data ghcr.io/tunecc/c
 
 ### Sub-Store 目标列表
 
-导出弹窗的「文件格式」和一键复制弹窗提供「Sub-Store 目标列表」，CLI 使用 `-outformat substore`。输出为每行 `host[:port]#alias` 的纯文本，文件扩展名固定为 `.txt`：
+导出弹窗的「文件格式」和一键复制弹窗提供「Sub-Store 目标列表」，输出为每行 `host[:port]#alias` 的纯文本，文件扩展名固定为 `.txt`：
 
 ```text
 1.2.3.4:443#LAX-洛杉矶
@@ -186,7 +159,7 @@ Content-Type: application/json
 
 ## 自动调度
 
-调度由程序进程内完成，不依赖 systemd、root 权限或 Linux 专有机制；Web 模式启动后自动加载，CLI 菜单「自动调度 → 启动常驻调度」也可运行。调度参数来自配置文件 `config`：
+调度由程序进程内完成，不依赖 systemd、root 权限或 Linux 专有机制；Web 模式启动后自动加载。调度参数来自配置文件 `config`：
 
 ```json
 {
@@ -222,7 +195,7 @@ sudo systemctl daemon-reload
 sudo rm -f /etc/systemd/system/cfdata-schedule.timer /etc/systemd/system/cfdata-schedule.service
 ```
 
-程序目录中的 `cfdata-schedule.service`、`cfdata-schedule.timer` 与 `cfdata-schedule.log` 不再使用，可按需删除。随后在 Web 设置面板或 CLI 菜单「自动调度」中启用调度并设置 Cron/间隔。同一个配置文件只应由一个进程加载调度，避免多实例重复扫描。
+程序目录中的 `cfdata-schedule.service`、`cfdata-schedule.timer` 与 `cfdata-schedule.log` 不再使用，可按需删除。随后在 Web 设置面板中启用调度并设置 Cron/间隔。同一个配置文件只应由一个进程加载调度，避免多实例重复扫描。
 
 ## 测速地址
 
@@ -238,50 +211,23 @@ Web 下拉项：
 - 移动专属
 - 手动输入
 
-CLI 可通过 `-offurl`/`-nsburl` 指定：
-
-```bash
-./cfdata-linux-amd64 -cli -offurl auto
-./cfdata-linux-amd64 -cli -offurl speed.cloudflare.com/__down?bytes=99999999
-./cfdata-linux-amd64 -cli -offurl https://example.com/file.bin
-```
-
 说明：测速只读取响应字节流计算速度，不会把测速文件保存到本地。
 
 ## 常用参数
 
 ```text
--cli              启用 CLI 模式
--mode             official 或 nsb
--scanmode         扫描方式：tcping（默认，TCP 握手延迟）或 httping（HTTP TTFB，延迟比 tcping 高属正常，不同模式数据不可对比）
--offthreads       官方扫描并发数
--nsbthreads       非标扫描并发数
--offport          官方测试/测速端口
--offdelay         官方延迟阈值，单位毫秒
--nsbdelay         非标延迟阈值，单位毫秒；0=不筛延迟
--offurl           官方测速下载地址，默认 auto
--nsburl           非标测速下载地址，默认 auto
+-nsbspeedtest     NSB 任务未指定扫描并发时的默认值；0 表示按最小并发 1 执行
+-url              测速下载地址，auto 表示由后端自动选择内置测速源
 -dns              自定义 DNS 服务器
 -debug            调试日志等级：false、error、all
 -skipgeo          跳过地区/代理环境验证（启动时不再提示代理警告）
--out              输出文件名（官方/非标通用），默认 cfdata-results
+-port             服务监听端口，默认 13335
+-host             服务监听地址，留空监听全部地址
+-user/-password   Web 认证账号密码（需同时设置）
+-session          Web 登录会话有效期（分钟），默认 720
 ```
 
-非标常用参数：
-
-```text
--nsbfile          本地输入文件
--nsbsourceurl     网络输入 URL
--nsbfallbackport  非标输入缺省端口；不传时随 TLS 自动使用 443/80
--nsbtls           非标是否启用 TLS
--nsbspeedtest     非标测速线程数，0 表示不测速。多 IP 并发影响实际速度，需要准确应设为 1
--nsbresultlimit   非标延迟测试结果上限
--nsbspeedmin      非标测速合格阈值，单位 MB/s
--nsbspeedlimit    非标测速合格结果上限
--relink           链路复验开关（默认开启）；扫描完成时对结果做真实链路验证，不可用的候选将被剔除
--relinkhost       链路复验探针域名；默认使用内置公共探针，配合 -relink 开关使用
--proxy            管理面代理地址（支持 socks5://、socks5h://、http://、https://）；下载 ASN 库/locations、版本检查、GitHub/订阅上传走此代理，扫描测速不受影响；留空走系统环境变量代理
-```
+非标任务的输入文件、并发、TLS、链路复验、导出与合格筛选等参数均在 Web 参数区（或配置文件 `config`）中设置。
 
 完整参数可运行：
 

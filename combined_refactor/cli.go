@@ -1,11 +1,11 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"encoding/csv"
 	"encoding/json"
 	"errors"
-	"flag"
 	"fmt"
 	"io"
 	"math"
@@ -217,46 +217,7 @@ var (
 	ansiCyan        = "\033[36m"
 	ansiMagenta     = "\033[35m"
 
-	cliCommonFlags = []cliFlagInfo{
-		{name: "cli", description: "启用命令行模式：不带时启动 Web；-cli 进入交互菜单；-cli qs 按配置快速启动（请用 -cli 或 -cli=true）", defaultValue: "false"},
-		{name: "port", description: "Web 服务监听端口", defaultValue: "13335"},
-		{name: "user", description: "Web 认证用户名（不设置则不启用认证）", defaultValue: ""},
-		{name: "password", description: "Web 认证密码（需同时设置 -user）", defaultValue: ""},
-		{name: "session", description: "Web 登录会话有效期（分钟）", defaultValue: "720"},
-		{name: "host", description: "服务监听地址；留空监听全部地址，Android APK 建议使用 127.0.0.1", defaultValue: ""},
-		{name: "mode", description: "运行模式：official 或 nsb", defaultValue: "official"},
-		{name: "scanmode", description: "扫描方式：tcping（默认，TCP 握手延迟）或 httping（HTTP TTFB，延迟比 tcping 高属正常，不同模式数据不可对比）", defaultValue: "tcping"},
-		{name: "out", description: "输出文件名", defaultValue: "cfdata-results"},
-		{name: "progress", description: "是否输出进度日志", defaultValue: "true"},
-		{name: "nocolor", description: "禁用颜色输出（cmd 等不支持 ANSI 的终端可开启避免乱码）", defaultValue: "false"},
-		{name: "skipgeo", description: "跳过地区/代理环境验证，CLI 启动测试前不再确认代理警告", defaultValue: "false"},
-		{name: "url", description: "测速下载地址；auto 表示由后端自动选择内置测速源", defaultValue: autoSpeedURLValue},
-		{name: "dns", description: "自定义 DNS 服务器，例如 1.1.1.1 或 223.5.5.5,8.8.8.8；默认系统 DNS 优先，失败回退内置 DNS；显式设置时强制使用指定 DNS", defaultValue: defaultDNSServers},
-		{name: "debug", description: "调试输出等级：error、all；true 等同 error", defaultValue: "false"},
-		{name: "compactipv4", description: "精简本地 IPv4 地址库：按 /24 子网测 TCP:80 连通性并覆盖 ips-v4.txt", defaultValue: "false"},
-		{name: "config", description: "CLI 配置文件路径，不存在时在二进制目录自动生成模板", defaultValue: "二进制目录/cfdata-config.json"},
-		{name: "outformat", description: "CLI 导出格式：csv、txt 或 substore（Sub-Store 目标列表，固定导出 .txt）", defaultValue: "txt"},
-		{name: "outfields", description: "CLI 导出字段：compact、all、ipport 或逗号分隔字段 key；可用 -outcustom 增加常量字段", defaultValue: "compact"},
-		{name: "outcustom", description: "CLI 自定义导出字段，格式 标题:内容，多项用逗号分隔；在 -outfields 中可用标题排序，未写入则默认追加到最后", defaultValue: ""},
-		{name: "outv6bracket", description: "TXT 导出时对 IPv6 地址加方括号（[IPv6]:端口）", defaultValue: "true"},
-		{name: "outseparator", description: "TXT 导出字段分隔符；写 空格 表示空格", defaultValue: "-"},
-		{name: "outqualified", description: "导出/上传合格结果筛选：all 全部 / qualified 仅合格 / unqualified 仅不合格", defaultValue: "all"},
-		{name: "outiptype", description: "导出/上传 IP 类型筛选：all、ipv4 或 ipv6", defaultValue: "all"},
-		{name: "outstartrow", description: "导出/上传开始行（筛选后第 1 行起计），只影响导出和上传内容", defaultValue: "1"},
-		{name: "outendrow", description: "导出/上传结束行；0 表示至末尾，只影响导出和上传内容", defaultValue: "20"},
-		{name: "github", description: "CLI 导出后上传到 GitHub", defaultValue: "false"},
-		{name: "ghrepo", description: "GitHub 仓库，格式 owner/repo", defaultValue: ""},
-		{name: "ghbranch", description: "GitHub 分支", defaultValue: "main"},
-		{name: "ghpath", description: "GitHub 目标路径；留空时按 -outformat 自动使用 results/ip.csv 或 results/ip.txt", defaultValue: "<自动>"},
-		{name: "ghmessage", description: "GitHub 提交信息", defaultValue: "update cfdata results"},
-		{name: "ghtoken", description: "GitHub token（不推荐直接写入配置；强烈建议使用仅限制指定仓库读写权限的 token，并确保仓库内无重要数据）", defaultValue: ""},
-		{name: "ghtokenfile", description: "GitHub token 文件路径（强烈建议文件内 token 仅限制指定仓库读写权限，并确保仓库内无重要数据）", defaultValue: ""},
-		{name: "ghupload", description: "快速上传指定文件到 GitHub，不执行测试；需配合 -github", defaultValue: ""},
-		{name: "edgetunnel", description: "CLI 导出后上传到 edgetunnel", defaultValue: "false"},
-		{name: "ethost", description: "edgetunnel 主机地址，例如 https://example.com", defaultValue: ""},
-		{name: "etpassword", description: "edgetunnel 密码", defaultValue: ""},
-		{name: "etmode", description: "edgetunnel 上传模式：overwrite 覆盖 / append 追加", defaultValue: "overwrite"},
-	}
+	// CLI flag 描述表（仅测试引用，保留用于描述核对）
 	cliOfficialFlags = []cliFlagInfo{
 		{name: "offiptype", description: "官方模式 IP 类型：4 或 6", defaultValue: "4"},
 		{name: "offthreads", description: "官方模式扫描并发数", defaultValue: "100"},
@@ -268,207 +229,9 @@ var (
 		{name: "offspeedmin", description: "官方模式测速达标下限，单位 MB/s", defaultValue: "0.1"},
 		{name: "offurl", description: "官方模式测速下载地址；auto 表示由后端自动选择内置测速源", defaultValue: autoSpeedURLValue},
 	}
-	cliNSBFlags = []cliFlagInfo{
-		{name: "nsbfile", description: "非标模式输入文件路径", defaultValue: ""},
-		{name: "nsbsourceurl", description: "非标模式网络输入 URL", defaultValue: ""},
-		{name: "nsbthreads", description: "非标模式扫描并发数", defaultValue: "100"},
-		{name: "nsbdelay", description: "非标模式延迟阈值（毫秒）；0 表示不筛延迟", defaultValue: "0"},
-		{name: "nsbfallbackport", description: "非标输入缺省端口；不填时随 TLS 自动使用 443/80", defaultValue: "0"},
-		{name: "nsbdc", description: "非标模式指定结果数据中心；留空不限制", defaultValue: ""},
-		{name: "nsbspeedtest", description: "非标测速线程数；0 表示不测速。多 IP 并发影响实际速度，需要准确应设为 1", defaultValue: "0"},
-		{name: "nsburl", description: "非标模式测速下载地址；auto 表示由后端自动选择内置测速源", defaultValue: autoSpeedURLValue},
-		{name: "nsbtls", description: "非标模式是否启用 TLS", defaultValue: "true"},
-		{name: "nsbcompact", description: "非标模式导出精简表格列", defaultValue: "true"},
-		{name: "nsbresultlimit", description: "非标模式延迟测试结果上限；必须为非 0 正整数", defaultValue: "1000"},
-		{name: "nsbspeedmin", description: "非标模式测速结果阈值，单位 MB/s", defaultValue: "0.1"},
-		{name: "nsbspeedlimit", description: "非标模式测速结果上限；0 表示关闭测速", defaultValue: "5"},
-		{name: "relink", description: "链路复验开关；开启后扫描完成时对结果做真实链路验证，不可用的候选将被剔除", defaultValue: "true"},
-		{name: "relinkhost", description: "链路复验探针域名；默认使用内置公共探针，配合 relink 开关使用", defaultValue: "probe.609909.xyz"},
-		{name: "proxy", description: "管理面代理；下载 ASN 库/locations、版本检查上传 GitHub/订阅等走此代理，扫描测速不受影响。支持 socks5://、socks5h://、http://、https://，留空使用系统环境变量代理", defaultValue: ""},
-	}
 )
 
 var errCLIConfigCreated = errors.New("CLI 配置文件已生成")
-
-var proxyFlag = ""
-
-func registerCLIFlags() *cliConfig {
-	cfg := &cliConfig{}
-	flag.Usage = printCLIUsage
-	flag.BoolVar(&cfg.enabled, "cli", false, "启用命令行模式（默认启动 Web）")
-	flag.StringVar(&cfg.mode, "mode", "official", "CLI 模式：official 或 nsb")
-	flag.StringVar(&cfg.scanMode, "scanmode", "tcping", "扫描方式：tcping（默认，TCP 握手延迟）或 httping（HTTP TTFB，延迟比 tcping 高属正常，不同模式数据不可对比）")
-	flag.IntVar(&cfg.ipType, "offiptype", 4, "官方模式 IP 类型：4 或 6")
-	flag.IntVar(&cfg.offThreads, "offthreads", 100, "官方扫描并发数")
-	flag.IntVar(&cfg.nsbThreads, "nsbthreads", 100, "非标扫描并发数")
-	flag.IntVar(&cfg.speedTest, "nsbspeedtest", 0, "非标测速线程数；表示同时测速的 IP 数量，0 表示不测速。多 IP 并发测速会影响实际下载速度，需要准确速度应设置为 1")
-	flag.IntVar(&cfg.port, "offport", 443, "目标测试端口")
-	flag.IntVar(&cfg.offDelay, "offdelay", 500, "官方延迟阈值（毫秒）")
-	flag.IntVar(&cfg.nsbDelay, "nsbdelay", 0, "非标延迟阈值（毫秒）；0 表示不筛延迟")
-	flag.StringVar(&cfg.dc, "offdc", "", "官方模式指定数据中心，不填则自动选择最低延迟数据中心")
-	flag.IntVar(&cfg.offStop, "offstop", defaultOfficialStopCount, "官方模式指定数据中心时，收集到该数量目标 IP 后提前结束扫描；0 表示不早停")
-	flag.StringVar(&cfg.file, "nsbfile", "", "非标模式输入文件路径")
-	flag.StringVar(&cfg.sourceURL, "nsbsourceurl", "", "非标模式网络输入 URL")
-	flag.IntVar(&cfg.nsbFallbackPort, "nsbfallbackport", 0, "非标输入缺省端口；不填时随 TLS 自动使用 443/80")
-	flag.StringVar(&cfg.outIPType, "outiptype", "all", "导出/上传 IP 类型筛选：all、ipv4 或 ipv6")
-	flag.StringVar(&cfg.outQualified, "outqualified", "all", "导出/上传合格结果筛选：all、qualified 或 unqualified")
-	flag.StringVar(&cfg.nsbDC, "nsbdc", "", "非标模式指定结果数据中心")
-	flag.StringVar(&cfg.outFile, "out", "cfdata-results", "输出文件名")
-	flag.IntVar(&cfg.startRow, "outstartrow", 1, "导出/上传开始行（筛选后第 1 行起计）")
-	flag.IntVar(&cfg.endRow, "outendrow", 20, "导出/上传结束行；0 表示至末尾")
-	flag.IntVar(&cfg.speedLimit, "offspeedlimit", 5, "官方模式测速达标结果上限；0 表示关闭官方测速")
-	flag.Float64Var(&cfg.speedMin, "offspeedmin", 0.1, "官方模式测速达标下限，单位 MB/s")
-	flag.StringVar(&cfg.offURL, "offurl", autoSpeedURLValue, "官方测速下载地址")
-	flag.StringVar(&cfg.nsbURL, "nsburl", autoSpeedURLValue, "非标测速下载地址")
-	flag.BoolVar(&cfg.enableTLS, "nsbtls", true, "非标模式是否启用 TLS")
-	flag.BoolVar(&cfg.compactNSB, "nsbcompact", true, "非标模式导出精简表格列")
-	flag.IntVar(&cfg.resultLimit, "nsbresultlimit", 1000, "非标模式延迟测试结果上限；必须为非 0 正整数")
-	flag.BoolVar(&cfg.relink, "relink", true, "链路复验开关；开启后非标扫描完成时对结果做真实链路验证（TCP+TLS+HTTP 访问探针），不可用的候选将被剔除")
-	flag.StringVar(&cfg.relinkHost, "relinkhost", "probe.609909.xyz", "链路复验探针域名；默认使用内置公共探针，配合 -relink 开关使用")
-	flag.StringVar(&proxyFlag, "proxy", "", "管理面代理地址，支持 socks5://、socks5h://、http://、https://；下载/版本检查/上传走此代理，扫描测速不受影响；留空走系统环境变量代理")
-	flag.Float64Var(&cfg.nsbSpeedMin, "nsbspeedmin", 0.1, "非标模式测速结果阈值，单位 MB/s")
-	flag.IntVar(&cfg.nsbSpeedLimit, "nsbspeedlimit", 5, "非标模式测速结果上限；0 表示关闭测速")
-	flag.BoolVar(&cfg.showProgress, "progress", true, "CLI 模式输出进度日志")
-	flag.BoolVar(&cfg.noColor, "nocolor", false, "禁用 ANSI 颜色输出（cmd 等不支持的终端建议开启）")
-	flag.BoolVar(&cfg.compactIPv4, "compactipv4", false, "精简本地 IPv4 地址库，按 /24 子网探测 TCP:80 连通性后覆盖 ips-v4.txt")
-	flag.StringVar(&cfg.export.ConfigFile, "config", "", "CLI 导出/GitHub 配置文件路径")
-	flag.StringVar(&cfg.export.Format, "outformat", "", "CLI 导出格式：csv、txt 或 substore")
-	flag.StringVar(&cfg.export.Fields, "outfields", "", "CLI 导出字段：compact、all、ipport 或逗号分隔字段 key")
-	flag.StringVar(&cfg.export.Custom, "outcustom", "", "CLI 自定义导出字段，格式 标题:内容，多项用逗号分隔")
-	flag.StringVar(&cfg.export.Separator, "outseparator", "", "TXT 导出字段分隔符；写 空格 表示空格")
-	flag.BoolVar(&cfg.export.V6Bracket, "outv6bracket", true, "TXT 导出时对 IPv6 地址加方括号（[IPv6]:端口）")
-	flag.BoolVar(&cfg.export.GitHub, "github", false, "CLI 导出后上传到 GitHub")
-	flag.StringVar(&cfg.export.GHRepo, "ghrepo", "", "GitHub 仓库 owner/repo")
-	flag.StringVar(&cfg.export.GHBranch, "ghbranch", "", "GitHub 分支")
-	flag.StringVar(&cfg.export.GHPath, "ghpath", "", "GitHub 目标路径")
-	flag.StringVar(&cfg.export.GHMessage, "ghmessage", "", "GitHub 提交信息")
-	flag.StringVar(&cfg.export.GHToken, "ghtoken", "", "GitHub token")
-	flag.StringVar(&cfg.export.GHTokenFile, "ghtokenfile", "", "GitHub token 文件")
-	flag.StringVar(&cfg.export.GHUpload, "ghupload", "", "快速上传指定文件到 GitHub，不执行测试")
-	flag.BoolVar(&cfg.export.EdgeTunnel, "edgetunnel", false, "CLI 导出后上传到 edgetunnel")
-	flag.StringVar(&cfg.export.ETHost, "ethost", "", "edgetunnel 主机地址")
-	flag.StringVar(&cfg.export.ETPassword, "etpassword", "", "edgetunnel 密码")
-	flag.StringVar(&cfg.export.ETMode, "etmode", "overwrite", "edgetunnel 上传模式：overwrite 覆盖 / append 追加")
-	return cfg
-}
-
-func runCLI(cfg *cliConfig) error {
-	if !cfg.configResolved {
-		if err := prepareCLIConfig(cfg); err != nil {
-			return err
-		}
-	}
-	if cfg.compactIPv4 {
-		return runCompactIPv4CLI(cfg)
-	}
-	if strings.TrimSpace(cfg.export.GHUpload) != "" {
-		return runCLIQuickGitHubUpload(cfg)
-	}
-
-	applyCLISpeedDefault()
-	printCLIConfig(cfg)
-
-	if !skipGeoCheck {
-		ctx, cancel := context.WithTimeout(context.Background(), 7*time.Second)
-		country, ok := detectCloudflareTraceCountry(ctx)
-		cancel()
-		if !confirmCLIProxyCountry(country, ok) {
-			return fmt.Errorf("已取消：当前网络环境标签为 %s", firstNonEmpty(country, "未知"))
-		}
-	} else {
-		fmt.Println("[proxy-check] 已跳过地区/代理环境验证")
-	}
-
-	mode := strings.ToLower(strings.TrimSpace(cfg.mode))
-	switch mode {
-	case "official":
-		return runOfficialCLI(cfg)
-	case "nsb":
-		return runNSBCLI(cfg)
-	default:
-		return fmt.Errorf("不支持的 -mode: %s（仅支持 official 或 nsb）", cfg.mode)
-	}
-}
-
-func applyCLISpeedDefault() {
-	ensureSpeedURLAvailability()
-	logSpeedURLAvailabilitySummary()
-	if !isAutoSpeedURL(speedTestURL) {
-		return
-	}
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	_, info, err := resolveStartupSpeedTestURL(ctx, speedTestURL)
-	cancel()
-	if err != nil {
-		recordDebugError("speed_isp_check", err.Error())
-		return
-	}
-	recordDebugByLevel("all", "speed_isp_check", fmt.Sprintf("cli asn=%d org=%s mobile=%v selected=%s", info.ASN, info.ASOrganization, isChinaMobileISP(info), currentAutoSpeedURLDefault()))
-}
-
-func prepareCLIConfig(cfg *cliConfig) error {
-	if err := resolveCLIExportConfig(cfg); err != nil {
-		return err
-	}
-	if err := validateCLIOutputConfig(cfg); err != nil {
-		return err
-	}
-	if cfg.noColor {
-		disableANSIColors()
-	}
-	cfg.configResolved = true
-	return nil
-}
-
-func runCLIQuickGitHubUpload(cfg *cliConfig) error {
-	if !cfg.export.GitHub {
-		return fmt.Errorf("使用 -ghupload 快速上传时需要同时启用 -github")
-	}
-	path := expandHome(cfg.export.GHUpload)
-	content, err := os.ReadFile(path)
-	if err != nil {
-		return err
-	}
-	if strings.TrimSpace(cfg.export.GHPath) == "" || cfg.export.GHPath == "results/ip."+cfg.export.Format {
-		cfg.export.GHPath = "results/" + filepath.Base(path)
-	}
-	return uploadCLIExportToGitHub(cfg, string(content))
-}
-
-func runCompactIPv4CLI(cfg *cliConfig) error {
-	session := newCLISession(cfg)
-	if err := session.runTaskSync(func(ctx context.Context, session *appSession) {
-		runCompactIPv4Task(ctx, session)
-	}); err != nil {
-		return cliTaskError(err)
-	}
-	return nil
-}
-
-func resolveCLIExportConfig(cfg *cliConfig) error {
-	provided := map[string]bool{}
-	flag.Visit(func(f *flag.Flag) { provided[f.Name] = true })
-	configPath := cfg.export.ConfigFile
-	if configPath == "" {
-		configPath = defaultCLIConfigPath()
-	}
-	fileCfg, created, err := loadOrCreateCLIConfig(configPath)
-	if err != nil {
-		return err
-	}
-	if created {
-		fmt.Printf("[config] 已生成配置文件: %s\n", configPath)
-		fmt.Println("[config] 优先级: 命令行参数 > 配置文件 > 默认值")
-		fmt.Println("[config] 请退出后按需编辑配置文件，再重新开始测试。")
-		return errCLIConfigCreated
-	}
-	return applyCLIExportResolution(cfg, fileCfg, configPath, provided)
-}
-
-func applyCLIExportResolution(cfg *cliConfig, fileCfg cliFileConfig, configPath string, provided map[string]bool) error {
-	applyCLIFileConfig(cfg, fileCfg, provided)
-	return resolveCLIExportFields(cfg, fileCfg, configPath, provided)
-}
 
 // resolveCLIExportFields 只解析导出配置，不修改进程级运行时设置
 func resolveCLIExportFields(cfg *cliConfig, fileCfg cliFileConfig, configPath string, provided map[string]bool) error {
@@ -648,6 +411,23 @@ func cliFileConfigJSONKeys() map[string]bool {
 	return keys
 }
 
+// 配置迁移等共享流程的终端输入助手（原 menu.go，CLI 菜单删除后保留）
+const (
+	promptOK = iota
+	promptQuit
+)
+
+var menuInputReader = bufio.NewReader(os.Stdin)
+
+func readMenuLine() (string, int) {
+	line, err := menuInputReader.ReadString('\n')
+	trimmed := strings.TrimSpace(line)
+	if trimmed == "" && err != nil {
+		return "", promptQuit
+	}
+	return trimmed, promptOK
+}
+
 func migrateConfigFileToLatest(path string, data []byte) ([]byte, error) {
 	var raw map[string]interface{}
 	if err := json.Unmarshal(data, &raw); err != nil {
@@ -708,7 +488,7 @@ func migrateConfigFileToLatest(path string, data []byte) ([]byte, error) {
 	}
 	fmt.Printf("[migrate] 配置已按新模板迁移: %s（原文件备份: %s）\n", path, backupPath)
 	if len(unknown) > 0 {
-		fmt.Println("[migrate] 新增/改名的配置项已按默认值生成，请通过菜单 3「修改配置参数」自行设置")
+		fmt.Println("[migrate] 新增/改名的配置项已按默认值生成，请在 Web 设置或配置文件中自行调整")
 	}
 	migrated, err := os.ReadFile(path)
 	if err != nil {
@@ -764,7 +544,7 @@ func newCLIConfigTemplate(cfg cliFileConfig) cliExportConfigTemplate {
 		ConfigVersion:   appVersion,
 		Config:          cfg,
 		Description:     "CFData CLI 全量配置；真正配置项在 config 内。",
-		Priority:        "命令行参数 > 配置文件 > 默认值",
+		Priority:        "Web 设置/任务参数 > 配置文件 > 默认值",
 		Usage:           "首次生成后建议退出并编辑本文件，再重新运行测试。debug 支持 false、error、all、true。",
 		ConfigHelp:      buildCLIConfigHelp(),
 		FormatValues:    []string{"csv", "txt", "substore"},
@@ -788,7 +568,7 @@ func writeCLIConfigTemplate(path string, cfg cliFileConfig) error {
 
 func buildCLIConfigHelp() []cliConfigHelp {
 	return []cliConfigHelp{
-		{Name: "cli", Description: "CLI 模式开关；已废弃本字段，CLI 仅由命令行 -cli 控制（保留仅为兼容旧配置）", Default: "false", Options: []string{"true", "false"}},
+		{Name: "cli", Description: "CLI 模式开关；已废弃本字段，仅保留兼容旧配置读取", Default: "false", Options: []string{"true", "false"}},
 		{Name: "mode", Description: "运行模式", Default: "official", Options: []string{"official", "nsb"}},
 		{Name: "scanmode", Description: "扫描方式；tcping：仅测量 TCP 握手延迟（默认），httping：测量 HTTP TTFB 全链路延迟，延迟比 tcping 高属正常，不同模式数据不可互相比较", Default: "tcping", Options: []string{"tcping", "httping"}},
 		{Name: "offiptype", Description: "官方模式 IP 类型", Default: "4", Options: []string{"4", "6"}},
@@ -966,46 +746,6 @@ func applyCLIFileConfigFields(cfg *cliConfig, fileCfg cliFileConfig, provided ma
 	}
 }
 
-func applyCLIFileConfig(cfg *cliConfig, fileCfg cliFileConfig, provided map[string]bool) {
-	applyCLIFileConfigFields(cfg, fileCfg, provided)
-
-	if !provided["debug"] {
-		applyConfigDebug(fileCfg.Debug)
-	}
-	if !provided["skipgeo"] {
-		skipGeoCheck = fileCfg.SkipGeo
-	}
-	if !provided["dns"] && strings.TrimSpace(fileCfg.DNS) != "" {
-		customDNSServer = fileCfg.DNS
-	}
-	if provided["dns"] {
-		customDNSForced = true
-	}
-
-	proxyValue := strings.TrimSpace(fileCfg.Proxy)
-	if provided["proxy"] {
-		proxyValue = strings.TrimSpace(proxyFlag)
-	}
-	if err := setManagementProxy(proxyValue); err != nil {
-		fmt.Printf("[proxy] 管理面代理配置无效，未启用: %v\n", err)
-	}
-
-	genericURL := speedTestURL
-	if strings.EqualFold(strings.TrimSpace(cfg.mode), "nsb") {
-		if isAutoSpeedURL(cfg.nsbURL) && provided["url"] && strings.TrimSpace(genericURL) != "" {
-			speedTestURL = genericURL
-		} else {
-			speedTestURL = cfg.nsbURL
-		}
-		return
-	}
-	if isAutoSpeedURL(cfg.offURL) && provided["url"] && strings.TrimSpace(genericURL) != "" {
-		speedTestURL = genericURL
-	} else {
-		speedTestURL = cfg.offURL
-	}
-}
-
 func defaultCLIConfigPath() string {
 	exe, err := os.Executable()
 	if err != nil || exe == "" {
@@ -1034,21 +774,6 @@ func firstNonEmpty(values ...string) string {
 		}
 	}
 	return ""
-}
-
-func applyConfigDebug(value any) {
-	switch v := value.(type) {
-	case bool:
-		if v {
-			_ = setDebugFlag("error")
-		} else {
-			_ = setDebugFlag("false")
-		}
-	case string:
-		_ = setDebugFlag(v)
-	default:
-		_ = setDebugFlag("false")
-	}
 }
 
 func newCLISession(cfg *cliConfig) *appSession {
@@ -1230,21 +955,6 @@ func prepareOfficialCLIConfig(cfg *cliConfig) error {
 	return nil
 }
 
-func runOfficialCLI(cfg *cliConfig) error {
-	if err := prepareOfficialCLIConfig(cfg); err != nil {
-		return err
-	}
-
-	session := newCLISession(cfg)
-	var pipelineErr error
-	if err := session.runTaskSync(func(ctx context.Context, session *appSession) {
-		pipelineErr = runOfficialPipeline(ctx, session, cfg, speedTestURL)
-	}); err != nil {
-		return cliTaskError(err)
-	}
-	return pipelineErr
-}
-
 func runOfficialPipeline(ctx context.Context, session *appSession, cfg *cliConfig, speedURL string) error {
 	scanMode := cfg.scanMode
 	if scanMode == "" {
@@ -1335,21 +1045,6 @@ func prepareNSBCLIConfig(cfg *cliConfig) error {
 	return nil
 }
 
-func runNSBCLI(cfg *cliConfig) error {
-	if err := prepareNSBCLIConfig(cfg); err != nil {
-		return err
-	}
-
-	session := newCLISession(cfg)
-	var pipelineErr error
-	if err := session.runTaskSync(func(ctx context.Context, session *appSession) {
-		pipelineErr = runNSBPipeline(ctx, session, cfg, speedTestURL)
-	}); err != nil {
-		return cliTaskError(err)
-	}
-	return pipelineErr
-}
-
 func loadNSBInput(ctx context.Context, cfg *cliConfig) (string, string, error) {
 	if strings.TrimSpace(cfg.file) != "" {
 		content, err := getFileContent(cfg.file)
@@ -1403,13 +1098,6 @@ func runNSBPipeline(ctx context.Context, session *appSession, cfg *cliConfig, sp
 	return writeCLIExportAndMaybeUpload(cfg, rows, r2Rows, "nsb")
 }
 
-func cliTaskError(err error) error {
-	if errors.Is(err, context.Canceled) {
-		return errors.New("已有任务正在运行，请等待完成后再试")
-	}
-	return err
-}
-
 func pickBestDataCenter(scanResults []ScanResult) string {
 	dcLatency := map[string]time.Duration{}
 	for _, res := range scanResults {
@@ -1444,149 +1132,6 @@ func runOfficialSpeedTests(ctx context.Context, session *appSession, results []T
 		fmt.Printf("%s[official]%s %s\n", ansiYellow, ansiReset, speedRateLimitMessage)
 	})
 	return updated
-}
-
-func printCLIConfig(cfg *cliConfig) {
-	fmt.Printf("%s %s\n", colorize("CFData-WEB 版本:", ansiBold+ansiGreen), appVersionLabel())
-	fmt.Printf("%s %s\n", colorize("调试等级:", ansiBold+ansiGreen), debugFlagValue{}.String())
-	checkAndPrintUpdate("")
-
-	line := func(label, value string) {
-		fmt.Printf("  %s：%s\n", label, value)
-	}
-	boolLabel := func(v bool) string {
-		if v {
-			return "开启"
-		}
-		return "关闭"
-	}
-	isNSB := strings.EqualFold(strings.TrimSpace(cfg.mode), "nsb")
-
-	scanLabel := "TCPing"
-	if strings.EqualFold(strings.TrimSpace(cfg.scanMode), "httping") {
-		scanLabel = "HTTPing"
-	}
-	speedURLLabel := speedTestURL
-	if isAutoSpeedURL(speedTestURL) {
-		speedURLLabel = "自动选择"
-	}
-	dnsLabel := "系统默认"
-	if customDNSForced {
-		dnsLabel = customDNSServer
-	} else if strings.TrimSpace(customDNSServer) != "" && customDNSServer != defaultDNSServers {
-		dnsLabel = "系统默认（回退 " + customDNSServer + "）"
-	}
-	ipVersionLabel := "IPv4"
-	if cfg.ipType == 6 {
-		ipVersionLabel = "IPv6"
-	}
-	outputRows := func() {
-		line("开始行", strconv.Itoa(cfg.startRow))
-		if cfg.endRow > 0 {
-			line("结束行", strconv.Itoa(cfg.endRow))
-			line("输出总量", fmt.Sprintf("%d行", cfg.endRow-cfg.startRow+1))
-		} else {
-			line("结束行", "不限")
-			line("输出总量", "不限")
-		}
-	}
-
-	fmt.Println(colorize("----------------------------------------", ansiCyan))
-	fmt.Println(colorize("当前配置", ansiBold+ansiCyan))
-	if isNSB {
-		line("模式", "非标优选")
-		line("扫描方式", scanLabel)
-		line("输出文件名", cfg.outFile)
-		line("文件格式", cfg.export.Format)
-		line("CSV 精简", boolLabel(cfg.compactNSB))
-		outputRows()
-		if strings.TrimSpace(cfg.file) != "" {
-			line("输入文件", cfg.file)
-		} else {
-			line("网络URL", cfg.sourceURL)
-		}
-		if cfg.nsbFallbackPort > 0 {
-			line("备用端口", strconv.Itoa(cfg.nsbFallbackPort))
-		} else {
-			line("备用端口", "自动")
-		}
-		line("并发数量", strconv.Itoa(cfg.threads))
-		line("扫描合格延迟", fmt.Sprintf("%dms", cfg.delay))
-		line("扫描合格数量", strconv.Itoa(cfg.resultLimit))
-		line("DNS", dnsLabel)
-		dcLabel := strings.TrimSpace(cfg.nsbDC)
-		if dcLabel == "" {
-			dcLabel = "不限"
-		}
-		line("数据中心", dcLabel)
-		line("TLS 模式", boolLabel(cfg.enableTLS))
-		line("测速网址", speedURLLabel)
-		line("自动测速", boolLabel(cfg.speedTest > 0 && cfg.nsbSpeedLimit > 0))
-		line("测速并发", strconv.Itoa(cfg.speedTest))
-		line("测速结果数量", strconv.Itoa(cfg.nsbSpeedLimit))
-		line("测试合格速度", fmt.Sprintf("%.2fMB/s", cfg.nsbSpeedMin))
-	} else {
-		line("模式", "官方优选")
-		line("扫描方式", scanLabel)
-		line("IP类型", ipVersionLabel)
-		line("输出文件名", cfg.outFile)
-		line("文件格式", cfg.export.Format)
-		outputRows()
-		line("并发数量", strconv.Itoa(cfg.threads))
-		line("扫描合格延迟", fmt.Sprintf("%dms", cfg.delay))
-		line("DNS", dnsLabel)
-		line("测试端口", strconv.Itoa(cfg.port))
-		dcLabel := strings.TrimSpace(cfg.dc)
-		if dcLabel == "" {
-			dcLabel = "自动"
-		}
-		line("数据中心", dcLabel)
-		if dcLabel != "自动" {
-			stopLabel := "关闭"
-			if cfg.offStop > 0 {
-				stopLabel = fmt.Sprintf("%d 个", cfg.offStop)
-			}
-			line("扫描早停数量", stopLabel)
-		}
-		line("测速网址", speedURLLabel)
-		line("自动测速", boolLabel(cfg.speedLimit > 0))
-		line("测速结果数量", strconv.Itoa(cfg.speedLimit))
-		line("测试合格速度", fmt.Sprintf("%.2fMB/s", cfg.speedMin))
-	}
-	fmt.Println(colorize("----------------------------------------", ansiCyan))
-}
-
-func printCLIUsage() {
-	printBanner()
-	fmt.Fprintf(flag.CommandLine.Output(), "%s\n", colorize("CFData 命令行帮助", ansiBold+ansiGreen))
-	fmt.Fprintf(flag.CommandLine.Output(), "版本: %s\n", appVersionLabel())
-	checkAndPrintUpdate("")
-	fmt.Fprintf(flag.CommandLine.Output(), "\n")
-	fmt.Fprintf(flag.CommandLine.Output(), "默认行为: 不带 -cli 时启动 Web 服务；-cli 进入交互菜单；-cli qs 按配置快速启动\n")
-	fmt.Fprintf(flag.CommandLine.Output(), "CLI 用法: 程序名 -cli（菜单）或 -cli qs（快速启动）或 -cli -mode=official ...（直接执行）\n")
-	fmt.Fprintf(flag.CommandLine.Output(), "\n")
-	printCLIUsageGroup("通用参数", cliCommonFlags)
-	printCLIUsageGroup("官方模式参数", cliOfficialFlags)
-	printCLIUsageGroup("非标模式参数", cliNSBFlags)
-}
-
-func printCLIUsageGroup(title string, rows []cliFlagInfo) {
-	fmt.Fprintf(flag.CommandLine.Output(), "%s\n", colorize("----------------------------------------", ansiCyan))
-	fmt.Fprintf(flag.CommandLine.Output(), "%s\n", colorize(title, ansiBold+ansiCyan))
-	for _, row := range rows {
-		fmt.Fprintf(flag.CommandLine.Output(), "%s-%s%s\n", ansiBold, row.name, ansiReset)
-		fmt.Fprintf(flag.CommandLine.Output(), "  %s %s\n", colorize("说明:", ansiYellow), row.description)
-		fmt.Fprintf(flag.CommandLine.Output(), "  %s %s\n", colorize("默认:", ansiYellow), colorizeCLIDefaultValue(row.defaultValue))
-	}
-}
-
-func lookupCLIFlagDescription(rows []cliFlagInfo, name string) string {
-	for _, row := range rows {
-		if row.name == name {
-			return row.description
-		}
-	}
-	return ""
 }
 
 func colorize(text string, code string) string {
@@ -1649,32 +1194,6 @@ func colorizeSpeedString(speed string) string {
 		return colorize(speed, ansiRed)
 	}
 	return speed
-}
-
-func colorizeCLIParamValue(value string, defaultValue string) string {
-	if value == defaultValue {
-		if value == "" {
-			return colorize("<空>", ansiGreen)
-		}
-		return colorize(value, ansiGreen)
-	}
-	if value == "" {
-		return colorize("<空>", ansiYellow)
-	}
-	if value == "true" {
-		return colorize(value, ansiGreen)
-	}
-	if value == "false" {
-		return colorize(value, ansiRed)
-	}
-	return colorize(value, ansiMagenta)
-}
-
-func colorizeCLIDefaultValue(value string) string {
-	if value == "" {
-		return colorize("<空>", ansiYellow)
-	}
-	return colorize(value, ansiGreen)
 }
 
 func setCLIProgress(session *appSession, phase string, current int, total int) {

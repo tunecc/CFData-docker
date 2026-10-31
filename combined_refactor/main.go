@@ -16,7 +16,7 @@ import (
 
 var webUser, webPassword string
 var webSessionMinutes int
-var boolFlagNames = []string{"cli", "nsbtls", "progress", "nocolor", "compactipv4", "nsbcompact", "github", "skipgeo", "outv6bracket", "edgetunnel"}
+var boolFlagNames = []string{"skipgeo"}
 
 type latestReleaseInfo struct {
 	TagName string `json:"tag_name"`
@@ -189,9 +189,8 @@ func main() {
 	if !enableTerminalANSI() || os.Getenv("NO_COLOR") != "" || hasNoColorArg() {
 		disableANSIColors()
 	}
-	cliCfg := registerCLIFlags()
-
 	flag.IntVar(&listenPort, "port", 13335, "服务监听端口")
+	flag.IntVar(&speedTestWorkers, "nsbspeedtest", 0, "NSB 任务未指定扫描并发时的默认值；0 表示按最小并发 1 执行")
 	flag.StringVar(&listenHost, "host", "", "服务监听地址；留空监听全部地址，Android APK 建议使用 127.0.0.1")
 	flag.StringVar(&speedTestURL, "url", autoSpeedURLValue, "测速下载地址；auto 表示由后端自动选择内置测速源")
 	flag.BoolVar(&skipGeoCheck, "skipgeo", false, "跳过地区/代理环境验证")
@@ -214,38 +213,17 @@ func main() {
 		}
 	})
 	printBanner()
-	enterMenu := false
-	if cliCfg.enabled {
-		args := flag.Args()
-		quickStart := len(args) > 0 && strings.EqualFold(strings.TrimSpace(args[0]), "qs")
-		if !quickStart && onlyCLIArgProvided() {
-			enterMenu = true
-		}
-		if !enterMenu {
-			if err := prepareCLIConfig(cliCfg); err != nil {
-				if errors.Is(err, errCLIConfigCreated) {
-					return
-				}
-				recordProgramDebugError("cli_prepare", err.Error())
-				fmt.Printf("CLI 执行失败: %v\n", err)
-				return
-			}
-		}
-	}
-	speedTestWorkers = cliCfg.speedTest
 	configureHTTPClients()
 	startupSpeedTestURL := speedTestURL
-	if !cliCfg.enabled {
-		ensureSpeedURLAvailability()
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		resolvedSpeedURL, speedISP, err := resolveStartupSpeedTestURL(ctx, speedTestURL)
-		cancel()
-		if err != nil {
-			recordDebugError("speed_isp_check", err.Error())
-		} else {
-			startupSpeedTestURL = resolvedSpeedURL
-			recordDebugByLevel("all", "speed_isp_check", fmt.Sprintf("startup asn=%d org=%s mobile=%v selected=%s", speedISP.ASN, speedISP.ASOrganization, isChinaMobileISP(speedISP), currentAutoSpeedURLDefault()))
-		}
+	ensureSpeedURLAvailability()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	resolvedSpeedURL, speedISP, err := resolveStartupSpeedTestURL(ctx, speedTestURL)
+	cancel()
+	if err != nil {
+		recordDebugError("speed_isp_check", err.Error())
+	} else {
+		startupSpeedTestURL = resolvedSpeedURL
+		recordDebugByLevel("all", "speed_isp_check", fmt.Sprintf("startup asn=%d org=%s mobile=%v selected=%s", speedISP.ASN, speedISP.ASOrganization, isChinaMobileISP(speedISP), currentAutoSpeedURLDefault()))
 	}
 	if isAutoSpeedURL(speedTestURL) {
 		setStartupSpeedDefault(autoSpeedURLValue)
@@ -257,7 +235,7 @@ func main() {
 	}
 	webSessionTTL = time.Duration(webSessionMinutes) * time.Minute
 
-	if !cliCfg.enabled {
+	{
 		cfgPath := defaultCLIConfigPath()
 		if _, created, err := loadOrCreateCLIConfig(cfgPath); err != nil && !errors.Is(err, errCLIConfigCreated) {
 			fmt.Printf("[config] 加载配置文件失败: %v\n", err)
@@ -268,18 +246,6 @@ func main() {
 	}
 	initLocations()
 	loadDCLibraries()
-	if cliCfg.enabled {
-		if enterMenu {
-			runCLIMenu(cliCfg)
-			return
-		}
-		if err := runCLI(cliCfg); err != nil {
-			recordProgramDebugError("cli_run", err.Error())
-			fmt.Printf("CLI 执行失败: %v\n", err)
-		}
-		return
-	}
-
 	scheduler := startWebScheduler(defaultCLIConfigPath())
 	defer scheduler.Stop()
 

@@ -25,12 +25,6 @@ docker run -d --name cfdata \
 
 浏览器打开 `http://localhost:13335` 即可使用。容器默认以 Web 模式启动，监听 `0.0.0.0:13335`。
 
-以 CLI 交互菜单运行（需要 TTY）：
-
-```bash
-docker run --rm -it -v cfdata-data:/data ghcr.io/tunecc/cfdata-web:latest -cli
-```
-
 ## Docker Compose
 
 仓库根目录提供 `docker-compose.yml`，数据目录挂载到当前目录的 `./data`：

@@ -38,6 +38,18 @@ type schedulePlan struct {
 	Warning        string
 }
 
+// describeSchedulePlan 返回调度计划的中文摘要（原 schedule_menu.go，CLI 菜单删除后保留）
+func describeSchedulePlan(plan schedulePlan) string {
+	if !plan.Enabled {
+		return "已关闭"
+	}
+	desc := "已启用（" + plan.String() + "）"
+	if plan.Warning != "" {
+		desc += "；" + plan.Warning
+	}
+	return desc
+}
+
 func normalizeSchedulePlan(cfg cliFileConfig) schedulePlan {
 	plan := schedulePlan{Enabled: cfg.ScheduleEnabled}
 	if !plan.Enabled {
@@ -710,7 +722,7 @@ func startWebScheduler(configPath string) *scanScheduler {
 	webScheduler = scheduler
 
 	if !scheduler.Status().Enabled {
-		fmt.Println("自动调度: 未启用（可在 Web 设置或 CLI 菜单 4 中开启）")
+		fmt.Println("自动调度: 未启用（可在 Web 设置中开启）")
 	}
 	return scheduler
 }

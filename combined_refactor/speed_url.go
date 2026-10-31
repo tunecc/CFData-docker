@@ -380,26 +380,3 @@ func speedURLStatusPayload() map[string]interface{} {
 	}
 	return map[string]interface{}{"ready": speedURLAvailabilityState.ready, "urls": entries}
 }
-
-func logSpeedURLAvailabilitySummary() {
-	speedURLAvailabilityState.RLock()
-	if !speedURLAvailabilityState.ready {
-		speedURLAvailabilityState.RUnlock()
-		return
-	}
-	parts := make([]string, 0, 4)
-	for _, candidate := range speedURLCandidates() {
-		available, known := speedURLAvailabilityState.status[candidate]
-		mark := "未测"
-		if known {
-			if available {
-				mark = "可用"
-			} else {
-				mark = "不可用"
-			}
-		}
-		parts = append(parts, fmt.Sprintf("%s(%s)=%s", speedURLLabel(candidate), candidate, mark))
-	}
-	speedURLAvailabilityState.RUnlock()
-	fmt.Println("测速地址可用性: " + strings.Join(parts, " | "))
-}
