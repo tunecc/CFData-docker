@@ -1,0 +1,16 @@
+{
+  "change": "webui-scp-style-redesign",
+  "phase": "design",
+  "mode": "compact",
+  "canonical_spec": "openspec",
+  "task_hash_policy": "task-content-v1",
+  "generated_by": "comet-handoff.sh",
+  "context_hash": "3a37ebf5dfa59a0e70e24ae1a94d2ac6f70dbdce67c986ca6ef6a6f401fa00e6",
+  "files": [
+    { "path": "docs/openspec/changes/webui-scp-style-redesign/proposal.md", "sha256": "d610c42bcb86bb7094d80f154ceaa36d22d9cb229f478be883289094f5424ec2" },
+    { "path": "docs/openspec/changes/webui-scp-style-redesign/design.md", "sha256": "7914b03719e42f1c9482a8241ce0101bd02189613712d60a9257ff24206354fb" },
+    { "path": "docs/openspec/changes/webui-scp-style-redesign/tasks.md", "sha256": "39eacd24a89e596f74cc2d7eaead0bf97ce3728c4b551ce62b3bce4e3bf513df" },
+    { "path": "docs/openspec/changes/webui-scp-style-redesign/.openspec.yaml", "sha256": "c6ab3a95d8d0fd469ca8750ef79234025bf4a8356d5d57856e97d7e47fc8b6c2" },
+    { "path": "docs/openspec/changes/webui-scp-style-redesign/specs/web-console/spec.md", "sha256": "b9f45cea791d2f5a7718e821f75f4b083ad7a62f7af87fd1b858bf164bd7b685" }
+  ]
+}

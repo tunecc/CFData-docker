@@ -1,0 +1,37 @@
+{
+ "schemaVersion": 1,
+ "taskIds": [
+  "1b52202a-fb8c-46a3-be34-f65707c68581",
+  "c91a1e02-0e46-401c-b920-307f6532cfa6",
+  "fa5bfd47-0422-4aca-9a4a-11f40c8505c8",
+  "69307b1f-3ece-4186-b42e-b38863e6ec27",
+  "983b45e6-354b-4f11-906c-c569814decd8",
+  "9f6d0f3b-40e4-452d-92e6-3a76cf8cf076",
+  "e3a87f02-ea6a-47ca-bf1e-d3e4ef9578cb",
+  "bcb08df1-be03-4dcf-af18-273a4bd48f96",
+  "12709680-6695-488b-8c76-e886d3efac63",
+  "986f84a0-2d00-490a-924b-11d3afc60be6",
+  "cfb48e93-28fd-4144-b4bb-77f663f69325",
+  "9eb0936c-61c5-4271-9f84-c6163369687e",
+  "0013a895-0ef3-46a7-8628-8d239b87a3a6",
+  "17e0bfd1-ff37-4943-b694-665e371d595b",
+  "93597278-7719-4787-8287-2d514ee24d32",
+  "8fbd20fc-23de-434b-943c-c9b92d0a3dd2",
+  "fe654106-525a-4e67-8527-45d9d19a18fb"
+ ],
+ "revision": "39eacd24a89e596f74cc2d7eaead0bf97ce3728c4b551ce62b3bce4e3bf513df",
+ "stage": "task-review",
+ "sessionId": "zcode-webui-redesign-20261031",
+ "evidence": [
+  "浏览器实测：五视图导航/主题切换持久化/启停状态机（idle→preparing→running→stopping→idle）/终端日志着色与 500 行缓冲/分析 chips+排行/全部弹窗字段/真实 WS 消息路径（scan_result→渲染→徽章→弹窗可开）",
+  "移动端 390px 单列布局无横向溢出（截图验证）",
+  "Docker 镜像构建成功（exit 0）；go build/vet/test 全绿；release_assets/cfdata-test 已重建",
+  "登录页新样式 + ?error=1 + 正确 302 认证流程",
+  "审查修复后复验（浏览器实测）：preparing 状态可达+启动 toast、无总量进度不显示百分比、达标统计含 row-qualified、设置面板常驻、ANSI 渲染、初始单高亮、safe-area",
+  "修复后 go build/vet/test 全绿，release_assets/cfdata-test 重建"
+ ],
+ "unresolved": [
+  "结果操作/筛选排序弹窗的真实数据全量交互留待用户环境任务验收（脚本内部状态驱动的打开逻辑已用 handleMessage 消息注入验证）"
+ ],
+ "reviewRounds": 1
+}

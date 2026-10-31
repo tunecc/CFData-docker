@@ -1,0 +1,2732 @@
+# comet-execution: managed-run
+change_id: 700d6aed-ab9c-4333-b734-47cbf3ce12c4
+workflow: full
+language: zh-CN
+phase: archive
+context_compression: off
+build_mode: autonomous
+build_pause: null
+subagent_dispatch: null
+tdd_mode: tdd
+review_mode: standard
+isolation: current
+verify_mode: null
+auto_transition: true
+base_ref: 161fa3a42723d2e34114d4aeb09817ed314e3217
+design_doc: docs/openspec/changes/archive/2026-10-31-webui-scp-style-redesign/design.md
+plan: docs/superpowers/plans/2026-10-31-webui-scp-style-redesign.md
+verify_result: pass
+verify_failures: 0
+verification_report: docs/superpowers/reports/2026-10-31-webui-scp-style-redesign-verify.md
+branch_status: pending
+created_at: 2026-10-31
+verified_at: 2026-10-31
+archive_confirmation: confirmed
+archived: true
+bound_branch: main
+direct_override: false
+handoff_context: docs/openspec/changes/archive/2026-10-31-webui-scp-style-redesign/.comet/handoff/design-context.json
+handoff_hash: 3a37ebf5dfa59a0e70e24ae1a94d2ac6f70dbdce67c986ca6ef6a6f401fa00e6
+classic_profile: null
+classic_migration: null
+run_checkpoint:
+  schema: comet.workflow-run-checkpoint.v2
+  hash: bdd3af44da7d5f05c46e42f1adcb300924cb9494366e25e41d3363d4416d7801
+  run:
+    protocolVersion: 1
+    schemaVersion: 1
+    runId: webui-scp-style-redesign
+    revision: 1
+    workflow:
+      id: comet-classic-full
+      version: "1"
+      hash: 22f3d34c5ee18da3a0c2d11271ad799bd0ae40e37607cbf90baec05a5e003ee7
+    definitionHashes:
+      '["comet-classic-full","1"]': 22f3d34c5ee18da3a0c2d11271ad799bd0ae40e37607cbf90baec05a5e003ee7
+    initialStateHash: b70fe34e9dfce23de7be01d02b6cd91515b4453aaca9600d96280e5128122aae
+    input:
+      change: webui-scp-style-redesign
+      changeDir: docs/openspec/changes/webui-scp-style-redesign
+      workspaceBaseline:
+        ref: 036a0c77-4f28-46ae-8a7e-9ae40c1bfc63
+    state:
+      archiveConfirmation: confirmed
+      archived: true
+      autoTransition: true
+      baseRef: 161fa3a42723d2e34114d4aeb09817ed314e3217
+      boundBranch: main
+      branchStatus: pending
+      buildMode: autonomous
+      buildPause: null
+      checkEpoch: 6
+      classicMigration: null
+      classicProfile: null
+      contextCompression: off
+      createdAt: 2026-10-31
+      designDoc: docs/openspec/changes/archive/2026-10-31-webui-scp-style-redesign/design.md
+      directOverride: false
+      handoffContext: docs/openspec/changes/archive/2026-10-31-webui-scp-style-redesign/.comet/handoff/design-context.json
+      handoffHash: 3a37ebf5dfa59a0e70e24ae1a94d2ac6f70dbdce67c986ca6ef6a6f401fa00e6
+      isolation: current
+      language: zh-CN
+      phase: archive
+      plan: docs/superpowers/plans/2026-10-31-webui-scp-style-redesign.md
+      reviewMode: standard
+      subagentDispatch: null
+      tddMode: tdd
+      verificationReport: docs/superpowers/reports/2026-10-31-webui-scp-style-redesign-verify.md
+      verifiedAt: 2026-10-31
+      verifyFailures: 0
+      verifyMode: null
+      verifyResult: pass
+      workflow: full
+    status: running
+    sequence: 27
+    actions:
+      - attempt: 1
+        claim:
+          executorId: comet-classic-guard
+          token: portable-f8ba82f850c9185753018c9f6d398176cf6b27687e8eb9cf795f1f589f01d917
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: webui-scp-style-redesign:1
+        input:
+          input:
+            change: webui-scp-style-redesign
+            changeDir: docs/openspec/changes/webui-scp-style-redesign
+            workspaceBaseline:
+              ref: 036a0c77-4f28-46ae-8a7e-9ae40c1bfc63
+          outputs: {}
+        inputHash: 2111ec1ed59d8a907ace13c3cd083a0ce7305587930f514b9ab33d62ff0a69bb
+        outcome:
+          actionId: webui-scp-style-redesign:1
+          attempt: 1
+          claimToken: portable-f8ba82f850c9185753018c9f6d398176cf6b27687e8eb9cf795f1f589f01d917
+          inputHash: 2111ec1ed59d8a907ace13c3cd083a0ce7305587930f514b9ab33d62ff0a69bb
+          outcomeId: 3d75a3ba-6565-4ebb-82e8-9d0de0294b31
+          output:
+            event: open-complete
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 0b0930e0cf1d8df9c1363730933812c357cf5f8781857ab62b048ae9936dfb1b
+            outcomeId: 3d75a3ba-6565-4ebb-82e8-9d0de0294b31
+        reconciliations: []
+        ref: comet-open
+        requiredCapabilities: []
+        retry: manual
+        runId: webui-scp-style-redesign
+        status: succeeded
+        stepId: full.open
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-open-revalidate
+          token: portable-8f55352b0727aef7bfb25aad2981d11d79575652f60ef07057530a37b1b1a0ab
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: webui-scp-style-redesign:4
+        input:
+          input:
+            change: webui-scp-style-redesign
+            changeDir: docs/openspec/changes/webui-scp-style-redesign
+            workspaceBaseline:
+              ref: 036a0c77-4f28-46ae-8a7e-9ae40c1bfc63
+          outputs: {}
+        inputHash: 8e835b4ba3df933f376003985dfa2b49aac7981e137061ae4297aad9bf0a542d
+        outcome:
+          actionId: webui-scp-style-redesign:4
+          attempt: 1
+          claimToken: portable-8f55352b0727aef7bfb25aad2981d11d79575652f60ef07057530a37b1b1a0ab
+          inputHash: 8e835b4ba3df933f376003985dfa2b49aac7981e137061ae4297aad9bf0a542d
+          outcomeId: webui-scp-style-redesign:4:1:executor-result
+          output:
+            contentHash: 5552cf43a8310b572069e4a593c52a8221f6dc0fb984cda2395dccdad9678d24
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 1c2a006ca7e885abc42d6936e74c8c1823f4d656229dc5276f567678d09c9aa3
+            outcomeId: webui-scp-style-redesign:4:1:executor-result
+        reconciliations: []
+        ref: classic-open-revalidate
+        requiredCapabilities: []
+        retry: manual
+        runId: webui-scp-style-redesign
+        status: succeeded
+        stepId: full.open.revalidate
+        type: call_tool
+      - attempt: 1
+        claim:
+          executorId: comet-classic-state
+          token: portable-252e766c030ec643efe7832e8071fb2f658e3438c10558eba2e0aca9662ec0fc
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: webui-scp-style-redesign:5
+        input:
+          input:
+            change: webui-scp-style-redesign
+            changeDir: docs/openspec/changes/webui-scp-style-redesign
+            workspaceBaseline:
+              ref: 036a0c77-4f28-46ae-8a7e-9ae40c1bfc63
+          outputs: {}
+        inputHash: d673b339ff69a014da2ba3c4df34c505dc69578dbab7233528e4185465246087
+        outcome:
+          actionId: webui-scp-style-redesign:5
+          attempt: 1
+          claimToken: portable-252e766c030ec643efe7832e8071fb2f658e3438c10558eba2e0aca9662ec0fc
+          inputHash: d673b339ff69a014da2ba3c4df34c505dc69578dbab7233528e4185465246087
+          outcomeId: 68d42e4e-1a81-4564-8d14-6309790b16c1
+          output:
+            handoffContext: docs/openspec/changes/webui-scp-style-redesign/.comet/handoff/design-context.json
+            handoffHash: 3a37ebf5dfa59a0e70e24ae1a94d2ac6f70dbdce67c986ca6ef6a6f401fa00e6
+            proposal: "技术方案：整体重写 index.html（零依赖单文件+go:embed+WebSocket 通道不变）：CSS 变量设计体系（teal
+              #0ea5a0、语义色、玻璃拟态、color-mix、暗色 #121316）+ 三栏
+              Grid（左导航：任务运行/官方优选/非标优选/分析报告/设置；中栏控制卡+日志卡；右栏配置卡）+ 移动端单列。48px
+              圆形启停状态机（空闲绿/准备蓝/运行红/停止中）+乐观
+              UI+toast；进度条阶段名+计数+shimmer。终端风日志：级别着色、上滚暂停+回到底部胶囊、500
+              行环形缓冲（修复现有无上限）。分析：统计
+              chips+DC/地区排行（前端聚合不加后端消息）+结果表排序筛选复制+导出上传入口。兼容：21 种 WS 请求/39
+              种响应语义全兼容，Android 桥保留，login.html 统一主题，服务端最小改动。取舍与风险：重写回归风险以
+              protocol.go 消息清单逐项迁移核对，git 历史可回滚；现代浏览器目标，关键容器
+              fallback；不逐像素对照范本。测试策略：go build/test 全绿+测试版构建+本地真实运行走查 17
+              个验收场景+Docker 最终验收。Spec Patch：无，web-console delta spec
+              已完整覆盖。用户决定：设计内容与 Open 阶段已批准产物完全一致，Step 1c 确认提问未获答复，按 Open
+              批准继续（自主会话）。"
+            requirementsEvidence:
+              contentHash: 54e9213e62a2356cc81141ae681a4ce933732adb11c0ddf7de482a5c9cccec6f
+              ref: docs/openspec/changes/webui-scp-style-redesign
+            sourceEvidence:
+              contentHash: 8b79e457dad5ed9a7c059fd8697a17236bd3cbb70ece9dd003d62b3689036ea2
+              ref: docs/openspec/changes/webui-scp-style-redesign
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 07d0cc6931360bcbaf7151dd6b0984b0825d1b7999bd5a76f37bccdd5475a28f
+            outcomeId: 68d42e4e-1a81-4564-8d14-6309790b16c1
+        reconciliations: []
+        ref: comet-design
+        requiredCapabilities: []
+        retry: manual
+        runId: webui-scp-style-redesign
+        status: succeeded
+        stepId: full.design.handoff
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-state
+          token: portable-77731b1160b0db7d625ee31dc956241b4449f2501f8eff409a2076e6cac84fa1
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: webui-scp-style-redesign:7
+        input:
+          input:
+            change: webui-scp-style-redesign
+            changeDir: docs/openspec/changes/webui-scp-style-redesign
+            workspaceBaseline:
+              ref: 036a0c77-4f28-46ae-8a7e-9ae40c1bfc63
+          outputs: {}
+        inputHash: 9a094a7be4aac55316408c333500a2a91bd593e6668df9d89d7a5dad511ea51e
+        outcome:
+          actionId: webui-scp-style-redesign:7
+          attempt: 1
+          claimToken: portable-77731b1160b0db7d625ee31dc956241b4449f2501f8eff409a2076e6cac84fa1
+          inputHash: 9a094a7be4aac55316408c333500a2a91bd593e6668df9d89d7a5dad511ea51e
+          outcomeId: 0b519719-4cdc-4483-9b65-541a045d1934
+          output:
+            designDoc: docs/openspec/changes/webui-scp-style-redesign/design.md
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: bb1166d3c4b9d92e7d864121d8345f2891389897d1fa15ff1d974fc1cb64f720
+            outcomeId: 0b519719-4cdc-4483-9b65-541a045d1934
+        reconciliations: []
+        ref: comet-design
+        requiredCapabilities: []
+        retry: manual
+        runId: webui-scp-style-redesign
+        status: succeeded
+        stepId: full.design.document
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-state
+          token: portable-80270903a55b2506166f4e36959eb42164ddb01405a6d8dca5cac955779478dd
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: webui-scp-style-redesign:9
+        input:
+          input:
+            change: webui-scp-style-redesign
+            changeDir: docs/openspec/changes/webui-scp-style-redesign
+            workspaceBaseline:
+              ref: 036a0c77-4f28-46ae-8a7e-9ae40c1bfc63
+          outputs: {}
+        inputHash: 7d797088b9ad681ffc16806465b54c476476dc81a2d1bbe71d81adedfc894a09
+        outcome:
+          actionId: webui-scp-style-redesign:9
+          attempt: 1
+          claimToken: portable-80270903a55b2506166f4e36959eb42164ddb01405a6d8dca5cac955779478dd
+          inputHash: 7d797088b9ad681ffc16806465b54c476476dc81a2d1bbe71d81adedfc894a09
+          outcomeId: 5ad12c32-faea-41f2-84a7-dc8b1091f5cc
+          output:
+            boundBranch: main
+            buildMode: autonomous
+            directOverride: false
+            isolation: current
+            reviewMode: standard
+            subagentDispatch: null
+            tddMode: tdd
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 23e9b931e18f95f7777a90370e722f19154ee6b9c5002916124eebfa6bbe49ca
+            outcomeId: 5ad12c32-faea-41f2-84a7-dc8b1091f5cc
+        reconciliations: []
+        ref: comet-build
+        requiredCapabilities: []
+        retry: manual
+        runId: webui-scp-style-redesign
+        status: succeeded
+        stepId: full.build.configure
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-state
+          token: portable-a4db3c72c77564afb48c0103aff0b3795268a2eeeaf127703c8e910518a9cf97
+        executionOrigin:
+          workflow:
+            hash: ee198afdb53add0c23f98202aae8cdbe4079b9f4ebf7a62ed4ab8411ed591db5
+            id: comet-classic-full
+            version: "1"
+        id: webui-scp-style-redesign:11
+        input:
+          input:
+            change: webui-scp-style-redesign
+            changeDir: docs/openspec/changes/webui-scp-style-redesign
+            workspaceBaseline:
+              ref: 036a0c77-4f28-46ae-8a7e-9ae40c1bfc63
+          outputs: {}
+        inputHash: 1cc9493dfb862f8535285392ca795a4167c8af26e000d8b3977b9e428854b264
+        outcome:
+          actionId: webui-scp-style-redesign:11
+          attempt: 1
+          claimToken: portable-a4db3c72c77564afb48c0103aff0b3795268a2eeeaf127703c8e910518a9cf97
+          inputHash: 1cc9493dfb862f8535285392ca795a4167c8af26e000d8b3977b9e428854b264
+          outcomeId: d2de9f58-5530-4200-9f84-de9036b90484
+          output:
+            designEvidence:
+              contentHash: 7914b03719e42f1c9482a8241ce0101bd02189613712d60a9257ff24206354fb
+              ref: docs/openspec/changes/webui-scp-style-redesign/design.md
+            plan: docs/superpowers/plans/2026-10-31-webui-scp-style-redesign.md
+            planEvidence:
+              contentHash: 3362f4845af8b3b8103e35b14aa355fd1005f25db4792489030e11b15c9f0227
+              ref: docs/superpowers/plans/2026-10-31-webui-scp-style-redesign.md
+            taskRevision: 39eacd24a89e596f74cc2d7eaead0bf97ce3728c4b551ce62b3bce4e3bf513df
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: ea04622bbf714e59fd8b69d8757a8031c0f484f0dd0b578a24ad81d70d7d6ee3
+            outcomeId: d2de9f58-5530-4200-9f84-de9036b90484
+        reconciliations: []
+        ref: comet-build
+        requiredCapabilities: []
+        retry: manual
+        runId: webui-scp-style-redesign
+        status: succeeded
+        stepId: full.build.plan
+        type: invoke_skill
+      - attempt: 1
+        id: webui-scp-style-redesign:13
+        input:
+          input:
+            change: webui-scp-style-redesign
+            changeDir: docs/openspec/changes/webui-scp-style-redesign
+            workspaceBaseline:
+              ref: 036a0c77-4f28-46ae-8a7e-9ae40c1bfc63
+          outputs: {}
+        inputHash: a94e27730997085afd6caf737c94958d070efcad49865070739426cae0745b0d
+        protocolVersion: 1
+        reason: 命令 revise-plan 已取代待执行 Action
+        receipts: []
+        reconciliations: []
+        ref: comet-build
+        requiredCapabilities: []
+        retry: manual
+        runId: webui-scp-style-redesign
+        status: cancelled
+        stepId: full.build.execute
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-state
+          token: portable-1e4e059a8ee90af26df1f6f8ff640eced184a91ff1e7c3d2cf6a4c7cb47144b0
+        executionOrigin:
+          workflow:
+            hash: 22f3d34c5ee18da3a0c2d11271ad799bd0ae40e37607cbf90baec05a5e003ee7
+            id: comet-classic-full
+            version: "1"
+        id: webui-scp-style-redesign:14
+        input:
+          activation:
+            expectedRevision: 19
+            fromPhase: build
+          input:
+            change: webui-scp-style-redesign
+            changeDir: docs/openspec/changes/webui-scp-style-redesign
+            workspaceBaseline:
+              ref: 036a0c77-4f28-46ae-8a7e-9ae40c1bfc63
+          outputs: {}
+        inputHash: 16315dab280528e53d776c97e0bc20732f2a07260872bfb4a8fbf46381648033
+        outcome:
+          actionId: webui-scp-style-redesign:14
+          attempt: 1
+          claimToken: portable-1e4e059a8ee90af26df1f6f8ff640eced184a91ff1e7c3d2cf6a4c7cb47144b0
+          inputHash: 16315dab280528e53d776c97e0bc20732f2a07260872bfb4a8fbf46381648033
+          outcomeId: 27a3ff24-deb8-43a9-9392-9b017d366dbe
+          output:
+            designEvidence:
+              contentHash: 7914b03719e42f1c9482a8241ce0101bd02189613712d60a9257ff24206354fb
+              ref: docs/openspec/changes/webui-scp-style-redesign/design.md
+            plan: docs/superpowers/plans/2026-10-31-webui-scp-style-redesign.md
+            planEvidence:
+              contentHash: e061b7bc59827c77b19158fd9d74f24e942cf1fee67b7d5d670b69a6977acc7f
+              ref: docs/superpowers/plans/2026-10-31-webui-scp-style-redesign.md
+            taskRevision: 39eacd24a89e596f74cc2d7eaead0bf97ce3728c4b551ce62b3bce4e3bf513df
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 7a92d4ced20996a26d09aa41499748a1177985774000a5242f1473ec4a6df6a4
+            outcomeId: 27a3ff24-deb8-43a9-9392-9b017d366dbe
+        reconciliations: []
+        ref: comet-build
+        requiredCapabilities: []
+        retry: manual
+        runId: webui-scp-style-redesign
+        status: succeeded
+        stepId: full.build.plan
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-state
+          sessionId: classic-builder/webui-scp-style-redesign:16/1
+          token: portable-576c45737b310ef7ffe251c8c14660b23cbc98f713261de9b3bb6dbc78f9c18a
+        executionOrigin:
+          workflow:
+            hash: 22f3d34c5ee18da3a0c2d11271ad799bd0ae40e37607cbf90baec05a5e003ee7
+            id: comet-classic-full
+            version: "1"
+        id: webui-scp-style-redesign:16
+        input:
+          input:
+            change: webui-scp-style-redesign
+            changeDir: docs/openspec/changes/webui-scp-style-redesign
+            workspaceBaseline:
+              ref: 036a0c77-4f28-46ae-8a7e-9ae40c1bfc63
+          outputs: {}
+        inputHash: 93e73f00e743e3236de9601c195923ad952f32e9f6e753d26421131beef562d7
+        outcome:
+          actionId: webui-scp-style-redesign:16
+          attempt: 1
+          claimToken: portable-576c45737b310ef7ffe251c8c14660b23cbc98f713261de9b3bb6dbc78f9c18a
+          inputHash: 93e73f00e743e3236de9601c195923ad952f32e9f6e753d26421131beef562d7
+          outcomeId: 7baaca32-08f8-448e-9b75-665f63a9c2a9
+          output:
+            event: build-complete
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 2723fd505e70c76f29135c15df139f8da36979063552a53a4c9d0ab0987fb255
+            outcomeId: 7baaca32-08f8-448e-9b75-665f63a9c2a9
+        reconciliations: []
+        ref: comet-build
+        requiredCapabilities: []
+        retry: manual
+        runId: webui-scp-style-redesign
+        status: succeeded
+        stepId: full.build.execute
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-check
+          token: portable-e2a35885c6108ceb970d72a9b91476f8e1779cc02ac8aa442e87e1098c26b382
+        executionOrigin:
+          workflow:
+            hash: 22f3d34c5ee18da3a0c2d11271ad799bd0ae40e37607cbf90baec05a5e003ee7
+            id: comet-classic-full
+            version: "1"
+        id: webui-scp-style-redesign:17
+        input:
+          input:
+            change: webui-scp-style-redesign
+            changeDir: docs/openspec/changes/webui-scp-style-redesign
+            workspaceBaseline:
+              ref: 036a0c77-4f28-46ae-8a7e-9ae40c1bfc63
+          outputs: {}
+        inputHash: a4f9d8a0658375ef5f29ddd4133bfec6cd9e334f1c7b488df429791a87013174
+        outcome:
+          actionId: webui-scp-style-redesign:17
+          attempt: 1
+          claimToken: portable-e2a35885c6108ceb970d72a9b91476f8e1779cc02ac8aa442e87e1098c26b382
+          inputHash: a4f9d8a0658375ef5f29ddd4133bfec6cd9e334f1c7b488df429791a87013174
+          outcomeId: a7915803-d71b-4901-a18a-d7eb543cd08c
+          output:
+            argv:
+              - go
+              - -C
+              - combined_refactor
+              - test
+              - ./...
+            changedDuringExecution: []
+            checkEpoch: 2
+            contentHash: d54e053dab165fb66f72aed6f16911e7d6be3430b7f60b79d5887ab991b8f832
+            cwd: .
+            environment: 5cdf03293e67f4806ee1616a2d82bf7ecc8874ca90a5c78ab5f0604146387b92
+            exitCode: 0
+            inputAfter: ee981e6c7426198910a4e8b933837a5d9f8c7d199cea3f544cccca2bd952949a
+            inputBefore: ee981e6c7426198910a4e8b933837a5d9f8c7d199cea3f544cccca2bd952949a
+            manifestHash: f38092873f2db699f1fda3770d8a7ad8d9005daa3a9555aeeebc3edc7c87a38d
+            manifestRef: .comet/runtime/classic-sdk-checks/43cc496a24af68d276d124993eecde780ee9d11b8ac002015900e2c55016ad3a/40497736-a46c-4663-a157-6ce3ad0aaae1.manifest
+            receiptRef: .comet/runtime/classic-sdk-checks/43cc496a24af68d276d124993eecde780ee9d11b8ac002015900e2c55016ad3a/d640b9f9-6e03-463a-81d9-a86cf86bb7b3.log
+            reusable: false
+            reused: false
+            scope: build
+            tier: full
+            timeoutMs: 300000
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: a3b03408ff84f8d47fc199ce0fff56a201ec96a4489b34b604f5f6e89f882824
+            outcomeId: a7915803-d71b-4901-a18a-d7eb543cd08c
+        reconciliations: []
+        ref: classic-check
+        requiredCapabilities: []
+        retry: manual
+        runId: webui-scp-style-redesign
+        status: succeeded
+        stepId: full.build.check
+        type: call_tool
+      - attempt: 1
+        claim:
+          executorId: comet-classic-guard
+          token: portable-23bcf32b6a4b6d825a094f641fbd3314251da6c7c0e48903c4782652d5a87f54
+        executionOrigin:
+          workflow:
+            hash: 22f3d34c5ee18da3a0c2d11271ad799bd0ae40e37607cbf90baec05a5e003ee7
+            id: comet-classic-full
+            version: "1"
+        id: webui-scp-style-redesign:19
+        input:
+          input:
+            change: webui-scp-style-redesign
+            changeDir: docs/openspec/changes/webui-scp-style-redesign
+            workspaceBaseline:
+              ref: 036a0c77-4f28-46ae-8a7e-9ae40c1bfc63
+          outputs: {}
+        inputHash: 2f04b89f2ae99080b22fb2eecc9338e669dd93b10292c4297fb3e37fce9f5124
+        outcome:
+          actionId: webui-scp-style-redesign:19
+          attempt: 1
+          claimToken: portable-23bcf32b6a4b6d825a094f641fbd3314251da6c7c0e48903c4782652d5a87f54
+          inputHash: 2f04b89f2ae99080b22fb2eecc9338e669dd93b10292c4297fb3e37fce9f5124
+          outcomeId: 2cf634a6-5b46-4feb-a207-731715d77e2a
+          output:
+            event: verification-ready
+            verificationReport: docs/superpowers/reports/2026-10-31-webui-scp-style-redesign-verify.md
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 50b2b7b72d651ad2e210c9201cd18ea1c9906b788ab6381e9f22d95497d42875
+            outcomeId: 2cf634a6-5b46-4feb-a207-731715d77e2a
+        reconciliations: []
+        ref: comet-verify
+        requiredCapabilities: []
+        retry: manual
+        runId: webui-scp-style-redesign
+        status: succeeded
+        stepId: full.verify.run
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-check
+          token: portable-f6bcdb898f6d6461948f7d646704d9ef12524edc51b69eb9bd6c3bfa97216ec8
+        executionOrigin:
+          workflow:
+            hash: 22f3d34c5ee18da3a0c2d11271ad799bd0ae40e37607cbf90baec05a5e003ee7
+            id: comet-classic-full
+            version: "1"
+        id: webui-scp-style-redesign:21
+        input:
+          input:
+            change: webui-scp-style-redesign
+            changeDir: docs/openspec/changes/webui-scp-style-redesign
+            workspaceBaseline:
+              ref: 036a0c77-4f28-46ae-8a7e-9ae40c1bfc63
+          outputs: {}
+        inputHash: dd682231f410431558eba7623ec2a7d789347a44d4bb4d3cb2ba720300568bc1
+        outcome:
+          actionId: webui-scp-style-redesign:21
+          attempt: 1
+          claimToken: portable-f6bcdb898f6d6461948f7d646704d9ef12524edc51b69eb9bd6c3bfa97216ec8
+          inputHash: dd682231f410431558eba7623ec2a7d789347a44d4bb4d3cb2ba720300568bc1
+          outcomeId: 93b65ace-169e-4884-9cec-84d299b8eba9
+          output:
+            argv:
+              - go
+              - -C
+              - combined_refactor
+              - test
+              - ./...
+            changedDuringExecution: []
+            checkEpoch: 3
+            contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+            cwd: .
+            deliveryInputs: {}
+            environment: 5cdf03293e67f4806ee1616a2d82bf7ecc8874ca90a5c78ab5f0604146387b92
+            exitCode: 0
+            inputAfter: ee981e6c7426198910a4e8b933837a5d9f8c7d199cea3f544cccca2bd952949a
+            inputBefore: ee981e6c7426198910a4e8b933837a5d9f8c7d199cea3f544cccca2bd952949a
+            manifestHash: f38092873f2db699f1fda3770d8a7ad8d9005daa3a9555aeeebc3edc7c87a38d
+            manifestRef: .comet/runtime/classic-sdk-checks/43cc496a24af68d276d124993eecde780ee9d11b8ac002015900e2c55016ad3a/9e0c8c6a-ef9a-4967-ad6e-17ac8ad87a3d.manifest
+            receiptRef: .comet/runtime/classic-sdk-checks/43cc496a24af68d276d124993eecde780ee9d11b8ac002015900e2c55016ad3a/c6879b83-43e5-493a-8ecc-8c818eb06f4c.log
+            reusable: false
+            reused: false
+            scope: verify
+            tier: full
+            timeoutMs: 300000
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 5d17ef705de61b68ed34a7567ec69df8e86b2bea82ec4f483c5e2e0fa06ba809
+            outcomeId: 93b65ace-169e-4884-9cec-84d299b8eba9
+        reconciliations: []
+        ref: classic-check
+        requiredCapabilities: []
+        retry: manual
+        runId: webui-scp-style-redesign
+        status: succeeded
+        stepId: full.verify.check
+        type: call_tool
+      - attempt: 1
+        claim:
+          executorId: comet-classic-state
+          token: portable-2ff8fa8ba8d2bcd9161f1b81b45ea61e247e2c66308c501f5acdf244d5179b3f
+        executionOrigin:
+          workflow:
+            hash: 22f3d34c5ee18da3a0c2d11271ad799bd0ae40e37607cbf90baec05a5e003ee7
+            id: comet-classic-full
+            version: "1"
+        id: webui-scp-style-redesign:23
+        input:
+          input:
+            change: webui-scp-style-redesign
+            changeDir: docs/openspec/changes/webui-scp-style-redesign
+            workspaceBaseline:
+              ref: 036a0c77-4f28-46ae-8a7e-9ae40c1bfc63
+          outputs: {}
+        inputHash: 0ff43c587ea05d4cede8adb81d886e855058ba87cb278c668796220dd8a51532
+        outcome:
+          actionId: webui-scp-style-redesign:23
+          attempt: 1
+          claimToken: portable-2ff8fa8ba8d2bcd9161f1b81b45ea61e247e2c66308c501f5acdf244d5179b3f
+          inputHash: 0ff43c587ea05d4cede8adb81d886e855058ba87cb278c668796220dd8a51532
+          outcomeId: 1c50c613-7049-4d9b-b0f7-9b67866dffbc
+          output:
+            remote: origin
+            summary: Web 控制台照 subs-check-pro 设计体系大改：三栏布局/圆形启停/终端日志/分析页/配置分组/深浅主题/移动端；WS
+              全兼容服务端零改动。验证全通过（full 模式，19 场景），复查 PASS_WITH_MINOR（遗留已修），实现提交
+              ef4ab85。
+            targetBranch: main
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 29417e8deba828471a39b1ecd4151003555de534cf4c71da524f270bd17a8145
+            outcomeId: 1c50c613-7049-4d9b-b0f7-9b67866dffbc
+        reconciliations: []
+        ref: comet-archive
+        requiredCapabilities: []
+        retry: manual
+        runId: webui-scp-style-redesign
+        status: succeeded
+        stepId: full.archive.prepare
+        type: invoke_skill
+      - attempt: 1
+        claim:
+          executorId: comet-classic-archive-preflight
+          token: portable-fb9895e41b3456725448aae7d56de827c98c7f8f899f91060183b19383e13842
+        executionOrigin:
+          workflow:
+            hash: 22f3d34c5ee18da3a0c2d11271ad799bd0ae40e37607cbf90baec05a5e003ee7
+            id: comet-classic-full
+            version: "1"
+        id: webui-scp-style-redesign:25
+        input:
+          input:
+            change: webui-scp-style-redesign
+            changeDir: docs/openspec/changes/webui-scp-style-redesign
+            workspaceBaseline:
+              ref: 036a0c77-4f28-46ae-8a7e-9ae40c1bfc63
+          outputs: {}
+        inputHash: 1a1b37491824f2e1db61f82f3ce40642d4c90698e92eb546115325321653bd14
+        outcome:
+          actionId: webui-scp-style-redesign:25
+          attempt: 1
+          claimToken: portable-fb9895e41b3456725448aae7d56de827c98c7f8f899f91060183b19383e13842
+          inputHash: 1a1b37491824f2e1db61f82f3ce40642d4c90698e92eb546115325321653bd14
+          outcomeId: fa925316-44db-4020-87c1-5f1fd6b5db99
+          output:
+            baseCommit: ef4ab851fd2df25d6f5c692f4b9bc0a140d69ff6
+            deliveryAction: push
+            remote: origin
+            remoteIdentity: f77fd8941c2db1c30d5e8e3438a94109c2534b02c7bc211de17168b469821b65
+            targetBranch: main
+            verifiedBranch: main
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 9f08bb3c9ec4d0f3aae9ad4562ea740b507ddb2ac1b7089b6082d14fc325c331
+            outcomeId: fa925316-44db-4020-87c1-5f1fd6b5db99
+        reconciliations: []
+        ref: classic-archive-preflight
+        requiredCapabilities: []
+        retry: manual
+        runId: webui-scp-style-redesign
+        status: succeeded
+        stepId: full.archive.preflight
+        type: call_tool
+      - attempt: 1
+        claim:
+          executorId: comet-classic-archive
+          token: portable-e66a65eb30ed491d268b0b8676a61f3dec12f094508bd4e5050c8b804b0be573
+        executionOrigin:
+          workflow:
+            hash: 22f3d34c5ee18da3a0c2d11271ad799bd0ae40e37607cbf90baec05a5e003ee7
+            id: comet-classic-full
+            version: "1"
+        id: webui-scp-style-redesign:26
+        input:
+          input:
+            change: webui-scp-style-redesign
+            changeDir: docs/openspec/changes/webui-scp-style-redesign
+            workspaceBaseline:
+              ref: 036a0c77-4f28-46ae-8a7e-9ae40c1bfc63
+          outputs: {}
+        inputHash: 7f0edf2a636ed59fd2102a3a7377f226d3a20ace27847aeec81188e62812503b
+        outcome:
+          actionId: webui-scp-style-redesign:26
+          artifacts:
+            - sha256: cd95490746e0754902e5827cf0ae785bcb970f215f639a0336f4785852093ccf
+              uri: docs/openspec/changes/archive/2026-10-31-webui-scp-style-redesign/.comet/archive-manifest.json
+          attempt: 1
+          claimToken: portable-e66a65eb30ed491d268b0b8676a61f3dec12f094508bd4e5050c8b804b0be573
+          inputHash: 7f0edf2a636ed59fd2102a3a7377f226d3a20ace27847aeec81188e62812503b
+          outcomeId: 235d29dc-91f0-4b78-98b2-11ea70680b06
+          output:
+            archiveDirectory: docs/openspec/changes/archive/2026-10-31-webui-scp-style-redesign
+          status: succeeded
+        protocolVersion: 1
+        receipts:
+          - hash: 42856e7cf2eeee3337c9b0eec267be3db3b4ef7f85092f1914a8d5ac69523ac4
+            outcomeId: 235d29dc-91f0-4b78-98b2-11ea70680b06
+        reconciliations: []
+        ref: classic-archive
+        requiredCapabilities: []
+        retry: manual
+        runId: webui-scp-style-redesign
+        status: succeeded
+        stepId: full.archive.execute
+        type: call_tool
+      - attempt: 1
+        id: webui-scp-style-redesign:27
+        input:
+          input:
+            change: webui-scp-style-redesign
+            changeDir: docs/openspec/changes/webui-scp-style-redesign
+            workspaceBaseline:
+              ref: 036a0c77-4f28-46ae-8a7e-9ae40c1bfc63
+          outputs: {}
+        inputHash: a9c1448d969e8ccf1288c53ca5d3f440d344afb7a0fab4a101df47097df08ded
+        protocolVersion: 1
+        receipts: []
+        reconciliations: []
+        ref: comet-archive
+        requiredCapabilities: []
+        retry: manual
+        runId: webui-scp-style-redesign
+        status: pending
+        stepId: full.archive.deliver
+        type: invoke_skill
+    commands:
+      - id: da7fa9c5cf57a5d46a67a3edf5682c31ec212d9fd22205e2d63b50a43433a9e1
+        name: revise-plan
+        inputHash: ed99e8b6701dcdfa2c40efa491ca6d0bbfa20eb28942fae559abfefdd83169a1
+        actionId: webui-scp-style-redesign:14
+    actionContexts:
+      webui-scp-style-redesign:1:
+        results: {}
+        sequence: 1
+      webui-scp-style-redesign:11:
+        results: {}
+        sequence: 11
+      webui-scp-style-redesign:13:
+        results: {}
+        sequence: 13
+      webui-scp-style-redesign:14:
+        results: {}
+        sequence: 14
+      webui-scp-style-redesign:16:
+        results: {}
+        sequence: 16
+      webui-scp-style-redesign:17:
+        results: {}
+        sequence: 17
+      webui-scp-style-redesign:19:
+        results: {}
+        sequence: 19
+      webui-scp-style-redesign:21:
+        results: {}
+        sequence: 21
+      webui-scp-style-redesign:23:
+        results: {}
+        sequence: 23
+      webui-scp-style-redesign:25:
+        results: {}
+        sequence: 25
+      webui-scp-style-redesign:26:
+        results: {}
+        sequence: 26
+      webui-scp-style-redesign:27:
+        results: {}
+        sequence: 27
+      webui-scp-style-redesign:4:
+        results: {}
+        sequence: 4
+      webui-scp-style-redesign:5:
+        results: {}
+        sequence: 5
+      webui-scp-style-redesign:7:
+        results: {}
+        sequence: 7
+      webui-scp-style-redesign:9:
+        results: {}
+        sequence: 9
+    waits:
+      - id: webui-scp-style-redesign:3
+        stepId: full.open.confirm
+        sequence: 3
+        status: resolved
+        proposal:
+          input:
+            change: webui-scp-style-redesign
+            changeDir: docs/openspec/changes/webui-scp-style-redesign
+            workspaceBaseline:
+              ref: 036a0c77-4f28-46ae-8a7e-9ae40c1bfc63
+          outputs:
+            full.open:
+              event: open-complete
+            full.open.evidence:
+              contentHash: 5552cf43a8310b572069e4a593c52a8221f6dc0fb984cda2395dccdad9678d24
+              ref: docs/openspec/changes/webui-scp-style-redesign
+        proposalHash: 2d4d1ad0d893a4509b5d2ebe5ecc0aac5853c708f4b34d9e825792cd3304731a
+        choices:
+          - approved
+          - rejected
+        results: {}
+        decision:
+          id: classic-open-5552cf43a8310b572069e4a593c52a8221f6dc0fb984cda2395dccdad9678d24
+          choice: approved
+          proposalHash: 2d4d1ad0d893a4509b5d2ebe5ecc0aac5853c708f4b34d9e825792cd3304731a
+      - id: webui-scp-style-redesign:6
+        stepId: full.design.confirm
+        sequence: 6
+        status: resolved
+        proposal:
+          input:
+            change: webui-scp-style-redesign
+            changeDir: docs/openspec/changes/webui-scp-style-redesign
+            workspaceBaseline:
+              ref: 036a0c77-4f28-46ae-8a7e-9ae40c1bfc63
+          outputs:
+            full.design.handoff:
+              handoffContext: docs/openspec/changes/webui-scp-style-redesign/.comet/handoff/design-context.json
+              handoffHash: 3a37ebf5dfa59a0e70e24ae1a94d2ac6f70dbdce67c986ca6ef6a6f401fa00e6
+              proposal: "技术方案：整体重写 index.html（零依赖单文件+go:embed+WebSocket 通道不变）：CSS 变量设计体系（teal
+                #0ea5a0、语义色、玻璃拟态、color-mix、暗色 #121316）+ 三栏
+                Grid（左导航：任务运行/官方优选/非标优选/分析报告/设置；中栏控制卡+日志卡；右栏配置卡）+ 移动端单列。48px
+                圆形启停状态机（空闲绿/准备蓝/运行红/停止中）+乐观
+                UI+toast；进度条阶段名+计数+shimmer。终端风日志：级别着色、上滚暂停+回到底部胶囊、500
+                行环形缓冲（修复现有无上限）。分析：统计
+                chips+DC/地区排行（前端聚合不加后端消息）+结果表排序筛选复制+导出上传入口。兼容：21 种 WS 请求/39
+                种响应语义全兼容，Android 桥保留，login.html 统一主题，服务端最小改动。取舍与风险：重写回归风险以
+                protocol.go 消息清单逐项迁移核对，git 历史可回滚；现代浏览器目标，关键容器
+                fallback；不逐像素对照范本。测试策略：go build/test 全绿+测试版构建+本地真实运行走查 17
+                个验收场景+Docker 最终验收。Spec Patch：无，web-console delta spec
+                已完整覆盖。用户决定：设计内容与 Open 阶段已批准产物完全一致，Step 1c 确认提问未获答复，按 Open
+                批准继续（自主会话）。"
+              requirementsEvidence:
+                contentHash: 54e9213e62a2356cc81141ae681a4ce933732adb11c0ddf7de482a5c9cccec6f
+                ref: docs/openspec/changes/webui-scp-style-redesign
+              sourceEvidence:
+                contentHash: 8b79e457dad5ed9a7c059fd8697a17236bd3cbb70ece9dd003d62b3689036ea2
+                ref: docs/openspec/changes/webui-scp-style-redesign
+        proposalHash: 89be19ca0bde5c58145888b706f7393e9c6cf6b5e8a902d347f631633d673300
+        choices:
+          - approved
+          - rejected
+        results: {}
+        decision:
+          id: classic-design-89be19ca0bde5c58145888b706f7393e9c6cf6b5e8a902d347f631633d673300-approved
+          choice: approved
+          proposalHash: 89be19ca0bde5c58145888b706f7393e9c6cf6b5e8a902d347f631633d673300
+      - id: webui-scp-style-redesign:10
+        stepId: full.build.confirm
+        sequence: 10
+        status: resolved
+        proposal:
+          input:
+            change: webui-scp-style-redesign
+            changeDir: docs/openspec/changes/webui-scp-style-redesign
+            workspaceBaseline:
+              ref: 036a0c77-4f28-46ae-8a7e-9ae40c1bfc63
+          outputs:
+            full.build.configure:
+              boundBranch: main
+              buildMode: autonomous
+              directOverride: false
+              isolation: current
+              reviewMode: standard
+              subagentDispatch: null
+              tddMode: tdd
+        proposalHash: 837e2c0b10ba2180e93c141dd948bcc2c477ac0a4cf3dde6315b9e20910aef20
+        choices:
+          - approved
+          - rejected
+        results: {}
+        decision:
+          id: classic-build-837e2c0b10ba2180e93c141dd948bcc2c477ac0a4cf3dde6315b9e20910aef20-approved
+          choice: approved
+          proposalHash: 837e2c0b10ba2180e93c141dd948bcc2c477ac0a4cf3dde6315b9e20910aef20
+      - id: webui-scp-style-redesign:24
+        stepId: full.archive.confirm
+        sequence: 24
+        status: resolved
+        proposal:
+          input:
+            change: webui-scp-style-redesign
+            changeDir: docs/openspec/changes/webui-scp-style-redesign
+            workspaceBaseline:
+              ref: 036a0c77-4f28-46ae-8a7e-9ae40c1bfc63
+          outputs:
+            full.archive.prepare:
+              remote: origin
+              summary: Web 控制台照 subs-check-pro 设计体系大改：三栏布局/圆形启停/终端日志/分析页/配置分组/深浅主题/移动端；WS
+                全兼容服务端零改动。验证全通过（full 模式，19 场景），复查 PASS_WITH_MINOR（遗留已修），实现提交
+                ef4ab85。
+              targetBranch: main
+        proposalHash: 5e78667a6411fd47b9858a117e48b7f9412e64c350e0df34cff5d4c165398d67
+        choices:
+          - local
+          - push
+          - pr
+          - reverify
+          - later
+        results: {}
+        decision:
+          id: classic-archive-5e78667a6411fd47b9858a117e48b7f9412e64c350e0df34cff5d4c165398d67-push
+          choice: push
+          proposalHash: 5e78667a6411fd47b9858a117e48b7f9412e64c350e0df34cff5d4c165398d67
+    evidenceWaits:
+      - id: webui-scp-style-redesign:2
+        stepId: full.open.evidence
+        sequence: 2
+        kind: classic-open-artifacts
+        status: resolved
+        results: {}
+        receipt:
+          ref: docs/openspec/changes/webui-scp-style-redesign
+          contentHash: 5552cf43a8310b572069e4a593c52a8221f6dc0fb984cda2395dccdad9678d24
+          submissionId: d4ec5c7d-d0e1-4172-b06c-de87f8d84a71
+      - id: webui-scp-style-redesign:8
+        stepId: full.design.evidence
+        sequence: 8
+        kind: classic-design-document
+        status: resolved
+        results: {}
+        receipt:
+          ref: docs/openspec/changes/webui-scp-style-redesign/design.md
+          contentHash: 7914b03719e42f1c9482a8241ce0101bd02189613712d60a9257ff24206354fb
+          submissionId: 9e3fd509-3567-4fbd-8095-9246832fb601
+      - id: webui-scp-style-redesign:12
+        stepId: full.build.plan.evidence
+        sequence: 12
+        kind: classic-build-plan
+        status: resolved
+        results: {}
+        receipt:
+          ref: docs/superpowers/plans/2026-10-31-webui-scp-style-redesign.md
+          contentHash: 3362f4845af8b3b8103e35b14aa355fd1005f25db4792489030e11b15c9f0227
+          submissionId: 4675800f-6097-4243-bcde-337b1870b9ae
+      - id: webui-scp-style-redesign:15
+        stepId: full.build.plan.evidence
+        sequence: 15
+        kind: classic-build-plan
+        status: resolved
+        results: {}
+        receipt:
+          ref: docs/superpowers/plans/2026-10-31-webui-scp-style-redesign.md
+          contentHash: e061b7bc59827c77b19158fd9d74f24e942cf1fee67b7d5d670b69a6977acc7f
+          submissionId: 392e6e78-4bd4-44bb-82f1-c12a75d543a8
+      - id: webui-scp-style-redesign:18
+        stepId: full.build.check.evidence
+        sequence: 18
+        kind: classic-build-check
+        status: resolved
+        results: {}
+        receipt:
+          ref: .comet/runtime/classic-sdk-checks/43cc496a24af68d276d124993eecde780ee9d11b8ac002015900e2c55016ad3a/d640b9f9-6e03-463a-81d9-a86cf86bb7b3.log
+          contentHash: d54e053dab165fb66f72aed6f16911e7d6be3430b7f60b79d5887ab991b8f832
+          submissionId: 1d10188c-964e-4903-ada2-bdfdb22c68cd
+      - id: webui-scp-style-redesign:20
+        stepId: full.verify.report.evidence
+        sequence: 20
+        kind: classic-verification-report
+        status: resolved
+        results: {}
+        receipt:
+          ref: docs/superpowers/reports/2026-10-31-webui-scp-style-redesign-verify.md
+          contentHash: 728c4755adc5fa8358fc31a70627920cb6d2a6f5a7906bc09a409c7e0089dae1
+          submissionId: c245632e-8bb1-4995-9d6d-f683323bf8af
+      - id: webui-scp-style-redesign:22
+        stepId: full.verify.check.evidence
+        sequence: 22
+        kind: classic-verify-check
+        status: resolved
+        results: {}
+        receipt:
+          ref: .comet/runtime/classic-sdk-checks/43cc496a24af68d276d124993eecde780ee9d11b8ac002015900e2c55016ad3a/c6879b83-43e5-493a-8ecc-8c818eb06f4c.log
+          contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+          submissionId: f80c3745-c6e5-4e53-9a52-a2020b0d7252
+    ready: []
+    joins: {}
+    outputs: {}
+    children: []
+    lineage: []
+  sourceRevision: 41
+  sourceHash: 539063a6dc5c5b9014da96e23348c7db2ce89f5e6732ad60945d8e65e00f6f5a
+  pool:
+    version: 3
+    values:
+      - event: open-complete
+      - choice: approved
+        proposal:
+          input:
+            change: webui-scp-style-redesign
+            changeDir: docs/openspec/changes/webui-scp-style-redesign
+            workspaceBaseline:
+              ref: 036a0c77-4f28-46ae-8a7e-9ae40c1bfc63
+          outputs:
+            full.open:
+              event: open-complete
+            full.open.evidence:
+              contentHash: 5552cf43a8310b572069e4a593c52a8221f6dc0fb984cda2395dccdad9678d24
+              ref: docs/openspec/changes/webui-scp-style-redesign
+      - contentHash: 5552cf43a8310b572069e4a593c52a8221f6dc0fb984cda2395dccdad9678d24
+        ref: docs/openspec/changes/webui-scp-style-redesign
+      - contentHash: 5552cf43a8310b572069e4a593c52a8221f6dc0fb984cda2395dccdad9678d24
+      - choice: approved
+        proposal:
+          input:
+            change: webui-scp-style-redesign
+            changeDir: docs/openspec/changes/webui-scp-style-redesign
+            workspaceBaseline:
+              ref: 036a0c77-4f28-46ae-8a7e-9ae40c1bfc63
+          outputs:
+            full.design.handoff:
+              handoffContext: docs/openspec/changes/webui-scp-style-redesign/.comet/handoff/design-context.json
+              handoffHash: 3a37ebf5dfa59a0e70e24ae1a94d2ac6f70dbdce67c986ca6ef6a6f401fa00e6
+              proposal: "技术方案：整体重写 index.html（零依赖单文件+go:embed+WebSocket 通道不变）：CSS 变量设计体系（teal
+                #0ea5a0、语义色、玻璃拟态、color-mix、暗色 #121316）+ 三栏
+                Grid（左导航：任务运行/官方优选/非标优选/分析报告/设置；中栏控制卡+日志卡；右栏配置卡）+ 移动端单列。48px
+                圆形启停状态机（空闲绿/准备蓝/运行红/停止中）+乐观
+                UI+toast；进度条阶段名+计数+shimmer。终端风日志：级别着色、上滚暂停+回到底部胶囊、500
+                行环形缓冲（修复现有无上限）。分析：统计
+                chips+DC/地区排行（前端聚合不加后端消息）+结果表排序筛选复制+导出上传入口。兼容：21 种 WS 请求/39
+                种响应语义全兼容，Android 桥保留，login.html 统一主题，服务端最小改动。取舍与风险：重写回归风险以
+                protocol.go 消息清单逐项迁移核对，git 历史可回滚；现代浏览器目标，关键容器
+                fallback；不逐像素对照范本。测试策略：go build/test 全绿+测试版构建+本地真实运行走查 17
+                个验收场景+Docker 最终验收。Spec Patch：无，web-console delta spec
+                已完整覆盖。用户决定：设计内容与 Open 阶段已批准产物完全一致，Step 1c 确认提问未获答复，按 Open
+                批准继续（自主会话）。"
+              requirementsEvidence:
+                contentHash: 54e9213e62a2356cc81141ae681a4ce933732adb11c0ddf7de482a5c9cccec6f
+                ref: docs/openspec/changes/webui-scp-style-redesign
+              sourceEvidence:
+                contentHash: 8b79e457dad5ed9a7c059fd8697a17236bd3cbb70ece9dd003d62b3689036ea2
+                ref: docs/openspec/changes/webui-scp-style-redesign
+      - handoffContext: docs/openspec/changes/webui-scp-style-redesign/.comet/handoff/design-context.json
+        handoffHash: 3a37ebf5dfa59a0e70e24ae1a94d2ac6f70dbdce67c986ca6ef6a6f401fa00e6
+        proposal: "技术方案：整体重写 index.html（零依赖单文件+go:embed+WebSocket 通道不变）：CSS 变量设计体系（teal
+          #0ea5a0、语义色、玻璃拟态、color-mix、暗色 #121316）+ 三栏
+          Grid（左导航：任务运行/官方优选/非标优选/分析报告/设置；中栏控制卡+日志卡；右栏配置卡）+ 移动端单列。48px
+          圆形启停状态机（空闲绿/准备蓝/运行红/停止中）+乐观
+          UI+toast；进度条阶段名+计数+shimmer。终端风日志：级别着色、上滚暂停+回到底部胶囊、500
+          行环形缓冲（修复现有无上限）。分析：统计 chips+DC/地区排行（前端聚合不加后端消息）+结果表排序筛选复制+导出上传入口。兼容：21
+          种 WS 请求/39 种响应语义全兼容，Android 桥保留，login.html 统一主题，服务端最小改动。取舍与风险：重写回归风险以
+          protocol.go 消息清单逐项迁移核对，git 历史可回滚；现代浏览器目标，关键容器
+          fallback；不逐像素对照范本。测试策略：go build/test 全绿+测试版构建+本地真实运行走查 17 个验收场景+Docker
+          最终验收。Spec Patch：无，web-console delta spec 已完整覆盖。用户决定：设计内容与 Open
+          阶段已批准产物完全一致，Step 1c 确认提问未获答复，按 Open 批准继续（自主会话）。"
+        requirementsEvidence:
+          contentHash: 54e9213e62a2356cc81141ae681a4ce933732adb11c0ddf7de482a5c9cccec6f
+          ref: docs/openspec/changes/webui-scp-style-redesign
+        sourceEvidence:
+          contentHash: 8b79e457dad5ed9a7c059fd8697a17236bd3cbb70ece9dd003d62b3689036ea2
+          ref: docs/openspec/changes/webui-scp-style-redesign
+      - designDoc: docs/openspec/changes/webui-scp-style-redesign/design.md
+      - contentHash: 7914b03719e42f1c9482a8241ce0101bd02189613712d60a9257ff24206354fb
+        ref: docs/openspec/changes/webui-scp-style-redesign/design.md
+      - boundBranch: main
+        buildMode: autonomous
+        directOverride: false
+        isolation: current
+        reviewMode: standard
+        subagentDispatch: null
+        tddMode: tdd
+      - choice: approved
+        proposal:
+          input:
+            change: webui-scp-style-redesign
+            changeDir: docs/openspec/changes/webui-scp-style-redesign
+            workspaceBaseline:
+              ref: 036a0c77-4f28-46ae-8a7e-9ae40c1bfc63
+          outputs:
+            full.build.configure:
+              boundBranch: main
+              buildMode: autonomous
+              directOverride: false
+              isolation: current
+              reviewMode: standard
+              subagentDispatch: null
+              tddMode: tdd
+      - designEvidence:
+          contentHash: 7914b03719e42f1c9482a8241ce0101bd02189613712d60a9257ff24206354fb
+          ref: docs/openspec/changes/webui-scp-style-redesign/design.md
+        plan: docs/superpowers/plans/2026-10-31-webui-scp-style-redesign.md
+        planEvidence:
+          contentHash: 3362f4845af8b3b8103e35b14aa355fd1005f25db4792489030e11b15c9f0227
+          ref: docs/superpowers/plans/2026-10-31-webui-scp-style-redesign.md
+        taskRevision: 39eacd24a89e596f74cc2d7eaead0bf97ce3728c4b551ce62b3bce4e3bf513df
+      - contentHash: 3362f4845af8b3b8103e35b14aa355fd1005f25db4792489030e11b15c9f0227
+        ref: docs/superpowers/plans/2026-10-31-webui-scp-style-redesign.md
+      - designEvidence:
+          contentHash: 7914b03719e42f1c9482a8241ce0101bd02189613712d60a9257ff24206354fb
+          ref: docs/openspec/changes/webui-scp-style-redesign/design.md
+        plan: docs/superpowers/plans/2026-10-31-webui-scp-style-redesign.md
+        planEvidence:
+          contentHash: e061b7bc59827c77b19158fd9d74f24e942cf1fee67b7d5d670b69a6977acc7f
+          ref: docs/superpowers/plans/2026-10-31-webui-scp-style-redesign.md
+        taskRevision: 39eacd24a89e596f74cc2d7eaead0bf97ce3728c4b551ce62b3bce4e3bf513df
+      - contentHash: e061b7bc59827c77b19158fd9d74f24e942cf1fee67b7d5d670b69a6977acc7f
+        ref: docs/superpowers/plans/2026-10-31-webui-scp-style-redesign.md
+      - event: build-complete
+      - argv:
+          - go
+          - -C
+          - combined_refactor
+          - test
+          - ./...
+        changedDuringExecution: []
+        checkEpoch: 2
+        contentHash: d54e053dab165fb66f72aed6f16911e7d6be3430b7f60b79d5887ab991b8f832
+        cwd: .
+        environment: 5cdf03293e67f4806ee1616a2d82bf7ecc8874ca90a5c78ab5f0604146387b92
+        exitCode: 0
+        inputAfter: ee981e6c7426198910a4e8b933837a5d9f8c7d199cea3f544cccca2bd952949a
+        inputBefore: ee981e6c7426198910a4e8b933837a5d9f8c7d199cea3f544cccca2bd952949a
+        manifestHash: f38092873f2db699f1fda3770d8a7ad8d9005daa3a9555aeeebc3edc7c87a38d
+        manifestRef: .comet/runtime/classic-sdk-checks/43cc496a24af68d276d124993eecde780ee9d11b8ac002015900e2c55016ad3a/40497736-a46c-4663-a157-6ce3ad0aaae1.manifest
+        receiptRef: .comet/runtime/classic-sdk-checks/43cc496a24af68d276d124993eecde780ee9d11b8ac002015900e2c55016ad3a/d640b9f9-6e03-463a-81d9-a86cf86bb7b3.log
+        reusable: false
+        reused: false
+        scope: build
+        tier: full
+        timeoutMs: 300000
+      - contentHash: d54e053dab165fb66f72aed6f16911e7d6be3430b7f60b79d5887ab991b8f832
+        ref: .comet/runtime/classic-sdk-checks/43cc496a24af68d276d124993eecde780ee9d11b8ac002015900e2c55016ad3a/d640b9f9-6e03-463a-81d9-a86cf86bb7b3.log
+      - contentHash: 728c4755adc5fa8358fc31a70627920cb6d2a6f5a7906bc09a409c7e0089dae1
+        ref: docs/superpowers/reports/2026-10-31-webui-scp-style-redesign-verify.md
+      - event: verification-ready
+        verificationReport: docs/superpowers/reports/2026-10-31-webui-scp-style-redesign-verify.md
+      - argv:
+          - go
+          - -C
+          - combined_refactor
+          - test
+          - ./...
+        changedDuringExecution: []
+        checkEpoch: 3
+        contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+        cwd: .
+        deliveryInputs: {}
+        environment: 5cdf03293e67f4806ee1616a2d82bf7ecc8874ca90a5c78ab5f0604146387b92
+        exitCode: 0
+        inputAfter: ee981e6c7426198910a4e8b933837a5d9f8c7d199cea3f544cccca2bd952949a
+        inputBefore: ee981e6c7426198910a4e8b933837a5d9f8c7d199cea3f544cccca2bd952949a
+        manifestHash: f38092873f2db699f1fda3770d8a7ad8d9005daa3a9555aeeebc3edc7c87a38d
+        manifestRef: .comet/runtime/classic-sdk-checks/43cc496a24af68d276d124993eecde780ee9d11b8ac002015900e2c55016ad3a/9e0c8c6a-ef9a-4967-ad6e-17ac8ad87a3d.manifest
+        receiptRef: .comet/runtime/classic-sdk-checks/43cc496a24af68d276d124993eecde780ee9d11b8ac002015900e2c55016ad3a/c6879b83-43e5-493a-8ecc-8c818eb06f4c.log
+        reusable: false
+        reused: false
+        scope: verify
+        tier: full
+        timeoutMs: 300000
+      - contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+        ref: .comet/runtime/classic-sdk-checks/43cc496a24af68d276d124993eecde780ee9d11b8ac002015900e2c55016ad3a/c6879b83-43e5-493a-8ecc-8c818eb06f4c.log
+      - choice: push
+        proposal:
+          input:
+            change: webui-scp-style-redesign
+            changeDir: docs/openspec/changes/webui-scp-style-redesign
+            workspaceBaseline:
+              ref: 036a0c77-4f28-46ae-8a7e-9ae40c1bfc63
+          outputs:
+            full.archive.prepare:
+              remote: origin
+              summary: Web 控制台照 subs-check-pro 设计体系大改：三栏布局/圆形启停/终端日志/分析页/配置分组/深浅主题/移动端；WS
+                全兼容服务端零改动。验证全通过（full 模式，19 场景），复查 PASS_WITH_MINOR（遗留已修），实现提交
+                ef4ab85。
+              targetBranch: main
+      - remote: origin
+        summary: Web 控制台照 subs-check-pro 设计体系大改：三栏布局/圆形启停/终端日志/分析页/配置分组/深浅主题/移动端；WS
+          全兼容服务端零改动。验证全通过（full 模式，19 场景），复查 PASS_WITH_MINOR（遗留已修），实现提交 ef4ab85。
+        targetBranch: main
+      - baseCommit: ef4ab851fd2df25d6f5c692f4b9bc0a140d69ff6
+        deliveryAction: push
+        remote: origin
+        remoteIdentity: f77fd8941c2db1c30d5e8e3438a94109c2534b02c7bc211de17168b469821b65
+        targetBranch: main
+        verifiedBranch: main
+      - archiveDirectory: docs/openspec/changes/archive/2026-10-31-webui-scp-style-redesign
+      - sequence: 9
+        value:
+          boundBranch: main
+          buildMode: autonomous
+          directOverride: false
+          isolation: current
+          reviewMode: standard
+          subagentDispatch: null
+          tddMode: tdd
+      - sequence: 10
+        value:
+          choice: approved
+          proposal:
+            input:
+              change: webui-scp-style-redesign
+              changeDir: docs/openspec/changes/webui-scp-style-redesign
+              workspaceBaseline:
+                ref: 036a0c77-4f28-46ae-8a7e-9ae40c1bfc63
+            outputs:
+              full.build.configure:
+                boundBranch: main
+                buildMode: autonomous
+                directOverride: false
+                isolation: current
+                reviewMode: standard
+                subagentDispatch: null
+                tddMode: tdd
+      - sequence: 6
+        value:
+          choice: approved
+          proposal:
+            input:
+              change: webui-scp-style-redesign
+              changeDir: docs/openspec/changes/webui-scp-style-redesign
+              workspaceBaseline:
+                ref: 036a0c77-4f28-46ae-8a7e-9ae40c1bfc63
+            outputs:
+              full.design.handoff:
+                handoffContext: docs/openspec/changes/webui-scp-style-redesign/.comet/handoff/design-context.json
+                handoffHash: 3a37ebf5dfa59a0e70e24ae1a94d2ac6f70dbdce67c986ca6ef6a6f401fa00e6
+                proposal: "技术方案：整体重写 index.html（零依赖单文件+go:embed+WebSocket 通道不变）：CSS 变量设计体系（teal
+                  #0ea5a0、语义色、玻璃拟态、color-mix、暗色 #121316）+ 三栏
+                  Grid（左导航：任务运行/官方优选/非标优选/分析报告/设置；中栏控制卡+日志卡；右栏配置卡）+ 移动端单列。48px
+                  圆形启停状态机（空闲绿/准备蓝/运行红/停止中）+乐观
+                  UI+toast；进度条阶段名+计数+shimmer。终端风日志：级别着色、上滚暂停+回到底部胶囊、500
+                  行环形缓冲（修复现有无上限）。分析：统计
+                  chips+DC/地区排行（前端聚合不加后端消息）+结果表排序筛选复制+导出上传入口。兼容：21 种 WS 请求/39
+                  种响应语义全兼容，Android 桥保留，login.html 统一主题，服务端最小改动。取舍与风险：重写回归风险以
+                  protocol.go 消息清单逐项迁移核对，git 历史可回滚；现代浏览器目标，关键容器
+                  fallback；不逐像素对照范本。测试策略：go build/test 全绿+测试版构建+本地真实运行走查 17
+                  个验收场景+Docker 最终验收。Spec Patch：无，web-console delta spec
+                  已完整覆盖。用户决定：设计内容与 Open 阶段已批准产物完全一致，Step 1c 确认提问未获答复，按 Open
+                  批准继续（自主会话）。"
+                requirementsEvidence:
+                  contentHash: 54e9213e62a2356cc81141ae681a4ce933732adb11c0ddf7de482a5c9cccec6f
+                  ref: docs/openspec/changes/webui-scp-style-redesign
+                sourceEvidence:
+                  contentHash: 8b79e457dad5ed9a7c059fd8697a17236bd3cbb70ece9dd003d62b3689036ea2
+                  ref: docs/openspec/changes/webui-scp-style-redesign
+      - sequence: 7
+        value:
+          designDoc: docs/openspec/changes/webui-scp-style-redesign/design.md
+      - sequence: 8
+        value:
+          contentHash: 7914b03719e42f1c9482a8241ce0101bd02189613712d60a9257ff24206354fb
+          ref: docs/openspec/changes/webui-scp-style-redesign/design.md
+      - sequence: 5
+        value:
+          handoffContext: docs/openspec/changes/webui-scp-style-redesign/.comet/handoff/design-context.json
+          handoffHash: 3a37ebf5dfa59a0e70e24ae1a94d2ac6f70dbdce67c986ca6ef6a6f401fa00e6
+          proposal: "技术方案：整体重写 index.html（零依赖单文件+go:embed+WebSocket 通道不变）：CSS 变量设计体系（teal
+            #0ea5a0、语义色、玻璃拟态、color-mix、暗色 #121316）+ 三栏
+            Grid（左导航：任务运行/官方优选/非标优选/分析报告/设置；中栏控制卡+日志卡；右栏配置卡）+ 移动端单列。48px
+            圆形启停状态机（空闲绿/准备蓝/运行红/停止中）+乐观
+            UI+toast；进度条阶段名+计数+shimmer。终端风日志：级别着色、上滚暂停+回到底部胶囊、500
+            行环形缓冲（修复现有无上限）。分析：统计
+            chips+DC/地区排行（前端聚合不加后端消息）+结果表排序筛选复制+导出上传入口。兼容：21 种 WS 请求/39
+            种响应语义全兼容，Android 桥保留，login.html 统一主题，服务端最小改动。取舍与风险：重写回归风险以
+            protocol.go 消息清单逐项迁移核对，git 历史可回滚；现代浏览器目标，关键容器
+            fallback；不逐像素对照范本。测试策略：go build/test 全绿+测试版构建+本地真实运行走查 17
+            个验收场景+Docker 最终验收。Spec Patch：无，web-console delta spec
+            已完整覆盖。用户决定：设计内容与 Open 阶段已批准产物完全一致，Step 1c 确认提问未获答复，按 Open
+            批准继续（自主会话）。"
+          requirementsEvidence:
+            contentHash: 54e9213e62a2356cc81141ae681a4ce933732adb11c0ddf7de482a5c9cccec6f
+            ref: docs/openspec/changes/webui-scp-style-redesign
+          sourceEvidence:
+            contentHash: 8b79e457dad5ed9a7c059fd8697a17236bd3cbb70ece9dd003d62b3689036ea2
+            ref: docs/openspec/changes/webui-scp-style-redesign
+      - sequence: 1
+        value:
+          event: open-complete
+      - sequence: 3
+        value:
+          choice: approved
+          proposal:
+            input:
+              change: webui-scp-style-redesign
+              changeDir: docs/openspec/changes/webui-scp-style-redesign
+              workspaceBaseline:
+                ref: 036a0c77-4f28-46ae-8a7e-9ae40c1bfc63
+            outputs:
+              full.open:
+                event: open-complete
+              full.open.evidence:
+                contentHash: 5552cf43a8310b572069e4a593c52a8221f6dc0fb984cda2395dccdad9678d24
+                ref: docs/openspec/changes/webui-scp-style-redesign
+      - sequence: 2
+        value:
+          contentHash: 5552cf43a8310b572069e4a593c52a8221f6dc0fb984cda2395dccdad9678d24
+          ref: docs/openspec/changes/webui-scp-style-redesign
+      - sequence: 4
+        value:
+          contentHash: 5552cf43a8310b572069e4a593c52a8221f6dc0fb984cda2395dccdad9678d24
+      - sequence: 11
+        value:
+          designEvidence:
+            contentHash: 7914b03719e42f1c9482a8241ce0101bd02189613712d60a9257ff24206354fb
+            ref: docs/openspec/changes/webui-scp-style-redesign/design.md
+          plan: docs/superpowers/plans/2026-10-31-webui-scp-style-redesign.md
+          planEvidence:
+            contentHash: 3362f4845af8b3b8103e35b14aa355fd1005f25db4792489030e11b15c9f0227
+            ref: docs/superpowers/plans/2026-10-31-webui-scp-style-redesign.md
+          taskRevision: 39eacd24a89e596f74cc2d7eaead0bf97ce3728c4b551ce62b3bce4e3bf513df
+      - sequence: 12
+        value:
+          contentHash: 3362f4845af8b3b8103e35b14aa355fd1005f25db4792489030e11b15c9f0227
+          ref: docs/superpowers/plans/2026-10-31-webui-scp-style-redesign.md
+      - sequence: 14
+        value:
+          designEvidence:
+            contentHash: 7914b03719e42f1c9482a8241ce0101bd02189613712d60a9257ff24206354fb
+            ref: docs/openspec/changes/webui-scp-style-redesign/design.md
+          plan: docs/superpowers/plans/2026-10-31-webui-scp-style-redesign.md
+          planEvidence:
+            contentHash: e061b7bc59827c77b19158fd9d74f24e942cf1fee67b7d5d670b69a6977acc7f
+            ref: docs/superpowers/plans/2026-10-31-webui-scp-style-redesign.md
+          taskRevision: 39eacd24a89e596f74cc2d7eaead0bf97ce3728c4b551ce62b3bce4e3bf513df
+      - sequence: 15
+        value:
+          contentHash: e061b7bc59827c77b19158fd9d74f24e942cf1fee67b7d5d670b69a6977acc7f
+          ref: docs/superpowers/plans/2026-10-31-webui-scp-style-redesign.md
+      - sequence: 16
+        value:
+          event: build-complete
+      - sequence: 17
+        value:
+          argv:
+            - go
+            - -C
+            - combined_refactor
+            - test
+            - ./...
+          changedDuringExecution: []
+          checkEpoch: 2
+          contentHash: d54e053dab165fb66f72aed6f16911e7d6be3430b7f60b79d5887ab991b8f832
+          cwd: .
+          environment: 5cdf03293e67f4806ee1616a2d82bf7ecc8874ca90a5c78ab5f0604146387b92
+          exitCode: 0
+          inputAfter: ee981e6c7426198910a4e8b933837a5d9f8c7d199cea3f544cccca2bd952949a
+          inputBefore: ee981e6c7426198910a4e8b933837a5d9f8c7d199cea3f544cccca2bd952949a
+          manifestHash: f38092873f2db699f1fda3770d8a7ad8d9005daa3a9555aeeebc3edc7c87a38d
+          manifestRef: .comet/runtime/classic-sdk-checks/43cc496a24af68d276d124993eecde780ee9d11b8ac002015900e2c55016ad3a/40497736-a46c-4663-a157-6ce3ad0aaae1.manifest
+          receiptRef: .comet/runtime/classic-sdk-checks/43cc496a24af68d276d124993eecde780ee9d11b8ac002015900e2c55016ad3a/d640b9f9-6e03-463a-81d9-a86cf86bb7b3.log
+          reusable: false
+          reused: false
+          scope: build
+          tier: full
+          timeoutMs: 300000
+      - sequence: 18
+        value:
+          contentHash: d54e053dab165fb66f72aed6f16911e7d6be3430b7f60b79d5887ab991b8f832
+          ref: .comet/runtime/classic-sdk-checks/43cc496a24af68d276d124993eecde780ee9d11b8ac002015900e2c55016ad3a/d640b9f9-6e03-463a-81d9-a86cf86bb7b3.log
+      - sequence: 20
+        value:
+          contentHash: 728c4755adc5fa8358fc31a70627920cb6d2a6f5a7906bc09a409c7e0089dae1
+          ref: docs/superpowers/reports/2026-10-31-webui-scp-style-redesign-verify.md
+      - sequence: 19
+        value:
+          event: verification-ready
+          verificationReport: docs/superpowers/reports/2026-10-31-webui-scp-style-redesign-verify.md
+      - sequence: 21
+        value:
+          argv:
+            - go
+            - -C
+            - combined_refactor
+            - test
+            - ./...
+          changedDuringExecution: []
+          checkEpoch: 3
+          contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+          cwd: .
+          deliveryInputs: {}
+          environment: 5cdf03293e67f4806ee1616a2d82bf7ecc8874ca90a5c78ab5f0604146387b92
+          exitCode: 0
+          inputAfter: ee981e6c7426198910a4e8b933837a5d9f8c7d199cea3f544cccca2bd952949a
+          inputBefore: ee981e6c7426198910a4e8b933837a5d9f8c7d199cea3f544cccca2bd952949a
+          manifestHash: f38092873f2db699f1fda3770d8a7ad8d9005daa3a9555aeeebc3edc7c87a38d
+          manifestRef: .comet/runtime/classic-sdk-checks/43cc496a24af68d276d124993eecde780ee9d11b8ac002015900e2c55016ad3a/9e0c8c6a-ef9a-4967-ad6e-17ac8ad87a3d.manifest
+          receiptRef: .comet/runtime/classic-sdk-checks/43cc496a24af68d276d124993eecde780ee9d11b8ac002015900e2c55016ad3a/c6879b83-43e5-493a-8ecc-8c818eb06f4c.log
+          reusable: false
+          reused: false
+          scope: verify
+          tier: full
+          timeoutMs: 300000
+      - sequence: 22
+        value:
+          contentHash: 9afe5fb933a1496cf61270e202f760d9d8ab3f904aa9ec456041cd67d4975adc
+          ref: .comet/runtime/classic-sdk-checks/43cc496a24af68d276d124993eecde780ee9d11b8ac002015900e2c55016ad3a/c6879b83-43e5-493a-8ecc-8c818eb06f4c.log
+      - sequence: 24
+        value:
+          choice: push
+          proposal:
+            input:
+              change: webui-scp-style-redesign
+              changeDir: docs/openspec/changes/webui-scp-style-redesign
+              workspaceBaseline:
+                ref: 036a0c77-4f28-46ae-8a7e-9ae40c1bfc63
+            outputs:
+              full.archive.prepare:
+                remote: origin
+                summary: Web 控制台照 subs-check-pro 设计体系大改：三栏布局/圆形启停/终端日志/分析页/配置分组/深浅主题/移动端；WS
+                  全兼容服务端零改动。验证全通过（full 模式，19 场景），复查 PASS_WITH_MINOR（遗留已修），实现提交
+                  ef4ab85。
+                targetBranch: main
+      - sequence: 23
+        value:
+          remote: origin
+          summary: Web 控制台照 subs-check-pro 设计体系大改：三栏布局/圆形启停/终端日志/分析页/配置分组/深浅主题/移动端；WS
+            全兼容服务端零改动。验证全通过（full 模式，19 场景），复查 PASS_WITH_MINOR（遗留已修），实现提交
+            ef4ab85。
+          targetBranch: main
+      - sequence: 25
+        value:
+          baseCommit: ef4ab851fd2df25d6f5c692f4b9bc0a140d69ff6
+          deliveryAction: push
+          remote: origin
+          remoteIdentity: f77fd8941c2db1c30d5e8e3438a94109c2534b02c7bc211de17168b469821b65
+          targetBranch: main
+          verifiedBranch: main
+      - sequence: 26
+        value:
+          archiveDirectory: docs/openspec/changes/archive/2026-10-31-webui-scp-style-redesign
+    nodes:
+      - key: full.open
+        value: 0
+        left: null
+        right: null
+        height: 1
+      - key: full.open.evidence
+        value: 2
+        left: null
+        right: null
+        height: 1
+      - key: full.open.confirm
+        value: 1
+        left: 0
+        right: 1
+        height: 2
+      - key: full.open.revalidate
+        value: 3
+        left: null
+        right: null
+        height: 1
+      - key: full.open.evidence
+        value: 2
+        left: null
+        right: 3
+        height: 2
+      - key: full.open.confirm
+        value: 1
+        left: 0
+        right: 4
+        height: 3
+      - key: full.design.confirm
+        value: 4
+        left: null
+        right: null
+        height: 1
+      - key: full.open
+        value: 0
+        left: null
+        right: null
+        height: 1
+      - key: full.design.handoff
+        value: 5
+        left: 6
+        right: 7
+        height: 2
+      - key: full.open.confirm
+        value: 1
+        left: 8
+        right: 4
+        height: 3
+      - key: full.design.confirm
+        value: 4
+        left: null
+        right: null
+        height: 1
+      - key: full.design.evidence
+        value: 7
+        left: null
+        right: null
+        height: 1
+      - key: full.design.document
+        value: 6
+        left: 10
+        right: 11
+        height: 2
+      - key: full.design.handoff
+        value: 5
+        left: 12
+        right: 7
+        height: 3
+      - key: full.open.confirm
+        value: 1
+        left: 13
+        right: 4
+        height: 4
+      - key: full.build.configure
+        value: 8
+        left: null
+        right: null
+        height: 1
+      - key: full.design.confirm
+        value: 4
+        left: null
+        right: null
+        height: 1
+      - key: full.build.confirm
+        value: 9
+        left: 15
+        right: 16
+        height: 2
+      - key: full.design.handoff
+        value: 5
+        left: 11
+        right: 7
+        height: 2
+      - key: full.design.document
+        value: 6
+        left: 17
+        right: 18
+        height: 3
+      - key: full.open.confirm
+        value: 1
+        left: 19
+        right: 4
+        height: 4
+      - key: full.build.plan
+        value: 10
+        left: null
+        right: null
+        height: 1
+      - key: full.design.confirm
+        value: 4
+        left: null
+        right: null
+        height: 1
+      - key: full.build.plan.evidence
+        value: 11
+        left: 21
+        right: 22
+        height: 2
+      - key: full.build.confirm
+        value: 9
+        left: 15
+        right: 23
+        height: 3
+      - key: full.open.confirm
+        value: 1
+        left: 18
+        right: 4
+        height: 3
+      - key: full.design.document
+        value: 6
+        left: 24
+        right: 25
+        height: 4
+      - key: full.build.plan.evidence
+        value: 13
+        left: null
+        right: null
+        height: 1
+      - key: full.build.plan
+        value: 12
+        left: null
+        right: 27
+        height: 2
+      - key: full.build.execute
+        value: 14
+        left: null
+        right: null
+        height: 1
+      - key: full.build.plan
+        value: 12
+        left: 29
+        right: 27
+        height: 2
+      - key: full.build.check
+        value: 15
+        left: null
+        right: null
+        height: 1
+      - key: full.build.execute
+        value: 14
+        left: null
+        right: null
+        height: 1
+      - key: full.build.check.evidence
+        value: 16
+        left: 31
+        right: 32
+        height: 2
+      - key: full.build.plan
+        value: 12
+        left: 33
+        right: 27
+        height: 3
+      - key: full.build.plan.evidence
+        value: 13
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.run
+        value: 18
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.report.evidence
+        value: 17
+        left: 35
+        right: 36
+        height: 2
+      - key: full.build.plan
+        value: 12
+        left: 33
+        right: 37
+        height: 3
+      - key: full.build.plan.evidence
+        value: 13
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.check.evidence
+        value: 20
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.check
+        value: 19
+        left: 39
+        right: 40
+        height: 2
+      - key: full.verify.report.evidence
+        value: 17
+        left: 41
+        right: 36
+        height: 3
+      - key: full.build.plan
+        value: 12
+        left: 33
+        right: 42
+        height: 4
+      - key: full.archive.confirm
+        value: 21
+        left: null
+        right: null
+        height: 1
+      - key: full.build.check
+        value: 15
+        left: null
+        right: null
+        height: 1
+      - key: full.archive.prepare
+        value: 22
+        left: 44
+        right: 45
+        height: 2
+      - key: full.build.check.evidence
+        value: 16
+        left: 46
+        right: 32
+        height: 3
+      - key: full.build.plan
+        value: 12
+        left: 47
+        right: 42
+        height: 4
+      - key: full.archive.preflight
+        value: 23
+        left: null
+        right: null
+        height: 1
+      - key: full.archive.confirm
+        value: 21
+        left: null
+        right: 49
+        height: 2
+      - key: full.build.check.evidence
+        value: 16
+        left: 45
+        right: 32
+        height: 2
+      - key: full.archive.prepare
+        value: 22
+        left: 50
+        right: 51
+        height: 3
+      - key: full.build.plan
+        value: 12
+        left: 52
+        right: 42
+        height: 4
+      - key: full.archive.confirm
+        value: 21
+        left: null
+        right: null
+        height: 1
+      - key: full.archive.preflight
+        value: 23
+        left: null
+        right: null
+        height: 1
+      - key: full.archive.execute
+        value: 24
+        left: 54
+        right: 55
+        height: 2
+      - key: full.archive.prepare
+        value: 22
+        left: 56
+        right: 51
+        height: 3
+      - key: full.build.plan
+        value: 12
+        left: 57
+        right: 42
+        height: 4
+      - key: full.build.configure
+        value: 25
+        left: null
+        right: null
+        height: 1
+      - key: full.design.confirm
+        value: 27
+        left: null
+        right: null
+        height: 1
+      - key: full.build.confirm
+        value: 26
+        left: 59
+        right: 60
+        height: 2
+      - key: full.design.evidence
+        value: 29
+        left: null
+        right: null
+        height: 1
+      - key: full.open
+        value: 31
+        left: null
+        right: null
+        height: 1
+      - key: full.design.handoff
+        value: 30
+        left: 62
+        right: 63
+        height: 2
+      - key: full.open.revalidate
+        value: 34
+        left: null
+        right: null
+        height: 1
+      - key: full.open.evidence
+        value: 33
+        left: null
+        right: 65
+        height: 2
+      - key: full.open.confirm
+        value: 32
+        left: 64
+        right: 66
+        height: 3
+      - key: full.design.document
+        value: 28
+        left: 61
+        right: 67
+        height: 4
+      - key: full.build.plan
+        value: 35
+        left: null
+        right: null
+        height: 1
+      - key: full.design.confirm
+        value: 27
+        left: null
+        right: null
+        height: 1
+      - key: full.build.plan.evidence
+        value: 36
+        left: 69
+        right: 70
+        height: 2
+      - key: full.build.confirm
+        value: 26
+        left: 59
+        right: 71
+        height: 3
+      - key: full.design.document
+        value: 28
+        left: 72
+        right: 67
+        height: 4
+      - key: full.build.plan.evidence
+        value: 38
+        left: null
+        right: null
+        height: 1
+      - key: full.build.plan
+        value: 37
+        left: null
+        right: 74
+        height: 2
+      - key: full.build.execute
+        value: 39
+        left: null
+        right: null
+        height: 1
+      - key: full.build.plan
+        value: 37
+        left: 76
+        right: 74
+        height: 2
+      - key: full.build.check
+        value: 40
+        left: null
+        right: null
+        height: 1
+      - key: full.build.execute
+        value: 39
+        left: null
+        right: null
+        height: 1
+      - key: full.build.check.evidence
+        value: 41
+        left: 78
+        right: 79
+        height: 2
+      - key: full.build.plan
+        value: 37
+        left: 80
+        right: 74
+        height: 3
+      - key: full.build.plan.evidence
+        value: 38
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.run
+        value: 43
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.report.evidence
+        value: 42
+        left: 82
+        right: 83
+        height: 2
+      - key: full.build.plan
+        value: 37
+        left: 80
+        right: 84
+        height: 3
+      - key: full.build.plan.evidence
+        value: 38
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.check.evidence
+        value: 45
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.check
+        value: 44
+        left: 86
+        right: 87
+        height: 2
+      - key: full.verify.report.evidence
+        value: 42
+        left: 88
+        right: 83
+        height: 3
+      - key: full.build.plan
+        value: 37
+        left: 80
+        right: 89
+        height: 4
+      - key: full.archive.confirm
+        value: 46
+        left: null
+        right: null
+        height: 1
+      - key: full.build.check
+        value: 40
+        left: null
+        right: null
+        height: 1
+      - key: full.archive.prepare
+        value: 47
+        left: 91
+        right: 92
+        height: 2
+      - key: full.build.check.evidence
+        value: 41
+        left: 93
+        right: 79
+        height: 3
+      - key: full.build.plan
+        value: 37
+        left: 94
+        right: 89
+        height: 4
+      - key: full.archive.preflight
+        value: 48
+        left: null
+        right: null
+        height: 1
+      - key: full.archive.confirm
+        value: 46
+        left: null
+        right: 96
+        height: 2
+      - key: full.build.check.evidence
+        value: 41
+        left: 92
+        right: 79
+        height: 2
+      - key: full.archive.prepare
+        value: 47
+        left: 97
+        right: 98
+        height: 3
+      - key: full.build.plan
+        value: 37
+        left: 99
+        right: 89
+        height: 4
+      - key: full.archive.confirm
+        value: 46
+        left: null
+        right: null
+        height: 1
+      - key: full.archive.preflight
+        value: 48
+        left: null
+        right: null
+        height: 1
+      - key: full.archive.execute
+        value: 49
+        left: 101
+        right: 102
+        height: 2
+      - key: full.archive.prepare
+        value: 47
+        left: 103
+        right: 98
+        height: 3
+      - key: full.build.plan
+        value: 37
+        left: 104
+        right: 89
+        height: 4
+      - key: full.open
+        value: 31
+        left: null
+        right: null
+        height: 1
+      - key: full.open.evidence
+        value: 33
+        left: null
+        right: null
+        height: 1
+      - key: full.open.confirm
+        value: 32
+        left: 106
+        right: 107
+        height: 2
+      - key: full.open.revalidate
+        value: 34
+        left: null
+        right: null
+        height: 1
+      - key: full.open.evidence
+        value: 33
+        left: null
+        right: 109
+        height: 2
+      - key: full.open.confirm
+        value: 32
+        left: 106
+        right: 110
+        height: 3
+      - key: full.design.confirm
+        value: 27
+        left: null
+        right: null
+        height: 1
+      - key: full.open
+        value: 31
+        left: null
+        right: null
+        height: 1
+      - key: full.design.handoff
+        value: 30
+        left: 112
+        right: 113
+        height: 2
+      - key: full.open.confirm
+        value: 32
+        left: 114
+        right: 110
+        height: 3
+      - key: full.design.confirm
+        value: 27
+        left: null
+        right: null
+        height: 1
+      - key: full.design.evidence
+        value: 29
+        left: null
+        right: null
+        height: 1
+      - key: full.design.document
+        value: 28
+        left: 116
+        right: 117
+        height: 2
+      - key: full.design.handoff
+        value: 30
+        left: 118
+        right: 113
+        height: 3
+      - key: full.open.confirm
+        value: 32
+        left: 119
+        right: 110
+        height: 4
+      - key: full.archive.confirm
+        value: 46
+        left: null
+        right: null
+        height: 1
+      - key: full.archive.preflight
+        value: 48
+        left: null
+        right: null
+        height: 1
+      - key: full.archive.execute
+        value: 49
+        left: 121
+        right: 122
+        height: 2
+      - key: full.build.check
+        value: 40
+        left: null
+        right: null
+        height: 1
+      - key: full.build.configure
+        value: 25
+        left: null
+        right: null
+        height: 1
+      - key: full.build.check.evidence
+        value: 41
+        left: 124
+        right: 125
+        height: 2
+      - key: full.archive.prepare
+        value: 47
+        left: 123
+        right: 126
+        height: 3
+      - key: full.build.execute
+        value: 39
+        left: null
+        right: null
+        height: 1
+      - key: full.build.plan.evidence
+        value: 38
+        left: null
+        right: null
+        height: 1
+      - key: full.design.confirm
+        value: 27
+        left: 129
+        right: null
+        height: 2
+      - key: full.build.plan
+        value: 37
+        left: 128
+        right: 130
+        height: 3
+      - key: full.build.confirm
+        value: 26
+        left: 127
+        right: 131
+        height: 4
+      - key: full.design.handoff
+        value: 30
+        left: 117
+        right: 113
+        height: 2
+      - key: full.open.evidence
+        value: 33
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.check
+        value: 44
+        left: null
+        right: null
+        height: 1
+      - key: full.open.revalidate
+        value: 34
+        left: 134
+        right: 135
+        height: 2
+      - key: full.verify.run
+        value: 43
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.report.evidence
+        value: 42
+        left: null
+        right: 137
+        height: 2
+      - key: full.verify.check.evidence
+        value: 45
+        left: 136
+        right: 138
+        height: 3
+      - key: full.open.confirm
+        value: 32
+        left: 133
+        right: 139
+        height: 4
+      - key: full.design.document
+        value: 28
+        left: 132
+        right: 140
+        height: 5
+      - key: full.open.evidence
+        value: 33
+        left: null
+        right: null
+        height: 1
+      - key: full.open
+        value: 31
+        left: null
+        right: 142
+        height: 2
+      - key: full.design.handoff
+        value: 30
+        left: null
+        right: null
+        height: 1
+      - key: full.open.confirm
+        value: 32
+        left: null
+        right: null
+        height: 1
+      - key: full.open.revalidate
+        value: 34
+        left: null
+        right: null
+        height: 1
+      - key: full.open.evidence
+        value: 33
+        left: 145
+        right: 146
+        height: 2
+      - key: full.open
+        value: 31
+        left: 144
+        right: 147
+        height: 3
+      - key: full.build.configure
+        value: 25
+        left: null
+        right: null
+        height: 1
+      - key: full.design.document
+        value: 28
+        left: null
+        right: null
+        height: 1
+      - key: full.design.handoff
+        value: 30
+        left: null
+        right: null
+        height: 1
+      - key: full.design.evidence
+        value: 29
+        left: 150
+        right: 151
+        height: 2
+      - key: full.design.confirm
+        value: 27
+        left: 149
+        right: 152
+        height: 3
+      - key: full.open
+        value: 31
+        left: 153
+        right: 147
+        height: 4
+      - key: full.archive.prepare
+        value: 47
+        left: null
+        right: null
+        height: 1
+      - key: full.build.check.evidence
+        value: 41
+        left: null
+        right: null
+        height: 1
+      - key: full.build.check
+        value: 40
+        left: 155
+        right: 156
+        height: 2
+      - key: full.build.plan
+        value: 37
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.check
+        value: 44
+        left: null
+        right: null
+        height: 1
+      - key: full.build.plan.evidence
+        value: 38
+        left: 158
+        right: 159
+        height: 2
+      - key: full.verify.run
+        value: 43
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.report.evidence
+        value: 42
+        left: null
+        right: 161
+        height: 2
+      - key: full.verify.check.evidence
+        value: 45
+        left: 160
+        right: 162
+        height: 3
+      - key: full.build.execute
+        value: 39
+        left: 157
+        right: 163
+        height: 4
+      - key: full.open
+        value: 31
+        left: null
+        right: null
+        height: 1
+      - key: full.design.confirm
+        value: 27
+        left: null
+        right: null
+        height: 1
+      - key: full.design.handoff
+        value: 30
+        left: null
+        right: null
+        height: 1
+      - key: full.design.document
+        value: 28
+        left: 166
+        right: 167
+        height: 2
+      - key: full.open.confirm
+        value: 32
+        left: null
+        right: null
+        height: 1
+      - key: full.open.revalidate
+        value: 34
+        left: null
+        right: null
+        height: 1
+      - key: full.open.evidence
+        value: 33
+        left: 169
+        right: 170
+        height: 2
+      - key: full.open
+        value: 31
+        left: 168
+        right: 171
+        height: 3
+      - key: full.build.configure
+        value: 25
+        left: null
+        right: null
+        height: 1
+      - key: full.build.plan
+        value: 35
+        left: null
+        right: null
+        height: 1
+      - key: full.build.confirm
+        value: 26
+        left: 173
+        right: 174
+        height: 2
+      - key: full.design.document
+        value: 28
+        left: null
+        right: null
+        height: 1
+      - key: full.design.handoff
+        value: 30
+        left: null
+        right: null
+        height: 1
+      - key: full.design.evidence
+        value: 29
+        left: 176
+        right: 177
+        height: 2
+      - key: full.design.confirm
+        value: 27
+        left: 175
+        right: 178
+        height: 3
+      - key: full.open
+        value: 31
+        left: 179
+        right: 171
+        height: 4
+      - key: full.build.plan
+        value: 37
+        left: null
+        right: null
+        height: 1
+      - key: full.build.check
+        value: 40
+        left: null
+        right: null
+        height: 1
+      - key: full.build.plan.evidence
+        value: 38
+        left: null
+        right: null
+        height: 1
+      - key: full.build.plan
+        value: 37
+        left: null
+        right: 183
+        height: 2
+      - key: full.build.execute
+        value: 39
+        left: 182
+        right: 184
+        height: 3
+      - key: full.build.check.evidence
+        value: 41
+        left: null
+        right: null
+        height: 1
+      - key: full.build.check
+        value: 40
+        left: null
+        right: 186
+        height: 2
+      - key: full.build.plan
+        value: 37
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.run
+        value: 43
+        left: null
+        right: null
+        height: 1
+      - key: full.build.plan.evidence
+        value: 38
+        left: 188
+        right: 189
+        height: 2
+      - key: full.build.execute
+        value: 39
+        left: 187
+        right: 190
+        height: 3
+      - key: full.verify.check
+        value: 44
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.run
+        value: 43
+        left: null
+        right: null
+        height: 1
+      - key: full.verify.report.evidence
+        value: 42
+        left: 192
+        right: 193
+        height: 2
+      - key: full.build.plan.evidence
+        value: 38
+        left: 188
+        right: 194
+        height: 3
+      - key: full.build.execute
+        value: 39
+        left: 187
+        right: 195
+        height: 4
+    maps:
+      - null
+      - 2
+      - 5
+      - 9
+      - 14
+      - 20
+      - 26
+      - 28
+      - 30
+      - 34
+      - 38
+      - 43
+      - 48
+      - 53
+      - 58
+      - 68
+      - 73
+      - 75
+      - 77
+      - 81
+      - 85
+      - 90
+      - 95
+      - 100
+      - 105
+      - 108
+      - 111
+      - 115
+      - 120
+      - 141
+      - 143
+      - 148
+      - 154
+      - 164
+      - 165
+      - 172
+      - 180
+      - 181
+      - 185
+      - 191
+      - 196
+    bindings:
+      - path:
+          - actions
+          - "0"
+          - input
+          - outputs
+        map: 0
+      - path:
+          - actions
+          - "1"
+          - input
+          - outputs
+        map: 1
+      - path:
+          - actions
+          - "2"
+          - input
+          - outputs
+        map: 2
+      - path:
+          - actions
+          - "3"
+          - input
+          - outputs
+        map: 3
+      - path:
+          - actions
+          - "4"
+          - input
+          - outputs
+        map: 4
+      - path:
+          - actions
+          - "5"
+          - input
+          - outputs
+        map: 5
+      - path:
+          - actions
+          - "6"
+          - input
+          - outputs
+        map: 6
+      - path:
+          - actions
+          - "7"
+          - input
+          - outputs
+        map: 0
+      - path:
+          - actions
+          - "8"
+          - input
+          - outputs
+        map: 7
+      - path:
+          - actions
+          - "9"
+          - input
+          - outputs
+        map: 8
+      - path:
+          - actions
+          - "10"
+          - input
+          - outputs
+        map: 9
+      - path:
+          - actions
+          - "11"
+          - input
+          - outputs
+        map: 10
+      - path:
+          - actions
+          - "12"
+          - input
+          - outputs
+        map: 11
+      - path:
+          - actions
+          - "13"
+          - input
+          - outputs
+        map: 12
+      - path:
+          - actions
+          - "14"
+          - input
+          - outputs
+        map: 13
+      - path:
+          - actions
+          - "15"
+          - input
+          - outputs
+        map: 14
+      - path:
+          - actionContexts
+          - webui-scp-style-redesign:1
+          - results
+        map: 0
+      - path:
+          - actionContexts
+          - webui-scp-style-redesign:11
+          - results
+        map: 15
+      - path:
+          - actionContexts
+          - webui-scp-style-redesign:13
+          - results
+        map: 16
+      - path:
+          - actionContexts
+          - webui-scp-style-redesign:14
+          - results
+        map: 0
+      - path:
+          - actionContexts
+          - webui-scp-style-redesign:16
+          - results
+        map: 17
+      - path:
+          - actionContexts
+          - webui-scp-style-redesign:17
+          - results
+        map: 18
+      - path:
+          - actionContexts
+          - webui-scp-style-redesign:19
+          - results
+        map: 19
+      - path:
+          - actionContexts
+          - webui-scp-style-redesign:21
+          - results
+        map: 20
+      - path:
+          - actionContexts
+          - webui-scp-style-redesign:23
+          - results
+        map: 21
+      - path:
+          - actionContexts
+          - webui-scp-style-redesign:25
+          - results
+        map: 22
+      - path:
+          - actionContexts
+          - webui-scp-style-redesign:26
+          - results
+        map: 23
+      - path:
+          - actionContexts
+          - webui-scp-style-redesign:27
+          - results
+        map: 24
+      - path:
+          - actionContexts
+          - webui-scp-style-redesign:4
+          - results
+        map: 25
+      - path:
+          - actionContexts
+          - webui-scp-style-redesign:5
+          - results
+        map: 26
+      - path:
+          - actionContexts
+          - webui-scp-style-redesign:7
+          - results
+        map: 27
+      - path:
+          - actionContexts
+          - webui-scp-style-redesign:9
+          - results
+        map: 28
+      - path:
+          - outputs
+        map: 29
+      - path:
+          - waits
+          - "0"
+          - results
+        map: 30
+      - path:
+          - waits
+          - "1"
+          - results
+        map: 31
+      - path:
+          - waits
+          - "2"
+          - results
+        map: 32
+      - path:
+          - waits
+          - "3"
+          - results
+        map: 33
+      - path:
+          - evidenceWaits
+          - "0"
+          - results
+        map: 34
+      - path:
+          - evidenceWaits
+          - "1"
+          - results
+        map: 35
+      - path:
+          - evidenceWaits
+          - "2"
+          - results
+        map: 36
+      - path:
+          - evidenceWaits
+          - "3"
+          - results
+        map: 37
+      - path:
+          - evidenceWaits
+          - "4"
+          - results
+        map: 38
+      - path:
+          - evidenceWaits
+          - "5"
+          - results
+        map: 39
+      - path:
+          - evidenceWaits
+          - "6"
+          - results
+        map: 40
+  storageHash: 05e666d52b00bd866e3c599462d1f1f333d23df95fa7f7f309e89f4eed0acda2
+check_epoch: 6
