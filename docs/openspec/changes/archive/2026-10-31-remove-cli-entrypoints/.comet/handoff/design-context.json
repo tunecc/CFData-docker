@@ -1,0 +1,15 @@
+{
+  "change": "remove-cli-entrypoints",
+  "phase": "design",
+  "mode": "compact",
+  "canonical_spec": "openspec",
+  "task_hash_policy": "task-content-v1",
+  "generated_by": "comet-handoff.sh",
+  "context_hash": "6f3143661c72884493b668dd322c2f0b83882659984124c6b61c5457539476ea",
+  "files": [
+    { "path": "docs/openspec/changes/remove-cli-entrypoints/proposal.md", "sha256": "1d8f59490f91c3cea70149087b8cacdfeea199450fae930d843cd984d9306d33" },
+    { "path": "docs/openspec/changes/remove-cli-entrypoints/design.md", "sha256": "f94e01ef8d70ec19aa174e6503ad5121782d072a1844768750ee3a3e069fbb31" },
+    { "path": "docs/openspec/changes/remove-cli-entrypoints/tasks.md", "sha256": "3946bb11cdd4bd2e67d8dd4e8365c5c8431d9650c2bb5217299626abce4ed072" },
+    { "path": "docs/openspec/changes/remove-cli-entrypoints/.openspec.yaml", "sha256": "a2388f7f2e8033f3e9cc7c648738f7ff3d462b6c8eea8267f8ff598cd1149831" }
+  ]
+}

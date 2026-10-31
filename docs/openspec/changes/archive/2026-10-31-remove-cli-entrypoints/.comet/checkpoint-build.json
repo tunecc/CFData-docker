@@ -1,0 +1,25 @@
+{
+ "schemaVersion": 1,
+ "taskIds": [
+  "a34cecf4-b4fb-47a8-b63f-02f84d84caa6",
+  "9fe02ef8-225b-4987-b9d7-85a2d53a57ea",
+  "dd4a8547-1c0c-4781-bda7-2fa1442c5c4f",
+  "aaba315c-1ea7-48c9-a801-19f96157884a",
+  "dc5db5f0-871e-45f0-a7a4-bba1903b74f4",
+  "123e1c77-e819-4291-8720-2c35615030cd",
+  "365010b4-60be-4c5a-be18-407639a68be6"
+ ],
+ "revision": "3946bb11cdd4bd2e67d8dd4e8365c5c8431d9650c2bb5217299626abce4ed072",
+ "stage": "task-review",
+ "sessionId": "zcode-remove-cli-20261031",
+ "evidence": [
+  "净删约 1650 行：menu.go 923、schedule_menu.go 219、cli.go 交互函数 20 个（迭代引用闭包法，含 cascade）、main.go CLI 分支、geo_warning.go confirmCLIProxyCountry",
+  "共享符号保留并迁移：readMenuLine/promptOK/promptQuit/menuInputReader → cli.go（配置迁移交互仍用）；describeSchedulePlan → scheduler.go（调度摘要）；newCLISession/handleCLIMessage 经调用图核实为调度器终端输出渲染器，保留",
+  "-nsbspeedtest 升为公共 flag（Web 测速默认并发，原经 registerCLIFlags 注册）；boolFlagNames 裁剪为 skipgeo",
+  "go build/vet/test 全绿；Web 冒烟 200 + 新界面；-cli 报 flag provided but not defined；release_assets/cfdata-test 重建",
+  "初审查 FAIL（3 IMPORTANT 均为文档/flag 描述层）：README 非标参数块重写、-proxy 提法修正、-nsbspeedtest 默认值恢复 0 并修正描述、三处 CLI 菜单文案更新、孤儿清理（logSpeedURLAvailabilitySummary/cliCommonFlags/cliNSBFlags/proxyFlag）、release 重建 19:16",
+  "修复后 go build/vet/test 全绿；Web 冒烟 200；-cli 报错正常"
+ ],
+ "unresolved": [],
+ "reviewRounds": 1
+}
