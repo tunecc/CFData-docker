@@ -2,21 +2,30 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#f4f6f7">
     <title>CFData 登录</title>
     <link rel="icon" type="image/png" href="favicon.png">
     <style>
         :root {
-            --bg1: #eff6ff;
-            --bg2: #e2e8f0;
+            --bg: #f4f6f7;
+            --fg: #1a1d21;
             --card: #ffffff;
-            --text: #0f172a;
-            --muted: #64748b;
-            --border: #cbd5e1;
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --error-bg: #fef2f2;
-            --error-text: #b91c1c;
+            --muted: #646971;
+            --border: rgba(15, 23, 42, 0.08);
+            --accent: #0ea5a0;
+            --accent-2: #09c7c1;
+            --accent-soft: rgba(14, 165, 160, 0.1);
+            --danger: #ed1717;
+        }
+
+        :root[data-theme='dark'] {
+            --bg: #121316;
+            --fg: #e6e6e6;
+            --card: #18191b;
+            --muted: #9aa4b2;
+            --border: rgba(255, 255, 255, 0.07);
+            --accent-soft: rgba(14, 165, 160, 0.16);
         }
 
         * { box-sizing: border-box; }
@@ -28,39 +37,52 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            color: var(--text);
-            background: linear-gradient(145deg, var(--bg1), var(--bg2));
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            color: var(--fg);
+            background: var(--bg);
         }
 
         .card {
             width: 100%;
-            max-width: 420px;
+            max-width: 400px;
             background: var(--card);
             border: 1px solid var(--border);
             border-radius: 14px;
-            box-shadow: 0 16px 30px rgba(15, 23, 42, 0.12);
-            padding: 22px;
+            box-shadow: 0 0 0 1px var(--border), 0 16px 40px rgba(15, 23, 42, 0.1);
+            padding: 26px 24px;
         }
 
-        h1 {
-            margin: 0 0 6px;
-            font-size: 22px;
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
         }
 
-        .sub {
-            margin: 0 0 18px;
-            color: var(--muted);
-            font-size: 13px;
+        .brand-mark {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: #fff;
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+            font-size: 17px;
+            box-shadow: 0 4px 12px rgba(14, 165, 160, 0.35);
         }
+
+        h1 { margin: 0; font-size: 19px; }
+
+        .sub { margin: 0 0 16px; color: var(--muted); font-size: 13px; }
 
         .error {
             display: none;
             margin-bottom: 12px;
-            background: var(--error-bg);
-            color: var(--error-text);
+            background: color-mix(in srgb, var(--danger) 7%, transparent);
+            color: var(--danger);
             border-radius: 10px;
-            border: 1px solid #fecaca;
+            border: 1px solid color-mix(in srgb, var(--danger) 30%, transparent);
             padding: 10px 12px;
             font-size: 13px;
         }
@@ -70,7 +92,7 @@
         label {
             display: block;
             margin-bottom: 6px;
-            font-size: 13px;
+            font-size: 12px;
             color: var(--muted);
         }
 
@@ -79,14 +101,17 @@
             height: 42px;
             border-radius: 10px;
             border: 1px solid var(--border);
+            background: color-mix(in srgb, var(--fg) 3%, var(--card));
+            color: var(--fg);
             padding: 0 12px;
             font-size: 14px;
             outline: none;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
         }
 
         input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-soft);
         }
 
         button {
@@ -98,15 +123,38 @@
             font-size: 14px;
             font-weight: 700;
             cursor: pointer;
-            background: linear-gradient(135deg, var(--primary), #3b82f6);
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            box-shadow: 0 4px 14px rgba(14, 165, 160, 0.3);
+            transition: filter 0.15s ease, transform 0.15s ease;
         }
 
-        button:hover { background: linear-gradient(135deg, var(--primary-hover), var(--primary)); }
+        button:hover { filter: brightness(1.05); transform: translateY(-1px); }
+
+        .footer {
+            margin-top: 16px;
+            text-align: center;
+            font-size: 11px;
+            color: var(--muted);
+        }
     </style>
+    <script>
+        (function () {
+            var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            var stored = null;
+            try { stored = localStorage.getItem('cfdata-theme'); } catch (e) {}
+            var dark = stored === 'dark' || ((stored === null || stored === 'auto') && prefersDark);
+            document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+        })();
+    </script>
 </head>
 <body>
     <form class="card" method="post" action="/auth/login" autocomplete="off">
-        <h1>登录 CFData</h1>
+        <div class="brand">
+            <div class="brand-mark">CF</div>
+            <div>
+                <h1>CFData 控制台</h1>
+            </div>
+        </div>
         <p class="sub">请输入管理员账号和密码</p>
         <div class="error" id="errorBox">用户名或密码错误，请重试。</div>
         <div class="field">
@@ -118,6 +166,7 @@
             <input id="password" name="password" type="password" required>
         </div>
         <button type="submit">登录</button>
+        <div class="footer">Cloudflare IP 优选 · 数据中心库</div>
     </form>
 
     <script>

@@ -1,1736 +1,1263 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloudflare IP Data (Combined)</title>
-    <link rel="icon" type="image/png" href="favicon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#f4f6f7">
+    <title>CFData 控制台 - Cloudflare IP 优选</title>
+    <link rel="icon" href="/favicon.png" type="image/png">
     <style>
-        :root {
-            --primary-color: #3b82f6;
-            --primary-hover: #2563eb;
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --error-color: #ef4444;
-            --bg-color: #eef1f5;
-            --card-bg: #fbfcfe;
-            --text-main: #243041;
-            --text-secondary: #64748b;
-            --border-color: #dbe2ea;
-            --radius: 16px;
-            --shadow: 0 18px 24px -8px rgba(30, 41, 59, .08), 0 8px 10px -8px rgba(30, 41, 59, .06), 0 0 0 1px rgba(30, 41, 59, .03);
-        }
-
-        :root.dark-theme,
-        body.dark-theme {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --text-main: #f1f5f9;
-            --text-secondary: #94a3b8;
-            --border-color: #334155;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        }
-
-        .no-transition,
-        .no-transition * {
-            transition: none !important;
-        }
-
-        .copy-hint {
-            position: fixed;
-            z-index: 9999;
-            pointer-events: none;
-            font-size: 13px;
-            font-weight: bold;
-            animation: copyFadeUp 0.8s ease-out forwards;
-        }
-
-        @keyframes copyFadeUp {
-            0% {
-                opacity: 0;
-                transform: translateY(0);
-            }
-
-            20% {
-                opacity: 1;
-                transform: translateY(-10px);
-            }
-
-            80% {
-                opacity: 1;
-                transform: translateY(-15px);
-            }
-
-            100% {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            padding: 15px;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: linear-gradient(135deg, #eef2f6 0%, #e3e8ef 100%);
-            color: var(--text-main);
-        }
-
-        .container {
-            position: relative;
-            max-width: 1200px;
-            margin: 0 auto;
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            padding: 20px;
-            border: 1px solid rgba(148, 163, 184, 0.28);
-            box-shadow: var(--shadow);
-        }
-
-        .top-actions {
-            position: absolute;
-            right: 20px;
-            top: 20px;
-            display: flex;
-            gap: 8px;
-            z-index: 100;
-        }
-
-        .settings-toggle,
-        .github-link {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            width: 40px;
-            height: 40px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            line-height: 1;
-            transition: all 0.2s;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            color: var(--text-main);
-            text-decoration: none;
-        }
-
-        .settings-toggle:hover,
-        .github-link:hover {
-            transform: scale(1.1);
-            border-color: var(--primary-color);
-        }
-
-        .settings-menu {
-            position: absolute;
-            right: 20px;
-            top: 68px;
-            width: 240px;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            box-shadow: 0 12px 24px rgba(0, 0, 0, .12);
-            padding: 12px;
-            z-index: 30;
-            max-height: calc(100vh - 90px);
-            overflow-y: auto;
-        }
-
-        .settings-menu.hidden {
-            display: none;
-        }
-
-        .settings-title {
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-            font-weight: 700;
-        }
-
-        .theme-options {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
-            margin-bottom: 12px;
-        }
-
-        .menu-btn {
-            border: 1px solid var(--border-color);
-            background: var(--bg-color);
-            color: var(--text-main);
-            border-radius: 8px;
-            padding: 8px 6px;
-            font-size: 12px;
-            cursor: pointer;
-        }
-
-        .menu-btn.active {
-            border-color: var(--primary-color);
-            color: #fff;
-            background: linear-gradient(135deg, var(--primary-color) 0%, #2563eb 100%);
-        }
-
-        .menu-btn:hover {
-            border-color: var(--primary-color);
-        }
-
-        .danger-btn {
-            width: 100%;
-            border: 1px solid #fca5a5;
-            background: #fff1f2;
-            color: #b91c1c;
-            border-radius: 8px;
-            padding: 10px;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .danger-btn:hover {
-            border-color: #ef4444;
-            background: #ffe4e6;
-        }
-
-        body.dark-theme .danger-btn {
-            background: #3f1f2b;
-            color: #fecdd3;
-            border-color: #be123c;
-        }
-
-        h1 {
-            margin: 0 96px 16px;
-            text-align: center;
-            font-size: 1.75rem;
-        }
-
-        .version-line {
-            margin: -8px 96px 16px;
-            text-align: center;
-            color: var(--text-secondary);
-            font-size: 12px;
-        }
-
-        .version-line a {
-            color: var(--warning-color);
-            font-weight: 700;
-            text-decoration: none;
-            margin-left: 8px;
-        }
-
-        .status-bar {
-            margin-bottom: 16px;
-            padding: 12px 16px;
-            border-left: 4px solid var(--success-color);
-            border-radius: 8px;
-            background: linear-gradient(to right, #edf7f2, #f4faf6);
-            color: #065f46;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 14px;
-        }
-
-        .status-bar.error {
-            border-left-color: var(--error-color);
-            background: linear-gradient(to right, #fbefef, #f8e3e3);
-            color: #991b1b;
-        }
-
-        .mode-switch {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 16px;
-        }
-
-        .mode-btn {
-            flex: 1;
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 12px 16px;
-            cursor: pointer;
-            background: var(--bg-color);
-            color: var(--text-main);
-            font-weight: 700;
-            transition: all .2s ease;
-        }
-
-        .mode-btn.active {
-            background: linear-gradient(135deg, var(--primary-color), #2563eb);
-            color: #fff;
-            border-color: var(--primary-hover);
-        }
-
-        .section-box {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            margin-bottom: 16px;
-            padding: 20px;
-        }
-
-        .automation-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 16px;
-            margin-top: 12px;
-        }
-
-        .automation-column {
-            min-width: 0;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            background: var(--bg-color);
-            padding: 14px 16px;
-        }
-
-        .automation-column .form-group {
-            margin-top: 10px;
-        }
-
-        .automation-column .form-group input {
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .automation-save-btn {
-            width: 100%;
-            margin-top: 12px;
-        }
-
-        .automation-hint {
-            margin-top: 10px;
-            font-size: 12px;
-            line-height: 1.6;
-            color: var(--text-secondary);
-        }
-
-        @media (max-width: 768px) {
-            .automation-grid {
-                grid-template-columns: minmax(0, 1fr);
-            }
-        }
-
-        @media (max-width: 768px) {
-            h1 {
-                margin: 56px 0 16px;
-                font-size: 1.5rem;
-            }
-
-            .top-actions {
-                right: 12px;
-                top: 12px;
-            }
-
-            .settings-menu {
-                right: 12px;
-                top: 58px;
-                width: calc(100vw - 24px);
-                max-width: 260px;
-            }
-        }
-
-        .controls {
-            background: linear-gradient(135deg, var(--card-bg), var(--bg-color));
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 15px;
-        }
-
-        .controls .control-title {
-            display: block;
-            margin-bottom: 10px;
-        }
-
-        #officialControls,
-        #nsbControls {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 16px;
-            min-width: 0;
-        }
-
-        .controls button {
-            display: block;
-            width: 100%;
-            margin-top: 15px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            min-width: 0;
-        }
-
-        .form-group label {
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin-bottom: 6px;
-        }
-
-        .checkbox-inline {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            min-height: 44px;
-        }
-
-        .checkbox-inline label {
-            margin-bottom: 0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--text-main);
-            font-size: 14px;
-            min-height: 44px;
-        }
-
-        .option-item {
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 14px 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: var(--card-bg);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            min-height: 52px;
-            box-sizing: border-box;
-            height: 100%;
-            min-width: 0;
-        }
-
-        .option-item .label {
-            color: var(--text-secondary);
-            font-size: 13px;
-            width: 120px;
-            flex-shrink: 0;
-        }
-
-        .option-item input,
-        .option-item select {
-            flex: 1;
-            min-width: 0;
-            box-sizing: border-box;
-        }
-
-        .option-item .field-with-action {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex: 1;
-            min-width: 0;
-            max-width: 100%;
-        }
-
-        .option-item .field-with-action:has(.speed-url-select) {
-            flex-wrap: wrap;
-        }
-
-        .option-item .field-with-action .speed-url-select + input {
-            flex: 1 1 260px;
-            min-width: 0;
-        }
-
-        .mini-action-btn {
-            width: 34px;
-            height: 34px;
-            flex-shrink: 0;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            background: var(--bg-color);
-            color: var(--text-secondary);
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            padding: 0;
-        }
-
-        .controls .mini-action-btn {
-            width: 34px !important;
-            margin-top: 0 !important;
-        }
-
-        .mini-action-btn:hover {
-            border-color: var(--primary-color);
-            color: var(--primary-color);
-        }
-
-        .speed-url-select {
-            width: min(170px, 100%);
-            max-width: 170px;
-            flex: 1 1 140px !important;
-            min-height: 44px;
-            font-size: 12px;
-        }
-
-        .option-item.full-width {
-            grid-column: 1 / -1;
-        }
-
-        input,
-        select {
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            background: var(--bg-color);
-            color: var(--text-main);
-            min-height: 44px;
-            padding: 10px 12px;
-            font-size: 14px;
-            line-height: 20px;
-            max-width: 100%;
-            min-width: 0;
-        }
-
-        select {
-            appearance: none;
-            -webkit-appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 14px center;
-            background-size: 16px;
-            padding-right: 36px;
-        }
-
-        .control-title {
-            grid-column: 1 / -1;
-            font-weight: 700;
-            color: var(--text-main);
-            margin: 4px 0 6px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .file-hint {
-            color: var(--text-secondary);
-            margin-top: 6px;
-            font-size: 12px;
-        }
-
-        .file-field {
-            flex: 1;
-            min-width: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            align-items: flex-start;
-        }
-
-        .btn {
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 700;
-        }
-
-        #btnStart {
-            width: 100%;
-            padding: 14px;
-            font-size: 16px;
-            color: #fff;
-            background: linear-gradient(135deg, var(--primary-color), #2563eb);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, .3);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 8px;
-            box-sizing: border-box;
-        }
-
-        .btn-spinner {
-            width: 14px;
-            height: 14px;
-            border: 2px solid rgba(255, 255, 255, .45);
-            border-top-color: rgba(255, 255, 255, .95);
-            border-radius: 50%;
-            display: inline-block;
-            animation: spin 0.9s linear infinite;
-            vertical-align: text-bottom;
-        }
-
-        .tabs {
-            display: flex;
-            border: 1px solid var(--border-color);
-            background: var(--bg-color);
-            border-radius: 12px;
-            padding: 4px;
-            gap: 4px;
-            margin-bottom: 14px;
-        }
-
-        .tab {
-            flex: 1;
-            padding: 10px 12px;
-            text-align: center;
-            cursor: pointer;
-            border-radius: 8px;
-            color: var(--text-secondary);
-            font-weight: 700;
-        }
-
-        .tab.active {
-            color: var(--primary-color);
-            background: rgba(59, 130, 246, .1);
-        }
-
-        .tab[style*='display: none'] {
-            display: none !important;
-        }
-
-        .tab-content {
-            display: none;
-            animation: fade .25s;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        @keyframes fade {
-            from {
-                opacity: 0;
-                transform: translateY(8px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .progress-container {
-            display: none;
-            width: 100%;
-            background: var(--border-color);
-            border-radius: 12px;
-            height: 24px;
-            overflow: hidden;
-            margin-bottom: 14px;
-        }
-
-        .progress-bar {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent), linear-gradient(to right, var(--primary-color), #60a5fa);
-            background-size: 20px 20px, 100% 100%;
-            animation: stripe 1s linear infinite;
-            color: #fff;
-            text-align: center;
-            font-size: 12px;
-            line-height: 24px;
-            font-weight: 700;
-        }
-
-        .background-status-card {
-            display: none;
-            border: 1px solid rgba(59, 130, 246, 0.28);
-            border-radius: 12px;
-            background: color-mix(in srgb, var(--bg-color), var(--primary-color) 8%);
-            padding: 14px;
-            margin-bottom: 14px;
-            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
-        }
-
-        .background-status-card.active {
-            display: block;
-        }
-
-        .background-confirm-card {
-            display: none;
-            margin-top: 10px;
-            margin-bottom: 0;
-            border-color: rgba(245, 158, 11, 0.45);
-            background: color-mix(in srgb, var(--bg-color), var(--warning-color) 10%);
-        }
-
-        .background-confirm-card.active {
-            display: block;
-        }
-
-        .background-confirm-text {
-            color: var(--text-secondary);
-            line-height: 1.7;
-            margin: 8px 0 12px;
-        }
-
-        .background-confirm-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .background-status-head {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 10px;
-        }
-
-        .background-status-title {
-            font-weight: 800;
-            color: var(--text-main);
-        }
-
-        .background-status-grid {
-            display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 10px;
-        }
-
-        .background-status-item {
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 10px;
-            background: var(--card-bg);
-            min-width: 0;
-            height: 96px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 6px;
-        }
-
-        .background-status-label {
-            display: block;
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-bottom: 4px;
-        }
-
-        .background-status-value {
-            font-weight: 700;
-            color: var(--text-main);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .background-status-wide {
-            grid-column: span 2;
-        }
-
-        .background-status-wide .background-status-value {
-            white-space: normal;
-            line-height: 1.55;
-        }
-
-        .background-stat-line {
-            font-size: 13px;
-            word-break: keep-all;
-        }
-
-        .background-status-wide-full {
-            grid-column: 1 / -1;
-        }
-
-        .background-stat-grid {
-            display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 8px;
-        }
-
-        .background-stat-cell {
-            display: grid;
-            grid-template-columns: 54px minmax(54px, 1fr);
-            align-items: baseline;
-            column-gap: 6px;
-            min-width: 0;
-            font-size: 13px;
-        }
-
-        .background-stat-name {
-            color: var(--text-secondary);
-            text-align: right;
-            white-space: nowrap;
-        }
-
-        .background-stat-number {
-            font-variant-numeric: tabular-nums;
-            text-align: left;
-            white-space: nowrap;
-        }
-
-        @keyframes stripe {
-            from {
-                background-position: 0 0, 0 0;
-            }
-
-            to {
-                background-position: 20px 20px, 0 0;
-            }
-        }
-
-        .scroll-table {
-            overflow-x: auto;
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 700px;
-            font-size: 14px;
-        }
-
-        th,
-        td {
-            padding: 12px;
-            border-bottom: 1px solid var(--border-color);
-            text-align: left;
-            white-space: nowrap;
-        }
-
-        th {
-            background: var(--bg-color);
-            color: var(--text-secondary);
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
-        tr:hover {
-            background: color-mix(in srgb, var(--bg-color), var(--primary-color) 6%);
-        }
-
-        .badge {
-            background: linear-gradient(135deg, var(--primary-color), #60a5fa);
-            color: #fff;
-            border-radius: 20px;
-            padding: 3px 10px;
-            font-size: 12px;
-        }
-
-        .action-btn {
-            padding: 7px 11px;
-            border: 0;
-            border-radius: 6px;
-            background: linear-gradient(135deg, var(--warning-color), #fbbf24);
-            color: #fff;
-            cursor: pointer;
-            font-size: 12px;
-            min-height: 34px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .speed-btn {
-            min-width: 78px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
-
-        .speed-result {
-            min-width: 136px;
-            display: inline-grid;
-            grid-template-columns: minmax(74px, auto) 48px;
-            align-items: center;
-            column-gap: 6px;
-            text-align: left;
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
-
-        .speed-cell-content {
-            display: inline-grid;
-            grid-template-columns: minmax(74px, auto) 48px;
-            align-items: center;
-            column-gap: 6px;
-            white-space: nowrap;
-        }
-
-        .export-btn {
-            background: linear-gradient(135deg, var(--success-color), #059669) !important;
-            box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2) !important;
-            border: none;
-        }
-
-        .export-btn:hover {
-            box-shadow: 0 4px 8px rgba(16, 185, 129, 0.4) !important;
-        }
-
-        .table-actions {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .official-test-actions,
-        .nsb-scan-actions {
-            display: grid;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .official-test-actions {
-            grid-template-columns: auto minmax(92px, auto) minmax(92px, auto) auto auto auto;
-        }
-
-        .nsb-scan-actions {
-            grid-template-columns: auto auto auto minmax(92px, auto) minmax(92px, auto) auto auto;
-        }
-
-        .nsb-scan-actions.official-scan-actions {
-            grid-template-columns: minmax(92px, auto) minmax(92px, auto);
-        }
-
-        .official-test-actions .action-btn,
-        .official-test-actions .table-filter-select,
-        .nsb-scan-actions .action-btn,
-        .nsb-scan-actions .table-filter-select {
-            white-space: nowrap;
-        }
-
-        #btnBatchSpeed,
-        #btnContinueBatchSpeed,
-        #btnNSBBatchSpeed,
-        #btnNSBContinueSpeed {
-            min-width: 92px;
-        }
-
-        .table-filter-select {
-            display: none;
-            width: auto;
-            height: 34px;
-            min-height: 34px;
-            padding: 6px 30px 6px 10px;
-            font-size: 12px;
-        }
-
-        .speed-unqualified {
-            position: relative;
-        }
-
-        tr.row-unqualified td {
-            position: relative;
-        }
-
-        tr.row-unqualified td::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            background: rgba(245, 158, 11, 0.10);
-        }
-
-        .result-status-tag {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: 0;
-            padding: 1px 6px;
-            border-radius: 999px;
-            font-size: 10px;
-            line-height: 1.4;
-            font-weight: 700;
-            vertical-align: middle;
-            background: rgba(148, 163, 184, 0.16);
-            color: var(--text-secondary);
-            border: 1px solid rgba(148, 163, 184, 0.26);
-        }
-
-        .result-status-slot {
-            display: inline-flex;
-            width: 48px;
-            justify-content: flex-start;
-        }
-
-        .result-status-tag.unqualified {
-            background: rgba(245, 158, 11, 0.14);
-            color: #b45309;
-            border-color: rgba(245, 158, 11, 0.28);
-        }
-
-        .result-status-tag.qualified {
-            background: rgba(16, 185, 129, 0.14);
-            color: #047857;
-            border-color: rgba(16, 185, 129, 0.28);
-        }
-
-        tr.row-qualified td {
-            position: relative;
-        }
-
-        tr.row-qualified td::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            background: rgba(16, 185, 129, 0.12);
-        }
-
-        .modal-mask {
-            position: fixed;
-            inset: 0;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 18px;
-            background: rgba(15, 23, 42, 0.58);
-            z-index: 1000;
-        }
-
-        .modal-mask.active {
-            display: flex;
-        }
-
-        .result-modal {
-            width: min(760px, 100%);
-            max-height: 90vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            box-sizing: border-box;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            box-shadow: 0 24px 80px rgba(15, 23, 42, 0.35);
-            padding: 22px;
-        }
-
-        .proxy-warning-modal {
-            width: min(680px, 100%);
-        }
-
-        .notice-modal {
-            width: min(560px, 100%);
-        }
-
-        .notice-card {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-
-        .notice-card-title {
-            margin: 0;
-            color: var(--text-main);
-            font-size: 20px;
-        }
-
-        .notice-card-message {
-            white-space: pre-line;
-            color: var(--text-secondary);
-            line-height: 1.7;
-        }
-
-        .proxy-warning-card {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .proxy-warning-title {
-            margin: 0;
-            color: #ef4444;
-            font-size: 24px;
-        }
-
-        .proxy-warning-country {
-            display: inline-flex;
-            align-items: center;
-            width: fit-content;
-            padding: 5px 10px;
-            border-radius: 999px;
-            background: rgba(239, 68, 68, 0.10);
-            color: #dc2626;
-            border: 1px solid rgba(239, 68, 68, 0.22);
-            font-size: 12px;
-            font-weight: 800;
-        }
-
-        .proxy-warning-card p,
-        .proxy-warning-card li {
-            color: var(--text-secondary);
-            line-height: 1.7;
-        }
-
-        .proxy-warning-card ul {
-            margin: 0;
-            padding-left: 22px;
-        }
-
-        .proxy-warning-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            flex-wrap: wrap;
-            padding-top: 4px;
-        }
-
-        .proxy-warning-actions .danger-btn {
-            background: linear-gradient(135deg, #ef4444, #dc2626) !important;
-            color: #fff !important;
-            box-shadow: 0 2px 4px rgba(239, 68, 68, 0.25) !important;
-        }
-
-        .modal-body {
-            min-height: 0;
-            flex: 1;
-            overflow-y: auto;
-            overflow-x: hidden;
-            padding-right: 18px;
-            margin-right: -8px;
-            scrollbar-gutter: stable;
-        }
-
-        .modal-body::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .modal-body::-webkit-scrollbar-thumb {
-            background: rgba(148, 163, 184, 0.55);
-            border-radius: 999px;
-        }
-
-        .modal-body::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .modal-head {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            margin-bottom: 12px;
-        }
-
-        .modal-head h3 {
-            margin: 0;
-        }
-
-        .modal-close {
-            border: 0;
-            background: transparent;
-            color: var(--text-secondary);
-            font-size: 24px;
-            cursor: pointer;
-        }
-
-        .modal-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 10px;
-            max-width: 100%;
-            overflow-x: hidden;
-        }
-
-        .sort-modal-section-title {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            letter-spacing: 1px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 4px;
-            margin-bottom: 2px;
-        }
-
-        .modal-field {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .modal-field.full {
-            grid-column: 1 / -1;
-        }
-
-        .modal-field label {
-            font-size: 12px;
-            color: var(--text-secondary);
-            font-weight: 700;
-        }
-
-        .field-head {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-        }
-
-        .field-head-actions {
-            display: flex;
-            justify-content: flex-end;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-
-        .field-head-actions .action-btn {
-            height: 28px;
-            padding: 0 10px;
-            font-size: 12px;
-        }
-
-        .field-picker {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 8px;
-            margin-top: 8px;
-        }
-
-        .field-pill {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 7px 8px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 12px;
-        }
-
-        .field-pill input {
-            width: auto;
-        }
-
-        .order-list {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            margin-top: 8px;
-        }
-
-        .order-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 8px;
-            padding: 7px 9px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            background: var(--bg-color);
-            font-size: 12px;
-        }
-
-        .order-item button {
-            width: auto;
-            height: auto;
-            padding: 3px 7px;
-            border-radius: 6px;
-            border: 0;
-            color: #fff;
-            background: var(--primary-color);
-            cursor: pointer;
-        }
-
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 14px;
-        }
-
-        .modal-actions.inline {
-            grid-column: 1 / -1;
-            margin-top: 0;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            background: color-mix(in srgb, var(--card-bg), var(--primary-color) 4%);
-        }
-
-        .modal-actions.footer {
-            flex-shrink: 0;
-            padding-top: 14px;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .github-account-row {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .github-account-row select {
-            flex: 1;
-        }
-
-        .separator-row {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .separator-row select {
-            flex: 0 0 min(170px, 45%);
-        }
-
-        .separator-row input {
-            flex: 1;
-        }
-
-        .inline-check {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 12px;
-            color: var(--text-secondary);
-            font-weight: 700;
-        }
-
-        .inline-check input {
-            width: auto;
-            margin: 0;
-            vertical-align: middle;
-            flex-shrink: 0;
-        }
-
-        .result-preview,
-        .upload-status {
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            background: var(--bg-color);
-            padding: 10px;
-            font-size: 12px;
-            white-space: pre-wrap;
-            overflow-y: auto;
-            overflow-x: hidden;
-            max-height: 120px;
-            max-width: 100%;
-            box-sizing: border-box;
-        }
-
-        .upload-status.error {
-            color: var(--error-color);
-            border-color: var(--error-color);
-            font-weight: bold;
-        }
-
-        .upload-status.success {
-            color: #059669;
-            border-color: #10b981;
-            font-weight: bold;
-        }
-
-        .upload-status .copy-ip {
-            color: inherit;
-        }
-
-        .action-btn.selected {
-            background: linear-gradient(135deg, #10b981, #34d399);
-        }
-
-        .action-btn:disabled {
-            background: #9ca3af;
-            cursor: not-allowed;
-        }
-
-        .copy-ip {
-            color: var(--primary-color);
-            cursor: pointer;
-            border-bottom: 1px dashed var(--primary-color);
-        }
-
-        .ip-cell {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .ip-detail-link {
-            opacity: 0;
-            text-decoration: none;
-            font-size: 13px;
-            line-height: 1;
-            color: var(--text-secondary);
-            transition: opacity 0.12s ease, color 0.12s ease;
-        }
-
-        td:hover .ip-detail-link,
-        .ip-detail-link:focus {
-            opacity: 1;
-        }
-
-        .ip-detail-link:hover {
-            color: var(--primary-color);
-        }
-
-        .log-box {
-            background: #0f172a;
-            color: #34d399;
-            border-radius: 12px;
-            padding: 14px;
-            height: 180px;
-            overflow-y: auto;
-            font-family: Menlo, Monaco, "Courier New", monospace;
-            border: 1px solid #1e293b;
-            font-size: 13px;
-            margin-top: 16px;
-            cursor: text;
-        }
-
-        .log-box,
-        .log-box * {
-            user-select: text !important;
-            -webkit-user-select: text !important;
-            caret-color: auto;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        @keyframes spin {
-            from {
-                transform: rotate(0deg);
-            }
-
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        @media (max-width: 768px) {
-
-            .modal-mask {
-                align-items: flex-start;
-                padding: 10px;
-                overflow-y: auto;
-            }
-
-            #noticeCardMask {
-                align-items: center;
-            }
-
-            .modal-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .result-modal {
-                width: calc(100vw - 20px);
-                max-height: 94vh;
-                padding: 18px 16px 18px 18px;
-                margin: 0 auto;
-            }
-
-            .modal-body {
-                max-height: calc(94vh - 92px);
-                padding-right: 0;
-                margin-right: 0;
-                overflow-x: hidden;
-            }
-
-            .result-modal,
-            .modal-body,
-            .modal-grid,
-            .modal-field,
-            .field-head,
-            .field-head-actions,
-            .field-picker,
-            .field-pill,
-            .order-list,
-            .order-item,
-            .github-account-row,
-            .modal-actions {
-                min-width: 0;
-                max-width: 100%;
-                box-sizing: border-box;
-            }
-
-            .field-head,
-            .github-account-row,
-            .modal-actions {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .field-head-actions,
-            .modal-actions {
-                justify-content: stretch;
-            }
-
-            .field-head-actions .action-btn,
-            .modal-actions .action-btn,
-            .github-account-row select,
-            .github-account-row .action-btn {
-                width: 100%;
-                min-width: 0;
-            }
-
-            .modal-field input,
-            .modal-field select,
-            .modal-field button,
-            .modal-field pre,
-            .modal-field .upload-status {
-                max-width: 100%;
-                min-width: 0;
-                box-sizing: border-box;
-            }
-
-            .field-head-actions {
-                display: grid;
-                grid-template-columns: 1fr;
-            }
-
-            .inline-check {
-                display: flex;
-                align-items: center;
-                white-space: normal;
-            }
-
-            .order-item {
-                flex-wrap: wrap;
-            }
-
-            .field-picker {
-                grid-template-columns: 1fr;
-            }
-
-            .result-preview,
-            .upload-status {
-                max-width: 100%;
-            }
-
-            .section-box h3:has(.table-actions) {
-                flex-direction: column;
-                align-items: stretch !important;
-                gap: 10px;
-            }
-
-            .section-box h3 .table-actions {
-                display: grid;
-                grid-template-columns: minmax(0, 1fr);
-                align-items: center;
-                gap: 8px;
-                width: 100%;
-            }
-
-            .section-box h3 .table-actions > * {
-                width: 100%;
-            }
-
-            .section-box h3 .table-actions .table-filter-select {
-                width: 100%;
-            }
-
-            #test .section-box h3 .table-actions {
-                display: grid;
-                grid-template-columns: 1fr;
-            }
-
-            #test .section-box h3 .table-actions .official-test-actions,
-            #scan .section-box h3 .table-actions .nsb-scan-actions {
-                display: grid;
-                grid-template-columns: minmax(0, 1fr);
-                gap: 8px;
-                width: 100%;
-            }
-
-            #btnScanCopy {
-                width: 100%;
-            }
-
-            #btnScanResultAction {
-                width: 100%;
-            }
-
-            #btnTestCopy {
-                width: 100%;
-            }
-
-            #btnTestResultAction {
-                width: 100%;
-            }
-
-            #btnNSBBatchSpeed {
-                width: 100%;
-            }
-
-            #btnNSBContinueSpeed {
-                width: 100%;
-            }
-
-            .section-box h3 .table-actions .export-btn {
-                align-self: center;
-                white-space: nowrap;
-            }
-
-            .controls,
-            .container {
-                padding: 12px;
-            }
-
-            body {
-                padding: 10px;
-            }
-
-            #officialControls,
-            #nsbControls {
-                grid-template-columns: 1fr;
-            }
-
-            .background-status-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .background-stat-grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-
-            .background-status-item,
-            .background-status-wide-full {
-                height: 112px;
-            }
-
-            .background-status-wide-full {
-                grid-column: 1;
-            }
-
-            .option-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-                height: auto;
-                padding: 12px;
-            }
-
-            .option-item .label {
-                width: 100%;
-                margin-bottom: 2px;
-            }
-
-            .option-item input,
-            .option-item select,
-            .option-item .field-with-action {
-                width: 100%;
-            }
-
-            .option-item .field-with-action:has(.speed-url-select) {
-                flex-wrap: wrap;
-            }
-
-            .option-item .field-with-action .speed-url-select {
-                flex: 1 0 100% !important;
-                max-width: 100%;
-            }
-
-            .option-item .field-with-action .speed-url-select + input {
-                flex: 1 1 calc(100% - 42px);
-            }
-        }
-
-        body {
-            user-select: none;
-            -webkit-user-select: none;
-            caret-color: transparent;
-        }
-
-        input,
-        textarea {
-            user-select: text;
-            -webkit-user-select: text;
-            caret-color: auto;
-        }
-
-        table th,
-        table td,
-        .copy-ip {
-            user-select: text !important;
-            -webkit-user-select: text !important;
-            caret-color: auto;
-        }
-
-        *:focus {
-            outline: none;
-        }
+/* ============================================================
+   CFData-WEB 控制台 · 设计体系（参照 subs-check-pro-webui）
+   分区：变量 → 基础 → 布局 → 侧边栏 → 组件 → 视图 → 弹窗 → 响应式
+   ============================================================ */
+
+:root {
+    --bg: #f4f6f7;
+    --fg: #1a1d21;
+    --card: #ffffff;
+    --border: rgba(15, 23, 42, 0.08);
+    --accent: #0ea5a0;
+    --accent-2: #09c7c1;
+    --accent-soft: rgba(14, 165, 160, 0.1);
+    --muted: #646971;
+    --success: #0fd056;
+    --warning: #d97706;
+    --danger: #ed1717;
+    --idle: #0198d3;
+    --prepare: #1ab2fe;
+    --stopping: #00cf6f;
+    --glass-bg: rgba(255, 255, 255, 0.72);
+    --glass-blur: 12px;
+    --card-shadow: 0 0 0 1px var(--border), 0 8px 24px rgba(15, 23, 42, 0.06);
+    --logs-bg: #0f1216;
+    --logs-fg: #d6dde6;
+    --gap: 10px;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Courier New', monospace;
+
+    /* 旧版变量别名：旧脚本内联样式仍引用 */
+    --primary-color: var(--accent);
+    --primary-hover: #0c938e;
+    --bg-color: var(--bg);
+    --card-bg: var(--card);
+    --text-main: var(--fg);
+    --text-secondary: var(--muted);
+    --border-color: var(--border);
+    --success-color: var(--success);
+    --warning-color: var(--warning);
+    --error-color: var(--danger);
+    --shadow: var(--card-shadow);
+}
+
+:root[data-theme='dark'] {
+    --bg: #121316;
+    --fg: #e6e6e6;
+    --card: #18191b;
+    --border: rgba(255, 255, 255, 0.07);
+    --accent-soft: rgba(14, 165, 160, 0.16);
+    --muted: #9aa4b2;
+    --success: #16a34a;
+    --glass-bg: rgba(24, 25, 27, 0.78);
+    --card-shadow: 0 0 0 1px var(--border), 0 8px 24px rgba(0, 0, 0, 0.35);
+    --logs-bg: #0b0d10;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { height: 100%; }
+
+body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--fg);
+    font-size: 14px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    transition: background 0.25s ease, color 0.25s ease;
+}
+
+::selection { background: var(--accent-soft); }
+
+a { color: var(--accent); text-decoration: none; }
+
+/* ---------------- 布局：三栏 Grid ---------------- */
+
+.app {
+    display: grid;
+    grid-template-columns: minmax(190px, 230px) minmax(0, 1fr) minmax(300px, 350px);
+    gap: var(--gap);
+    max-width: 1760px;
+    margin: 0 auto;
+    padding: var(--gap);
+    min-height: 100vh;
+    align-items: start;
+}
+
+.main-col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+    min-width: 0;
+}
+
+.view { display: none; flex-direction: column; gap: var(--gap); min-width: 0; }
+.view.active { display: flex; }
+
+/* ---------------- 卡片 ---------------- */
+
+.card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--card-shadow);
+    padding: 14px;
+}
+
+.card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.card-title {
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.card-tip { font-size: 11px; color: var(--muted); }
+
+/* ---------------- 侧边栏 ---------------- */
+
+.sidebar {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--card-shadow);
+    padding: 12px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    position: sticky;
+    top: var(--gap);
+    max-height: calc(100vh - 2 * var(--gap));
+    overflow-y: auto;
+}
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 8px 12px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 6px;
+}
+
+.brand-mark {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    font-size: 15px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(14, 165, 160, 0.35);
+}
+
+.brand-name { font-weight: 800; font-size: 14px; letter-spacing: 0.02em; }
+.brand-sub { font-size: 10px; color: var(--muted); }
+
+.sidebar-list { display: flex; flex-direction: column; gap: 2px; }
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 10px;
+    border-radius: 10px;
+    border: none;
+    background: transparent;
+    color: var(--fg);
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.nav-item:hover { background: color-mix(in srgb, var(--accent) 7%, transparent); }
+.nav-item.active {
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    color: var(--accent);
+    font-weight: 700;
+}
+.nav-item .nav-icon { width: 18px; text-align: center; flex-shrink: 0; }
+.nav-item .nav-badge {
+    margin-left: auto;
+    min-width: 20px;
+    text-align: center;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 99px;
+    padding: 1px 6px;
+    background: color-mix(in srgb, var(--accent) 15%, transparent);
+    color: var(--accent);
+    display: none;
+}
+.nav-item .nav-badge.show { display: inline-block; }
+
+.sidebar-bottom {
+    margin-top: auto;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.sidebar-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 8px 2px;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+/* ---------------- 通用控件 ---------------- */
+
+button { font-family: inherit; }
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    box-shadow: 0 4px 14px rgba(14, 165, 160, 0.3);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+.btn:hover { filter: brightness(1.05); transform: translateY(-1px); }
+.btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 99px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--fg);
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+    backdrop-filter: blur(6px);
+}
+.action-btn:hover { background: var(--accent-soft); border-color: var(--accent); }
+.action-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.action-btn.danger { color: var(--danger); }
+.action-btn.danger:hover { background: color-mix(in srgb, var(--danger) 8%, transparent); border-color: var(--danger); }
+
+.mini-action-btn {
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--fg);
+    cursor: pointer;
+    font-size: 13px;
+    flex-shrink: 0;
+    transition: background 0.15s ease;
+}
+.mini-action-btn:hover { background: var(--accent-soft); }
+.mini-action-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+input, select, textarea {
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--fg);
+    background: color-mix(in srgb, var(--fg) 3%, var(--card));
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    max-width: 100%;
+}
+input:focus, select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+}
+input[readonly] { color: var(--muted); }
+input[type='checkbox'] { width: auto; accent-color: var(--accent); }
+
+label { font-size: 12px; color: var(--muted); }
+
+.form-group { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; }
+.inline-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--fg);
+    cursor: pointer;
+}
+
+.field-with-action { display: flex; gap: 6px; align-items: center; flex: 1; min-width: 0; }
+.field-with-action input, .field-with-action select { flex: 1; min-width: 0; }
+
+.option-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 0;
+}
+.option-item .label { flex: 0 0 128px; font-size: 13px; color: var(--fg); }
+.option-item input, .option-item select { flex: 1; min-width: 0; }
+.option-item.full-width { flex-wrap: wrap; }
+
+.settings-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 10px 0 6px;
+}
+
+.danger-btn {
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid color-mix(in srgb, var(--danger) 35%, transparent);
+    background: color-mix(in srgb, var(--danger) 6%, transparent);
+    color: var(--danger);
+    font-size: 13px;
+    cursor: pointer;
+}
+.danger-btn:hover { background: color-mix(in srgb, var(--danger) 12%, transparent); }
+
+.badge {
+    display: inline-block;
+    min-width: 22px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 99px;
+    padding: 1px 8px;
+    background: var(--accent-soft);
+    color: var(--accent);
+}
+
+.upload-status, .status-line {
+    font-size: 12px;
+    color: var(--muted);
+    background: color-mix(in srgb, var(--fg) 4%, transparent);
+    border-radius: var(--radius-sm);
+    padding: 7px 10px;
+}
+
+.automation-hint {
+    font-size: 11px;
+    line-height: 1.6;
+    color: var(--muted);
+    margin-top: 8px;
+}
+
+.hidden { display: none !important; }
+
+/* ---------------- 圆形启停按钮（状态机） ---------------- */
+
+.run-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.toggle-btn {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    border-radius: 50%;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    background: color-mix(in srgb, var(--success) 8%, transparent);
+    border-color: color-mix(in srgb, var(--success) 35%, transparent);
+    color: var(--success);
+}
+.toggle-btn:hover { transform: scale(1.06); }
+.toggle-btn:active { transform: scale(0.97); }
+.toggle-btn svg { width: 20px; height: 20px; }
+
+.toggle-btn.state-preparing {
+    background: color-mix(in srgb, var(--prepare) 8%, transparent);
+    border-color: color-mix(in srgb, var(--prepare) 35%, transparent);
+    color: var(--prepare);
+}
+.toggle-btn.state-preparing .toggle-icon-idle { display: none; }
+.toggle-btn.state-preparing .toggle-spinner { display: block; }
+
+.toggle-btn.state-running {
+    background: color-mix(in srgb, var(--danger) 8%, transparent);
+    border-color: color-mix(in srgb, var(--danger) 40%, transparent);
+    color: var(--danger);
+}
+.toggle-btn.state-running .toggle-icon-idle { display: none; }
+
+.toggle-btn.state-stopping {
+    background: color-mix(in srgb, var(--stopping) 8%, transparent);
+    border-color: color-mix(in srgb, var(--stopping) 35%, transparent);
+    color: var(--stopping);
+    cursor: not-allowed;
+}
+.toggle-btn.state-stopping .toggle-icon-idle { display: none; }
+
+.toggle-spinner {
+    display: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid color-mix(in srgb, currentColor 25%, transparent);
+    border-top-color: currentColor;
+    animation: nz-spin 0.8s linear infinite;
+}
+@keyframes nz-spin { to { transform: rotate(360deg); } }
+
+.run-meta { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.run-state-title { font-size: 13px; font-weight: 700; }
+.run-state-sub { font-size: 11px; color: var(--muted); }
+
+/* ---------------- 进度条 ---------------- */
+
+.progress-container {
+    height: 6px;
+    border-radius: 99px;
+    background: color-mix(in srgb, var(--fg) 8%, transparent);
+    overflow: hidden;
+    display: none;
+}
+.progress-container.show { display: block; }
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    border-radius: 99px;
+    font-size: 10px;
+    line-height: 6px;
+    color: transparent;
+    background: linear-gradient(90deg, var(--accent), var(--success));
+    transition: width 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+.progress-bar::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+    animation: progress-shimmer 1.6s ease infinite;
+}
+@keyframes progress-shimmer { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+
+.progress-meta {
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 5px;
+}
+.progress-meta.show { display: flex; }
+.progress-meta .stage { font-weight: 700; color: var(--fg); }
+.progress-meta .count-ok { color: var(--success); font-weight: 700; }
+
+/* ---------------- 状态 pill ---------------- */
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 99px;
+    padding: 3px 10px;
+    background: color-mix(in srgb, var(--idle) 10%, transparent);
+    color: var(--idle);
+}
+.status-pill.error {
+    background: color-mix(in srgb, var(--danger) 10%, transparent);
+    color: var(--danger);
+}
+.status-pill.running {
+    background: color-mix(in srgb, var(--prepare) 12%, transparent);
+    color: var(--prepare);
+}
+.status-pill .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: badge-breath 1.8s ease infinite;
+}
+@keyframes badge-breath { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+/* ---------------- 后台任务卡 ---------------- */
+
+.background-status-card {
+    display: none;
+    border: 1px solid color-mix(in srgb, var(--prepare) 30%, transparent);
+    border-radius: var(--radius);
+    padding: 12px;
+    background: color-mix(in srgb, var(--prepare) 5%, var(--card));
+}
+.background-status-card.show { display: block; }
+.background-status-title { font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+.background-status-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.background-status-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+.background-status-item {
+    background: color-mix(in srgb, var(--fg) 4%, transparent);
+    border-radius: var(--radius-sm);
+    padding: 7px 9px;
+    min-width: 0;
+}
+.background-status-label { display: block; font-size: 10px; color: var(--muted); }
+.background-status-value { font-size: 13px; font-weight: 700; word-break: break-all; }
+
+.background-confirm-card { display: none; }
+.background-confirm-card.show { display: block; }
+.background-confirm-text { font-size: 12px; color: var(--muted); line-height: 1.7; margin: 6px 0 10px; }
+.background-confirm-actions { display: flex; gap: 8px; }
+
+/* ---------------- 日志（终端风） ---------------- */
+
+.log-card { position: relative; }
+
+.log-shell {
+    position: relative;
+    background: var(--logs-bg);
+    color: var(--logs-fg);
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.65;
+    border-radius: var(--radius-sm);
+    box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.45);
+    overflow: auto;
+    height: 300px;
+    padding: 10px 12px;
+}
+
+#logBox { white-space: pre-wrap; word-break: break-all; }
+#logBox > div { padding: 1px 0; }
+#logBox > div.log-line-new { animation: log-enter 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
+@keyframes log-enter { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+
+.log-time { color: #6b7684; }
+.log-level { font-weight: 700; }
+.log-level-info { color: #2dd4a7; }
+.log-level-warn { color: #f0b24a; }
+.log-level-error { color: #ff6c6c; }
+.log-level-debug { color: #56b6c2; }
+.log-url { color: #56b6c2; text-decoration: underline; }
+.log-num { color: #5cb3d5; font-weight: 600; }
+.log-kv-key { color: #a18248; }
+.log-version { border-bottom: 1px solid var(--accent); }
+
+.log-skeleton { display: none; padding: 2px 0; }
+.log-shell.loading .log-skeleton { display: flex; gap: 8px; }
+.log-shell.loading #logBox { display: none; }
+.log-skeleton .sk-tag {
+    width: 18%;
+    height: 10px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.07);
+    animation: log-shimmer 1.2s ease infinite;
+}
+.log-skeleton .sk-line {
+    flex: 1;
+    height: 10px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    animation: log-shimmer 1.2s ease infinite;
+}
+@keyframes log-shimmer { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+
+.log-back-capsule {
+    position: absolute;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%) translateY(8px);
+    opacity: 0;
+    pointer-events: none;
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--border);
+    color: var(--fg);
+    font-size: 12px;
+    padding: 6px 14px;
+    border-radius: 99px;
+    cursor: pointer;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 5;
+}
+.log-back-capsule.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* ---------------- 统计 chips 与排行 ---------------- */
+
+.chip-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 8px;
+}
+
+.stat-chip {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    background: color-mix(in srgb, var(--card) 80%, transparent);
+}
+.stat-chip .chip-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    display: grid;
+    place-items: center;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+.stat-chip .chip-num { font-size: 19px; font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; }
+.stat-chip .chip-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.stat-chip .chip-sub { font-size: 10px; color: var(--muted); }
+
+.rank-list { display: flex; flex-direction: column; gap: 6px; }
+.rank-row {
+    display: grid;
+    grid-template-columns: 26px minmax(60px, auto) 1fr auto auto;
+    gap: 8px;
+    align-items: center;
+    font-size: 12px;
+}
+.rank-no {
+    width: 22px;
+    height: 22px;
+    border-radius: 7px;
+    display: grid;
+    place-items: center;
+    font-size: 11px;
+    font-weight: 700;
+    background: color-mix(in srgb, var(--fg) 7%, transparent);
+    color: var(--muted);
+}
+.rank-no.top { background: color-mix(in srgb, var(--accent) 15%, transparent); color: var(--accent); }
+.rank-name { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rank-bar {
+    height: 6px;
+    border-radius: 99px;
+    background: color-mix(in srgb, var(--fg) 7%, transparent);
+    overflow: hidden;
+}
+.rank-bar > i {
+    display: block;
+    height: 100%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    transition: width 0.4s ease;
+}
+.rank-val { font-variant-numeric: tabular-nums; font-weight: 700; }
+.rank-pct { color: var(--muted); font-variant-numeric: tabular-nums; min-width: 44px; text-align: right; }
+
+.analysis-empty { font-size: 12px; color: var(--muted); text-align: center; padding: 18px 0; }
+
+/* ---------------- 表格 ---------------- */
+
+.tabs {
+    display: flex;
+    gap: 4px;
+    background: color-mix(in srgb, var(--fg) 5%, transparent);
+    border-radius: 99px;
+    padding: 3px;
+    width: fit-content;
+}
+.tab {
+    padding: 6px 16px;
+    border-radius: 99px;
+    font-size: 12.5px;
+    cursor: pointer;
+    color: var(--muted);
+    transition: all 0.15s ease;
+    user-select: none;
+}
+.tab.active { background: var(--card); color: var(--accent); font-weight: 700; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08); }
+
+.tab-content { display: none; flex-direction: column; gap: var(--gap); }
+.tab-content.active { display: flex; }
+
+.scroll-table { overflow: auto; border: 1px solid var(--border); border-radius: var(--radius-sm); }
+
+table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+th, td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+thead th {
+    position: sticky;
+    top: 0;
+    background: var(--card);
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 700;
+    z-index: 2;
+}
+tbody tr { transition: background 0.12s ease; }
+tbody tr:hover { background: var(--accent-soft); }
+
+.table-actions { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+
+h3 {
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* ---------------- 弹窗 ---------------- */
+
+.modal-mask {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(8, 12, 16, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+.modal-mask.active { display: flex; }
+
+.result-modal, .copy-modal, .sort-modal {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    width: min(720px, 96vw);
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    animation: modal-in 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@keyframes modal-in { from { opacity: 0; transform: translateY(14px) scale(0.98); } to { opacity: 1; transform: none; } }
+
+.modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+}
+.modal-head h3 { font-size: 14px; }
+.modal-close {
+    border: none;
+    background: transparent;
+    font-size: 20px;
+    color: var(--muted);
+    cursor: pointer;
+    line-height: 1;
+}
+.modal-close:hover { color: var(--fg); }
+
+.modal-body { padding: 14px 16px; overflow: auto; }
+
+.modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.modal-field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.modal-field.full { grid-column: 1 / -1; }
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 12px 16px;
+    border-top: 1px solid var(--border);
+}
+
+.result-preview {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    background: var(--logs-bg);
+    color: var(--logs-fg);
+    border-radius: var(--radius-sm);
+    padding: 10px;
+    max-height: 160px;
+    overflow: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.field-head { display: flex; align-items: center; justify-content: space-between; }
+.field-head-actions { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+
+.field-order-list { display: flex; flex-direction: column; gap: 4px; max-height: 220px; overflow: auto; }
+.field-order-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 5px 8px;
+    background: color-mix(in srgb, var(--fg) 3%, transparent);
+}
+.field-order-item .order-arrows { margin-left: auto; display: inline-flex; gap: 4px; }
+
+/* ---------------- 右栏配置 ---------------- */
+
+.config-col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+    position: sticky;
+    top: var(--gap);
+    max-height: calc(100vh - 2 * var(--gap));
+    overflow-y: auto;
+    min-width: 0;
+}
+
+.config-section { display: flex; flex-direction: column; gap: 4px; }
+
+.automation-grid { display: flex; flex-direction: column; }
+
+/* ---------------- 设置视图 ---------------- */
+
+.settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap); align-items: start; }
+
+.theme-options { display: flex; gap: 6px; flex-wrap: wrap; }
+.menu-btn {
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--fg);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+.menu-btn:hover { background: var(--accent-soft); border-color: var(--accent); }
+.menu-btn.active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 700; }
+
+.version-line { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+.proxy-warning-text { font-size: 12.5px; line-height: 1.7; color: var(--fg); }
+
+/* ---------------- Toast ---------------- */
+
+.toast-wrap {
+    position: fixed;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    pointer-events: none;
+}
+.toast {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--border);
+    color: var(--fg);
+    font-size: 13px;
+    padding: 9px 18px;
+    border-radius: 99px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    animation: toast-in 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.toast.info { border-color: color-mix(in srgb, var(--idle) 40%, transparent); }
+.toast.success { border-color: color-mix(in srgb, var(--success) 45%, transparent); }
+.toast.error { border-color: color-mix(in srgb, var(--danger) 45%, transparent); }
+@keyframes toast-in { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+
+/* ---------------- 响应式 ---------------- */
+
+@media (max-width: 1180px) {
+    .app { grid-template-columns: minmax(0, 1fr) minmax(280px, 340px); }
+    .sidebar {
+        position: static;
+        grid-column: 1 / -1;
+        max-height: none;
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 4px;
+        padding: 8px;
+    }
+    .sidebar-brand { border-bottom: none; padding: 4px 8px; margin-bottom: 0; }
+    .sidebar-list { flex-direction: row; flex-wrap: wrap; }
+    .sidebar-bottom { margin-top: 0; padding-top: 0; border-top: none; margin-left: auto; flex-direction: row; }
+    .sidebar-footer { display: none; }
+}
+
+@media (max-width: 760px) {
+    .app { grid-template-columns: 1fr; padding: 8px; }
+    .config-col { position: static; max-height: none; }
+    .background-status-grid { grid-template-columns: 1fr 1fr; }
+    .settings-grid { grid-template-columns: 1fr; }
+    .modal-grid { grid-template-columns: 1fr; }
+    .option-item { flex-wrap: wrap; }
+    .option-item .label { flex-basis: 100%; }
+    .log-shell { height: 240px; }
+    .card { border-radius: 14px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* ---------------- 旧结构兼容样式 ---------------- */
+
+.section-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--card-shadow);
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+.section-box h3 { margin-bottom: 4px; }
+
+.control-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 4px;
+}
+
+.speed-url-select { flex: 0 0 auto; max-width: 46%; }
+
+.automation-save-btn { margin-top: 12px; width: 100%; }
+
+.automation-column { display: flex; flex-direction: column; }
+
+.github-field, .edgetunnel-field { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; }
+.github-account-row, .field-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 5px 8px;
+    margin-top: 4px;
+    background: color-mix(in srgb, var(--fg) 3%, transparent);
+    flex-wrap: wrap;
+    min-width: 0;
+}
+.field-picker { display: flex; flex-wrap: wrap; gap: 5px; }
+.field-picker .action-btn { padding: 3px 10px; font-size: 11px; }
+.field-picker .action-btn.selected { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+
+.separator-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+
+.order-list { display: flex; flex-direction: column; gap: 4px; max-height: 240px; overflow: auto; }
+.order-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 5px 8px;
+    background: color-mix(in srgb, var(--fg) 3%, transparent);
+}
+.order-item .order-arrows { margin-left: auto; display: inline-flex; gap: 4px; }
+.order-item .order-arrows .mini-action-btn { padding: 2px 7px; }
+
+.sort-modal-section-title { font-size: 12px; font-weight: 700; color: var(--muted); margin: 10px 0 4px; }
+
+.copy-ip { font-family: var(--mono); font-size: 12px; }
+
+.ip-cell { font-family: var(--mono); }
+.ip-detail-link { color: var(--accent); cursor: pointer; text-decoration: none; }
+.ip-detail-link:hover { text-decoration: underline; }
+
+.speed-cell-content { display: inline-flex; align-items: center; gap: 6px; }
+.speed-btn {
+    padding: 2px 9px;
+    border-radius: 99px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--accent);
+    font-size: 11px;
+    cursor: pointer;
+}
+.speed-btn:hover { background: var(--accent-soft); }
+.speed-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.speed-result { font-variant-numeric: tabular-nums; font-weight: 600; }
+.speed-qualified { color: var(--success); }
+.speed-unqualified { color: var(--warning); }
+tr.row-qualified td:first-child { box-shadow: inset 3px 0 0 var(--success); }
+tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb, var(--warning) 60%, transparent); }
+
+.result-status-tag {
+    display: inline-block;
+    font-size: 10.5px;
+    font-weight: 700;
+    border-radius: 99px;
+    padding: 1px 8px;
+}
+.result-status-slot .result-status-tag.qualified { background: color-mix(in srgb, var(--success) 14%, transparent); color: var(--success); }
+.result-status-slot .result-status-tag.unqualified { background: color-mix(in srgb, var(--warning) 14%, transparent); color: var(--warning); }
+
+.notice-modal {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    width: min(420px, 94vw);
+    padding: 18px;
+    animation: modal-in 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.notice-card-title, .notice-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+.notice-card-message { font-size: 13px; line-height: 1.7; margin-bottom: 14px; word-break: break-word; }
+
+.btn-spinner {
+    display: inline-block;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    border-top-color: #fff;
+    animation: nz-spin 0.8s linear infinite;
+}
+
+.mode-btn { padding: 8px 16px; border-radius: 99px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; font-size: 13px; }
+.mode-btn.active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 700; }
+
+.status-bar {
+    font-size: 12px;
+    color: var(--muted);
+    background: color-mix(in srgb, var(--fg) 4%, transparent);
+    border-radius: var(--radius-sm);
+    padding: 7px 10px;
+}
+
+.top-actions { display: none; }
+.settings-toggle { display: none; }
+
+.log-box { white-space: pre-wrap; }
+
+.toggle-btn .toggle-icon-stop { display: none; }
+.toggle-btn.state-running .toggle-icon-stop, .toggle-btn.state-stopping .toggle-icon-stop { display: block; }
+.toggle-btn.state-stopping .toggle-spinner { display: block; }
+
+/* ---------------- 审查修复补充 ---------------- */
+
+#logBox > div.nz-line-err { color: #ff8f8f; }
+#logBox > div.nz-line-warn { color: #f0b24a; }
+.log-level-ansi-error { color: #ff6c6c; font-weight: 700; }
+.log-level-ansi-info { color: #2dd4a7; }
+.log-level-ansi-warn { color: #f0b24a; font-weight: 700; }
+.log-level-ansi-debug { color: #56b6c2; }
+
+.action-btn.export-btn {
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+    color: var(--accent);
+    font-weight: 600;
+}
+.action-btn.export-btn:hover { background: color-mix(in srgb, var(--accent) 18%, transparent); }
+
+.background-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 8px; }
+.background-stat-cell {
+    background: color-mix(in srgb, var(--fg) 4%, transparent);
+    border-radius: var(--radius-sm);
+    padding: 7px 9px;
+    min-width: 0;
+}
+.background-stat-name { display: block; font-size: 10px; color: var(--muted); }
+.background-stat-number { font-size: 14px; font-weight: 700; }
+.background-status-wide-full { grid-column: span 2; }
+
+.no-transition, .no-transition * { transition: none !important; }
+
+@keyframes stripe {
+    from { background-position: 0 0; }
+    to { background-position: 40px 0; }
+}
+
+@supports (padding: max(0px)) {
+    .app {
+        padding-left: max(10px, env(safe-area-inset-left));
+        padding-right: max(10px, env(safe-area-inset-right));
+        padding-top: max(10px, env(safe-area-inset-top));
+        padding-bottom: max(10px, env(safe-area-inset-bottom));
+    }
+}
+
     </style>
-    <script>
-    (function(){
+<script>
+    (function () {
         var t = localStorage.getItem('cfdata-theme') || 'auto';
-        var dark = t === 'dark';
-        if (t === 'auto') {
-            dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            try { if (window.CFDataAndroid && window.CFDataAndroid.isDarkMode()) dark = true; } catch(e) {}
-        }
-        if (dark) document.documentElement.className = 'dark-theme';
+        var androidDark = false;
+        try { if (window.CFDataAndroid && window.CFDataAndroid.isDarkMode()) androidDark = true; } catch (e) {}
+        var dark = t === 'dark' || (t === 'auto' && (window.matchMedia('(prefers-color-scheme: dark)').matches || androidDark));
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
     })();
     </script>
 </head>
 
 <body>
-        <div class="container">
-        <h1>Cloudflare IP Data</h1>
-        <div class="version-line" id="versionLine">dev</div>
-        <div class="top-actions">
-            <a class="github-link" href="https://github.com/PoemMisty/CFData-WEB" target="_blank"
-                rel="noopener noreferrer" title="打开 GitHub 仓库" aria-label="打开 GitHub 仓库">
-                <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true" fill="currentColor">
-                    <path
-                        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.65 7.65 0 0 1 8 3.86c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z" />
-                </svg>
-            </a>
-            <button class="settings-toggle" id="btnConfigMenu" onclick="toggleConfigMenu(event)" title="保存/加载配置">💾</button>
-            <button class="settings-toggle" id="settingsToggle" onclick="toggleSettingsMenu(event)" title="设置">
-                <span id="themeIcon">⚙️</span>
-            </button>
-        </div>
-        <div id="settingsMenu" class="settings-menu hidden">
-            <div class="settings-title">颜色模式</div>
-            <div class="theme-options">
-                <button class="menu-btn" id="theme-light" onclick="setTheme('light')">浅色</button>
-                <button class="menu-btn" id="theme-dark" onclick="setTheme('dark')">深色</button>
-                <button class="menu-btn" id="theme-auto" onclick="setTheme('auto')">自动</button>
-            </div>
-            <div class="settings-title">本地缓存</div>
-            <button class="danger-btn" onclick="resetAllConfig()">恢复全部默认配置</button>
-
-            <div class="settings-title" style="margin-top:12px;">🌐 管理面代理</div>
-            <div class="upload-status" id="proxyStatusText">未启用（可用系统环境变量代理）</div>
-            <div id="proxySourceText" style="font-size:11px;color:var(--text-secondary);margin-top:2px;"></div>
-            <input id="proxyInput" type="text" placeholder="socks5://127.0.0.1:1080 或 http://127.0.0.1:8080" style="width:100%;margin-top:6px;">
-            <div class="theme-options" style="display:flex;gap:8px;margin-top:6px;">
-                <button class="menu-btn" style="flex:1;" onclick="saveManagementProxy()">保存</button>
-                <button class="menu-btn" style="flex:1;" onclick="clearManagementProxy()">清除</button>
-            </div>
-            <div style="font-size:11px;line-height:1.5;color:var(--text-secondary);margin-top:6px;">
-                仅作用于下载 ASN 库/locations、版本检查、GitHub/订阅上传等管理操作；扫描与测速保持直连。程序配置优先生效，未配置时使用系统环境变量代理。
+<div class="app">
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-mark">CF</div>
+            <div>
+                <div class="brand-name">CFData 控制台</div>
+                <div class="brand-sub">Cloudflare IP 优选 · 数据中心库</div>
             </div>
         </div>
-
-        <div id="configMenu" class="settings-menu hidden">
-            <div class="settings-title">💾 保存配置</div>
-            <button class="menu-btn" onclick="saveConfigToLS()">保存当前配置</button>
-
-            <div class="settings-title" style="margin-top:12px;">📂 加载配置</div>
-            <button class="menu-btn" onclick="loadConfigFromLS()">加载保存配置</button>
-
-            <div class="settings-title" style="margin-top:12px;">🔄 自动加载配置</div>
-            <select id="configAutoLoad" onchange="saveAutoLoadPreference(this.value)" style="width:100%;">
-                <option value="off">关闭</option>
-                <option value="localStorage">localStorage</option>
-                <option value="configFile">本地配置文件</option>
-            </select>
-
-            <div class="settings-title" style="margin-top:12px;">📄 从服务器同步</div>
-            <button class="menu-btn" onclick="loadConfigFromServer()">从服务器同步配置</button>
-
-            <div class="settings-title" style="margin-top:12px;">🗑️ 管理</div>
-            <button class="danger-btn" onclick="deleteSavedConfig()">删除保存配置</button>
+        <nav class="sidebar-list">
+            <button class="nav-item active" id="navViewRun" onclick="nzShowView('run')" title="任务控制与运行日志"><span class="nav-icon">🚀</span>任务运行</button>
+            <button class="nav-item" id="btnOfficial" onclick="nzNavMode('official')" title="官方优选参数与扫描"><span class="nav-icon">☁️</span>官方优选</button>
+            <button class="nav-item" id="btnNSB" onclick="nzNavMode('nsb')" title="非标优选参数与扫描"><span class="nav-icon">📂</span>非标优选</button>
+            <button class="nav-item" id="navViewAnalysis" onclick="nzShowView('analysis')" title="结果统计与明细"><span class="nav-icon">📊</span>分析报告<span class="nav-badge" id="navBadgeAnalysis">0</span></button>
+            <button class="nav-item" id="navViewSettings" onclick="nzShowView('settings')" title="主题、配置与管理"><span class="nav-icon">⚙️</span>设置</button>
+        </nav>
+        <div class="sidebar-bottom">
+            <div class="sidebar-footer">
+                <span class="version-line" id="versionLine">dev</span>
+                <a class="github-link" href="https://github.com/PoemMisty/CFData-WEB" target="_blank" rel="noopener noreferrer" title="打开 GitHub 仓库" aria-label="打开 GitHub 仓库">
+                    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.65 7.65 0 0 1 8 3.86c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+                </a>
+            </div>
         </div>
+    </aside>
 
-        <div class="status-bar" id="status">正在连接服务器...</div>
-
-        <div class="mode-switch">
-            <button class="mode-btn active" id="btnOfficial" onclick="switchMode('official')">☁️ 官方优选</button>
-            <button class="mode-btn" id="btnNSB" onclick="switchMode('nsb')">📂 非标优选</button>
+    <main class="main-col">
+        <!-- ===== 任务运行 ===== -->
+        <section class="view active" id="view-run">
+            <div class="card">
+                <div class="card-head">
+                    <div class="card-title">任务控制</div>
+                    <span class="status-pill" id="status"><span class="dot"></span>正在连接服务器...</span>
+                </div>
+                <div class="run-card">
+                    <button class="toggle-btn" id="nzToggle" onclick="nzToggleClick()" title="启动 / 停止任务">
+                        <svg class="toggle-icon-idle" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.14v14l11-7-11-7z"/></svg>
+                        <svg class="toggle-icon-stop" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+                        <span class="toggle-spinner"></span>
+                    </button>
+                    <div class="run-meta">
+                        <div class="run-state-title" id="nzRunTitle">空闲</div>
+                        <div class="run-state-sub" id="nzRunSub">点击按钮开始扫描与测试</div>
+                    </div>
+            <button id="btnStart" class="btn hidden" onclick="startTask()"><span id="btnStartSpinner"
+                    class="hidden"></span><span id="btnStartLabel">✨ 开始扫描与测试</span></button>
+            <button id="btnRunInBackground" class="action-btn export-btn" onclick="runTaskInBackground()" style="display:none;margin-top:10px;">🕘 转入后台运行</button>
+            <div class="background-status-card background-confirm-card" id="backgroundConfirmCard">
+                <div class="background-status-title">确认转入后台运行？</div>
+                <div class="background-confirm-text">
+                    <div>转入后台后，任务会继续运行，关闭或刷新页面不会中断，任务完成后会渲染最终结果。</div>
+                    <div>重新打开页面时，只会显示任务状态和当前进度，不会回放断开期间的表格数据。</div>
+                    <div>这里不会做“后台恢复后同步全部历史数据”，因为大量结果一次性回传可能导致浏览器卡死或崩溃。</div>
+                    <div>如果测试数据量很大，建议使用 CLI 模式。</div>
+                </div>
+                <div class="background-confirm-actions">
+                    <button class="action-btn export-btn" onclick="confirmRunTaskInBackground()">确认转入后台</button>
+                    <button class="action-btn" onclick="hideBackgroundConfirmCard()">取消</button>
+                </div>
+            </div>
+                </div>
+                <div style="margin-top:12px;">
+        <div class="progress-container" id="progressBox">
+            <div class="progress-bar" id="progressBar">0%</div>
         </div>
+                    <div class="progress-meta" id="nzProgressMeta"><span class="stage" id="nzProgressStage"></span><span id="nzProgressCount"></span></div>
+                </div>
+            </div>
+        <div class="background-status-card" id="backgroundStatusCard">
+            <div class="background-status-head">
+                <div class="background-status-title" id="backgroundStatusTitle">🕘 后台任务运行中</div>
+                <button class="action-btn export-btn" id="btnFollowBackground" onclick="followBackgroundTask()">📡 跟随实时数据</button>
+            </div>
+            <div class="background-status-grid">
+                <div class="background-status-item" style="grid-column:1/-1;"><span class="background-status-label">数据来源</span><div class="background-status-value" id="backgroundSource">-</div></div>
+                <div class="background-status-item" style="grid-column:span 2;"><span class="background-status-label">阶段</span><div class="background-status-value" id="backgroundPhase">-</div></div>
+                <div class="background-status-item" style="grid-column:span 2;"><span class="background-status-label">进度</span><div class="background-status-value" id="backgroundProgressText">-</div></div>
+                <div class="background-status-item background-status-wide-full"><span class="background-status-label">扫描结果</span><div class="background-status-value" id="backgroundResultCount">0</div></div>
+                <div class="background-status-item background-status-wide-full"><span class="background-status-label">测速结果</span><div class="background-status-value" id="backgroundSpeedCount">0</div></div>
+            </div>
+        </div>
+            <div class="card log-card">
+                <div class="card-head">
+                    <div class="card-title">运行日志</div>
+                    <div style="display:flex;gap:6px;align-items:center;">
+                        <span class="status-pill" id="logStatusPill"><span class="dot"></span>日志</span>
+                        <button class="mini-action-btn" onclick="nzClearLog()" title="清空日志">🧹</button>
+                    </div>
+                </div>
+                <div class="log-shell" id="logShell">
+                    <div class="log-skeleton"><div class="sk-tag"></div><div class="sk-line"></div></div>
+                    <div class="log-skeleton"><div class="sk-tag"></div><div class="sk-line"></div></div>
+                    <div class="log-skeleton"><div class="sk-tag"></div><div class="sk-line"></div></div>
+        <div id="logBox">
+            <div>[系统] 等待操作...</div>
+        </div>
+                    <button class="log-back-capsule" id="logBackCapsule" onclick="nzLogScrollBottom()">↓ 回到底部</button>
+                </div>
+            </div>
+        </section>
 
-        <div class="section-box controls">
+        <!-- ===== 官方优选 ===== -->
+        <section class="view" id="view-official">
+            <div class="card">
+                <div class="card-head">
+                    <div class="card-title">官方优选参数</div>
+                    <span class="card-tip">端口可选 · 数据中心库加速扫描</span>
+                </div>
             <div id="officialControls">
                 <div class="control-title">
                     <span>官方参数</span>
@@ -1853,6 +1380,16 @@
                 </div>
             </div>
 
+            </div>
+        </section>
+
+        <!-- ===== 非标优选 ===== -->
+        <section class="view" id="view-nsb">
+            <div class="card">
+                <div class="card-head">
+                    <div class="card-title">非标优选参数</div>
+                    <span class="card-tip">支持 txt/csv 文件或网络 URL</span>
+                </div>
             <div id="nsbControls" class="hidden">
                 <div class="control-title">
                     <span>非标参数</span>
@@ -1974,92 +1511,29 @@
                 </div>
             </div>
 
-            <button id="btnStart" class="btn" onclick="startTask()"><span id="btnStartSpinner"
-                    class="hidden"></span><span id="btnStartLabel">✨ 开始扫描与测试</span></button>
-            <button id="btnRunInBackground" class="action-btn export-btn" onclick="runTaskInBackground()" style="display:none;margin-top:10px;">🕘 转入后台运行</button>
-            <div class="background-status-card background-confirm-card" id="backgroundConfirmCard">
-                <div class="background-status-title">确认转入后台运行？</div>
-                <div class="background-confirm-text">
-                    <div>转入后台后，任务会继续运行，关闭或刷新页面不会中断，任务完成后会渲染最终结果。</div>
-                    <div>重新打开页面时，只会显示任务状态和当前进度，不会回放断开期间的表格数据。</div>
-                    <div>这里不会做“后台恢复后同步全部历史数据”，因为大量结果一次性回传可能导致浏览器卡死或崩溃。</div>
-                    <div>如果测试数据量很大，建议使用 CLI 模式。</div>
-                </div>
-                <div class="background-confirm-actions">
-                    <button class="action-btn export-btn" onclick="confirmRunTaskInBackground()">确认转入后台</button>
-                    <button class="action-btn" onclick="hideBackgroundConfirmCard()">取消</button>
-                </div>
             </div>
-        </div>
+        </section>
 
-        <div class="section-box" id="automationSection">
-            <h3>⏱️ 自动化</h3>
-            <div class="upload-status" id="scheduleStatusText">调度未启用</div>
-            <div class="automation-grid">
-                <div class="automation-column">
-                    <div class="settings-title">自动调度</div>
-                    <label class="inline-check"><input type="checkbox" id="scheduleEnabled"> 启用自动调度</label>
-                    <div class="form-group">
-                        <label for="scheduleCron">Cron 表达式</label>
-                        <input id="scheduleCron" type="text" placeholder="优先于检测间隔，例如 0 4 * * *">
-                    </div>
-                    <div class="form-group">
-                        <label for="scheduleInterval">检测间隔（分钟）</label>
-                        <input id="scheduleInterval" type="number" min="0" placeholder="默认 2880">
-                    </div>
+        <!-- ===== 分析报告 ===== -->
+        <section class="view" id="view-analysis">
+            <div class="card" id="analysisSummaryCard" style="display:none;">
+                <div class="card-head">
+                    <div class="card-title">分析概览</div>
+                    <span class="card-tip" id="analysisHero"></span>
                 </div>
-                <div class="automation-column">
-                    <div class="settings-title">R2 上传</div>
-                    <label class="inline-check"><input type="checkbox" id="r2Enabled"> 启用 R2 上传</label>
-                    <div class="form-group">
-                        <label for="r2WorkerUrl">Worker 地址</label>
-                        <input id="r2WorkerUrl" type="text" placeholder="例如 https://r2.example.com">
-                    </div>
-                    <div class="form-group">
-                        <label for="r2WorkerToken">Worker token</label>
-                        <input id="r2WorkerToken" type="password" autocomplete="off" placeholder="Worker token">
-                    </div>
-                    <div class="form-group">
-                        <label for="r2Filename">文件名</label>
-                        <input id="r2Filename" type="text" placeholder="默认 cfdata-targets.txt">
-                    </div>
-                    <div class="form-group">
-                        <label for="r2AliasFormat">别名模板</label>
-                        <input id="r2AliasFormat" type="text" maxlength="200" placeholder="留空使用默认「数据中心-城市」">
-                        <div class="automation-hint">上传内容中节点别名按模板生成，支持占位符 {dc} {city} {region} {dcCountry} {ip} {port} {ipport}，例如 {region}-{dc}。修改文件名后 R2 上会写入新文件，旧文件不会被自动删除。</div>
-                    </div>
-                    <div class="automation-hint">
-                        自动调度扫描按规则上传：开启测速只上传测速达标行，未开启测速只上传通过延迟筛选的结果行，与导出文件的筛选和行数设置无关。手动任务需在结果页「⬆ 自动上传」下拉框选择「R2 上传」，同样按该规则筛选；选择 GitHub 账户或关闭时不会上传 R2。
-                    </div>
+                <div class="chip-grid" id="analysisChips"></div>
+            </div>
+            <div class="card" id="analysisRankCard" style="display:none;">
+                <div class="card-head">
+                    <div class="card-title">数据中心排行</div>
+                    <span class="card-tip" id="analysisRankTip"></span>
                 </div>
+                <div class="rank-list" id="analysisRankDC"></div>
             </div>
-            <button class="menu-btn automation-save-btn" onclick="saveScheduleConfig()">保存自动化设置</button>
-            <div class="automation-hint" id="r2UploadFeedback" style="display:none"></div>
-        </div>
-
-        <div class="progress-container" id="progressBox">
-            <div class="progress-bar" id="progressBar">0%</div>
-        </div>
-
-        <div class="background-status-card" id="backgroundStatusCard">
-            <div class="background-status-head">
-                <div class="background-status-title" id="backgroundStatusTitle">🕘 后台任务运行中</div>
-                <button class="action-btn export-btn" id="btnFollowBackground" onclick="followBackgroundTask()">📡 跟随实时数据</button>
-            </div>
-            <div class="background-status-grid">
-                <div class="background-status-item" style="grid-column:1/-1;"><span class="background-status-label">数据来源</span><div class="background-status-value" id="backgroundSource">-</div></div>
-                <div class="background-status-item" style="grid-column:span 2;"><span class="background-status-label">阶段</span><div class="background-status-value" id="backgroundPhase">-</div></div>
-                <div class="background-status-item" style="grid-column:span 2;"><span class="background-status-label">进度</span><div class="background-status-value" id="backgroundProgressText">-</div></div>
-                <div class="background-status-item background-status-wide-full"><span class="background-status-label">扫描结果</span><div class="background-status-value" id="backgroundResultCount">0</div></div>
-                <div class="background-status-item background-status-wide-full"><span class="background-status-label">测速结果</span><div class="background-status-value" id="backgroundSpeedCount">0</div></div>
-            </div>
-        </div>
-
         <div class="tabs">
             <div class="tab active" onclick="switchTab('scan')">📡 扫描结果</div>
             <div class="tab" onclick="switchTab('test')">📊 详细测试</div>
         </div>
-
         <div id="scan" class="tab-content active">
             <div class="section-box" id="dcSection" style="display:none;">
                 <h3>
@@ -2115,7 +1589,6 @@
                 </div>
             </div>
         </div>
-
         <div id="test" class="tab-content">
             <div class="section-box">
                 <h3 style="display:flex;justify-content:space-between;align-items:center;">
@@ -2153,11 +1626,115 @@
                 </div>
             </div>
         </div>
+        </section>
 
-        <div class="log-box" id="logBox">
-            <div>[系统] 等待操作...</div>
+        <!-- ===== 设置 ===== -->
+        <section class="view" id="view-settings">
+            <div class="settings-grid">
+                <div class="card">
+                    <div class="card-head"><div class="card-title">外观与代理</div></div>
+        <div id="settingsMenu" class="settings-panel">
+            <div class="settings-title">颜色模式</div>
+            <div class="theme-options">
+                <button class="menu-btn" id="theme-light" onclick="setTheme('light')">浅色</button>
+                <button class="menu-btn" id="theme-dark" onclick="setTheme('dark')">深色</button>
+                <button class="menu-btn" id="theme-auto" onclick="setTheme('auto')">自动</button>
+            </div>
+            <div class="settings-title">本地缓存</div>
+            <button class="danger-btn" onclick="resetAllConfig()">恢复全部默认配置</button>
+
+            <div class="settings-title" style="margin-top:12px;">🌐 管理面代理</div>
+            <div class="upload-status" id="proxyStatusText">未启用（可用系统环境变量代理）</div>
+            <div id="proxySourceText" style="font-size:11px;color:var(--text-secondary);margin-top:2px;"></div>
+            <input id="proxyInput" type="text" placeholder="socks5://127.0.0.1:1080 或 http://127.0.0.1:8080" style="width:100%;margin-top:6px;">
+            <div class="theme-options" style="display:flex;gap:8px;margin-top:6px;">
+                <button class="menu-btn" style="flex:1;" onclick="saveManagementProxy()">保存</button>
+                <button class="menu-btn" style="flex:1;" onclick="clearManagementProxy()">清除</button>
+            </div>
+            <div style="font-size:11px;line-height:1.5;color:var(--text-secondary);margin-top:6px;">
+                仅作用于下载 ASN 库/locations、版本检查、GitHub/订阅上传等管理操作；扫描与测速保持直连。程序配置优先生效，未配置时使用系统环境变量代理。
+            </div>
         </div>
-    </div>
+
+                </div>
+                <div class="card">
+                    <div class="card-head"><div class="card-title">配置管理</div></div>
+        <div id="configMenu" class="settings-panel">
+            <div class="settings-title">💾 保存配置</div>
+            <button class="menu-btn" onclick="saveConfigToLS()">保存当前配置</button>
+
+            <div class="settings-title" style="margin-top:12px;">📂 加载配置</div>
+            <button class="menu-btn" onclick="loadConfigFromLS()">加载保存配置</button>
+
+            <div class="settings-title" style="margin-top:12px;">🔄 自动加载配置</div>
+            <select id="configAutoLoad" onchange="saveAutoLoadPreference(this.value)" style="width:100%;">
+                <option value="off">关闭</option>
+                <option value="localStorage">localStorage</option>
+                <option value="configFile">本地配置文件</option>
+            </select>
+
+            <div class="settings-title" style="margin-top:12px;">📄 从服务器同步</div>
+            <button class="menu-btn" onclick="loadConfigFromServer()">从服务器同步配置</button>
+
+            <div class="settings-title" style="margin-top:12px;">🗑️ 管理</div>
+            <button class="danger-btn" onclick="deleteSavedConfig()">删除保存配置</button>
+        </div>
+
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ===== 右栏：自动化与上传配置 ===== -->
+    <aside class="config-col">
+        <div class="section-box" id="automationSection">
+            <h3>⏱️ 自动化</h3>
+            <div class="upload-status" id="scheduleStatusText">调度未启用</div>
+            <div class="automation-grid">
+                <div class="automation-column">
+                    <div class="settings-title">自动调度</div>
+                    <label class="inline-check"><input type="checkbox" id="scheduleEnabled"> 启用自动调度</label>
+                    <div class="form-group">
+                        <label for="scheduleCron">Cron 表达式</label>
+                        <input id="scheduleCron" type="text" placeholder="优先于检测间隔，例如 0 4 * * *">
+                    </div>
+                    <div class="form-group">
+                        <label for="scheduleInterval">检测间隔（分钟）</label>
+                        <input id="scheduleInterval" type="number" min="0" placeholder="默认 2880">
+                    </div>
+                </div>
+                <div class="automation-column">
+                    <div class="settings-title">R2 上传</div>
+                    <label class="inline-check"><input type="checkbox" id="r2Enabled"> 启用 R2 上传</label>
+                    <div class="form-group">
+                        <label for="r2WorkerUrl">Worker 地址</label>
+                        <input id="r2WorkerUrl" type="text" placeholder="例如 https://r2.example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="r2WorkerToken">Worker token</label>
+                        <input id="r2WorkerToken" type="password" autocomplete="off" placeholder="Worker token">
+                    </div>
+                    <div class="form-group">
+                        <label for="r2Filename">文件名</label>
+                        <input id="r2Filename" type="text" placeholder="默认 cfdata-targets.txt">
+                    </div>
+                    <div class="form-group">
+                        <label for="r2AliasFormat">别名模板</label>
+                        <input id="r2AliasFormat" type="text" maxlength="200" placeholder="留空使用默认「数据中心-城市」">
+                        <div class="automation-hint">上传内容中节点别名按模板生成，支持占位符 {dc} {city} {region} {dcCountry} {ip} {port} {ipport}，例如 {region}-{dc}。修改文件名后 R2 上会写入新文件，旧文件不会被自动删除。</div>
+                    </div>
+                    <div class="automation-hint">
+                        自动调度扫描按规则上传：开启测速只上传测速达标行，未开启测速只上传通过延迟筛选的结果行，与导出文件的筛选和行数设置无关。手动任务需在结果页「⬆ 自动上传」下拉框选择「R2 上传」，同样按该规则筛选；选择 GitHub 账户或关闭时不会上传 R2。
+                    </div>
+                </div>
+            </div>
+            <button class="menu-btn automation-save-btn" onclick="saveScheduleConfig()">保存自动化设置</button>
+            <div class="automation-hint" id="r2UploadFeedback" style="display:none"></div>
+        </div>
+    </aside>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
 
     <div class="modal-mask" id="resultModalMask">
         <div class="result-modal">
@@ -2517,7 +2094,8 @@
         </div>
     </div>
 
-    <script>
+
+<script>
         let ws;
         let defaultSpeedTestUrl = "speed.okl.abrdns.com";
         let scheduleConfigLoaded = false;
@@ -2995,8 +2573,6 @@
                 showNoticeCard('与服务端的连接尚未就绪，请稍后再试');
                 return;
             }
-            const menu = document.getElementById('settingsMenu');
-            if (menu) menu.classList.add('hidden');
             document.body.classList.add('no-transition');
             setTimeout(() => document.body.classList.remove('no-transition'), 500);
         }
@@ -3641,7 +3217,10 @@
 
         function updateProgress(current, total, text) {
             if (!total) {
-                total = 100;
+                progressBar.style.width = '100%';
+                progressBar.style.animation = 'none';
+                progressBar.textContent = `${text || ''} ${current || 0}`;
+                return;
             }
             const p = Math.min(Math.max((current / total) * 100, 0), 100);
             progressBar.style.width = `${Math.round(p)}%`;
@@ -6803,8 +6382,6 @@
                         const input = document.getElementById('proxyInput');
                         if (input && (msg.data?.saved !== false)) {
                             input.value = '';
-                            const menu = document.getElementById('settingsMenu');
-                            if (menu) menu.classList.add('hidden');
                         }
                     }
                     showNoticeCard((msg.data && msg.data.message) || '代理设置已保存并生效');
@@ -7254,6 +6831,526 @@
         }
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', autoThemeBySystem);
     </script>
+
+<script>
+/* ============================================================
+   新界面增强层：视图导航 / 圆形启停状态机 / 终端日志 / 分析聚合 / Toast
+   以包装（wrap）旧顶层函数的方式集成，不改动旧逻辑本身。
+   ============================================================ */
+(function () {
+    'use strict';
+
+    /* ---------------- 视图导航 ---------------- */
+
+    var VIEW_NAV = { run: 'navViewRun', official: 'btnOfficial', nsb: 'btnNSB', analysis: 'navViewAnalysis', settings: 'navViewSettings' };
+
+    window.nzShowView = function (view) {
+        document.querySelectorAll('.view').forEach(function (v) { v.classList.remove('active'); });
+        var el = document.getElementById('view-' + view);
+        if (el) el.classList.add('active');
+        document.querySelectorAll('.sidebar .nav-item').forEach(function (b) { b.classList.remove('active'); });
+        var nav = document.getElementById(VIEW_NAV[view]);
+        if (nav) nav.classList.add('active');
+        if (view === 'settings') {
+            try { wsSend({ type: 'get_management_proxy', data: {} }); } catch (e) { /* 连接未就绪 */ }
+        }
+        try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) { /* 旧内核 */ }
+    };
+
+    window.nzNavMode = function (mode) {
+        nzShowView(mode === 'official' ? 'official' : 'nsb');
+        try { switchMode(mode); } catch (e) { console.error(e); }
+    };
+
+    /* ---------------- Toast ---------------- */
+
+    window.nzToast = function (text, kind) {
+        var wrap = document.getElementById('toastWrap');
+        if (!wrap) return;
+        var t = document.createElement('div');
+        t.className = 'toast ' + (kind || 'info');
+        t.textContent = String(text == null ? '' : text);
+        wrap.appendChild(t);
+        setTimeout(function () {
+            t.style.transition = 'opacity .3s';
+            t.style.opacity = '0';
+            setTimeout(function () { t.remove(); }, 320);
+        }, 2600);
+    };
+
+    /* ---------------- 圆形启停状态机 ---------------- */
+
+    var nzToggleState = 'idle';
+    var STATE_META = {
+        idle: { title: '空闲', sub: '点击按钮开始扫描与测试' },
+        preparing: { title: '准备中…', sub: '正在初始化任务' },
+        running: { title: '任务运行中', sub: '点击按钮可停止任务' },
+        stopping: { title: '正在停止…', sub: '等待任务退出' }
+    };
+
+    function nzSetToggleState(state) {
+        if (!STATE_META[state]) return;
+        nzToggleState = state;
+        var btn = document.getElementById('nzToggle');
+        if (btn) {
+            btn.classList.remove('state-idle', 'state-preparing', 'state-running', 'state-stopping');
+            btn.classList.add('state-' + state);
+        }
+        var title = document.getElementById('nzRunTitle');
+        if (title) title.textContent = STATE_META[state].title;
+        var sub = document.getElementById('nzRunSub');
+        if (sub) sub.textContent = STATE_META[state].sub;
+    }
+
+    var nzPendingPrepare = false;
+    window.nzToggleClick = function () {
+        if (nzToggleState === 'preparing' || nzToggleState === 'stopping') return;
+        if (nzToggleState === 'running') {
+            try { startTask(); } catch (e) { console.error(e); }
+            return;
+        }
+        nzPendingPrepare = true;
+        nzSetToggleState('preparing');
+        nzToast('任务启动中…', 'info');
+        setTimeout(function () { nzPendingPrepare = false; }, 3000);
+        try { startTask(); } catch (e) { nzSetToggleState('idle'); nzPendingPrepare = false; }
+    };
+
+    /* 包装旧状态写入函数，派生按钮状态 */
+    var _setStartLoading = setStartLoading;
+    setStartLoading = function (text, bg, shadow) {
+        _setStartLoading(text, bg, shadow);
+        var t = String(text || '');
+        if (t.indexOf('停止') >= 0) {
+            nzSetToggleState('stopping');
+            nzPendingPrepare = false;
+        } else if (nzPendingPrepare) {
+            nzSetToggleState('preparing');
+        } else {
+            nzSetToggleState('running');
+        }
+    };
+    var _resetButton = resetButton;
+    resetButton = function (text) {
+        _resetButton(text);
+        nzSetToggleState('idle');
+    };
+    var _showStoppingProgress = showStoppingProgress;
+    showStoppingProgress = function () {
+        _showStoppingProgress();
+        nzSetToggleState('stopping');
+    };
+    if (typeof finishRunningTask === 'function') {
+        var _finishRunningTask = finishRunningTask;
+        finishRunningTask = function (buttonText) {
+            _finishRunningTask(buttonText);
+            nzSetToggleState('idle');
+        };
+    }
+    if (typeof resetStoppedTaskUI === 'function') {
+        var _resetStoppedTaskUI = resetStoppedTaskUI;
+        resetStoppedTaskUI = function () {
+            var r = _resetStoppedTaskUI.apply(this, arguments);
+            nzSetToggleState('idle');
+            return r;
+        };
+    }
+
+    /* ---------------- 进度元信息 ---------------- */
+
+    var nzProgressStageText = '';
+
+    function nzSyncProgressMeta() {
+        var bar = document.getElementById('progressBar');
+        var box = document.getElementById('progressBox');
+        var meta = document.getElementById('nzProgressMeta');
+        if (!bar || !box || !meta) return;
+        var show = box.style.display === 'block';
+        meta.classList.toggle('show', show);
+        var stage = document.getElementById('nzProgressStage');
+        if (stage) stage.textContent = show ? nzProgressStageText : '';
+        var count = document.getElementById('nzProgressCount');
+        if (count) count.textContent = show ? (bar.textContent || '') : '';
+    }
+
+    var _resetProgress = resetProgress;
+    resetProgress = function () {
+        _resetProgress();
+        nzSyncProgressMeta();
+    };
+    var _updateProgress = updateProgress;
+    updateProgress = function () {
+        _updateProgress.apply(this, arguments);
+        nzSyncProgressMeta();
+    };
+    if (typeof updateQualifiedSpeedProgress === 'function') {
+        var _updateQualifiedSpeedProgress = updateQualifiedSpeedProgress;
+        updateQualifiedSpeedProgress = function () {
+            _updateQualifiedSpeedProgress.apply(this, arguments);
+            nzSyncProgressMeta();
+        };
+    }
+    if (typeof completeProgressWithCurrentCount === 'function') {
+        var _completeProgressWithCurrentCount = completeProgressWithCurrentCount;
+        completeProgressWithCurrentCount = function () {
+            _completeProgressWithCurrentCount.apply(this, arguments);
+            nzSyncProgressMeta();
+        };
+    }
+
+    /* ---------------- 消息后处理：状态/跳转/分析/徽章 ---------------- */
+
+    var nzFirstResultJumped = false;
+    var PROGRESS_TYPES = ['scan_progress', 'nsb_progress', 'official_speed_progress', 'test_progress', 'speed_test_result', 'compact_ipv4_progress', 'dc_library_progress'];
+    var RESULT_TYPES = ['scan_result', 'nsb_scan_result', 'nsb_scan_sorted', 'test_result', 'test_complete', 'official_speed_complete', 'nsb_speed_complete', 'nsb_csv_complete', 'speed_test_result', 'task_complete'];
+    var STAGE_NAMES = {
+        scan_progress: '扫描中', nsb_progress: '非标扫描', official_speed_progress: '官方测速',
+        test_progress: '详细测试', speed_test_result: '单点测速', compact_ipv4_progress: '精简地址库',
+        dc_library_progress: '数据中心库'
+    };
+
+    var _handleMessage = handleMessage;
+    handleMessage = function (msg) {
+        var result = _handleMessage(msg);
+        try { nzAfterMessage(msg); } catch (e) { console.error(e); }
+        return result;
+    };
+
+    function nzAfterMessage(msg) {
+        var type = msg && msg.type;
+        if (PROGRESS_TYPES.indexOf(type) >= 0) {
+            if (STAGE_NAMES[type]) nzProgressStageText = STAGE_NAMES[type];
+            if (nzToggleState === 'preparing' || nzToggleState === 'idle') nzSetToggleState('running');
+            nzSyncProgressMeta();
+        }
+        if (RESULT_TYPES.indexOf(type) >= 0) {
+            nzScheduleAnalysis();
+            nzUpdateNavBadge();
+        }
+        if ((type === 'scan_result' || type === 'nsb_scan_result' || type === 'nsb_scan_sorted') && !nzFirstResultJumped) {
+            nzFirstResultJumped = true;
+            nzShowView('analysis');
+            nzToast('已收到首批结果，已切换到分析报告', 'info');
+        }
+        if (type === 'task_complete') {
+            nzSetToggleState('idle');
+            nzToast('任务完成', 'success');
+            nzScheduleAnalysis();
+        }
+        if (type === 'task_stopped') {
+            nzToast('任务已停止', 'info');
+        }
+        if (type === 'error') {
+            nzToast(typeof msg.data === 'string' ? msg.data : '发生错误，请查看日志', 'error');
+        }
+    }
+
+    /* ---------------- 分析聚合（从已渲染表格读取） ---------------- */
+
+    var nzAnalysisTimer = null;
+    window.nzScheduleAnalysis = function () {
+        clearTimeout(nzAnalysisTimer);
+        nzAnalysisTimer = setTimeout(nzRefreshAnalysis, 220);
+    };
+    window.nzRefreshAnalysis = nzRefreshAnalysis;
+    window.nzUpdateLogCount = nzUpdateLogCount;
+    window.nzUpdateNavBadge = nzUpdateNavBadge;
+
+    function nzRows(tableId) {
+        var tb = document.querySelector('#' + tableId + ' tbody');
+        return tb ? Array.prototype.slice.call(tb.children) : [];
+    }
+
+    function nzCells(tr) {
+        return Array.prototype.slice.call(tr.children).map(function (td) { return td.textContent.trim(); });
+    }
+
+    function nzColIndex(tableId, names) {
+        var ths = Array.prototype.slice.call(document.querySelectorAll('#' + tableId + ' thead th')).map(function (th) { return th.textContent.trim(); });
+        for (var i = 0; i < names.length; i++) {
+            var idx = ths.indexOf(names[i]);
+            if (idx >= 0) return idx;
+        }
+        return -1;
+    }
+
+    function nzChip(icon, color, num, label, sub) {
+        return '<div class="stat-chip"><div class="chip-icon" style="background:color-mix(in srgb,' + color + ' 14%,transparent);color:' + color + ';">' + icon +
+            '</div><div><div class="chip-num" style="color:' + color + ';">' + num + '</div><div class="chip-label">' + label +
+            '</div>' + (sub ? '<div class="chip-sub">' + sub + '</div>' : '') + '</div></div>';
+    }
+
+    function nzRefreshAnalysis() {
+        var scanRows = nzRows('scanTable');
+        var testRows = nzRows('testTable');
+        var dcRows = nzRows('dcTable');
+        var summaryCard = document.getElementById('analysisSummaryCard');
+        var rankCard = document.getElementById('analysisRankCard');
+        if (!summaryCard || !rankCard) return;
+
+        var regionIdxScan = nzColIndex('scanTable', ['地区', '落地区域']);
+        var regions = {};
+        scanRows.forEach(function (tr) {
+            var cells = nzCells(tr);
+            var v = regionIdxScan >= 0 ? (cells[regionIdxScan] || '') : '';
+            if (v) regions[v] = (regions[v] || 0) + 1;
+        });
+        if (Object.keys(regions).length === 0) {
+            var regionIdxTest = nzColIndex('testTable', ['地区']);
+            testRows.forEach(function (tr) {
+                var cells = nzCells(tr);
+                var v = regionIdxTest >= 0 ? (cells[regionIdxTest] || '') : '';
+                if (v) regions[v] = (regions[v] || 0) + 1;
+            });
+        }
+        var regionCount = Object.keys(regions).length;
+        var qualified = document.querySelectorAll('#testTable tbody tr.row-qualified').length +
+            document.querySelectorAll('#scanTable tbody tr.row-qualified').length;
+
+        var hasData = scanRows.length + testRows.length + dcRows.length > 0;
+        summaryCard.style.display = hasData ? '' : 'none';
+        rankCard.style.display = dcRows.length > 0 ? '' : 'none';
+        if (!hasData) return;
+
+        var chips = nzChip('📡', '#0ea5a0', scanRows.length, '扫描结果', '当前任务结果行');
+        chips += nzChip('🧪', '#8b5cf6', testRows.length, '详细测试', '丢包与延迟明细');
+        chips += nzChip('🏢', '#0198d3', dcRows.length, '数据中心', '落地点汇总');
+        chips += nzChip('🌍', '#e23b76', regionCount, '覆盖地区', '按结果行地区去重');
+        chips += nzChip('✅', '#0fd056', qualified, '达标节点', '测速/合格标记');
+        var chipsEl = document.getElementById('analysisChips');
+        if (chipsEl) chipsEl.innerHTML = chips;
+
+        var hero = document.getElementById('analysisHero');
+        if (hero) {
+            hero.textContent = '共 ' + scanRows.length + ' 条扫描结果 · ' + testRows.length + ' 条详细测试 · 覆盖 ' + regionCount + ' 个地区 / ' + dcRows.length + ' 个数据中心';
+        }
+
+        /* 数据中心排行：按 IP 数量 */
+        var countIdx = nzColIndex('dcTable', ['IP数量', 'IP 数量']);
+        var stats = dcRows.map(function (tr) {
+            var cells = nzCells(tr);
+            var raw = countIdx >= 0 ? parseInt(String(cells[countIdx]).replace(/[^\d]/g, ''), 10) : 0;
+            return { name: cells[0] || '-', count: isNaN(raw) ? 0 : raw, meta: cells[1] || '' };
+        }).sort(function (a, b) { return b.count - a.count; });
+        var rankEl = document.getElementById('analysisRankDC');
+        if (rankEl) {
+            var max = stats.length ? stats[0].count || 1 : 1;
+            var total = stats.reduce(function (s, x) { return s + x.count; }, 0);
+            var html = '';
+            stats.slice(0, 10).forEach(function (s, i) {
+                var pct = total ? Math.round(s.count / total * 100) : 0;
+                var nameEsc = nzEscText(s.name);
+                html += '<div class="rank-row"><div class="rank-no' + (i < 3 ? ' top' : '') + '">' + (i + 1) + '</div>' +
+                    '<div class="rank-name" title="' + nameEsc + '">' + nameEsc + '</div>' +
+                    '<div class="rank-bar"><i style="width:' + Math.round(s.count / max * 100) + '%"></i></div>' +
+                    '<div class="rank-val">' + s.count + '</div><div class="rank-pct">' + pct + '%</div></div>';
+            });
+            if (stats.length > 10) {
+                html += '<div class="card-tip" style="text-align:center;">其余 ' + (stats.length - 10) + ' 个数据中心未列出</div>';
+            }
+            rankEl.innerHTML = html || '<div class="analysis-empty">暂无数据</div>';
+            var tip = document.getElementById('analysisRankTip');
+            if (tip) {
+                tip.textContent = stats.length ? ('共 ' + stats.length + ' 个数据中心 · 按落地 IP 数排序') : '';
+            }
+        }
+    }
+
+    function nzUpdateNavBadge() {
+        var badge = document.getElementById('navBadgeAnalysis');
+        if (!badge) return;
+        var n = nzRows('scanTable').length + nzRows('testTable').length;
+        badge.textContent = n > 999 ? '999+' : String(n);
+        badge.classList.toggle('show', n > 0);
+    }
+
+    /* ---------------- 终端风日志 ---------------- */
+
+    var LOG_MAX = 500;
+    var nzLogSelecting = false;
+    var nzLogPaused = false;
+
+    function nzShell() { return document.getElementById('logShell'); }
+
+    function nzNearBottom() {
+        var shell = nzShell();
+        if (!shell) return true;
+        return shell.scrollTop + shell.clientHeight >= shell.scrollHeight - 48;
+    }
+
+    function nzUpdateBackCapsule() {
+        var cap = document.getElementById('logBackCapsule');
+        if (!cap) return;
+        cap.classList.toggle('show', nzLogPaused && !nzLogSelecting);
+    }
+
+    window.nzLogScrollBottom = function () {
+        var shell = nzShell();
+        if (!shell) return;
+        try { shell.scrollTo({ top: shell.scrollHeight, behavior: 'smooth' }); } catch (e) { shell.scrollTop = shell.scrollHeight; }
+        nzLogPaused = false;
+        nzUpdateBackCapsule();
+    };
+
+    window.nzClearLog = function () {
+        var box = document.getElementById('logBox');
+        if (box) box.innerHTML = '';
+        nzUpdateLogCount();
+    };
+
+    function nzUpdateLogCount() {
+        var box = document.getElementById('logBox');
+        var el = document.getElementById('logStatusCount');
+        if (box && el) el.textContent = String(box.children.length);
+    }
+
+    function nzEscText(s) {
+        return window.escapeHTML ? escapeHTML(s) : String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function nzColorizePlain(text) {
+        var s = nzEscText(text);
+        s = s.replace(/(^|[\s（(：:=＝，,])(\d+(?:\.\d+)?)(?=%|ms|MB\/s|KB\/s|GB|MB|KB|\s|，|,|。|；|;|）|\)|$)/g, function (a, p, n) {
+            return p + '<span class="log-num">' + n + '</span>';
+        });
+        s = s.replace(/(^|\s)(INF|WRN|ERR|DBG)(?=[\s:：]|$)/g, function (a, p, w) {
+            var cls = { INF: 'info', WRN: 'warn', ERR: 'error', DBG: 'debug' }[w];
+            return p + '<span class="log-level log-level-' + cls + '">' + w + '</span>';
+        });
+        return s;
+    }
+
+    var ANSI_MAP = { 31: 'error', 32: 'info', 33: 'warn', 34: 'debug', 36: 'debug' };
+    function nzColorize(raw) {
+        raw = String(raw == null ? '' : raw).replace(/\x1b\[(\d+)m/g, function (a, code) {
+            if (code === '0') return '\u0000/close\u0000';
+            var cls = ANSI_MAP[code];
+            return cls ? '\u0000/ansi-' + cls + '\u0000' : '';
+        });
+        var urlRe = /(https?:\/\/[^\s，。；、（）()<>"]+)/g;
+        var out = '';
+        var last = 0;
+        var m;
+        while ((m = urlRe.exec(raw)) !== null) {
+            out += nzColorizePlain(raw.slice(last, m.index));
+            out += '<span class="log-url">' + nzEscText(m[0]) + '</span>';
+            last = m.index + m[0].length;
+        }
+        out += nzColorizePlain(raw.slice(last));
+        out = out.replace(/\u0000\/close\u0000/g, '</span>');
+        out = out.replace(/\u0000\/(ansi-[a-z]+)\u0000/g, '<span class="log-level-$1">');
+        return out;
+    }
+
+    function nzAppendLogLine(text) {
+        var shell = nzShell();
+        var box = document.getElementById('logBox');
+        if (!box) return;
+        if (shell) shell.classList.remove('loading');
+        var stick = nzNearBottom();
+        var div = document.createElement('div');
+        var isError = /失败|错误|ERR\b|error|鉴权|无效/i.test(text);
+        var isWarn = !isError && /警告|WRN\b|warn/i.test(text);
+        div.className = 'log-line-new' + (isError ? ' nz-line-err' : (isWarn ? ' nz-line-warn' : ''));
+        var time = document.createElement('span');
+        time.className = 'log-time';
+        time.textContent = '[' + new Date().toLocaleTimeString() + ']';
+        div.appendChild(time);
+        var body = document.createElement('span');
+        body.innerHTML = ' ' + nzColorize(String(text == null ? '' : text));
+        div.appendChild(body);
+        box.appendChild(div);
+        while (box.children.length > LOG_MAX) box.removeChild(box.firstChild);
+        if (!nzLogPaused && !nzLogSelecting && stick) {
+            shell.scrollTop = shell.scrollHeight;
+        } else if (!stick) {
+            nzLogPaused = true;
+        }
+        nzUpdateBackCapsule();
+        nzUpdateLogCount();
+    }
+
+    var _log = log;
+    log = function (text) {
+        try {
+            if (typeof recordWebDebugNotice === 'function') recordWebDebugNotice('web_log', text);
+            nzAppendLogLine(String(text == null ? '' : text));
+        } catch (e) {
+            _log(text);
+        }
+    };
+
+    /* 日志滚动：上滚暂停 + 回到底部胶囊；框选文本不打断 */
+    (function () {
+        var shell = nzShell();
+        if (!shell) return;
+        shell.addEventListener('scroll', function () {
+            nzLogPaused = !nzNearBottom();
+            nzUpdateBackCapsule();
+        });
+        shell.addEventListener('mousedown', function () { nzLogSelecting = true; });
+        document.addEventListener('mouseup', function () {
+            if (nzLogSelecting) {
+                nzLogSelecting = false;
+                nzUpdateBackCapsule();
+            }
+        });
+    })();
+
+    /* ---------------- 主题（data-theme 同步） ---------------- */
+
+    function nzAndroidDark() {
+        try { return !!(window.CFDataAndroid && window.CFDataAndroid.isDarkMode()); } catch (e) { return false; }
+    }
+
+    var _applyTheme = applyTheme;
+    applyTheme = function (theme) {
+        _applyTheme(theme);
+        var t = theme || localStorage.getItem('cfdata-theme') || 'auto';
+        var dark = t === 'dark' || (t === 'auto' && (window.matchMedia('(prefers-color-scheme: dark)').matches || nzAndroidDark()));
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', dark ? '#121316' : '#f4f6f7');
+    };
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () {
+        if ((localStorage.getItem('cfdata-theme') || 'auto') === 'auto') {
+            nzSetThemeNow();
+        }
+    });
+    function nzSetThemeNow() {
+        try { applyTheme(localStorage.getItem('cfdata-theme') || 'auto'); } catch (e) { /* ignore */ }
+    }
+
+    /* ---------------- 状态 pill ---------------- */
+
+    var _updateStatus = updateStatus;
+    updateStatus = function (text, connected) {
+        var el = document.getElementById('status');
+        if (!el) { _updateStatus(text, connected); return; }
+        var t = String(text == null ? '' : text);
+        el.innerHTML = '<span class="dot"></span>' + nzEscText(t);
+        el.classList.toggle('error', !connected);
+        el.classList.toggle('running', !!connected && /扫描|运行|测试|测速|进行中/.test(t));
+    };
+
+    /* ---------------- 初始化 ---------------- */
+
+    document.addEventListener('DOMContentLoaded', function () {
+        setTimeout(function () {
+            if (document.getElementById('view-run')?.classList.contains('active')) {
+                document.getElementById('btnOfficial')?.classList.remove('active');
+                document.getElementById('btnNSB')?.classList.remove('active');
+            }
+        }, 0);
+    });
+
+    nzSetToggleState('idle');
+    var pill = document.getElementById('logStatusPill');
+    if (pill) pill.innerHTML = '<span class="dot"></span><span id="logStatusCount">0</span>';
+    nzSyncProgressMeta();
+    try { applyTheme(localStorage.getItem('cfdata-theme') || 'auto'); } catch (e) { /* ignore */ }
+})();
+</script>
 </body>
 
 </html>
