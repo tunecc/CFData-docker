@@ -34,18 +34,25 @@ func triggerManualR2Upload(session *appSession, rows []cliResultRow) {
 }
 
 func uploadManualRowsToR2(session *appSession, content string) {
+	defer updateSessionUploadNote(session)
 	cfg, err := readScheduleConfigFile(manualR2ConfigPath())
 	if err != nil {
+		note := "R2 上传跳过：读取配置失败"
+		session.setUploadNote(note)
 		session.sendWSMessage("log", "读取 R2 配置失败，已跳过手动结果上传: "+err.Error())
 		return
 	}
 	if !cfg.R2Enabled {
+		note := "R2 上传未启用"
+		session.setUploadNote(note)
 		session.sendWSMessage("log", "R2 上传未启用，已跳过手动结果上传")
 		return
 	}
 	workerURL := strings.TrimSpace(cfg.R2WorkerURL)
 	workerToken := strings.TrimSpace(cfg.R2WorkerToken)
 	if workerURL == "" || workerToken == "" {
+		note := "R2 上传跳过：Worker 地址或 token 未配置"
+		session.setUploadNote(note)
 		session.sendWSMessage("log", "R2 上传已启用，但 Worker 地址或 token 未配置，已跳过手动结果上传")
 		return
 	}
@@ -53,11 +60,25 @@ func uploadManualRowsToR2(session *appSession, content string) {
 	if filename == "" {
 		filename = defaultR2Filename
 	}
+	session.setUploadNote("R2 上传中…")
 	if err := uploadR2Content(workerURL, workerToken, filename, content); err != nil {
+		note := "R2 上传失败"
+		session.setUploadNote(note)
 		session.sendWSMessage("log", "R2 上传失败，保留 R2 上的旧内容: "+err.Error())
 		return
 	}
+	session.setUploadNote(fmt.Sprintf("R2 已上传 %d 条", countSubstoreEntries(content)))
 	session.sendWSMessage("log", fmt.Sprintf("R2 上传完成：%d 条结果已上传到 %s", countSubstoreEntries(content), filename))
+}
+
+// updateSessionUploadNote 把会话内最新的上传说明同步到全局上次运行摘要并推送给页面，
+// 使任务结束后才完成的异步上传也能反映在摘要行中。
+func updateSessionUploadNote(session *appSession) {
+	if session == nil || session.emit != nil {
+		return
+	}
+	updateLastRunUploadNote(session.uploadNoteValue())
+	session.sendWSMessage("last_run", lastRunPayload())
 }
 
 func filterR2QualifiedRows(rows []cliResultRow, speedMin float64) []cliResultRow {

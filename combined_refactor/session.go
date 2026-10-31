@@ -38,6 +38,14 @@ func safeGo(label string, session *appSession, fn func()) {
 }
 
 func (s *appSession) sendWSMessage(msgType string, data interface{}) {
+	if msgType == "log" && s.emit == nil {
+		if text, ok := data.(string); ok {
+			for _, out := range s.logThrottle.pass(text) {
+				s.sendLogLine(out)
+			}
+			return
+		}
+	}
 	updatedBackground := false
 	if s.emit == nil {
 		s.updateBackgroundSnapshotFromMessage(msgType, data)
@@ -47,6 +55,48 @@ func (s *appSession) sendWSMessage(msgType string, data interface{}) {
 		s.sendWSMessageDirect("background_task_update", s.backgroundSummary())
 	}
 	s.sendWSMessageDirect(msgType, data)
+}
+
+// sendLogLine 发送单条日志并同步后台任务快照，供日志合并节流复用。
+func (s *appSession) sendLogLine(text string) {
+	s.updateBackgroundSnapshotFromMessage("log", text)
+	if s.isBackgroundTask() {
+		s.sendWSMessageDirect("background_task_update", s.backgroundSummary())
+	}
+	s.sendWSMessageDirect("log", text)
+}
+
+// setUploadNote 记录本会话最近一次 R2 自动上传的结果说明，用于上次运行摘要。
+func (s *appSession) setUploadNote(note string) {
+	s.uploadNoteMutex.Lock()
+	s.uploadNote = note
+	s.uploadNoteMutex.Unlock()
+}
+
+func (s *appSession) uploadNoteValue() string {
+	s.uploadNoteMutex.Lock()
+	defer s.uploadNoteMutex.Unlock()
+	return s.uploadNote
+}
+
+// finalResultCount 返回任务结束时 session 内的最终结果行数。
+func (s *appSession) finalResultCount() int {
+	s.testMutex.Lock()
+	testCount := len(s.testResults)
+	s.testMutex.Unlock()
+	if testCount > 0 {
+		return testCount
+	}
+	s.scanMutex.Lock()
+	scanCount := len(s.scanResults)
+	s.scanMutex.Unlock()
+	if scanCount > 0 {
+		return scanCount
+	}
+	s.nsbMutex.Lock()
+	nsbCount := len(s.nsbRows)
+	s.nsbMutex.Unlock()
+	return nsbCount
 }
 
 func (s *appSession) sendWSMessageDirect(msgType string, data interface{}) {
@@ -105,7 +155,18 @@ func (s *appSession) startTaskNamed(label string, mode string, params map[string
 	safeGo("task", s, func() {
 		defer cancel()
 		defer func() {
+			snapshot := s.backgroundSummary()
 			s.endTask()
+			// 空标签的同步任务（如调度流水线内部步骤）不覆盖上次运行摘要
+			if label != "" {
+				startedAt := snapshot.StartedAt
+				if startedAt.IsZero() {
+					startedAt = time.Now()
+				}
+				success := ctx.Err() == nil
+				recordLastRun(mode, label, startedAt, success, s.finalResultCount(), s.uploadNoteValue())
+				s.sendWSMessage("last_run", lastRunPayload())
+			}
 			if ctx.Err() != nil {
 				s.sendWSMessage("task_stopped", nil)
 				return

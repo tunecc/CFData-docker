@@ -122,3 +122,70 @@ type githubUploadRequest struct {
 	Content string `json:"content"`
 	Silent  bool   `json:"silent"`
 }
+
+// taskConfigUpdateRequest 保存任务参数的请求。指针为 nil 表示不修改该字段。
+type taskConfigUpdateRequest struct {
+	Mode               *string  `json:"mode,omitempty"`
+	OfficialScanMode   *string  `json:"officialScanMode,omitempty"`
+	OfficialIPType     *int     `json:"officialIpType,omitempty"`
+	OfficialPort       *int     `json:"officialPort,omitempty"`
+	OfficialThreads    *int     `json:"officialThreads,omitempty"`
+	OfficialDelay      *int     `json:"officialDelay,omitempty"`
+	OfficialSpeedMin   *float64 `json:"officialSpeedMin,omitempty"`
+	OfficialSpeedLimit *int     `json:"officialSpeedLimit,omitempty"`
+	OfficialAutoSpeed  *bool    `json:"officialAutoSpeed,omitempty"`
+	OfficialTargetDC   *string  `json:"officialTargetDC,omitempty"`
+	OfficialStopCount  *int     `json:"officialStopCount,omitempty"`
+	OfficialSpeedURL   *string  `json:"officialSpeedUrl,omitempty"`
+	NSBScanMode        *string  `json:"nsbScanMode,omitempty"`
+	NSBThreads         *int     `json:"nsbThreads,omitempty"`
+	NSBDelay           *int     `json:"nsbDelay,omitempty"`
+	NSBResultLimit     *int     `json:"nsbResultLimit,omitempty"`
+	NSBFallbackPort    *int     `json:"nsbFallbackPort,omitempty"`
+	NSBSpeedTest       *int     `json:"nsbSpeedTest,omitempty"`
+	NSBSpeedMin        *float64 `json:"nsbSpeedMin,omitempty"`
+	NSBSpeedLimit      *int     `json:"nsbSpeedLimit,omitempty"`
+	NSBEnableSpeed     *bool    `json:"nsbEnableSpeed,omitempty"`
+	NSBTargetDC        *string  `json:"nsbTargetDC,omitempty"`
+	NSBTLS             *bool    `json:"nsbTls,omitempty"`
+	NSBCompact         *bool    `json:"nsbCompact,omitempty"`
+	NSBOutFile         *string  `json:"nsbOutFile,omitempty"`
+	NSBSpeedURL        *string  `json:"nsbSpeedUrl,omitempty"`
+	NSBSourceURL       *string  `json:"nsbSourceUrl,omitempty"`
+	NSBRelink          *bool    `json:"nsbRelink,omitempty"`
+	NSBRelinkHost      *string  `json:"nsbRelinkHost,omitempty"`
+}
+
+func (r *taskConfigUpdateRequest) toTaskConfigUpdate() *taskConfigUpdate {
+	return &taskConfigUpdate{
+		Mode:               r.Mode,
+		OfficialScanMode:   r.OfficialScanMode,
+		OfficialIPType:     r.OfficialIPType,
+		OfficialPort:       r.OfficialPort,
+		OfficialThreads:    r.OfficialThreads,
+		OfficialDelay:      r.OfficialDelay,
+		OfficialSpeedMin:   r.OfficialSpeedMin,
+		OfficialSpeedLimit: r.OfficialSpeedLimit,
+		OfficialAutoSpeed:  r.OfficialAutoSpeed,
+		OfficialTargetDC:   r.OfficialTargetDC,
+		OfficialStopCount:  r.OfficialStopCount,
+		OfficialSpeedURL:   r.OfficialSpeedURL,
+		NSBScanMode:        r.NSBScanMode,
+		NSBThreads:         r.NSBThreads,
+		NSBDelay:           r.NSBDelay,
+		NSBResultLimit:     r.NSBResultLimit,
+		NSBFallbackPort:    r.NSBFallbackPort,
+		NSBSpeedTest:       r.NSBSpeedTest,
+		NSBSpeedMin:        r.NSBSpeedMin,
+		NSBSpeedLimit:      r.NSBSpeedLimit,
+		NSBEnableSpeed:     r.NSBEnableSpeed,
+		NSBTargetDC:        r.NSBTargetDC,
+		NSBTLS:             r.NSBTLS,
+		NSBCompact:         r.NSBCompact,
+		NSBOutFile:         r.NSBOutFile,
+		NSBSpeedURL:        r.NSBSpeedURL,
+		NSBSourceURL:       r.NSBSourceURL,
+		NSBRelink:          r.NSBRelink,
+		NSBRelinkHost:      r.NSBRelinkHost,
+	}
+}

@@ -38,6 +38,7 @@ func buildInitConfigPayload() map[string]interface{} {
 		"speedURLStatus":   speedURLStatusPayload(),
 		"proxyStatus":      map[string]interface{}{"configured": managementProxyConfigured(), "source": proxySourceLabel()},
 		"dcLibraries":      dcLibrariesPayload(),
+		"lastRun":          lastRunPayload(),
 	}
 }
 
@@ -583,6 +584,23 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			session.sendWSMessage("config_data", payload)
+		},
+		"save_task_config": func(data json.RawMessage) {
+			var params taskConfigUpdateRequest
+			if err := json.Unmarshal(data, &params); err != nil {
+				session.sendWSMessage("error", "save_task_config 参数解析失败")
+				return
+			}
+			update := params.toTaskConfigUpdate()
+			if err := validateTaskConfigUpdate(update); err != nil {
+				session.sendWSMessage("error", err.Error())
+				return
+			}
+			if err := saveTaskConfigFields(defaultCLIConfigPath(), *update); err != nil {
+				session.sendWSMessage("error", "保存任务参数失败: "+err.Error())
+				return
+			}
+			session.sendWSMessage("task_config_saved", map[string]interface{}{"saved": true})
 		},
 		"check_proxy_country": func(data json.RawMessage) {
 			if skipGeoCheck {

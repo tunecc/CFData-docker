@@ -239,6 +239,9 @@ type appSession struct {
 	r2AutoUpload         bool
 	backgroundTask       bool
 	backgroundSnapshot   backgroundTaskSnapshot
+	logThrottle          logThrottle
+	uploadNoteMutex      sync.Mutex
+	uploadNote           string
 	wsClosed             bool
 	scanMutex            sync.Mutex
 	scanResults          []ScanResult

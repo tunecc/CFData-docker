@@ -912,6 +912,178 @@ h3 {
 .toast.error { border-color: color-mix(in srgb, var(--danger) 45%, transparent); }
 @keyframes toast-in { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
 
+/* ---------------- 右侧分组配置面板 ---------------- */
+
+.cfg-panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--card-shadow);
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+}
+.cfg-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 10px 10px 8px;
+    border-bottom: 1px solid var(--border);
+    background: color-mix(in srgb, var(--accent) 4%, var(--card));
+    position: sticky;
+    top: 0;
+    z-index: 5;
+}
+.cfg-tab {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 8px 6px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background .15s, color .15s, border-color .15s;
+}
+.cfg-tab .nav-icon { font-size: 13px; }
+.cfg-tab:hover { background: color-mix(in srgb, var(--accent) 8%, transparent); color: var(--fg); }
+.cfg-tab.active {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+.cfg-body { display: none; padding: 12px; overflow-y: auto; min-height: 0; }
+.cfg-body.active { display: block; }
+/* 配置列整体已有滚动（sticky + max-height），面板内层不再单独滚动，避免双滚动条 */
+@media (min-width: 761px) {
+    .cfg-body { overflow-y: visible; }
+}
+.cfg-body .settings-grid { grid-template-columns: 1fr; }
+.cfg-panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+.cfg-panel-title { font-size: 15px; font-weight: 700; }
+.cfg-save-btn { padding: 6px 12px; font-size: 12px; }
+.cfg-panel .section-box { margin-bottom: 12px; }
+.cfg-panel .section-box:last-child { margin-bottom: 0; }
+.cfg-panel .option-item .label { flex-shrink: 0; }
+.cfg-body .option-item.missing-hint {
+    border: 1px dashed var(--danger);
+    border-radius: 10px;
+    padding: 6px;
+    background: color-mix(in srgb, var(--danger) 6%, transparent);
+}
+
+/* ---------------- 主列运行标签页（运行日志 / 分析报告） ---------------- */
+
+.run-panels { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+.run-tabs {
+    display: flex;
+    gap: 6px;
+    padding: 4px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    width: fit-content;
+}
+.run-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: background .15s, color .15s;
+    user-select: none;
+}
+.run-tab:hover { background: color-mix(in srgb, var(--accent) 8%, transparent); color: var(--fg); }
+.run-tab.active {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #fff;
+}
+.run-panel { display: none; min-height: 0; }
+.run-panel.active { display: block; }
+
+/* 模式指示与上次运行摘要 */
+.run-mode-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    flex-wrap: wrap;
+}
+.run-mode-chip {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 99px;
+    background: color-mix(in srgb, var(--accent) 14%, transparent);
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 12px;
+}
+.run-mode-tip { font-size: 11px; opacity: .8; }
+.last-run-line {
+    margin-top: 10px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--idle) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--idle) 25%, transparent);
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+.last-run-line.last-run-empty {
+    background: transparent;
+    border-style: dashed;
+    color: var(--text-secondary);
+    opacity: .75;
+}
+
+/* 日志过滤 */
+.log-filter { display: inline-flex; gap: 2px; padding: 2px; border-radius: 8px; background: color-mix(in srgb, var(--fg) 6%, transparent); }
+.log-filter-btn {
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background .15s, color .15s;
+}
+.log-filter-btn:hover { color: var(--fg); }
+.log-filter-btn.active { background: var(--accent); color: #fff; }
+#logBox.filter-brief .log-line-detail { display: none; }
+#logBox.filter-error .log-line-info, #logBox.filter-error .log-line-detail { display: none; }
+.log-line-dup {
+    margin-left: 6px;
+    padding: 0 6px;
+    border-radius: 99px;
+    background: color-mix(in srgb, var(--fg) 10%, transparent);
+    font-size: 10px;
+    color: var(--text-secondary);
+}
+
 /* ---------------- 响应式 ---------------- */
 
 @media (max-width: 1180px) {
@@ -1161,10 +1333,7 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
         </div>
         <nav class="sidebar-list">
             <button class="nav-item active" id="navViewRun" onclick="nzShowView('run')" title="任务控制与运行日志"><span class="nav-icon">🚀</span>任务运行</button>
-            <button class="nav-item" id="btnOfficial" onclick="nzNavMode('official')" title="官方优选参数与扫描"><span class="nav-icon">☁️</span>官方优选</button>
-            <button class="nav-item" id="btnNSB" onclick="nzNavMode('nsb')" title="非标优选参数与扫描"><span class="nav-icon">📂</span>非标优选</button>
             <button class="nav-item" id="navViewAnalysis" onclick="nzShowView('analysis')" title="结果统计与明细"><span class="nav-icon">📊</span>分析报告<span class="nav-badge" id="navBadgeAnalysis">0</span></button>
-            <button class="nav-item" id="navViewSettings" onclick="nzShowView('settings')" title="主题、配置与管理"><span class="nav-icon">⚙️</span>设置</button>
         </nav>
         <div class="sidebar-bottom">
             <div class="sidebar-footer">
@@ -1193,6 +1362,7 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                     <div class="run-meta">
                         <div class="run-state-title" id="nzRunTitle">空闲</div>
                         <div class="run-state-sub" id="nzRunSub">点击按钮开始扫描与测试</div>
+                        <div class="run-mode-line">当前模式：<span class="run-mode-chip" id="nzRunModeLabel">官方优选</span><span class="run-mode-tip">在右侧配置面板「官方优选 / 非标优选」分组切换</span></div>
                     </div>
             <button id="btnStart" class="btn hidden" onclick="startTask()"><span id="btnStartSpinner"
                     class="hidden"></span><span id="btnStartLabel">✨ 开始扫描与测试</span></button>
@@ -1217,6 +1387,7 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
         </div>
                     <div class="progress-meta" id="nzProgressMeta"><span class="stage" id="nzProgressStage"></span><span id="nzProgressCount"></span></div>
                 </div>
+                <div class="last-run-line" id="lastRunLine" style="display:none;"></div>
             </div>
         <div class="background-status-card" id="backgroundStatusCard">
             <div class="background-status-head">
@@ -1231,10 +1402,21 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                 <div class="background-status-item background-status-wide-full"><span class="background-status-label">测速结果</span><div class="background-status-value" id="backgroundSpeedCount">0</div></div>
             </div>
         </div>
+            <div class="run-panels">
+                <div class="run-tabs">
+                    <div class="run-tab active" id="runTabLog" onclick="nzShowRunPanel('log')">📜 运行日志</div>
+                    <div class="run-tab" id="runTabReport" onclick="nzShowRunPanel('report')">📊 分析报告<span class="nav-badge" id="reportBadge">0</span></div>
+                </div>
+                <div id="runPanelLog" class="run-panel active">
             <div class="card log-card">
                 <div class="card-head">
                     <div class="card-title">运行日志</div>
-                    <div style="display:flex;gap:6px;align-items:center;">
+                    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+                        <div class="log-filter" id="logFilter">
+                            <button class="log-filter-btn active" data-level="brief" onclick="nzSetLogFilter('brief')" title="隐藏高频逐行细节">简要</button>
+                            <button class="log-filter-btn" data-level="all" onclick="nzSetLogFilter('all')" title="显示全部日志">全部</button>
+                            <button class="log-filter-btn" data-level="error" onclick="nzSetLogFilter('error')" title="只看错误与警告">错误</button>
+                        </div>
                         <span class="status-pill" id="logStatusPill"><span class="dot"></span>日志</span>
                         <button class="mini-action-btn" onclick="nzClearLog()" title="清空日志">🧹</button>
                     </div>
@@ -1249,16 +1431,140 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                     <button class="log-back-capsule" id="logBackCapsule" onclick="nzLogScrollBottom()">↓ 回到底部</button>
                 </div>
             </div>
-        </section>
-
-        <!-- ===== 官方优选 ===== -->
-        <section class="view" id="view-official">
-            <div class="card">
-                <div class="card-head">
-                    <div class="card-title">官方优选参数</div>
-                    <span class="card-tip">端口可选 · 数据中心库加速扫描</span>
                 </div>
-            <div id="officialControls">
+
+                <div id="runPanelReport" class="run-panel">
+            <div class="card" id="analysisSummaryCard" style="display:none;">
+                <div class="card-head">
+                    <div class="card-title">分析概览</div>
+                    <span class="card-tip" id="analysisHero"></span>
+                </div>
+                <div class="chip-grid" id="analysisChips"></div>
+            </div>
+            <div class="card" id="analysisRankCard" style="display:none;">
+                <div class="card-head">
+                    <div class="card-title">数据中心排行</div>
+                    <span class="card-tip" id="analysisRankTip"></span>
+                </div>
+                <div class="rank-list" id="analysisRankDC"></div>
+            </div>
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('scan')">📡 扫描结果</div>
+            <div class="tab" onclick="switchTab('test')">📊 详细测试</div>
+        </div>
+        <div id="scan" class="tab-content active">
+            <div class="section-box" id="dcSection" style="display:none;">
+                <h3>
+                    数据中心汇总 <span class="badge" id="dcCount">0</span>
+                    <span id="currentTestDC"
+                        style="margin-left:10px;font-size:12px;color:var(--text-secondary);"></span>
+                </h3>
+                <div class="scroll-table">
+                    <table id="dcTable">
+                        <thead>
+                            <tr>
+                                <th>数据中心</th>
+                                <th>落地区域</th>
+                                <th>城市</th>
+                                <th>IP数量</th>
+                                <th>最低延迟</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="section-box">
+                <h3 style="display:flex;justify-content:space-between;align-items:center;">
+                    <span>扫描结果 <span class="badge" id="scanCount">0</span></span>
+                    <span class="table-actions">
+                        <span class="nsb-scan-actions" id="nsbScanActions">
+                            <button class="action-btn export-btn" id="btnNSBBatchSpeed" onclick="startNSBBatchSpeed(false)" disabled>🚀 一键测速</button>
+                            <button class="action-btn export-btn" id="btnNSBContinueSpeed" onclick="startNSBBatchSpeed(true)" disabled>⏭️ 继续测速</button>
+                            <button class="action-btn export-btn" id="btnNSBSort" onclick="openSortModal('nsb')">🔎 筛选排序</button>
+                            <button class="action-btn export-btn" id="btnScanCopy" onclick="openCopyModal('scan')">📋 一键复制</button>
+                            <button class="action-btn export-btn" id="btnScanResultAction" onclick="openResultModal('scan')">📥 结果操作</button>
+                        </span>
+                    </span>
+                </h3>
+                <div class="scroll-table" style="max-height:520px;">
+                    <table id="scanTable">
+                        <thead>
+                            <tr>
+                                <th>IP</th>
+                                <th>端口</th>
+                                <th>数据中心</th>
+                                <th>落地区域</th>
+                                <th>地区</th>
+                                <th>城市</th>
+                                <th>延迟</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="test" class="tab-content">
+            <div class="section-box">
+                <h3 style="display:flex;justify-content:space-between;align-items:center;">
+                    <span>详细测试结果 <span class="badge" id="testCount">0</span></span>
+                    <span class="table-actions">
+                        <span class="official-test-actions">
+                            <button class="action-btn export-btn" id="btnBatchSpeed" onclick="startOfficialBatchSpeed(false)" disabled>🚀 一键测速</button>
+                            <button class="action-btn export-btn" id="btnContinueBatchSpeed" onclick="startOfficialBatchSpeed(false, true)" disabled>⏭️ 继续测速</button>
+                            <button class="action-btn export-btn" id="btnTestSort" onclick="openSortModal('official')">🔎 筛选排序</button>
+                            <button class="action-btn export-btn" id="btnTestCopy" onclick="openCopyModal('test')">📋 一键复制</button>
+                            <button class="action-btn export-btn" id="btnTestResultAction" onclick="openResultModal('test')">📥 结果操作</button>
+                        </span>
+                    </span>
+                </h3>
+                <div class="scroll-table" style="max-height:520px;">
+                    <table id="testTable">
+                        <thead>
+                            <tr>
+                                <th>IP 地址</th>
+                                <th>端口</th>
+                                <th>数据中心</th>
+                                <th>落地区域</th>
+                                <th>地区</th>
+                                <th>城市</th>
+                                <th>扫描方式</th>
+                                <th>丢包率</th>
+                                <th>最小延迟</th>
+                                <th>最大延迟</th>
+                                <th>平均延迟</th>
+                                <th>测速</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ===== 右栏：全部配置（分组标签页） ===== -->
+    <aside class="config-col">
+        <div class="cfg-panel">
+            <div class="cfg-tabs" id="cfgTabBar">
+                <button class="cfg-tab active" id="cfgTabOfficial" onclick="nzShowConfigPanel('official')" title="官方优选参数与扫描"><span class="nav-icon">☁️</span>官方优选</button>
+                <button class="cfg-tab" id="cfgTabNSB" onclick="nzShowConfigPanel('nsb')" title="非标优选参数与扫描"><span class="nav-icon">📂</span>非标优选</button>
+                <button class="cfg-tab" id="cfgTabAutomation" onclick="nzShowConfigPanel('automation')" title="自动调度与 R2 上传"><span class="nav-icon">⏱️</span>自动化</button>
+                <button class="cfg-tab" id="cfgTabAccounts" onclick="nzShowConfigPanel('accounts')" title="GitHub / edgetunnel 上传账号管理"><span class="nav-icon">📤</span>上传账号</button>
+                <button class="cfg-tab" id="cfgTabSettings" onclick="nzShowConfigPanel('settings')" title="外观、代理与配置管理"><span class="nav-icon">⚙️</span>设置</button>
+            </div>
+            <div class="cfg-body active" id="cfgPanelOfficial">
+                <div class="cfg-panel-head">
+                    <div class="cfg-panel-title">官方优选参数</div>
+                    <button class="menu-btn cfg-save-btn" onclick="saveTaskConfigToServer('official')" title="保存官方优选参数到服务器配置文件">💾 保存参数</button>
+                </div>
+<div id="officialControls">
                 <div class="control-title">
                     <span>官方参数</span>
                     <span style="font-size:12px;color:var(--text-secondary);">端口可选</span>
@@ -1379,18 +1685,13 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                     <select id="officialAutoUploadAccount" onchange="markAutoUploadTouched('officialAutoUploadAccount')"></select>
                 </div>
             </div>
-
             </div>
-        </section>
-
-        <!-- ===== 非标优选 ===== -->
-        <section class="view" id="view-nsb">
-            <div class="card">
-                <div class="card-head">
-                    <div class="card-title">非标优选参数</div>
-                    <span class="card-tip">支持 txt/csv 文件或网络 URL</span>
+            <div class="cfg-body hidden" id="cfgPanelNSB">
+                <div class="cfg-panel-head">
+                    <div class="cfg-panel-title">非标优选参数</div>
+                    <button class="menu-btn cfg-save-btn" onclick="saveTaskConfigToServer('nsb')" title="保存非标优选参数到服务器配置文件">💾 保存参数</button>
                 </div>
-            <div id="nsbControls" class="hidden">
+<div id="nsbControls" class="hidden">
                 <div class="control-title">
                     <span>非标参数</span>
                     <span style="font-size:12px;color:var(--text-secondary);">支持上传 txt/csv 文件或填写网络
@@ -1510,184 +1811,9 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                     <select id="nsbAutoUploadAccount" onchange="markAutoUploadTouched('nsbAutoUploadAccount')"></select>
                 </div>
             </div>
-
             </div>
-        </section>
-
-        <!-- ===== 分析报告 ===== -->
-        <section class="view" id="view-analysis">
-            <div class="card" id="analysisSummaryCard" style="display:none;">
-                <div class="card-head">
-                    <div class="card-title">分析概览</div>
-                    <span class="card-tip" id="analysisHero"></span>
-                </div>
-                <div class="chip-grid" id="analysisChips"></div>
-            </div>
-            <div class="card" id="analysisRankCard" style="display:none;">
-                <div class="card-head">
-                    <div class="card-title">数据中心排行</div>
-                    <span class="card-tip" id="analysisRankTip"></span>
-                </div>
-                <div class="rank-list" id="analysisRankDC"></div>
-            </div>
-        <div class="tabs">
-            <div class="tab active" onclick="switchTab('scan')">📡 扫描结果</div>
-            <div class="tab" onclick="switchTab('test')">📊 详细测试</div>
-        </div>
-        <div id="scan" class="tab-content active">
-            <div class="section-box" id="dcSection" style="display:none;">
-                <h3>
-                    数据中心汇总 <span class="badge" id="dcCount">0</span>
-                    <span id="currentTestDC"
-                        style="margin-left:10px;font-size:12px;color:var(--text-secondary);"></span>
-                </h3>
-                <div class="scroll-table">
-                    <table id="dcTable">
-                        <thead>
-                            <tr>
-                                <th>数据中心</th>
-                                <th>落地区域</th>
-                                <th>城市</th>
-                                <th>IP数量</th>
-                                <th>最低延迟</th>
-                                <th>操作</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="section-box">
-                <h3 style="display:flex;justify-content:space-between;align-items:center;">
-                    <span>扫描结果 <span class="badge" id="scanCount">0</span></span>
-                    <span class="table-actions">
-                        <span class="nsb-scan-actions" id="nsbScanActions">
-                            <button class="action-btn export-btn" id="btnNSBBatchSpeed" onclick="startNSBBatchSpeed(false)" disabled>🚀 一键测速</button>
-                            <button class="action-btn export-btn" id="btnNSBContinueSpeed" onclick="startNSBBatchSpeed(true)" disabled>⏭️ 继续测速</button>
-                            <button class="action-btn export-btn" id="btnNSBSort" onclick="openSortModal('nsb')">🔎 筛选排序</button>
-                            <button class="action-btn export-btn" id="btnScanCopy" onclick="openCopyModal('scan')">📋 一键复制</button>
-                            <button class="action-btn export-btn" id="btnScanResultAction" onclick="openResultModal('scan')">📥 结果操作</button>
-                        </span>
-                    </span>
-                </h3>
-                <div class="scroll-table" style="max-height:520px;">
-                    <table id="scanTable">
-                        <thead>
-                            <tr>
-                                <th>IP</th>
-                                <th>端口</th>
-                                <th>数据中心</th>
-                                <th>落地区域</th>
-                                <th>地区</th>
-                                <th>城市</th>
-                                <th>延迟</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <div id="test" class="tab-content">
-            <div class="section-box">
-                <h3 style="display:flex;justify-content:space-between;align-items:center;">
-                    <span>详细测试结果 <span class="badge" id="testCount">0</span></span>
-                    <span class="table-actions">
-                        <span class="official-test-actions">
-                            <button class="action-btn export-btn" id="btnBatchSpeed" onclick="startOfficialBatchSpeed(false)" disabled>🚀 一键测速</button>
-                            <button class="action-btn export-btn" id="btnContinueBatchSpeed" onclick="startOfficialBatchSpeed(false, true)" disabled>⏭️ 继续测速</button>
-                            <button class="action-btn export-btn" id="btnTestSort" onclick="openSortModal('official')">🔎 筛选排序</button>
-                            <button class="action-btn export-btn" id="btnTestCopy" onclick="openCopyModal('test')">📋 一键复制</button>
-                            <button class="action-btn export-btn" id="btnTestResultAction" onclick="openResultModal('test')">📥 结果操作</button>
-                        </span>
-                    </span>
-                </h3>
-                <div class="scroll-table" style="max-height:520px;">
-                    <table id="testTable">
-                        <thead>
-                            <tr>
-                                <th>IP 地址</th>
-                                <th>端口</th>
-                                <th>数据中心</th>
-                                <th>落地区域</th>
-                                <th>地区</th>
-                                <th>城市</th>
-                                <th>扫描方式</th>
-                                <th>丢包率</th>
-                                <th>最小延迟</th>
-                                <th>最大延迟</th>
-                                <th>平均延迟</th>
-                                <th>测速</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        </section>
-
-        <!-- ===== 设置 ===== -->
-        <section class="view" id="view-settings">
-            <div class="settings-grid">
-                <div class="card">
-                    <div class="card-head"><div class="card-title">外观与代理</div></div>
-        <div id="settingsMenu" class="settings-panel">
-            <div class="settings-title">颜色模式</div>
-            <div class="theme-options">
-                <button class="menu-btn" id="theme-light" onclick="setTheme('light')">浅色</button>
-                <button class="menu-btn" id="theme-dark" onclick="setTheme('dark')">深色</button>
-                <button class="menu-btn" id="theme-auto" onclick="setTheme('auto')">自动</button>
-            </div>
-            <div class="settings-title">本地缓存</div>
-            <button class="danger-btn" onclick="resetAllConfig()">恢复全部默认配置</button>
-
-            <div class="settings-title" style="margin-top:12px;">🌐 管理面代理</div>
-            <div class="upload-status" id="proxyStatusText">未启用（可用系统环境变量代理）</div>
-            <div id="proxySourceText" style="font-size:11px;color:var(--text-secondary);margin-top:2px;"></div>
-            <input id="proxyInput" type="text" placeholder="socks5://127.0.0.1:1080 或 http://127.0.0.1:8080" style="width:100%;margin-top:6px;">
-            <div class="theme-options" style="display:flex;gap:8px;margin-top:6px;">
-                <button class="menu-btn" style="flex:1;" onclick="saveManagementProxy()">保存</button>
-                <button class="menu-btn" style="flex:1;" onclick="clearManagementProxy()">清除</button>
-            </div>
-            <div style="font-size:11px;line-height:1.5;color:var(--text-secondary);margin-top:6px;">
-                仅作用于下载 ASN 库/locations、版本检查、GitHub/订阅上传等管理操作；扫描与测速保持直连。程序配置优先生效，未配置时使用系统环境变量代理。
-            </div>
-        </div>
-
-                </div>
-                <div class="card">
-                    <div class="card-head"><div class="card-title">配置管理</div></div>
-        <div id="configMenu" class="settings-panel">
-            <div class="settings-title">💾 保存配置</div>
-            <button class="menu-btn" onclick="saveConfigToLS()">保存当前配置</button>
-
-            <div class="settings-title" style="margin-top:12px;">📂 加载配置</div>
-            <button class="menu-btn" onclick="loadConfigFromLS()">加载保存配置</button>
-
-            <div class="settings-title" style="margin-top:12px;">🔄 自动加载配置</div>
-            <select id="configAutoLoad" onchange="saveAutoLoadPreference(this.value)" style="width:100%;">
-                <option value="off">关闭</option>
-                <option value="localStorage">localStorage</option>
-                <option value="configFile">本地配置文件</option>
-            </select>
-
-            <div class="settings-title" style="margin-top:12px;">📄 从服务器同步</div>
-            <button class="menu-btn" onclick="loadConfigFromServer()">从服务器同步配置</button>
-
-            <div class="settings-title" style="margin-top:12px;">🗑️ 管理</div>
-            <button class="danger-btn" onclick="deleteSavedConfig()">删除保存配置</button>
-        </div>
-
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- ===== 右栏：自动化与上传配置 ===== -->
-    <aside class="config-col">
-        <div class="section-box" id="automationSection">
+            <div class="cfg-body hidden" id="cfgPanelAutomation">
+<div class="section-box" id="automationSection">
             <h3>⏱️ 自动化</h3>
             <div class="upload-status" id="scheduleStatusText">调度未启用</div>
             <div class="automation-grid">
@@ -1730,6 +1856,105 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
             </div>
             <button class="menu-btn automation-save-btn" onclick="saveScheduleConfig()">保存自动化设置</button>
             <div class="automation-hint" id="r2UploadFeedback" style="display:none"></div>
+        </div>
+            </div>
+            <div class="cfg-body hidden" id="cfgPanelAccounts">
+                <div class="section-box">
+                    <h3>GitHub 上传账号</h3>
+                    <div class="modal-field github-field"><label>GitHub 账户</label>
+                        <div class="github-account-row">
+                            <select id="githubAccountSelect" onchange="loadSelectedGitHubAccount()"></select>
+                            <button class="action-btn" onclick="deleteSelectedGitHubAccount()">删除</button>
+                        </div>
+                    </div>
+                    <div class="modal-field github-field"><label>账户名称</label><input id="githubAccountName" type="text" placeholder="例如 main-account"></div>
+                    <div class="modal-field github-field"><label>GitHub Token</label><input id="githubToken" type="password" autocomplete="off" placeholder="repo 权限 token"></div>
+                    <div class="modal-field github-field"><label>仓库 owner/repo</label><input id="githubRepo" type="text" placeholder="owner/repo"></div>
+                    <div class="modal-field github-field"><label>分支</label><input id="githubBranch" type="text" value="main"></div>
+                    <div class="modal-field github-field"><label>目标路径</label><input id="githubPath" type="text" placeholder="results/ip.csv 或 results/ip.txt"></div>
+                    <div class="modal-field full github-field"><label>提交信息</label><input id="githubMessage" type="text" value="update cfdata results"></div>
+                    <div class="modal-field full github-field"><label class="inline-check"><input id="githubSaveToken" type="checkbox"> 保存 token 到本机浏览器（使用 WebCrypto 加密存储）</label></div>
+                    <button class="menu-btn" onclick="saveGithubAccountFromPanel()">💾 保存当前 GitHub 账号</button>
+                    <div class="automation-hint">账号只保存在本机浏览器加密存储；结果操作弹窗内可通过「选择已保存账号」下拉直接切换账号（面板字段同步更新），上传时按「保存 token」勾选状态更新账号。</div>
+                </div>
+                <div class="section-box">
+                    <h3>edgetunnel 上传账号</h3>
+                    <div class="modal-field edgetunnel-field"><label>edgetunnel 账户</label>
+                        <div class="github-account-row">
+                            <select id="edgetunnelAccountSelect" onchange="loadSelectedEdgetunnelAccount()"></select>
+                            <button class="action-btn" onclick="deleteSelectedEdgetunnelAccount()">删除</button>
+                        </div>
+                    </div>
+                    <div class="modal-field edgetunnel-field"><label>账户名称</label><input id="edgetunnelAccountName" type="text" placeholder="例如 main-tunnel"></div>
+                    <div class="modal-field edgetunnel-field"><label>edgetunnel 域名</label><input id="edgetunnelHost" type="text" placeholder="https://example.com"></div>
+                    <div class="modal-field edgetunnel-field"><label>密码</label><input id="edgetunnelPassword" type="password" autocomplete="off" placeholder="edgetunnel 密码"></div>
+                    <div class="modal-field edgetunnel-field"><label>上传模式</label>
+                        <select id="edgetunnelMode">
+                            <option value="overwrite">覆盖上传</option>
+                            <option value="append">追加上传</option>
+                        </select>
+                    </div>
+                    <div class="modal-field full edgetunnel-field"><label class="inline-check"><input id="edgetunnelSavePassword" type="checkbox"> 保存密码到本机浏览器（使用 WebCrypto 加密存储）</label></div>
+                    <button class="menu-btn" onclick="saveEdgetunnelAccountFromPanel()">💾 保存当前 edgetunnel 账号</button>
+                    <div class="automation-hint">结果操作弹窗内的「上传 edgetunnel-追加 / 覆盖」按钮会使用此处当前填写的账号信息；弹窗内也可通过「选择已保存账号」下拉切换，面板字段同步更新。</div>
+                </div>
+            </div>
+            <div class="cfg-body hidden" id="cfgPanelSettings">
+<div class="settings-grid">
+                <div class="card">
+                    <div class="card-head"><div class="card-title">外观与代理</div></div>
+        <div id="settingsMenu" class="settings-panel">
+            <div class="settings-title">颜色模式</div>
+            <div class="theme-options">
+                <button class="menu-btn" id="theme-light" onclick="setTheme('light')">浅色</button>
+                <button class="menu-btn" id="theme-dark" onclick="setTheme('dark')">深色</button>
+                <button class="menu-btn" id="theme-auto" onclick="setTheme('auto')">自动</button>
+            </div>
+            <div class="settings-title">本地缓存</div>
+            <button class="danger-btn" onclick="resetAllConfig()">恢复全部默认配置</button>
+
+            <div class="settings-title" style="margin-top:12px;">🌐 管理面代理</div>
+            <div class="upload-status" id="proxyStatusText">未启用（可用系统环境变量代理）</div>
+            <div id="proxySourceText" style="font-size:11px;color:var(--text-secondary);margin-top:2px;"></div>
+            <input id="proxyInput" type="text" placeholder="socks5://127.0.0.1:1080 或 http://127.0.0.1:8080" style="width:100%;margin-top:6px;">
+            <div class="theme-options" style="display:flex;gap:8px;margin-top:6px;">
+                <button class="menu-btn" style="flex:1;" onclick="saveManagementProxy()">保存</button>
+                <button class="menu-btn" style="flex:1;" onclick="clearManagementProxy()">清除</button>
+            </div>
+            <div style="font-size:11px;line-height:1.5;color:var(--text-secondary);margin-top:6px;">
+                仅作用于下载 ASN 库/locations、版本检查、GitHub/订阅上传等管理操作；扫描与测速保持直连。程序配置优先生效，未配置时使用系统环境变量代理。
+            </div>
+        </div>
+
+                </div>
+                <div class="card">
+                    <div class="card-head"><div class="card-title">配置管理</div></div>
+        <div id="configMenu" class="settings-panel">
+            <div class="settings-title">💾 保存配置</div>
+            <button class="menu-btn" onclick="saveConfigToLS()">保存当前配置</button>
+
+            <div class="settings-title" style="margin-top:12px;">📂 加载配置</div>
+            <button class="menu-btn" onclick="loadConfigFromLS()">加载保存配置</button>
+
+            <div class="settings-title" style="margin-top:12px;">🔄 自动加载配置</div>
+            <select id="configAutoLoad" onchange="saveAutoLoadPreference(this.value)" style="width:100%;">
+                <option value="off">服务器参数（连接时自动加载，默认）</option>
+                <option value="localStorage">本地保存参数（覆盖服务器参数）</option>
+            </select>
+            <div style="font-size:11px;line-height:1.5;color:var(--text-secondary);margin-top:6px;">
+                服务器配置文件是任务参数的主载体：在「官方优选 / 非标优选」分组点击「💾 保存参数」写入服务器，换浏览器或重启容器后自动回显。
+            </div>
+
+            <div class="settings-title" style="margin-top:12px;">📄 从服务器同步</div>
+            <button class="menu-btn" onclick="loadConfigFromServer()">从服务器同步配置</button>
+
+            <div class="settings-title" style="margin-top:12px;">🗑️ 管理</div>
+            <button class="danger-btn" onclick="deleteSavedConfig()">删除保存配置</button>
+        </div>
+
+                </div>
+            </div>
+            </div>
         </div>
     </aside>
 </div>
@@ -1832,39 +2057,9 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                         <label>输出顺序</label>
                         <div class="order-list" id="resultOrderList"></div>
                     </div>
-                    <div class="modal-field github-field">
-                        <label>GitHub 账户</label>
-                        <div class="github-account-row">
-                            <select id="githubAccountSelect" onchange="loadSelectedGitHubAccount()"></select>
-                            <button class="action-btn" onclick="deleteSelectedGitHubAccount()">删除</button>
-                        </div>
-                    </div>
-                    <div class="modal-field github-field">
-                        <label>账户名称</label>
-                        <input id="githubAccountName" type="text" placeholder="例如 main-account">
-                    </div>
-                    <div class="modal-field github-field">
-                        <label>GitHub Token</label>
-                        <input id="githubToken" type="password" autocomplete="off" placeholder="repo 权限 token">
-                    </div>
-                    <div class="modal-field github-field">
-                        <label>仓库 owner/repo</label>
-                        <input id="githubRepo" type="text" placeholder="owner/repo">
-                    </div>
-                    <div class="modal-field github-field">
-                        <label>分支</label>
-                        <input id="githubBranch" type="text" value="main">
-                    </div>
-                    <div class="modal-field github-field">
-                        <label>目标路径</label>
-                        <input id="githubPath" type="text" placeholder="results/ip.csv 或 results/ip.txt">
-                    </div>
                     <div class="modal-field full github-field">
-                        <label>提交信息</label>
-                        <input id="githubMessage" type="text" value="update cfdata results">
-                    </div>
-                    <div class="modal-field full github-field">
-                        <label class="inline-check"><input id="githubSaveToken" type="checkbox"> 保存 token 到本机浏览器（使用 WebCrypto 加密存储）</label>
+                        <label>选择已保存账号（切换后「上传账号」面板字段同步更新）</label>
+                        <select id="githubAccountPick" onchange="pickGitHubAccountFromModal()"></select>
                     </div>
                     <div class="modal-field full github-field">
                         <label>快速上传指定文件（不使用上方结果内容）</label>
@@ -1878,34 +2073,9 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                         <label>上传失败提示</label>
                         <div class="upload-status" id="uploadProxyHint">上传失败？可在右上角设置菜单配置代理后重试；支持程序配置（socks5://、http:// 等）与系统环境变量代理，扫描测速不受影响。</div>
                     </div>
-                    <div class="modal-field edgetunnel-field">
-                        <label>edgetunnel 账户</label>
-                        <div class="github-account-row">
-                            <select id="edgetunnelAccountSelect" onchange="loadSelectedEdgetunnelAccount()"></select>
-                            <button class="action-btn" onclick="deleteSelectedEdgetunnelAccount()">删除</button>
-                        </div>
-                    </div>
-                    <div class="modal-field edgetunnel-field">
-                        <label>账户名称</label>
-                        <input id="edgetunnelAccountName" type="text" placeholder="例如 main-tunnel">
-                    </div>
-                    <div class="modal-field edgetunnel-field">
-                        <label>edgetunnel 域名</label>
-                        <input id="edgetunnelHost" type="text" placeholder="https://example.com">
-                    </div>
-                    <div class="modal-field edgetunnel-field">
-                        <label>密码</label>
-                        <input id="edgetunnelPassword" type="password" autocomplete="off" placeholder="edgetunnel 密码">
-                    </div>
-                    <div class="modal-field edgetunnel-field">
-                        <label>上传模式</label>
-                        <select id="edgetunnelMode">
-                            <option value="overwrite">覆盖上传</option>
-                            <option value="append">追加上传</option>
-                        </select>
-                    </div>
                     <div class="modal-field full edgetunnel-field">
-                        <label class="inline-check"><input id="edgetunnelSavePassword" type="checkbox"> 保存密码到本机浏览器（使用 WebCrypto 加密存储）</label>
+                        <label>选择已保存账号（切换后「上传账号」面板字段同步更新）</label>
+                        <select id="edgetunnelAccountPick" onchange="pickEdgetunnelAccountFromModal()"></select>
                     </div>
                     <div class="modal-field full edgetunnel-field">
                         <label>上传状态</label>
@@ -2099,6 +2269,7 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
         let ws;
         let defaultSpeedTestUrl = "speed.okl.abrdns.com";
         let scheduleConfigLoaded = false;
+        let lastSchedulePayload = null;
         let isTaskRunning = false;
         let isStoppingTask = false;
         let nsbReallinkRunning = false;
@@ -2192,8 +2363,8 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
         const progressBox = document.getElementById('progressBox');
         const progressBar = document.getElementById('progressBar');
 
-        const modeOfficial = document.getElementById('btnOfficial');
-        const modeNSB = document.getElementById('btnNSB');
+        const modeOfficial = document.getElementById('cfgTabOfficial');
+        const modeNSB = document.getElementById('cfgTabNSB');
         const officialControls = document.getElementById('officialControls');
         const nsbControls = document.getElementById('nsbControls');
         const fileInput = document.getElementById('nsbFileInput');
@@ -2228,6 +2399,7 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                 uploadedFileName = '';
                 uploadedFileContent = '';
             }
+            if (typeof nzUpdateStartReadiness === 'function') nzUpdateStartReadiness();
         }
 
         function applyTheme(theme) {
@@ -2458,6 +2630,7 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
 
         function applyScheduleConfig(payload) {
             if (!payload) return;
+            lastSchedulePayload = payload;
             const setValue = (id, value) => {
                 const el = document.getElementById(id);
                 if (el) el.value = value ?? '';
@@ -2616,6 +2789,8 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                     outFile: val('nsbOutFile'),
                     speedUrl: resolveSpeedTestUrl('nsbSpeedUrl', 'nsbSpeedUrlPreset'),
                     sourceUrl: val('nsbSourceUrl'),
+                    relinkPreset: selVal('nsbRelinkPreset'),
+                    relinkHost: val('nsbRelinkHost'),
                 },
             };
         }
@@ -2664,6 +2839,11 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
             syncNSBSpeedConfigState();
             updateNSBSpeedControls();
             updateNSBCompactToggle();
+            // 恢复保存的任务模式；任务运行中不切换
+            if (!isTaskRunning && config.mode && (config.mode === 'official' || config.mode === 'nsb') && config.mode !== currentMode) {
+                switchMode(config.mode);
+            }
+            if (typeof nzUpdateStartReadiness === 'function') nzUpdateStartReadiness();
         }
 
         function saveConfigToLS() {
@@ -2707,8 +2887,16 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
             }
             const c = cliCfg.config || cliCfg;
             const result = { official: {}, nsb: {} };
-            const sm = pick(c, ['scanmode', 'scanMode']);
-            if (sm !== undefined) { result.official.scanMode = sm; result.nsb.scanMode = sm; }
+            const sm = pick(c, ['offscanmode', 'scanmode', 'scanMode']);
+            if (sm !== undefined) result.official.scanMode = sm;
+            const nsm = pick(c, ['nsbscanmode', 'scanmode', 'scanMode']);
+            if (nsm !== undefined) result.nsb.scanMode = nsm;
+            const autospeed = c.offautospeed;
+            if (autospeed !== undefined) result.official.autoSpeed = (autospeed === true || String(autospeed).toLowerCase() === 'true' || String(autospeed) === '1') ? 'on' : 'off';
+            const enableSpeed = c.nsbenablespeed;
+            if (enableSpeed !== undefined) result.nsb.enableSpeed = (enableSpeed === true || String(enableSpeed).toLowerCase() === 'true' || String(enableSpeed) === '1') ? 'on' : 'off';
+            const savedMode = pick(c, ['mode']);
+            if (savedMode === 'official' || savedMode === 'nsb') result.mode = savedMode;
             result.official.ipType = pick(c, ['offiptype', 'iptype', 'ipType']);
             result.official.port = pick(c, ['offport', 'testport', 'port']);
             result.official.threads = pick(c, ['offthreads', 'threads']);
@@ -2748,6 +2936,45 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
             return result;
         }
 
+        // 「上传账号」分组内的账号保存入口：复用结果弹窗的保存逻辑与加密存储
+        async function saveGithubAccountFromPanel() {
+            const repoRaw = document.getElementById('githubRepo').value.trim();
+            const parts = repoRaw.split('/');
+            if (parts.length !== 2 || !parts[0] || !parts[1]) {
+                showNoticeCard('请先填写仓库 owner/repo，例如 myname/myrepo');
+                return;
+            }
+            const token = document.getElementById('githubToken').value.trim();
+            if (!token) {
+                showNoticeCard('请先填写 GitHub Token');
+                return;
+            }
+            const payload = {
+                owner: parts[0],
+                repo: parts[1],
+                token: token,
+                branch: document.getElementById('githubBranch').value.trim() || 'main',
+                path: document.getElementById('githubPath').value.trim() || 'results/ip.txt',
+                message: document.getElementById('githubMessage').value.trim() || 'update cfdata results',
+            };
+            await saveCurrentGitHubAccount(payload);
+            renderGitHubAccounts();
+            showNoticeCard('GitHub 账号已保存到本机浏览器加密存储');
+            log('GitHub 账号已保存到本机浏览器加密存储');
+        }
+
+        async function saveEdgetunnelAccountFromPanel() {
+            const host = document.getElementById('edgetunnelHost').value.trim();
+            const password = document.getElementById('edgetunnelPassword').value.trim();
+            if (!host || !password) {
+                showNoticeCard('请先填写 edgetunnel 域名与密码');
+                return;
+            }
+            await saveCurrentEdgetunnelAccount();
+            showNoticeCard('edgetunnel 账号已保存到本机浏览器加密存储');
+            log('edgetunnel 账号已保存到本机浏览器加密存储');
+        }
+
         function deleteSavedConfig() {
             if (!confirm('确定要删除保存的配置吗？')) return;
             try {
@@ -2769,25 +2996,92 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
         }
 
         function autoLoadConfig() {
+            // 服务器配置文件是任务参数的主载体，连接建立后总是加载一次；
+            // localStorage 仅作兜底缓存，选择「本地保存参数」时在服务器参数之上覆盖。
+            wsSend({ type: 'get_config' });
             let pref;
             try {
                 pref = localStorage.getItem('cfdata-autoload');
             } catch (e) {
                 return;
             }
-            if (!pref || pref === 'off') return;
+            if (pref !== 'localStorage') return;
             try {
-                if (pref === 'localStorage') {
-                    const raw = localStorage.getItem('cfdata-config');
-                    if (raw) {
-                        applyConfigValues(JSON.parse(raw));
-                    }
-                } else if (pref === 'configFile') {
-                    wsSend({ type: 'get_config' });
+                const raw = localStorage.getItem('cfdata-config');
+                if (raw) {
+                    applyConfigValues(JSON.parse(raw));
                 }
             } catch (e) {
                 console.error('[cfdata] autoLoadConfig failed:', e);
             }
+        }
+
+        function saveTaskConfigToServer(scope) {
+            const config = readFormValues();
+            const payload = {};
+            payload.mode = currentMode;
+            if (scope === 'official') {
+                const o = config.official;
+                payload.officialScanMode = o.scanMode;
+                payload.officialIpType = parseInt(o.ipType, 10) || 4;
+                payload.officialPort = parseInt(o.port, 10) || 443;
+                payload.officialThreads = parseInt(o.threads, 10) || 100;
+                payload.officialDelay = parseInt(o.delay, 10) || 0;
+                payload.officialSpeedMin = parseFloat(o.speedMin) || 0;
+                payload.officialSpeedLimit = Math.max(0, parseInt(o.speedLimit, 10) || 0);
+                payload.officialAutoSpeed = o.autoSpeed === 'on';
+                payload.officialTargetDC = o.targetDC || '';
+                payload.officialStopCount = Math.max(0, parseInt(o.stopCount, 10) || 0);
+                payload.officialSpeedUrl = o.speedUrl || '';
+            } else if (scope === 'nsb') {
+                const n = config.nsb;
+                payload.nsbScanMode = n.scanMode;
+                payload.nsbThreads = parseInt(n.threads, 10) || 100;
+                payload.nsbDelay = parseInt(n.delay, 10) || 0;
+                payload.nsbResultLimit = Math.max(0, parseInt(n.resultLimit, 10) || 0);
+                payload.nsbFallbackPort = parseInt(n.fallbackPort, 10) || 443;
+                payload.nsbSpeedTest = Math.max(0, parseInt(n.speedTest, 10) || 0);
+                payload.nsbSpeedMin = parseFloat(n.speedMin) || 0;
+                payload.nsbSpeedLimit = Math.max(0, parseInt(n.speedLimit, 10) || 0);
+                payload.nsbEnableSpeed = n.enableSpeed === 'on';
+                payload.nsbTargetDC = n.targetDC || '';
+                payload.nsbTls = n.tls === 'on';
+                payload.nsbCompact = n.compactView === 'compact';
+                payload.nsbOutFile = n.outFile || '';
+                payload.nsbSpeedUrl = n.speedUrl || '';
+                payload.nsbSourceUrl = n.sourceUrl || '';
+                payload.nsbRelink = n.relinkPreset !== 'off';
+                payload.nsbRelinkHost = (n.relinkPreset === 'off') ? '' : (n.relinkPreset === 'default' ? 'probe.609909.xyz' : (n.relinkHost || ''));
+            } else {
+                showNoticeCard('未知的参数分组');
+                return;
+            }
+            if (!wsSend({ type: 'save_task_config', data: payload })) {
+                showNoticeCard('与服务端的连接尚未就绪，请稍后再试');
+            }
+        }
+
+        function renderLastRun(info) {
+            const el = document.getElementById('lastRunLine');
+            if (!el) return;
+            // 无历史时显示空状态占位（服务器重启后摘要清空）
+            if (!info || (!info.label && !info.mode)) {
+                el.textContent = '上次运行：暂无记录';
+                el.classList.add('last-run-empty');
+                el.style.display = '';
+                return;
+            }
+            el.classList.remove('last-run-empty');
+            const date = new Date((info.endTime || 0) * 1000);
+            const timeText = isNaN(date.getTime()) || !info.endTime ? '-' : date.toLocaleString();
+            const dur = Number(info.durationMs) || 0;
+            const durText = dur >= 60000
+                ? Math.floor(dur / 60000) + '分' + Math.round((dur % 60000) / 1000) + '秒'
+                : (dur >= 1000 ? Math.round(dur / 1000) + ' 秒' : dur + ' ms');
+            const parts = ['上次运行：' + (info.label || '任务'), info.success ? '完成' : '已停止', timeText, '耗时 ' + durText, '结果 ' + (Number(info.results) || 0) + ' 条'];
+            if (info.uploadNote) parts.push(info.uploadNote);
+            el.textContent = parts.join(' · ');
+            el.style.display = '';
         }
 
         function loadConfigFromServer() {
@@ -3133,6 +3427,8 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
             currentMode = mode;
             modeOfficial.classList.toggle('active', mode === 'official');
             modeNSB.classList.toggle('active', mode === 'nsb');
+            nzUpdateRunModeLabel(mode);
+            nzUpdateStartReadiness();
 
             if (mode === 'official') {
                 officialControls.classList.remove('hidden');
@@ -3167,6 +3463,46 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
             if (!isTaskRunning) resetProgress();
             updateScanModeHint();
             log(`切换至：${mode === 'official' ? '官方优选' : '非标优选'}`);
+        }
+
+        function nzUpdateRunModeLabel(mode) {
+            const el = document.getElementById('nzRunModeLabel');
+            if (el) el.textContent = mode === 'official' ? '官方优选' : '非标优选';
+        }
+
+        // 启动前就绪校验：非标优选必须有 IP 来源（文件或网络 URL）；
+        // 官方优选无硬性前置。缺失时禁用启动并高亮对应配置项。
+        function nzStartReadiness() {
+            if (currentMode !== 'nsb') return { ready: true, missing: [] };
+            const hasFile = !!(uploadedFileContent && uploadedFileContent.trim());
+            const urlInput = document.getElementById('nsbSourceUrl');
+            const hasURL = !!(urlInput && urlInput.value.trim());
+            const missing = [];
+            if (!hasFile && !hasURL) missing.push('source');
+            return { ready: missing.length === 0, missing };
+        }
+
+        function nzUpdateStartReadiness() {
+            const { ready } = nzStartReadiness();
+            const fileRow = document.getElementById('nsbFileInput')?.closest('.option-item');
+            const urlRow = document.getElementById('nsbSourceUrl')?.closest('.option-item');
+            if (fileRow) fileRow.classList.toggle('missing-hint', !ready);
+            if (urlRow) urlRow.classList.toggle('missing-hint', !ready);
+            // 任务运行中不允许禁用启停按钮：停止运行中的任务必须始终可用
+            if (isTaskRunning || isStoppingTask) return;
+            for (const id of ['nzToggle', 'btnStart']) {
+                const btn = document.getElementById(id);
+                if (!btn) continue;
+                btn.disabled = !ready;
+                btn.title = ready ? '' : '非标优选需要先提供 IP 文件或网络 URL';
+            }
+        }
+
+        // 软性缺失提醒：不阻止任务启动
+        function nzSoftWarnings() {
+            if (lastSchedulePayload && lastSchedulePayload.r2Enabled && (!lastSchedulePayload.r2WorkerUrl || !lastSchedulePayload.r2WorkerTokenSet)) {
+                nzToast('R2 上传已启用但 Worker 地址或 token 不完整，任务完成后将跳过自动上传', 'error');
+            }
         }
 
         function switchTab(tabId) {
@@ -4644,6 +4980,15 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
 
             if (requireProxyWarning(() => startTask())) return;
 
+            const readiness = nzStartReadiness();
+            if (!readiness.ready) {
+                nzUpdateStartReadiness();
+                showNoticeCard('非标优选需要先提供 IP 文件或网络 URL，请在右侧「非标优选」分组中配置');
+                nzShowConfigPanel('nsb');
+                return;
+            }
+            nzSoftWarnings();
+
             if (currentMode === 'official') {
                 startOfficialTask();
             } else {
@@ -5354,8 +5699,27 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
             const accounts = getGitHubAccounts();
             const accountOptions = '<option value="">新账户/不使用保存配置</option>' + accounts.map((a, i) => `<option value="${i}">${escapeHTML(a.name || a.repo || 'GitHub账户')} ${a.tokenHash ? '(' + escapeHTML(a.tokenHash.slice(0, 10)) + ')' : ''}</option>`).join('');
             if (select) select.innerHTML = accountOptions;
+            syncGitHubAccountPick();
             renderAutoUploadSelect('nsbAutoUploadAccount', accounts);
             renderAutoUploadSelect('officialAutoUploadAccount', accounts);
+        }
+
+        // 结果弹窗内的已保存账号选择：与「上传账号」面板字段双向同步
+        function syncGitHubAccountPick() {
+            const pick = document.getElementById('githubAccountPick');
+            const select = document.getElementById('githubAccountSelect');
+            if (!pick) return;
+            const accounts = getGitHubAccounts();
+            pick.innerHTML = '<option value="">使用当前填写信息</option>' + accounts.map((a, i) => `<option value="${i}">${escapeHTML(a.name || a.repo || 'GitHub账户')}</option>`).join('');
+            pick.value = select ? select.value : '';
+        }
+
+        function pickGitHubAccountFromModal() {
+            const pick = document.getElementById('githubAccountPick');
+            const select = document.getElementById('githubAccountSelect');
+            if (!pick || !select) return;
+            select.value = pick.value;
+            loadSelectedGitHubAccount();
         }
 
         function normalizeGitHubAccountKey(account) {
@@ -5379,6 +5743,7 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
 
         function loadSelectedGitHubAccount() {
             const select = document.getElementById('githubAccountSelect');
+            syncGitHubAccountPick();
             const idx = parseInt(select.value, 10);
             if (Number.isNaN(idx)) {
                 clearGitHubAccountInputs();
@@ -5522,6 +5887,24 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
             const accounts = getEdgetunnelAccounts();
             const accountOptions = '<option value="">新账户/不使用保存配置</option>' + accounts.map((a, i) => `<option value="${i}">${escapeHTML(a.name || a.host || 'edgetunnel账户')}</option>`).join('');
             if (select) select.innerHTML = accountOptions;
+            syncEdgetunnelAccountPick();
+        }
+
+        function syncEdgetunnelAccountPick() {
+            const pick = document.getElementById('edgetunnelAccountPick');
+            const select = document.getElementById('edgetunnelAccountSelect');
+            if (!pick) return;
+            const accounts = getEdgetunnelAccounts();
+            pick.innerHTML = '<option value="">使用当前填写信息</option>' + accounts.map((a, i) => `<option value="${i}">${escapeHTML(a.name || a.host || 'edgetunnel账户')}</option>`).join('');
+            pick.value = select ? select.value : '';
+        }
+
+        function pickEdgetunnelAccountFromModal() {
+            const pick = document.getElementById('edgetunnelAccountPick');
+            const select = document.getElementById('edgetunnelAccountSelect');
+            if (!pick || !select) return;
+            select.value = pick.value;
+            loadSelectedEdgetunnelAccount();
         }
 
         function normalizeEdgetunnelAccountKey(account) {
@@ -5530,6 +5913,7 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
 
         function loadSelectedEdgetunnelAccount() {
             const select = document.getElementById('edgetunnelAccountSelect');
+            syncEdgetunnelAccountPick();
             const idx = parseInt(select.value, 10);
             if (Number.isNaN(idx)) {
                 clearEdgetunnelAccountInputs();
@@ -6361,11 +6745,19 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                     applyProxyStatus(msg.data.proxyStatus);
                     applyDcLibraryStatus(msg.data.dcLibraries);
                     renderVersionInfo(msg.data || {});
+                    renderLastRun(msg.data.lastRun || null);
                     autoLoadConfig();
                     if (!scheduleConfigLoaded) {
                         scheduleConfigLoaded = true;
                         wsSend({ type: 'get_schedule_config' });
                     }
+                    break;
+                case 'last_run':
+                    renderLastRun(msg.data || null);
+                    break;
+                case 'task_config_saved':
+                    nzToast('参数已保存到服务器配置文件', 'success');
+                    log('任务参数已保存到服务器配置文件');
                     break;
                 case 'speed_url_status':
                     applySpeedURLStatus(msg.data || {});
@@ -6840,26 +7232,71 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
 (function () {
     'use strict';
 
-    /* ---------------- 视图导航 ---------------- */
+    /* ---------------- 视图导航（主列双面板 + 右侧配置分组） ---------------- */
 
-    var VIEW_NAV = { run: 'navViewRun', official: 'btnOfficial', nsb: 'btnNSB', analysis: 'navViewAnalysis', settings: 'navViewSettings' };
+    var VIEW_NAV = { run: 'navViewRun', analysis: 'navViewAnalysis' };
 
-    window.nzShowView = function (view) {
-        document.querySelectorAll('.view').forEach(function (v) { v.classList.remove('active'); });
-        var el = document.getElementById('view-' + view);
-        if (el) el.classList.add('active');
+    function nzActivateNav(view) {
         document.querySelectorAll('.sidebar .nav-item').forEach(function (b) { b.classList.remove('active'); });
         var nav = document.getElementById(VIEW_NAV[view]);
         if (nav) nav.classList.add('active');
-        if (view === 'settings') {
-            try { wsSend({ type: 'get_management_proxy', data: {} }); } catch (e) { /* 连接未就绪 */ }
+    }
+
+    // 运行视图内「运行日志 / 分析报告」双面板切换
+    window.nzShowRunPanel = function (panel) {
+        var panels = { log: 'runPanelLog', report: 'runPanelReport' };
+        var tabs = { log: 'runTabLog', report: 'runTabReport' };
+        Object.keys(panels).forEach(function (key) {
+            var body = document.getElementById(panels[key]);
+            if (body) body.classList.toggle('active', key === panel);
+        });
+        document.querySelectorAll('.run-tab').forEach(function (t) { t.classList.remove('active'); });
+        var tab = document.getElementById(tabs[panel]);
+        if (tab) tab.classList.add('active');
+        nzActivateNav(panel === 'report' ? 'analysis' : 'run');
+        if (panel === 'report' && typeof window.nzRefreshAnalysis === 'function') {
+            try { window.nzRefreshAnalysis(); } catch (e) { /* 表格尚未渲染 */ }
         }
         try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) { /* 旧内核 */ }
     };
 
+    // 右侧配置分组切换；官方/非标分组同时切换任务模式
+    window.nzShowConfigPanel = function (name) {
+        var tabs = { official: 'cfgTabOfficial', nsb: 'cfgTabNSB', automation: 'cfgTabAutomation', accounts: 'cfgTabAccounts', settings: 'cfgTabSettings' };
+        var bodies = { official: 'cfgPanelOfficial', nsb: 'cfgPanelNSB', automation: 'cfgPanelAutomation', accounts: 'cfgPanelAccounts', settings: 'cfgPanelSettings' };
+        Object.keys(bodies).forEach(function (key) {
+            var body = document.getElementById(bodies[key]);
+            if (!body) return;
+            var isActive = key === name;
+            // 面板初始 HTML 自带 hidden 类，切换时必须同步增删
+            body.classList.toggle('active', isActive);
+            body.classList.toggle('hidden', !isActive);
+        });
+        document.querySelectorAll('.cfg-tab').forEach(function (t) { t.classList.remove('active'); });
+        var tab = document.getElementById(tabs[name]);
+        if (tab) tab.classList.add('active');
+        if (name === 'settings') {
+            try { wsSend({ type: 'get_management_proxy', data: {} }); } catch (e) { /* 连接未就绪 */ }
+        }
+        if ((name === 'official' || name === 'nsb') && typeof switchMode === 'function') {
+            try { switchMode(name); } catch (e) { console.error(e); }
+        }
+    };
+
+    window.nzShowView = function (view) {
+        if (view === 'official' || view === 'nsb' || view === 'settings' || view === 'automation' || view === 'accounts') {
+            window.nzShowConfigPanel(view);
+            return;
+        }
+        // 主列只有一个运行视图；run = 日志面板，analysis = 报告面板
+        document.querySelectorAll('.view').forEach(function (v) { v.classList.remove('active'); });
+        var el = document.getElementById('view-run');
+        if (el) el.classList.add('active');
+        window.nzShowRunPanel(view === 'analysis' ? 'report' : 'log');
+    };
+
     window.nzNavMode = function (mode) {
-        nzShowView(mode === 'official' ? 'official' : 'nsb');
-        try { switchMode(mode); } catch (e) { console.error(e); }
+        window.nzShowConfigPanel(mode === 'official' ? 'official' : 'nsb');
     };
 
     /* ---------------- Toast ---------------- */
@@ -7036,9 +7473,12 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
             nzSetToggleState('idle');
             nzToast('任务完成', 'success');
             nzScheduleAnalysis();
+            try { nzShowRunPanel('report'); } catch (e) { console.error(e); }
+            try { nzUpdateStartReadiness(); } catch (e) { /* 旧函数缺失时忽略 */ }
         }
         if (type === 'task_stopped') {
             nzToast('任务已停止', 'info');
+            try { nzUpdateStartReadiness(); } catch (e) { /* 旧函数缺失时忽略 */ }
         }
         if (type === 'error') {
             nzToast(typeof msg.data === 'string' ? msg.data : '发生错误，请查看日志', 'error');
@@ -7157,18 +7597,51 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
     }
 
     function nzUpdateNavBadge() {
-        var badge = document.getElementById('navBadgeAnalysis');
-        if (!badge) return;
         var n = nzRows('scanTable').length + nzRows('testTable').length;
-        badge.textContent = n > 999 ? '999+' : String(n);
-        badge.classList.toggle('show', n > 0);
+        var text = n > 999 ? '999+' : String(n);
+        var badge = document.getElementById('navBadgeAnalysis');
+        if (badge) {
+            badge.textContent = text;
+            badge.classList.toggle('show', n > 0);
+        }
+        var reportBadge = document.getElementById('reportBadge');
+        if (reportBadge) {
+            reportBadge.textContent = text;
+            reportBadge.classList.toggle('show', n > 0);
+        }
     }
 
-    /* ---------------- 终端风日志 ---------------- */
+    /* ---------------- 终端风日志（分级过滤 + 连续重复合并） ---------------- */
 
     var LOG_MAX = 500;
     var nzLogSelecting = false;
     var nzLogPaused = false;
+    var nzLogFilterLevel = 'brief';
+
+    // 「简要」级别隐藏的高频逐行细节（单点测速、分轮精简、上传重试、界面操作回声等）
+    var LOG_DETAIL_RE = /(测速完成: |第 \d+\/\d+ 次上传|^第 \d+ 轮|精简第 \d+ 轮|已复制: |复制失败: |切换至：|已连接服务器|连接断开|已开始跟随后台任务|配置文件已从|当前配置已保存|调试模式已开启)/;
+    var LOG_ERROR_RE = /失败|错误|ERR\b|error|鉴权|无效/i;
+    var LOG_WARN_RE = /警告|WRN\b|warn/i;
+
+    function nzLogClassify(text) {
+        if (LOG_ERROR_RE.test(text)) return 'err';
+        if (LOG_WARN_RE.test(text)) return 'warn';
+        if (LOG_DETAIL_RE.test(text)) return 'detail';
+        return 'info';
+    }
+
+    window.nzSetLogFilter = function (level) {
+        if (['all', 'brief', 'error'].indexOf(level) < 0) level = 'brief';
+        nzLogFilterLevel = level;
+        var box = document.getElementById('logBox');
+        if (box) {
+            box.classList.remove('filter-all', 'filter-brief', 'filter-error');
+            box.classList.add('filter-' + level);
+        }
+        document.querySelectorAll('#logFilter .log-filter-btn').forEach(function (btn) {
+            btn.classList.toggle('active', btn.getAttribute('data-level') === level);
+        });
+    };
 
     function nzShell() { return document.getElementById('logShell'); }
 
@@ -7195,6 +7668,8 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
     window.nzClearLog = function () {
         var box = document.getElementById('logBox');
         if (box) box.innerHTML = '';
+        nzLastLogLine = null;
+        nzLastLogText = '';
         nzUpdateLogCount();
     };
 
@@ -7242,24 +7717,44 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
         return out;
     }
 
+    var nzLastLogLine = null;
+    var nzLastLogText = '';
+    var nzLastLogCount = 0;
+
     function nzAppendLogLine(text) {
         var shell = nzShell();
         var box = document.getElementById('logBox');
         if (!box) return;
         if (shell) shell.classList.remove('loading');
+        text = String(text == null ? '' : text);
+        // 连续重复的相同日志合并为一行带计数徽标，避免刷屏
+        if (nzLastLogLine && nzLastLogText === text && nzLastLogLine.parentNode === box) {
+            nzLastLogCount++;
+            var dup = nzLastLogLine.querySelector('.log-line-dup');
+            if (!dup) {
+                dup = document.createElement('span');
+                dup.className = 'log-line-dup';
+                nzLastLogLine.appendChild(dup);
+            }
+            dup.textContent = '×' + (nzLastLogCount + 1);
+            nzUpdateLogCount();
+            return;
+        }
         var stick = nzNearBottom();
+        var level = nzLogClassify(text);
         var div = document.createElement('div');
-        var isError = /失败|错误|ERR\b|error|鉴权|无效/i.test(text);
-        var isWarn = !isError && /警告|WRN\b|warn/i.test(text);
-        div.className = 'log-line-new' + (isError ? ' nz-line-err' : (isWarn ? ' nz-line-warn' : ''));
+        div.className = 'log-line-new log-line-' + level + (level === 'err' ? ' nz-line-err' : (level === 'warn' ? ' nz-line-warn' : ''));
         var time = document.createElement('span');
         time.className = 'log-time';
         time.textContent = '[' + new Date().toLocaleTimeString() + ']';
         div.appendChild(time);
         var body = document.createElement('span');
-        body.innerHTML = ' ' + nzColorize(String(text == null ? '' : text));
+        body.innerHTML = ' ' + nzColorize(text);
         div.appendChild(body);
         box.appendChild(div);
+        nzLastLogLine = div;
+        nzLastLogText = text;
+        nzLastLogCount = 0;
         while (box.children.length > LOG_MAX) box.removeChild(box.firstChild);
         if (!nzLogPaused && !nzLogSelecting && stick) {
             shell.scrollTop = shell.scrollHeight;
@@ -7336,12 +7831,14 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
     /* ---------------- 初始化 ---------------- */
 
     document.addEventListener('DOMContentLoaded', function () {
-        setTimeout(function () {
-            if (document.getElementById('view-run')?.classList.contains('active')) {
-                document.getElementById('btnOfficial')?.classList.remove('active');
-                document.getElementById('btnNSB')?.classList.remove('active');
-            }
-        }, 0);
+        // 历史遗留的自动加载偏好值归一化：服务器参数现在总是自动加载
+        try {
+            var pref = localStorage.getItem('cfdata-autoload');
+            if (pref !== 'off' && pref !== 'localStorage') localStorage.setItem('cfdata-autoload', 'off');
+        } catch (e) { /* ignore */ }
+        // 初始日志过滤级别与启动就绪校验
+        try { nzSetLogFilter('brief'); } catch (e) { /* ignore */ }
+        try { nzUpdateStartReadiness(); } catch (e) { /* 旧函数缺失时忽略 */ }
     });
 
     nzSetToggleState('idle');
