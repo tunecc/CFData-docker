@@ -2,23 +2,42 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"runtime/debug"
 	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
-
-	"github.com/gorilla/websocket"
 )
 
 var globalRunningTasks int32
 var globalTaskMutex sync.Mutex
-var backgroundTaskMutex sync.Mutex
-var backgroundTaskSession *appSession
+
+// 回放缓冲上限：全局任务会话在内存中为“当前/上一次任务”保留的各类数据条数。
+const (
+	taskLogReplayLimit  = 500
+	scanReplayLimit     = 20000
+	testReplayLimit     = 20000
+	speedReplayLimit    = 2000
+	nsbLiveReplayLimit  = 20000
+	taskRestoreChunkLen = 400
+)
+
+// taskSession 是进程级全局任务会话：Web 触发的任务在其上执行，与任何
+// WebSocket 连接的生命周期解耦——关闭页面不会中断任务，新连接建立后可
+// 从回放缓冲恢复任务状态。
+var taskSession = newHubSession()
 
 func anyTaskRunning() bool {
 	return atomic.LoadInt32(&globalRunningTasks) > 0
+}
+
+// newHubSession 创建全局任务会话：任务消息经 broadcast 广播给所有在线连接。
+func newHubSession() *appSession {
+	s := &appSession{progressState: map[string][2]int{}}
+	s.broadcast = s.emitTaskMessage
+	return s
 }
 
 func safeGo(label string, session *appSession, fn func()) {
@@ -46,24 +65,35 @@ func (s *appSession) sendWSMessage(msgType string, data interface{}) {
 			return
 		}
 	}
-	updatedBackground := false
-	if s.emit == nil {
-		s.updateBackgroundSnapshotFromMessage(msgType, data)
-		updatedBackground = s.isBackgroundTask()
-	}
-	if updatedBackground && msgType != "background_task_update" && msgType != "background_task_found" && msgType != "background_task_enabled" {
-		s.sendWSMessageDirect("background_task_update", s.backgroundSummary())
-	}
-	s.sendWSMessageDirect(msgType, data)
+	s.dispatchOutgoing(msgType, data)
 }
 
-// sendLogLine 发送单条日志并同步后台任务快照，供日志合并节流复用。
+// sendLogLine 发送单条日志并同步任务快照，供日志合并节流复用。
 func (s *appSession) sendLogLine(text string) {
-	s.updateBackgroundSnapshotFromMessage("log", text)
-	if s.isBackgroundTask() {
-		s.sendWSMessageDirect("background_task_update", s.backgroundSummary())
+	s.dispatchOutgoing("log", text)
+}
+
+// dispatchOutgoing 按会话类型输出消息：CLI 会话交给 emit；全局任务会话
+// 记录回放并广播；普通连接会话直写自己的 WebSocket。
+func (s *appSession) dispatchOutgoing(msgType string, data interface{}) {
+	if s.emit != nil && s.broadcast == nil {
+		if msgType == "error" || msgType == "github_upload_error" || msgType == "edgetunnel_upload_error" {
+			recordProgramDebugError(msgType, data)
+		} else if msgType == "log" || msgType == "github_upload_status" || msgType == "edgetunnel_upload_status" || msgType == "version_info" {
+			recordDebugNotice(msgType, data)
+		}
+		s.emit(msgType, data)
+		return
 	}
-	s.sendWSMessageDirect("log", text)
+	s.updateBackgroundSnapshotFromMessage(msgType, data)
+	if s.broadcast != nil {
+		s.broadcast(msgType, data)
+		return
+	}
+	if s.ws == nil {
+		return
+	}
+	s.sendWSMessageDirect(msgType, data)
 }
 
 // setUploadNote 记录本会话最近一次 R2 自动上传的结果说明，用于上次运行摘要。
@@ -100,21 +130,7 @@ func (s *appSession) finalResultCount() int {
 }
 
 func (s *appSession) sendWSMessageDirect(msgType string, data interface{}) {
-	if s.emit != nil {
-		if msgType == "error" || msgType == "github_upload_error" || msgType == "edgetunnel_upload_error" {
-			recordProgramDebugError(msgType, data)
-		} else if msgType == "log" || msgType == "github_upload_status" || msgType == "edgetunnel_upload_status" || msgType == "version_info" {
-			recordDebugNotice(msgType, data)
-		}
-		s.emit(msgType, data)
-		return
-	}
-	if s.ws == nil {
-		return
-	}
-	s.wsMutex.Lock()
-	defer s.wsMutex.Unlock()
-	if s.wsClosed {
+	if s.client == nil {
 		return
 	}
 	msg := map[string]interface{}{
@@ -126,24 +142,22 @@ func (s *appSession) sendWSMessageDirect(msgType string, data interface{}) {
 	} else if msgType == "log" || msgType == "github_upload_status" || msgType == "version_info" {
 		recordDebugNotice(msgType, data)
 	}
-	s.ws.SetWriteDeadline(time.Now().Add(10 * time.Second))
-	if err := s.ws.WriteJSON(msg); err != nil {
-		s.wsClosed = true
-		recordProgramDebugError("websocket_write", err.Error())
-		sendLog("WebSocket 发送失败: " + err.Error())
+	payload, err := json.Marshal(msg)
+	if err != nil {
+		recordProgramDebugError("websocket_marshal", err.Error())
+		return
 	}
-}
-
-func (s *appSession) isBackgroundTask() bool {
-	s.taskMutex.Lock()
-	defer s.taskMutex.Unlock()
-	return s.backgroundTask
+	if !s.client.writePayload(payload) {
+		recordProgramDebugError("websocket_write", "connection closed")
+	}
 }
 
 func (s *appSession) startTask(run taskStarter) {
 	s.startTaskNamed("任务", "", nil, run)
 }
 
+// startTaskNamed 在当前会话上启动任务。在全局任务会话上启动的任务独立于
+// 任何 WebSocket 连接运行，关闭页面不会中断。
 func (s *appSession) startTaskNamed(label string, mode string, params map[string]interface{}, run taskStarter) {
 	ctx, cancel := context.WithCancel(context.Background())
 	started := s.beginTask(cancel, label, mode, params)
@@ -156,6 +170,8 @@ func (s *appSession) startTaskNamed(label string, mode string, params map[string
 		defer cancel()
 		defer func() {
 			snapshot := s.backgroundSummary()
+			// 先把终态写入快照再结束任务计数，保证恢复视图能看到最终阶段
+			s.markTaskFinished(ctx.Err() != nil)
 			s.endTask()
 			// 空标签的同步任务（如调度流水线内部步骤）不覆盖上次运行摘要
 			if label != "" {
@@ -198,26 +214,6 @@ func (s *appSession) cancelTaskSilently() {
 	s.cancelTask(false)
 }
 
-func (s *appSession) enableBackgroundTask() bool {
-	s.taskMutex.Lock()
-	if !s.isTaskRunning {
-		s.taskMutex.Unlock()
-		return false
-	}
-	s.backgroundTask = true
-	s.backgroundSnapshot.Running = true
-	s.backgroundSnapshot.UpdatedAt = time.Now()
-	s.taskMutex.Unlock()
-	registerBackgroundTaskSession(s)
-	return true
-}
-
-func (s *appSession) shouldCancelOnDisconnect() bool {
-	s.taskMutex.Lock()
-	defer s.taskMutex.Unlock()
-	return s.isTaskRunning && !s.backgroundTask
-}
-
 func (s *appSession) cancelTask(withLog bool) {
 	s.taskMutex.Lock()
 	cancel := s.taskCancel
@@ -225,27 +221,32 @@ func (s *appSession) cancelTask(withLog bool) {
 	if cancel != nil {
 		cancel()
 		if withLog {
-			s.markBackgroundStopping()
 			s.sendWSMessage("log", "已发送强制终止信号，正在清理当前任务...")
 		}
 	}
 }
 
-func (s *appSession) markBackgroundStopping() {
+// markTaskFinished 把任务终态（完成/已停止）写入快照，供新连接恢复视图使用。
+func (s *appSession) markTaskFinished(stopped bool) {
 	s.taskMutex.Lock()
 	defer s.taskMutex.Unlock()
-	if !s.backgroundTask {
+	if !s.isTaskRunning {
 		return
 	}
-	s.backgroundSnapshot.Phase = "正在停止"
-	s.backgroundSnapshot.Message = "已发送停止信号，正在整理当前可用结果"
+	if stopped {
+		s.backgroundSnapshot.Phase = "已停止"
+		s.backgroundSnapshot.Message = "任务已停止"
+	} else {
+		s.backgroundSnapshot.Phase = "完成"
+		s.backgroundSnapshot.Message = "任务完成"
+	}
+	s.backgroundSnapshot.Running = false
 	s.backgroundSnapshot.UpdatedAt = time.Now()
 }
 
 func (s *appSession) beginTask(cancel context.CancelFunc, label string, mode string, params map[string]interface{}) bool {
 	globalTaskMutex.Lock()
 	defer globalTaskMutex.Unlock()
-	clearCompletedBackgroundTaskSession()
 	s.taskMutex.Lock()
 	defer s.taskMutex.Unlock()
 	if anyTaskRunning() {
@@ -256,9 +257,12 @@ func (s *appSession) beginTask(cancel context.CancelFunc, label string, mode str
 	}
 	s.isTaskRunning = true
 	s.taskCancel = cancel
-	s.backgroundTask = false
 	now := time.Now()
 	s.backgroundSnapshot = backgroundTaskSnapshot{Label: label, Mode: mode, Phase: "准备中", Message: "任务准备中", Running: true, StartedAt: now, UpdatedAt: now, Params: params}
+	if s.broadcast != nil {
+		// 全局任务会话在新任务开始时清空上一任务的回放数据
+		s.resetReplayState()
+	}
 	atomic.AddInt32(&globalRunningTasks, 1)
 	return true
 }
@@ -277,39 +281,172 @@ func (s *appSession) endTask() {
 	s.backgroundSnapshot.UpdatedAt = time.Now()
 }
 
-func registerBackgroundTaskSession(session *appSession) {
-	backgroundTaskMutex.Lock()
-	defer backgroundTaskMutex.Unlock()
-	backgroundTaskSession = session
+// emitTaskMessage 为全局任务消息分配单调递增序号、写入回放缓冲，再广播给
+// 所有在线连接。序号让前端能区分“已包含在恢复载荷里的旧消息”与“增量消息”，
+// 恢复与实时消息交错时也不会出现重复行或缺行。
+func (s *appSession) emitTaskMessage(msgType string, data interface{}) {
+	s.replayMutex.Lock()
+	s.recordReplayLocked(msgType, data)
+	s.msgSeq++
+	seq := s.msgSeq
+	s.replayMutex.Unlock()
+	broadcastTaskEnvelope(seq, msgType, data)
 }
 
-func clearCompletedBackgroundTaskSession() {
-	backgroundTaskMutex.Lock()
-	defer backgroundTaskMutex.Unlock()
-	if backgroundTaskSession == nil {
-		return
+func appendCapped[T any](slice []T, value T, limit int) []T {
+	slice = append(slice, value)
+	if len(slice) > limit {
+		slice = slice[len(slice)-limit:]
 	}
-	backgroundTaskSession.taskMutex.Lock()
-	defer backgroundTaskSession.taskMutex.Unlock()
-	if backgroundTaskSession.isTaskRunning {
-		return
-	}
-	backgroundTaskSession.backgroundTask = false
-	backgroundTaskSession = nil
+	return slice
 }
 
-func currentBackgroundTaskSession() *appSession {
-	backgroundTaskMutex.Lock()
-	defer backgroundTaskMutex.Unlock()
-	if backgroundTaskSession == nil {
-		return nil
+// recordReplayLocked 把任务消息写入回放缓冲；调用方需持有 replayMutex。
+func (s *appSession) recordReplayLocked(msgType string, data interface{}) {
+	switch msgType {
+	case "log":
+		if text, ok := data.(string); ok {
+			s.taskLogs = appendCapped(s.taskLogs, text, taskLogReplayLimit)
+		}
+	case "scan_result":
+		if res, ok := data.(ScanResult); ok {
+			s.scanReplay = appendCapped(s.scanReplay, res, scanReplayLimit)
+		}
+	case "test_result":
+		if res, ok := data.(TestResult); ok {
+			s.testReplay = appendCapped(s.testReplay, res, testReplayLimit)
+		}
+	case "speed_test_result":
+		if res, ok := data.(map[string]string); ok {
+			s.speedReplay = appendCapped(s.speedReplay, res, speedReplayLimit)
+		}
+	case "nsb_scan_result":
+		if res, ok := data.(nsbScanMessage); ok {
+			s.nsbLiveReplay = appendCapped(s.nsbLiveReplay, res, nsbLiveReplayLimit)
+		}
+	case "nsb_scan_sorted":
+		if rows, ok := data.([]nsbScanMessage); ok {
+			if len(rows) > nsbLiveReplayLimit {
+				rows = rows[len(rows)-nsbLiveReplayLimit:]
+			}
+			s.nsbLiveReplay = rows
+		}
+	case "scan_complete_wait_dc":
+		if list, ok := data.([]DataCenterInfo); ok {
+			s.dcReplay = list
+		}
+	case "nsb_csv_complete":
+		if payload, ok := data.(nsbCSVCompletePayload); ok {
+			payloadCopy := payload
+			s.nsbFinalReplay = &payloadCopy
+		}
 	}
-	backgroundTaskSession.taskMutex.Lock()
-	defer backgroundTaskSession.taskMutex.Unlock()
-	if !backgroundTaskSession.backgroundTask {
-		return nil
+}
+
+// resetReplayState 清空全局任务会话的回放缓冲与上一任务遗留结果，在新任务开始时调用。
+func (s *appSession) resetReplayState() {
+	s.replayMutex.Lock()
+	s.taskLogs = nil
+	s.scanReplay = nil
+	s.testReplay = nil
+	s.speedReplay = nil
+	s.nsbLiveReplay = nil
+	s.dcReplay = nil
+	s.nsbFinalReplay = nil
+	s.replayMutex.Unlock()
+	s.scanMutex.Lock()
+	s.scanResults = nil
+	s.scanMutex.Unlock()
+	s.testMutex.Lock()
+	s.testResults = nil
+	s.testMutex.Unlock()
+	s.nsbMutex.Lock()
+	s.nsbHeaders = nil
+	s.nsbRows = nil
+	s.nsbCompletePayload = nil
+	s.nsbMutex.Unlock()
+	s.progressMutex.Lock()
+	s.progressState = map[string][2]int{}
+	s.progressPrintTime = map[string]time.Time{}
+	s.progressPrintPercent = map[string]float64{}
+	s.progressMutex.Unlock()
+	s.logThrottle = logThrottle{}
+	// 任务级临时状态复位：上一任务的 R2 上传备注不能串入下一任务的 last_run。
+	// 注意 r2AutoUpload 不在此复位——它由启动处理器在 startTaskNamed 之前写入，
+	// 在这里清空会把刚设置的启动参数清掉（顺序：handler 赋值 → beginTask）。
+	s.setUploadNote("")
+}
+
+// taskRestorePayload 是新连接恢复视图时下发的任务状态与元信息。
+type taskRestorePayload struct {
+	HasTask  bool                   `json:"hasTask"`
+	Running  bool                   `json:"running"`
+	Label    string                 `json:"label"`
+	Mode     string                 `json:"mode"`
+	Snapshot backgroundTaskSnapshot `json:"snapshot"`
+	Logs     []string               `json:"logs"`
+}
+
+// taskRestoreChunk 携带一类回放数据的一批行，避免单条消息过大。
+type taskRestoreChunk struct {
+	Kind string      `json:"kind"`
+	Rows interface{} `json:"rows"`
+}
+
+// buildTaskRestore 汇总全局任务会话的当前状态与回放数据，供新连接恢复页面。
+// 快照先经 taskMutex 读取，再在 replayMutex 内拷贝缓冲并读取序号——避免与
+// beginTask（taskMutex→replayMutex）形成锁序倒置；恢复载荷与增量消息不重不漏
+// 的不变量只依赖缓冲拷贝与序号读取同锁。
+func (s *appSession) buildTaskRestore() (taskRestorePayload, []taskRestoreChunk, uint64) {
+	snapshot := s.backgroundSummary()
+	s.replayMutex.Lock()
+	defer s.replayMutex.Unlock()
+	logs := append([]string(nil), s.taskLogs...)
+	scan := append([]ScanResult(nil), s.scanReplay...)
+	test := append([]TestResult(nil), s.testReplay...)
+	speed := append([]map[string]string(nil), s.speedReplay...)
+	nsbLive := append([]nsbScanMessage(nil), s.nsbLiveReplay...)
+	dc := append([]DataCenterInfo(nil), s.dcReplay...)
+	var nsbFinal *nsbCSVCompletePayload
+	if s.nsbFinalReplay != nil {
+		payloadCopy := *s.nsbFinalReplay
+		nsbFinal = &payloadCopy
 	}
-	return backgroundTaskSession
+	lastSeq := s.msgSeq
+
+	payload := taskRestorePayload{
+		HasTask:  snapshot.Label != "" || len(scan) > 0 || len(test) > 0 || len(speed) > 0 || len(nsbLive) > 0 || nsbFinal != nil,
+		Running:  snapshot.Running,
+		Label:    snapshot.Label,
+		Mode:     snapshot.Mode,
+		Snapshot: snapshot,
+		Logs:     logs,
+	}
+	chunks := make([]taskRestoreChunk, 0, 8)
+	chunks = appendTaskRestoreChunks(chunks, "scan", len(scan), func(from, to int) interface{} { return scan[from:to] })
+	chunks = appendTaskRestoreChunks(chunks, "test", len(test), func(from, to int) interface{} { return test[from:to] })
+	chunks = appendTaskRestoreChunks(chunks, "speed", len(speed), func(from, to int) interface{} { return speed[from:to] })
+	chunks = appendTaskRestoreChunks(chunks, "nsbLive", len(nsbLive), func(from, to int) interface{} { return nsbLive[from:to] })
+	chunks = appendTaskRestoreChunks(chunks, "dc", len(dc), func(from, to int) interface{} { return dc[from:to] })
+	if nsbFinal != nil {
+		chunks = appendTaskRestoreChunks(chunks, "nsbHeaders", len(nsbFinal.Headers), func(from, to int) interface{} { return nsbFinal.Headers[from:to] })
+		chunks = appendTaskRestoreChunks(chunks, "nsbRows", len(nsbFinal.Rows), func(from, to int) interface{} { return nsbFinal.Rows[from:to] })
+	}
+	return payload, chunks, lastSeq
+}
+
+func appendTaskRestoreChunks(chunks []taskRestoreChunk, kind string, total int, slice func(from, to int) interface{}) []taskRestoreChunk {
+	if total == 0 {
+		return chunks
+	}
+	for from := 0; from < total; from += taskRestoreChunkLen {
+		to := from + taskRestoreChunkLen
+		if to > total {
+			to = total
+		}
+		chunks = append(chunks, taskRestoreChunk{Kind: kind, Rows: slice(from, to)})
+	}
+	return chunks
 }
 
 func (s *appSession) backgroundSummary() backgroundTaskSnapshot {
@@ -319,17 +456,10 @@ func (s *appSession) backgroundSummary() backgroundTaskSnapshot {
 	return s.backgroundSnapshot
 }
 
-func (s *appSession) attachWebSocket(conn *websocket.Conn) {
-	s.wsMutex.Lock()
-	defer s.wsMutex.Unlock()
-	s.ws = conn
-	s.wsClosed = false
-}
-
 func (s *appSession) updateBackgroundSnapshotFromMessage(msgType string, data interface{}) {
 	s.taskMutex.Lock()
 	defer s.taskMutex.Unlock()
-	if !s.isTaskRunning && !s.backgroundTask {
+	if !s.isTaskRunning {
 		return
 	}
 	now := time.Now()
@@ -398,10 +528,6 @@ func (s *appSession) applyBackgroundMessageLocked(msgType string, data interface
 	case "speed_test_result":
 		s.backgroundSnapshot.SpeedCount++
 		s.updateBackgroundSpeedStatsLocked(data)
-	case "test_result":
-		s.backgroundSnapshot.TestCount++
-		s.backgroundSnapshot.ScanSuccess++
-		s.backgroundSnapshot.ScanTotal++
 	case "scan_complete_wait_dc":
 		if list, ok := data.([]DataCenterInfo); ok {
 			s.backgroundSnapshot.DCCount = len(list)
@@ -433,14 +559,6 @@ func (s *appSession) applyBackgroundMessageLocked(msgType string, data interface
 			s.nsbCompletePayload = &payload
 			s.nsbMutex.Unlock()
 		}
-	case "task_stopped":
-		s.backgroundSnapshot.Phase = "已停止"
-		s.backgroundSnapshot.Message = "任务已停止"
-		s.backgroundSnapshot.Running = false
-	case "task_complete":
-		s.backgroundSnapshot.Phase = "完成"
-		s.backgroundSnapshot.Message = "任务完成"
-		s.backgroundSnapshot.Running = false
 	}
 }
 

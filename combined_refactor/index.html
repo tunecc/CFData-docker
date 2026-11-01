@@ -438,37 +438,6 @@ label { font-size: 12px; color: var(--muted); }
 }
 @keyframes badge-breath { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
 
-/* ---------------- 后台任务卡 ---------------- */
-
-.background-status-card {
-    display: none;
-    border: 1px solid color-mix(in srgb, var(--prepare) 30%, transparent);
-    border-radius: var(--radius);
-    padding: 12px;
-    background: color-mix(in srgb, var(--prepare) 5%, var(--card));
-}
-.background-status-card.show { display: block; }
-.background-status-title { font-size: 13px; font-weight: 700; margin-bottom: 8px; }
-.background-status-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.background-status-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-}
-.background-status-item {
-    background: color-mix(in srgb, var(--fg) 4%, transparent);
-    border-radius: var(--radius-sm);
-    padding: 7px 9px;
-    min-width: 0;
-}
-.background-status-label { display: block; font-size: 10px; color: var(--muted); }
-.background-status-value { font-size: 13px; font-weight: 700; word-break: break-all; }
-
-.background-confirm-card { display: none; }
-.background-confirm-card.show { display: block; }
-.background-confirm-text { font-size: 12px; color: var(--muted); line-height: 1.7; margin: 6px 0 10px; }
-.background-confirm-actions { display: flex; gap: 8px; }
-
 /* ---------------- 日志（终端风） ---------------- */
 
 .log-card { position: relative; }
@@ -1101,7 +1070,6 @@ h3 {
     .config-col { position: static; height: auto; }
     .cfg-panel { flex: 0 0 auto; }
     .cfg-body { flex: 0 0 auto; overflow-y: visible; }
-    .background-status-grid { grid-template-columns: 1fr 1fr; }
     .settings-grid { grid-template-columns: 1fr; }
     .modal-grid { grid-template-columns: 1fr; }
     .result-panel-section { grid-template-columns: 1fr; }
@@ -1277,17 +1245,6 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
 }
 .action-btn.export-btn:hover { background: color-mix(in srgb, var(--accent) 18%, transparent); }
 
-.background-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 8px; }
-.background-stat-cell {
-    background: color-mix(in srgb, var(--fg) 4%, transparent);
-    border-radius: var(--radius-sm);
-    padding: 7px 9px;
-    min-width: 0;
-}
-.background-stat-name { display: block; font-size: 10px; color: var(--muted); }
-.background-stat-number { font-size: 14px; font-weight: 700; }
-.background-status-wide-full { grid-column: span 2; }
-
 .no-transition, .no-transition * { transition: none !important; }
 
 @keyframes stripe {
@@ -1339,20 +1296,6 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                     </div>
             <button id="btnStart" class="btn hidden" onclick="startTask()"><span id="btnStartSpinner"
                     class="hidden"></span><span id="btnStartLabel">✨ 开始扫描与测试</span></button>
-            <button id="btnRunInBackground" class="action-btn export-btn" onclick="runTaskInBackground()" style="display:none;margin-top:10px;">🕘 转入后台运行</button>
-            <div class="background-status-card background-confirm-card" id="backgroundConfirmCard">
-                <div class="background-status-title">确认转入后台运行？</div>
-                <div class="background-confirm-text">
-                    <div>转入后台后，任务会继续运行，关闭或刷新页面不会中断，任务完成后会渲染最终结果。</div>
-                    <div>重新打开页面时，只会显示任务状态和当前进度，不会回放断开期间的表格数据。</div>
-                    <div>这里不会做“后台恢复后同步全部历史数据”，因为大量结果一次性回传可能导致浏览器卡死或崩溃。</div>
-                    <div>如果测试数据量很大，建议使用 CLI 模式。</div>
-                </div>
-                <div class="background-confirm-actions">
-                    <button class="action-btn export-btn" onclick="confirmRunTaskInBackground()">确认转入后台</button>
-                    <button class="action-btn" onclick="hideBackgroundConfirmCard()">取消</button>
-                </div>
-            </div>
                 </div>
                 <div style="margin-top:12px;">
         <div class="progress-container" id="progressBox">
@@ -1362,19 +1305,6 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                 </div>
                 <div class="last-run-line" id="lastRunLine" style="display:none;"></div>
             </div>
-        <div class="background-status-card" id="backgroundStatusCard">
-            <div class="background-status-head">
-                <div class="background-status-title" id="backgroundStatusTitle">🕘 后台任务运行中</div>
-                <button class="action-btn export-btn" id="btnFollowBackground" onclick="followBackgroundTask()">📡 跟随实时数据</button>
-            </div>
-            <div class="background-status-grid">
-                <div class="background-status-item" style="grid-column:1/-1;"><span class="background-status-label">数据来源</span><div class="background-status-value" id="backgroundSource">-</div></div>
-                <div class="background-status-item" style="grid-column:span 2;"><span class="background-status-label">阶段</span><div class="background-status-value" id="backgroundPhase">-</div></div>
-                <div class="background-status-item" style="grid-column:span 2;"><span class="background-status-label">进度</span><div class="background-status-value" id="backgroundProgressText">-</div></div>
-                <div class="background-status-item background-status-wide-full"><span class="background-status-label">扫描结果</span><div class="background-status-value" id="backgroundResultCount">0</div></div>
-                <div class="background-status-item background-status-wide-full"><span class="background-status-label">测速结果</span><div class="background-status-value" id="backgroundSpeedCount">0</div></div>
-            </div>
-        </div>
             <div class="run-panels">
                 <div class="run-tabs">
                     <div class="run-tab active" id="runTabLog" onclick="nzShowRunPanel('log')">📜 运行日志</div>
@@ -2374,10 +2304,12 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
         let officialTestCompletePending = false;
         let officialSpeedEndedByRateLimit = false;
         let officialContinueSpeedUnlocked = false;
-        let backgroundTaskActive = false;
-        let backgroundTaskFollowing = false;
-        let backgroundStatusTimer = null;
-        let backgroundTaskFocusedOnce = false;
+        // 任务恢复状态：连接建立后服务端下发 task_restored / task_restore_chunk /
+        // task_restore_done，前端据此重建运行视图；seq 用于过滤已包含在恢复载荷里的旧消息
+        let taskRestorePending = false;
+        let taskRestoreLastSeq = 0;
+        let taskRestoreBuffer = [];
+        let taskRestoreData = null;
         let webDebugMode = false;
         let webDebugErrors = [];
         let currentSpeedTestingIP = '';
@@ -3252,6 +3184,9 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                 updateStatus('已连接服务器', true);
                 log('已连接服务器');
                 initThemeFromStorage();
+                // 等待服务端下发任务恢复载荷；期间带 seq 的任务消息先缓冲
+                taskRestorePending = true;
+                taskRestoreBuffer = [];
             };
             ws.onmessage = (event) => {
                 try {
@@ -3265,11 +3200,7 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
             ws.onclose = () => {
                 clearStopWatchdog();
                 resetCurrentSpeedButton();
-                if (backgroundTaskActive) {
-                    log('连接断开，后台任务将继续运行');
-                } else if (isTaskRunning || officialBatchSpeedRunning || isStoppingTask) {
-                    resetStoppedTaskUI('连接断开，当前任务状态已重置');
-                }
+                // 任务在服务端继续运行；重连后由任务恢复载荷自动重建视图
                 updateStatus('连接断开，3秒后重连...', false);
                 log('连接断开，正在重连...');
                 setTimeout(connect, 3000);
@@ -3685,156 +3616,69 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                 sp.className = 'btn-spinner';
             }
             btn.disabled = false;
-            updateBackgroundButton();
         }
 
-        function updateBackgroundButton() {
-            const btn = document.getElementById('btnRunInBackground');
-            if (!btn) return;
-            const visible = isTaskRunning && !backgroundTaskActive;
-            btn.style.display = visible ? 'inline-flex' : 'none';
-            btn.disabled = isStoppingTask;
-            if (!visible) hideBackgroundConfirmCard();
-        }
+        // ---------------- 任务恢复（连接建立后自动重建运行视图） ----------------
 
-        function runTaskInBackground() {
-            if (!isTaskRunning) return;
-            const card = document.getElementById('backgroundConfirmCard');
-            if (card) card.classList.add('active');
-        }
-
-        function hideBackgroundConfirmCard() {
-            const card = document.getElementById('backgroundConfirmCard');
-            if (card) card.classList.remove('active');
-        }
-
-        function confirmRunTaskInBackground() {
-            if (!isTaskRunning) return;
-            if (!wsSend({ type: 'run_in_background', data: {} })) {
-                showNoticeCard('连接未就绪，请等待重连后再试');
-                return;
-            }
-            hideBackgroundConfirmCard();
-            updateBackgroundButton();
-        }
-
-        function stopBackgroundTask() {
-            if (!wsSend({ type: 'stop_task', data: {} })) {
-                showNoticeCard('连接未就绪，无法发送停止命令');
-                return;
-            }
-            isStoppingTask = true;
-            showStoppingProgress();
-            startStopWatchdog();
-        }
-
-        function followBackgroundTask() {
-            if (!wsSend({ type: 'follow_background_task', data: {} })) {
-                showNoticeCard('连接未就绪，请等待重连后再试');
-                return;
-            }
-        }
-
-        function startBackgroundStatusPolling() {
-            if (backgroundStatusTimer) return;
-            backgroundStatusTimer = window.setInterval(() => {
-                if (!backgroundTaskActive || backgroundTaskFollowing) return;
-                wsSend({ type: 'get_background_task_status', data: {} });
-            }, 1000);
-        }
-
-        function stopBackgroundStatusPolling() {
-            if (!backgroundStatusTimer) return;
-            window.clearInterval(backgroundStatusTimer);
-            backgroundStatusTimer = null;
-        }
-
-        function applyBackgroundSnapshot(snapshot) {
-            if (!snapshot) return;
-            backgroundTaskActive = !!snapshot.running;
-            isTaskRunning = !!snapshot.running;
+        function applyTaskRestoredState(data) {
+            // 恢复载荷元信息：任务状态、进度与参数先行恢复，结果表格在 task_restore_done 统一重建
+            taskRestoreData = { scan: [], test: [], speed: [], nsbLive: [], dc: [], nsbHeaders: [], nsbRows: [] };
+            if (!data || !data.hasTask) return;
+            const snapshot = data.snapshot || {};
+            const mode = data.mode;
+            isTaskRunning = !!data.running;
             isStoppingTask = false;
-            renderBackgroundStatusCard(snapshot);
-            if (!snapshot.running) {
-                backgroundTaskActive = true;
-                isStoppingTask = false;
-                resetButton('✨ 开始扫描与测试');
-                updateBackgroundButton();
-                stopBackgroundStatusPolling();
-                if (snapshot.mode === 'official' || snapshot.mode === 'nsb') {
-                    if (currentMode !== snapshot.mode) switchMode(snapshot.mode);
-                    runningTaskMode = snapshot.mode;
-                    runningTaskLabel = snapshot.label || '后台任务';
-                    runningTaskTab = 'scan';
-                }
-                return;
-            }
-            if ((snapshot.mode === 'official' || snapshot.mode === 'nsb') && !backgroundTaskFocusedOnce) {
-                backgroundTaskFocusedOnce = true;
-                if (currentMode !== snapshot.mode) switchMode(snapshot.mode);
-                runningTaskMode = snapshot.mode;
-            }
-            if (snapshot.mode === 'official' || snapshot.mode === 'nsb') runningTaskMode = snapshot.mode;
-            runningTaskLabel = snapshot.label || '后台任务';
+            runningTaskMode = mode || '';
+            runningTaskLabel = data.label || '任务';
             runningTaskTab = 'scan';
-            applyBackgroundParams(snapshot.params || {});
-            setStartLoading(getRunningButtonText());
+            if ((mode === 'official' || mode === 'nsb') && currentMode !== mode) switchMode(mode);
+            if (snapshot.params) applyBackgroundParams(snapshot.params);
             progressBox.style.display = 'block';
-            updateProgress(snapshot.current || 0, snapshot.total || 1, snapshot.phase || '后台任务');
-            if (!backgroundTaskFollowing) startBackgroundStatusPolling();
+            if (data.running) {
+                setStartLoading(getRunningButtonText());
+                updateProgress(snapshot.current || 0, snapshot.total || 1, snapshot.phase || '任务运行中');
+            } else {
+                resetButton('✨ 开始扫描与测试');
+                updateProgress(snapshot.current || 0, Math.max(snapshot.total || 0, snapshot.current || 0, 1), snapshot.phase || '完成');
+            }
+            (data.logs || []).forEach((line) => log(line));
         }
 
-        function renderBackgroundStatusCard(snapshot) {
-            const card = document.getElementById('backgroundStatusCard');
-            if (!card) return;
-            const isComplete = !snapshot.running && snapshot.phase && snapshot.phase !== '-' && snapshot.phase !== '处理中' && snapshot.phase !== '扫描中' && snapshot.phase !== '详细测试中' && snapshot.phase !== '测速中';
-            card.classList.toggle('active', !!snapshot.running || isComplete);
-            const title = isComplete ? `✅ ${snapshot.phase || '任务完成'}` : `🕘 ${snapshot.label || '后台任务运行中'}`;
-            document.getElementById('backgroundStatusTitle').textContent = title;
-            const source = snapshot.params?.sourceURL || snapshot.params?.fileName || (snapshot.mode === 'official' ? '官方内置地址库' : '') || snapshot.params?.outFile || snapshot.params?.dc || '-';
-            document.getElementById('backgroundSource').textContent = source;
-            const phaseText = snapshot.phase || '-';
-            let dcSuffix = '';
-            if (snapshot.dcInfo) {
-                dcSuffix = ` [${snapshot.dcInfo}]`;
-            } else if ((snapshot.testCount || 0) > 0 || (snapshot.dcCount || 0) > 0) {
-                dcSuffix = ` (详细: ${snapshot.testCount || 0} / DC: ${snapshot.dcCount || 0})`;
+        function applyTaskRestoreChunk(chunk) {
+            if (!taskRestoreData || !chunk) return;
+            const rows = chunk.rows || [];
+            if (!Array.isArray(taskRestoreData[chunk.kind])) return;
+            taskRestoreData[chunk.kind] = taskRestoreData[chunk.kind].concat(rows);
+        }
+
+        function applyTaskRestoreDone(data) {
+            taskRestoreLastSeq = (data && data.lastSeq) || 0;
+            const buffered = taskRestoreBuffer;
+            taskRestoreBuffer = [];
+            taskRestorePending = false;
+            const d = taskRestoreData;
+            taskRestoreData = null;
+            if (d) {
+                scanData = d.scan;
+                testData = d.test;
+                dcList = d.dc;
+                nsbHeaders = d.nsbHeaders;
+                nsbRows = d.nsbRows;
+                nsbLiveRows = [];
+                nsbLiveIndex = {};
+                nsbLiveRowElements = {};
+                d.nsbLive.forEach((row) => addNSBLiveResult(row || {}, false));
+                updateBadge('scanCount', currentMode === 'nsb' ? nsbLiveRows.length : scanData.length);
+                updateBadge('testCount', testData.length);
+                if (d.speed.length) d.speed.forEach((res) => updateSpeedResult(res || {}));
+                if (dcList.length && currentMode === 'official') showDCSelection(dcList);
+                showRunningTaskView();
             }
-            document.getElementById('backgroundPhase').textContent = phaseText + dcSuffix;
-            const current = snapshot.current || 0;
-            const total = snapshot.total || 0;
-            const percent = Number.isFinite(snapshot.percent) ? snapshot.percent : (total > 0 ? current / total * 100 : 0);
-            document.getElementById('backgroundProgressText').textContent = total > 0 ? `${current}/${total} (${Math.round(percent)}%)` : '-';
-            const formatStats = (success, failed, qualified) => {
-                const safeSuccess = success || 0;
-                const safeFailed = failed || 0;
-                const safeTotal = safeSuccess + safeFailed;
-                const safeQualified = qualified ?? safeSuccess;
-                const qualifiedRate = safeTotal > 0 ? `${Math.round(safeQualified / safeTotal * 100)}%` : '-';
-                return [
-                    ['测试数', safeTotal],
-                    ['合格率', qualifiedRate],
-                    ['成功数', safeSuccess],
-                    ['失败数', safeFailed],
-                ].map(([label, value]) => `<span class="background-stat-cell"><span class="background-stat-name">${label}</span><span class="background-stat-number">${value}</span></span>`).join('');
-            };
-            const scanSuccess = snapshot.scanSuccess || 0;
-            const scanFailed = snapshot.scanFailed || 0;
-            const speedSuccess = snapshot.speedSuccess || 0;
-            const speedFailed = snapshot.speedFailed || 0;
-            document.getElementById('backgroundResultCount').innerHTML = `<div class="background-stat-grid">${formatStats(scanSuccess, scanFailed, scanSuccess)}</div>`;
-            document.getElementById('backgroundSpeedCount').innerHTML = `<div class="background-stat-grid">${formatStats(speedSuccess, speedFailed, snapshot.speedQualified || 0)}</div>`;
-            const followBtn = document.getElementById('btnFollowBackground');
-            if (followBtn) {
-                followBtn.disabled = backgroundTaskFollowing;
-                if (backgroundTaskFollowing) {
-                    followBtn.textContent = '📡 正在跟随实时数据';
-                } else if (isComplete) {
-                    followBtn.textContent = '📥 获取结果';
-                } else {
-                    followBtn.textContent = '📡 跟随实时数据';
-                }
-            }
+            // 回放恢复期间缓冲的增量消息：丢弃已包含在恢复载荷里的旧消息，其余按序应用
+            buffered.forEach((msg) => {
+                if (typeof msg.seq === 'number' && msg.seq <= taskRestoreLastSeq) return;
+                handleMessage(msg);
+            });
         }
 
         function applyBackgroundParams(params) {
@@ -3900,26 +3744,14 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
         }
 
         function finishRunningTask(buttonText = '✨ 开始扫描与测试') {
-            const wasBackgroundTask = backgroundTaskActive;
             isTaskRunning = false;
             isStoppingTask = false;
             dcLibraryScanning = false;
             const dcLibraryBtn = document.getElementById('btnUpdateDcLibrary');
             if (dcLibraryBtn) dcLibraryBtn.disabled = false;
-            if (!wasBackgroundTask) {
-                backgroundTaskActive = false;
-            }
-            backgroundTaskFollowing = false;
-            backgroundTaskFocusedOnce = false;
-            stopBackgroundStatusPolling();
             clearStopWatchdog();
             clearRunningTaskLabel();
             resetButton(buttonText);
-            updateBackgroundButton();
-            if (!wasBackgroundTask) {
-                const card = document.getElementById('backgroundStatusCard');
-                if (card) card.classList.remove('active');
-            }
             updateNSBCompactToggle();
         }
 
@@ -5067,6 +4899,7 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
         }
 
         function confirmStopCurrentTask() {
+            if (!isTaskRunning) return;
             if (!wsSend({ type: 'stop_task', data: {} })) {
                 showNoticeCard('连接未就绪，无法发送停止命令');
                 return;
@@ -5240,11 +5073,6 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
             officialContinueSpeedUnlocked = false;
             isStoppingTask = false;
 
-            backgroundTaskActive = false;
-            backgroundTaskFollowing = false;
-            const card = document.getElementById('backgroundStatusCard');
-            if (card) card.classList.remove('active');
-
             isTaskRunning = true;
             runningTaskLabel = '官方优选扫描';
             runningTaskMode = 'official';
@@ -5290,21 +5118,6 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                 return;
             }
             switchTab('scan');
-        }
-
-        function maybeStartOfficialAutoTest() {
-            if (!officialAutoSpeedPending || officialAutoStage !== 'scan') return false;
-            const targetDC = getOfficialTargetDC();
-            const selected = targetDC ? dcList.find((dc) => String(dc.DataCenter || '').toUpperCase() === targetDC) : dcList[0];
-            if (!selected) {
-                log(targetDC ? `官方自动测速未找到数据中心: ${targetDC}` : '官方自动测速没有可用数据中心');
-                officialAutoSpeedPending = false;
-                officialAutoStage = '';
-                return false;
-            }
-            officialAutoStage = 'test';
-            selectDC(selected.DataCenter);
-            return true;
         }
 
         function startNSBTask() {
@@ -5359,12 +5172,7 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
             runningTaskLabel = '非标优选';
             runningTaskMode = 'nsb';
             runningTaskTab = 'scan';
-            
-            backgroundTaskActive = false;
-            backgroundTaskFollowing = false;
-            const card = document.getElementById('backgroundStatusCard');
-            if (card) card.classList.remove('active');
-            
+
             updateNSBCompactToggle();
             setStartLoading(getRunningButtonText(), 'linear-gradient(135deg, var(--error-color), #dc2626)', '0 4px 12px rgba(239, 68, 68, 0.3), inset 0 1px 1px rgba(255,255,255,0.2)');
             renderScanHeaders('nsb');
@@ -7013,6 +6821,27 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
         }
 
         function handleMessage(msg) {
+            // 任务恢复载荷：元信息 → 分批结果数据 → 完成消息，按序处理
+            if (msg.type === 'task_restored') {
+                applyTaskRestoredState(msg.data || {});
+                return;
+            }
+            if (msg.type === 'task_restore_chunk') {
+                applyTaskRestoreChunk(msg.data || {});
+                return;
+            }
+            if (msg.type === 'task_restore_done') {
+                applyTaskRestoreDone(msg.data || {});
+                return;
+            }
+            // 带 seq 的任务消息：恢复期间先缓冲；恢复完成后丢弃已包含在恢复载荷里的旧消息
+            if (typeof msg.seq === 'number' && msg.seq > 0) {
+                if (taskRestorePending) {
+                    taskRestoreBuffer.push(msg);
+                    return;
+                }
+                if (taskRestoreLastSeq && msg.seq <= taskRestoreLastSeq) return;
+            }
             switch (msg.type) {
                 case 'init_config':
                     defaultSpeedTestUrl = msg.data.speedTestURL || defaultSpeedTestUrl;
@@ -7092,11 +6921,14 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                     break;
                 case 'scan_complete_wait_dc':
                     const wasStoppingScan = isStoppingTask;
-                    finishRunningTask('✨ 重新开始扫描');
+                    // 自动测速流水线由服务端在任务内继续执行，保持运行态等后续阶段
+                    if (!officialAutoSpeedPending) {
+                        finishRunningTask('✨ 重新开始扫描');
+                    }
                     if (currentMode === 'official') {
                         sortAndRenderScanResults();
                         showDCSelection(msg.data);
-                        if (!wasStoppingScan) {
+                        if (!wasStoppingScan && !officialAutoSpeedPending) {
                             completeProgressWithCurrentCount('扫描完成，选择数据中心');
                         }
                     }
@@ -7123,10 +6955,8 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                         onTestComplete();
                         officialTestCompletePending = true;
                         updateProgress(msg.data.length, msg.data.length, '测试完成');
-                        if (backgroundTaskFollowing) {
-                            switchTab('test');
-                        }
-                        if (officialAutoSpeedPending && officialAutoStage === 'test') {
+                        if (officialAutoSpeedPending) {
+                            // 自动流水线：详细测试结果的上传延后到测速完成节点，避免重复上传
                             officialAutoStage = 'speed';
                         } else {
                             autoUploadOfficialResults();
@@ -7315,27 +7145,6 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                     autoUploadNSBResults();
                     break;
 
-                case 'background_task_enabled':
-                case 'background_task_found':
-                case 'background_task_update':
-                    applyBackgroundSnapshot(msg.data || {});
-                    if (msg.type === 'background_task_found') log('检测到后台任务，已显示状态卡片');
-                    break;
-
-                case 'background_task_following':
-                    backgroundTaskFollowing = true;
-                    stopBackgroundStatusPolling();
-                    applyBackgroundSnapshot(msg.data || {});
-                    log('已开始跟随后台任务实时数据');
-                    break;
-
-                case 'background_task_missing':
-                    backgroundTaskActive = false;
-                    backgroundTaskFollowing = false;
-                    stopBackgroundStatusPolling();
-                    finishRunningTask('✨ 开始扫描与测试');
-                    break;
-
                 case 'task_stopped':
                     if (nsbStopHandledByComplete) {
                         nsbStopHandledByComplete = false;
@@ -7349,13 +7158,8 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                     recordWebDebugError('server_error', msg.data);
                     isStoppingTask = false;
                     if (String(msg.data || '').includes('已有任务正在运行')) {
-                        if (officialAutoSpeedPending && officialAutoStage === 'test') {
-                            officialAutoStage = 'scan';
-                            currentTestingDC = '';
-                            isTaskRunning = false;
-                            showDCSelection(dcList);
-                            window.setTimeout(maybeStartOfficialAutoTest, 300);
-                } else if (officialBatchSpeedRunning) {
+                        // 自动流水线由服务端续跑，前端无需重试串联
+                        if (officialBatchSpeedRunning) {
                     officialBatchSpeedRunning = false;
                     finishRunningTask('✨ 开始扫描与测试');
                 } else if (nsbBatchSpeedRunning) {
@@ -7460,13 +7264,7 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                     } else {
                         completeProgressWithCurrentCount('完成');
                     }
-                    if (currentMode === 'official' && officialAutoSpeedPending && officialAutoStage === 'scan') {
-                        window.setTimeout(maybeStartOfficialAutoTest, 100);
-                    } else if (currentMode === 'official' && officialAutoSpeedPending && officialAutoStage === 'speed') {
-                        window.setTimeout(() => {
-                            if (!startOfficialBatchSpeed(true)) autoUploadOfficialResults();
-                        }, 100);
-                    }
+                    // 自动测速流水线由服务端在任务内续跑，前端不再串联发起后续任务
                     break;
             }
         }

@@ -231,18 +231,17 @@ type resetConfigResult struct {
 
 type appSession struct {
 	ws                   *websocket.Conn
+	client               *wsClient
 	emit                 func(msgType string, data interface{})
-	wsMutex              sync.Mutex
+	broadcast            func(msgType string, data interface{})
 	taskMutex            sync.Mutex
 	isTaskRunning        bool
 	taskCancel           context.CancelFunc
 	r2AutoUpload         bool
-	backgroundTask       bool
 	backgroundSnapshot   backgroundTaskSnapshot
 	logThrottle          logThrottle
 	uploadNoteMutex      sync.Mutex
 	uploadNote           string
-	wsClosed             bool
 	scanMutex            sync.Mutex
 	scanResults          []ScanResult
 	testMutex            sync.Mutex
@@ -255,6 +254,15 @@ type appSession struct {
 	progressState        map[string][2]int
 	progressPrintTime    map[string]time.Time
 	progressPrintPercent map[string]float64
+	replayMutex          sync.Mutex
+	msgSeq               uint64
+	taskLogs             []string
+	scanReplay           []ScanResult
+	testReplay           []TestResult
+	speedReplay          []map[string]string
+	nsbLiveReplay        []nsbScanMessage
+	dcReplay             []DataCenterInfo
+	nsbFinalReplay       *nsbCSVCompletePayload
 }
 
 type backgroundTaskSnapshot struct {

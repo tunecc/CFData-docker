@@ -12,6 +12,7 @@ import (
 	"os"
 	"runtime/debug"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -42,6 +43,88 @@ func buildInitConfigPayload() map[string]interface{} {
 	}
 }
 
+// wsClient 包装一条 WebSocket 连接的写入：普通会话消息与全局任务广播共用
+// 同一把写锁，避免并发写同一连接。
+type wsClient struct {
+	conn   *websocket.Conn
+	mu     sync.Mutex
+	closed bool
+}
+
+var wsClientMutex sync.Mutex
+var wsClients = make(map[*wsClient]struct{})
+
+func registerWSClient(conn *websocket.Conn) *wsClient {
+	client := &wsClient{conn: conn}
+	wsClientMutex.Lock()
+	wsClients[client] = struct{}{}
+	wsClientMutex.Unlock()
+	return client
+}
+
+func unregisterWSClient(client *wsClient) {
+	wsClientMutex.Lock()
+	delete(wsClients, client)
+	wsClientMutex.Unlock()
+}
+
+func (c *wsClient) writePayload(payload []byte) bool {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if c.closed {
+		return false
+	}
+	c.conn.SetWriteDeadline(time.Now().Add(wsWriteDeadline))
+	if err := c.conn.WriteMessage(websocket.TextMessage, payload); err != nil {
+		c.closed = true
+		c.conn.Close()
+		return false
+	}
+	return true
+}
+
+func (c *wsClient) ping() bool {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if c.closed {
+		return false
+	}
+	c.conn.SetWriteDeadline(time.Now().Add(wsWriteDeadline))
+	return c.conn.WriteControl(websocket.PingMessage, nil, time.Now().Add(wsWriteDeadline)) == nil
+}
+
+// broadcastTaskEnvelope 把全局任务消息写到所有在线连接；单条连接写失败只
+// 关闭该连接，不影响任务与其他订阅端。
+func broadcastTaskEnvelope(seq uint64, msgType string, data interface{}) {
+	msg := map[string]interface{}{"type": msgType, "data": data, "seq": seq}
+	payload, err := json.Marshal(msg)
+	if err != nil {
+		recordProgramDebugError("task_broadcast_marshal", err.Error())
+		return
+	}
+	wsClientMutex.Lock()
+	targets := make([]*wsClient, 0, len(wsClients))
+	for client := range wsClients {
+		targets = append(targets, client)
+	}
+	wsClientMutex.Unlock()
+	for _, client := range targets {
+		client.writePayload(payload)
+	}
+}
+
+// sendTaskRestore 把全局任务会话的当前状态与回放数据下发给新连接：先发任
+// 务状态与日志，再分批发送结果数据，最后以带序号的完成消息收尾，前端据此
+// 恢复到与持续在线一致的视图。
+func sendTaskRestore(session *appSession) {
+	payload, chunks, lastSeq := taskSession.buildTaskRestore()
+	session.sendWSMessage("task_restored", payload)
+	for _, chunk := range chunks {
+		session.sendWSMessage("task_restore_chunk", chunk)
+	}
+	session.sendWSMessage("task_restore_done", map[string]interface{}{"lastSeq": lastSeq})
+}
+
 func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -49,11 +132,11 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	session := &appSession{ws: ws}
+	client := registerWSClient(ws)
+	session := &appSession{ws: ws, client: client}
 	defer func() {
-		if session.shouldCancelOnDisconnect() {
-			session.cancelTaskSilently()
-		}
+		// 任务运行在全局会话上，连接断开不取消任务；只清理连接自身的资源
+		unregisterWSClient(client)
 		ws.Close()
 	}()
 
@@ -73,14 +156,7 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 			case <-pingStop:
 				return
 			case <-ticker.C:
-				session.wsMutex.Lock()
-				if session.wsClosed {
-					session.wsMutex.Unlock()
-					return
-				}
-				err := ws.WriteControl(websocket.PingMessage, nil, time.Now().Add(wsWriteDeadline))
-				session.wsMutex.Unlock()
-				if err != nil {
+				if !client.ping() {
 					return
 				}
 			}
@@ -88,9 +164,7 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 	})
 
 	session.sendWSMessage("init_config", buildInitConfigPayload())
-	if backgroundSession := currentBackgroundTaskSession(); backgroundSession != nil {
-		session.sendWSMessage("background_task_found", backgroundSession.backgroundSummary())
-	}
+	sendTaskRestore(session)
 	safeGo("version-check", session, func() {
 		ctx, cancel := context.WithTimeout(r.Context(), 7*time.Second)
 		defer cancel()
@@ -115,7 +189,7 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 				fmt.Printf("handler %s panic: %v\n%s\n", name, r, debug.Stack())
 				recordProgramDebugError("handler_panic", fmt.Sprintf("%s: %v\n%s", name, r, debug.Stack()))
 				session.sendWSMessage("error", fmt.Sprintf("内部错误（%s），请重试；若持续发生请查看后端日志", name))
-				session.cancelTaskSilently()
+				taskSession.cancelTaskSilently()
 			}
 		}()
 		fn(data)
@@ -145,8 +219,8 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 			targetDC := normalizeOfficialTargetDC(params.OfficialTargetDC)
 			stopCount := resolveOfficialStopCount(params.OfficialStopCount)
 			fromLibrary := params.OfficialDCFromLib
-			session.r2AutoUpload = params.R2AutoUpload
-			session.startTaskNamed("官方优选扫描", "official", map[string]interface{}{"ipType": params.IPType, "threads": params.Threads, "port": params.Port, "delay": params.Delay, "scanMode": scanMode, "autoSpeed": autoSpeed, "targetDC": targetDC, "stopCount": stopCount, "fromLibrary": fromLibrary}, func(ctx context.Context, session *appSession) {
+			taskSession.r2AutoUpload = params.R2AutoUpload
+			taskSession.startTaskNamed("官方优选扫描", "official", map[string]interface{}{"ipType": params.IPType, "threads": params.Threads, "port": params.Port, "delay": params.Delay, "scanMode": scanMode, "autoSpeed": autoSpeed, "targetDC": targetDC, "stopCount": stopCount, "fromLibrary": fromLibrary}, func(ctx context.Context, session *appSession) {
 				if fromLibrary {
 					if targetDC == "" {
 						session.sendWSMessage("error", "请选择数据中心库中的数据中心")
@@ -162,7 +236,9 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 				} else {
 					runOfficialTask(ctx, session, params.IPType, params.Threads, params.Port, params.Delay, scanMode, targetDC, stopCount)
 				}
-				if ctx.Err() != nil || !autoSpeed || !session.isBackgroundTask() {
+				// 自动测速流水线统一由服务端在任务内续跑（扫描 → 详细测试 → 批量测速），
+				// 与浏览器连接解耦：页面关闭或刷新都不会中断后续阶段
+				if ctx.Err() != nil || !autoSpeed {
 					return
 				}
 				dc := targetDC
@@ -176,7 +252,7 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 				runDetailedTest(ctx, session, dc, params.OfficialSpeedPort, params.Delay, scanMode, true)
-				if ctx.Err() != nil || !session.isBackgroundTask() || params.OfficialSpeedLimit <= 0 {
+				if ctx.Err() != nil || params.OfficialSpeedLimit <= 0 {
 					return
 				}
 				speedURL := strings.TrimSpace(params.OfficialSpeedURL)
@@ -217,8 +293,8 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 			if scanMode == "" {
 				scanMode = scanModeTCPing
 			}
-			session.r2AutoUpload = params.R2AutoUpload
-			session.startTaskNamed("官方详细测试", "official", map[string]interface{}{"dc": params.DC, "port": params.Port, "delay": params.Delay, "scanMode": scanMode}, func(ctx context.Context, session *appSession) {
+			taskSession.r2AutoUpload = params.R2AutoUpload
+			taskSession.startTaskNamed("官方详细测试", "official", map[string]interface{}{"dc": params.DC, "port": params.Port, "delay": params.Delay, "scanMode": scanMode}, func(ctx context.Context, session *appSession) {
 				runDetailedTest(ctx, session, params.DC, params.Port, params.Delay, scanMode, params.DeferR2Upload)
 			})
 		},
@@ -231,7 +307,7 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 			if params.Port <= 0 {
 				params.Port = 443
 			}
-			session.startTaskNamed("单 IP 测速", "official", map[string]interface{}{"ip": params.IP, "port": params.Port, "url": params.URL}, func(ctx context.Context, session *appSession) {
+			taskSession.startTaskNamed("单 IP 测速", "official", map[string]interface{}{"ip": params.IP, "port": params.Port, "url": params.URL}, func(ctx context.Context, session *appSession) {
 				runSpeedTest(ctx, session, params.IP, params.Port, params.URL)
 			})
 		},
@@ -253,8 +329,8 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 			if strings.TrimSpace(params.URL) == "" {
 				params.URL = speedTestURL
 			}
-			session.r2AutoUpload = params.R2AutoUpload
-			session.startTaskNamed("官方批量测速", "official", map[string]interface{}{"port": params.Port, "url": params.URL, "speedLimit": params.SpeedLimit, "speedMin": params.SpeedMin, "skipTested": params.SkipTested}, func(ctx context.Context, session *appSession) {
+			taskSession.r2AutoUpload = params.R2AutoUpload
+			taskSession.startTaskNamed("官方批量测速", "official", map[string]interface{}{"port": params.Port, "url": params.URL, "speedLimit": params.SpeedLimit, "speedMin": params.SpeedMin, "skipTested": params.SkipTested}, func(ctx context.Context, session *appSession) {
 				runOfficialSpeedBatch(ctx, session, params.Port, params.URL, params.SpeedLimit, params.SpeedMin, params.Results, params.SkipTested)
 			})
 		},
@@ -305,8 +381,8 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 			if scanMode == "" {
 				scanMode = scanModeTCPing
 			}
-			session.r2AutoUpload = params.R2AutoUpload
-			session.startTaskNamed("非标优选", "nsb", map[string]interface{}{"fileName": params.FileName, "sourceURL": params.SourceURL, "outFile": params.OutFile, "maxThreads": params.MaxThreads, "fallbackPort": params.FallbackPort, "speedTest": params.SpeedTest, "speedURL": params.SpeedURL, "enableTLS": params.EnableTLS, "delay": params.Delay, "resultLimit": params.ResultLimit, "dc": params.DC, "speedMin": params.SpeedMin, "speedLimit": params.SpeedLimit, "compact": params.Compact, "scanMode": scanMode}, func(ctx context.Context, session *appSession) {
+			taskSession.r2AutoUpload = params.R2AutoUpload
+			taskSession.startTaskNamed("非标优选", "nsb", map[string]interface{}{"fileName": params.FileName, "sourceURL": params.SourceURL, "outFile": params.OutFile, "maxThreads": params.MaxThreads, "fallbackPort": params.FallbackPort, "speedTest": params.SpeedTest, "speedURL": params.SpeedURL, "enableTLS": params.EnableTLS, "delay": params.Delay, "resultLimit": params.ResultLimit, "dc": params.DC, "speedMin": params.SpeedMin, "speedLimit": params.SpeedLimit, "compact": params.Compact, "scanMode": scanMode}, func(ctx context.Context, session *appSession) {
 				fileName := params.FileName
 				fileContent := params.FileContent
 				if hasSourceURL {
@@ -359,8 +435,8 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 			if scanMode == "" {
 				scanMode = scanModeTCPing
 			}
-			session.r2AutoUpload = params.R2AutoUpload
-			session.startTaskNamed("链路复验", "nsb", map[string]interface{}{"outFile": params.OutFile, "speedTest": params.SpeedTest, "speedLimit": params.SpeedLimit}, func(ctx context.Context, session *appSession) {
+			taskSession.r2AutoUpload = params.R2AutoUpload
+			taskSession.startTaskNamed("链路复验", "nsb", map[string]interface{}{"outFile": params.OutFile, "speedTest": params.SpeedTest, "speedLimit": params.SpeedLimit}, func(ctx context.Context, session *appSession) {
 				runNSBReallinkTask(ctx, session, params.Results, params.RelinkHost, params.SpeedTest, params.SpeedURL, params.EnableTLS, params.SpeedMin, params.SpeedLimit, params.Compact, scanMode, params.OutFile)
 			})
 		},
@@ -386,78 +462,17 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 				session.sendWSMessage("error", "没有可测速的非标结果")
 				return
 			}
-			session.r2AutoUpload = params.R2AutoUpload
-			session.startTaskNamed("非标批量测速", "nsb", map[string]interface{}{"speedTest": params.SpeedTest, "speedURL": params.SpeedURL, "enableTLS": params.EnableTLS, "speedMin": params.SpeedMin, "speedLimit": params.SpeedLimit, "skipTested": params.SkipTested, "compact": params.Compact}, func(ctx context.Context, session *appSession) {
+			taskSession.r2AutoUpload = params.R2AutoUpload
+			taskSession.startTaskNamed("非标批量测速", "nsb", map[string]interface{}{"speedTest": params.SpeedTest, "speedURL": params.SpeedURL, "enableTLS": params.EnableTLS, "speedMin": params.SpeedMin, "speedLimit": params.SpeedLimit, "skipTested": params.SkipTested, "compact": params.Compact}, func(ctx context.Context, session *appSession) {
 				runNSBSpeedBatch(ctx, session, params.Results, params.SpeedTest, params.SpeedURL, params.EnableTLS, params.SpeedMin, params.SpeedLimit, params.SkipTested, params.Compact)
 			})
 		},
 		"stop_task": func(data json.RawMessage) {
-			if backgroundSession := currentBackgroundTaskSession(); backgroundSession != nil {
-				if session != backgroundSession {
-					backgroundSession.attachWebSocket(ws)
-					session = backgroundSession
-				}
-				backgroundSession.stopTask()
-				return
-			}
-			session.stopTask()
-		},
-		"run_in_background": func(data json.RawMessage) {
-			if !session.enableBackgroundTask() {
-				session.sendWSMessage("error", "当前没有可转入后台的运行任务")
-				return
-			}
-			session.sendWSMessage("background_task_enabled", session.backgroundSummary())
-			session.sendWSMessage("log", "当前任务已转入后台运行")
-		},
-		"follow_background_task": func(data json.RawMessage) {
-			backgroundSession := currentBackgroundTaskSession()
-			if backgroundSession == nil {
-				session.sendWSMessage("error", "当前没有可跟随的后台任务")
-				return
-			}
-			backgroundSession.attachWebSocket(ws)
-			session = backgroundSession
-			snapshot := backgroundSession.backgroundSummary()
-			backgroundSession.sendWSMessage("background_task_following", snapshot)
-
-			if !snapshot.Running && snapshot.Mode == "official" {
-				backgroundSession.scanMutex.Lock()
-				scanResults := append([]ScanResult(nil), backgroundSession.scanResults...)
-				backgroundSession.scanMutex.Unlock()
-				if len(scanResults) > 0 {
-					backgroundSession.sendWSMessage("scan_complete_wait_dc", buildDCList(scanResults))
-				}
-				backgroundSession.testMutex.Lock()
-				results := append([]TestResult(nil), backgroundSession.testResults...)
-				backgroundSession.testMutex.Unlock()
-				if len(results) > 0 {
-					for _, res := range results {
-						backgroundSession.sendWSMessage("test_result", res)
-					}
-					backgroundSession.sendWSMessage("test_complete", results)
-				}
-			}
-
-			if !snapshot.Running && snapshot.Phase == "完成" {
-				backgroundSession.nsbMutex.Lock()
-				payload := backgroundSession.nsbCompletePayload
-				backgroundSession.nsbMutex.Unlock()
-				if payload != nil {
-					backgroundSession.sendWSMessage("nsb_csv_complete", *payload)
-				}
-			}
-		},
-		"get_background_task_status": func(data json.RawMessage) {
-			backgroundSession := currentBackgroundTaskSession()
-			if backgroundSession == nil {
-				session.sendWSMessage("background_task_missing", nil)
-				return
-			}
-			session.sendWSMessage("background_task_update", backgroundSession.backgroundSummary())
+			// 停止当前全局任务；任务与连接解耦后，任意连接都可停止正在运行的任务
+			taskSession.stopTask()
 		},
 		"compact_ipv4": func(data json.RawMessage) {
-			session.startTaskNamed("IPv4 地址库精简", "official", nil, func(ctx context.Context, session *appSession) {
+			taskSession.startTaskNamed("IPv4 地址库精简", "official", nil, func(ctx context.Context, session *appSession) {
 				runCompactIPv4Task(ctx, session)
 			})
 		},
@@ -490,7 +505,7 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 			if scanMode == "" {
 				scanMode = scanModeTCPing
 			}
-			session.startTaskNamed("更新数据中心库", "dc_library", map[string]interface{}{"ipType": params.IPType, "threads": params.Threads, "port": params.Port, "delay": params.Delay, "scanMode": scanMode}, func(ctx context.Context, session *appSession) {
+			taskSession.startTaskNamed("更新数据中心库", "dc_library", map[string]interface{}{"ipType": params.IPType, "threads": params.Threads, "port": params.Port, "delay": params.Delay, "scanMode": scanMode}, func(ctx context.Context, session *appSession) {
 				runDCLibraryScan(ctx, session, params.IPType, params.Threads, params.Port, params.Delay, scanMode)
 			})
 		},
