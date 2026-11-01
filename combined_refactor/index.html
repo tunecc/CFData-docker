@@ -305,7 +305,40 @@ label { font-size: 12px; color: var(--muted); }
 .run-card {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 14px;
+}
+
+/* 分段式当前模式选择器（任务控制卡内，开始按钮右侧） */
+.mode-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+    padding: 4px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--fg) 4%, transparent);
+    flex-shrink: 0;
+}
+.mode-option {
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font: inherit;
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 9px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background .15s ease, color .15s ease, box-shadow .15s ease;
+}
+.mode-option:hover { color: var(--fg); background: color-mix(in srgb, var(--fg) 6%, transparent); }
+.mode-option.active {
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 14%, transparent);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 28%, transparent) inset;
 }
 
 .toggle-btn {
@@ -910,44 +943,133 @@ h3 {
 .cfg-panel-footer .github-link { color: var(--muted); display: inline-flex; flex-shrink: 0; }
 .cfg-panel-footer .github-link:hover { color: var(--fg); }
 
-/* ---------------- 配置面板折叠分组 ---------------- */
+/* ---------------- 配置面板常开分组（原折叠分组改为静态分组） ---------------- */
 
-.cfg-fold {
+.cfg-group {
     border: 1px solid var(--border);
     border-radius: 10px;
     margin-bottom: 10px;
     background: color-mix(in srgb, var(--fg) 2%, transparent);
 }
-.cfg-fold:last-child { margin-bottom: 0; }
-.cfg-fold-head {
+.cfg-group:last-child { margin-bottom: 0; }
+.cfg-group-head {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: 8px;
-    width: 100%;
     padding: 8px 10px;
-    border: none;
-    background: transparent;
     color: var(--fg);
     font-size: 13px;
     font-weight: 700;
-    font-family: inherit;
-    cursor: pointer;
-    text-align: left;
-    border-radius: 10px;
-    transition: background .15s ease;
 }
-.cfg-fold-head:hover { background: color-mix(in srgb, var(--accent) 7%, transparent); }
-.cfg-fold-head .fold-tip { font-size: 11px; font-weight: 400; color: var(--text-secondary); }
-.cfg-fold-head .fold-arrow {
+.cfg-group-head .fold-tip { font-size: 11px; font-weight: 400; color: var(--text-secondary); }
+.cfg-group-body { padding: 2px 10px 10px; }
+
+/* ---------------- 自动化面板：Cron 分段控件（照 subs-check-pro） ---------------- */
+
+.cfg-cron-wrap {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.cfg-cron-display {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 5px;
+    width: 100%;
+    min-height: 34px;
+    padding: 5px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: color-mix(in srgb, var(--fg) 3%, transparent);
+    font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
+    font-size: 13px;
+    cursor: text;
+    outline: none;
+    overflow-x: auto;
+    scrollbar-width: none;
+    transition: border-color .15s, box-shadow .15s;
+}
+.cfg-cron-display::-webkit-scrollbar { display: none; }
+.cfg-cron-display:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2.5px color-mix(in srgb, var(--accent) 15%, transparent);
+}
+.cfg-cron-seg {
+    display: inline-flex;
+    align-items: center;
+    padding: 1px 6px;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 13px;
     flex-shrink: 0;
-    font-size: 11px;
-    color: var(--muted);
-    transition: transform .18s ease;
+    white-space: nowrap;
 }
-.cfg-fold.open .fold-arrow { transform: rotate(90deg); }
-.cfg-fold-body { display: none; padding: 2px 10px 10px; }
-.cfg-fold.open .cfg-fold-body { display: block; }
+.cfg-cron-seg-0 { color: #3b82f6; background: color-mix(in srgb, #3b82f6 11%, transparent); }
+.cfg-cron-seg-1 { color: #8b5cf6; background: color-mix(in srgb, #8b5cf6 11%, transparent); }
+.cfg-cron-seg-2 { color: #10b981; background: color-mix(in srgb, #10b981 11%, transparent); }
+.cfg-cron-seg-3 { color: #f59e0b; background: color-mix(in srgb, #f59e0b 11%, transparent); }
+.cfg-cron-seg-4 { color: #ec4899; background: color-mix(in srgb, #ec4899 11%, transparent); }
+.cfg-cron-labels-row { display: flex; gap: 5px; padding: 0 2px; }
+.cfg-cron-label {
+    font-size: 9.5px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 4px;
+    letter-spacing: .04em;
+    opacity: .7;
+    white-space: nowrap;
+}
+.cfg-cron-label-0 { color: color-mix(in srgb, #3b82f6 60%, transparent); background: color-mix(in srgb, #3b82f6 9%, transparent); }
+.cfg-cron-label-1 { color: color-mix(in srgb, #8b5cf6 60%, transparent); background: color-mix(in srgb, #8b5cf6 9%, transparent); }
+.cfg-cron-label-2 { color: color-mix(in srgb, #10b981 60%, transparent); background: color-mix(in srgb, #10b981 9%, transparent); }
+.cfg-cron-label-3 { color: color-mix(in srgb, #f59e0b 60%, transparent); background: color-mix(in srgb, #f59e0b 9%, transparent); }
+.cfg-cron-label-4 { color: color-mix(in srgb, #ec4899 60%, transparent); background: color-mix(in srgb, #ec4899 9%, transparent); }
+.cfg-cron-placeholder { color: var(--muted); opacity: .45; font-style: italic; font-weight: 400; }
+.cfg-cron-raw-text { color: var(--fg); opacity: .7; white-space: nowrap; }
+.cfg-cron-display--error {
+    border-color: var(--danger);
+    box-shadow: 0 0 0 2.5px color-mix(in srgb, var(--danger) 15%, transparent);
+}
+.cfg-cron-display--error .cfg-cron-raw-text { color: var(--danger); opacity: .9; }
+.cfg-cron-input--error {
+    border-color: var(--danger) !important;
+    box-shadow: 0 0 0 2.5px color-mix(in srgb, var(--danger) 18%, transparent) !important;
+    color: var(--danger);
+}
+
+/* Cron 定时计划徽标：绿色=已启用（间隔被禁用），橙色=未配置（间隔生效） */
+.cfg-cron-badge {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-top: 6px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 11.5px;
+    font-weight: 600;
+    user-select: none;
+}
+.cfg-cron-badge svg { width: 13px; height: 13px; flex-shrink: 0; stroke: currentColor; }
+.cfg-cron-badge--active {
+    color: var(--success);
+    background: color-mix(in srgb, var(--success) 9%, transparent);
+    border: 1px solid color-mix(in srgb, var(--success) 25%, transparent);
+}
+.cfg-cron-badge--idle {
+    color: var(--warning);
+    background: color-mix(in srgb, var(--warning) 9%, transparent);
+    border: 1px solid color-mix(in srgb, var(--warning) 25%, transparent);
+}
+
+/* Cron 合法时检测间隔整行灰化禁用 */
+.cfg-field--muted {
+    opacity: .38;
+    pointer-events: none;
+    user-select: none;
+    transition: opacity .2s ease;
+}
 
 /* 结果操作面板：主字段区复用参考弹窗 modal-grid 两列交互，窄栏回退单列 */
 .cfg-body .result-panel-grid { display: flex; flex-direction: column; gap: 12px; }
@@ -995,26 +1117,7 @@ h3 {
 .run-panel { display: none; min-height: 0; }
 .run-panel.active { display: block; }
 
-/* 模式指示与上次运行摘要 */
-.run-mode-line {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 6px;
-    font-size: 12px;
-    color: var(--text-secondary);
-    flex-wrap: wrap;
-}
-.run-mode-chip {
-    display: inline-block;
-    padding: 2px 10px;
-    border-radius: 99px;
-    background: color-mix(in srgb, var(--accent) 14%, transparent);
-    color: var(--accent);
-    font-weight: 700;
-    font-size: 12px;
-}
-.run-mode-tip { font-size: 11px; opacity: .8; }
+/* 上次运行摘要 */
 .last-run-line {
     margin-top: 10px;
     padding: 8px 12px;
@@ -1292,10 +1395,13 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                     <div class="run-meta">
                         <div class="run-state-title" id="nzRunTitle">空闲</div>
                         <div class="run-state-sub" id="nzRunSub">点击按钮开始扫描与测试</div>
-                        <div class="run-mode-line">当前模式：<span class="run-mode-chip" id="nzRunModeLabel">官方优选</span><span class="run-mode-tip">在右侧配置面板「官方优选 / 非标优选」分组切换</span></div>
                     </div>
             <button id="btnStart" class="btn hidden" onclick="startTask()"><span id="btnStartSpinner"
                     class="hidden"></span><span id="btnStartLabel">✨ 开始扫描与测试</span></button>
+            <div class="mode-switch" id="nzModeSwitch" role="group" aria-label="当前任务模式">
+                <button type="button" class="mode-option active" id="modeOptionOfficial" onclick="switchMode('official')" title="官方优选：扫描 Cloudflare 官方优选 IP">官方优选</button>
+                <button type="button" class="mode-option" id="modeOptionNSB" onclick="switchMode('nsb')" title="非标优选：自定义订阅源扫描与测速">非标优选</button>
+            </div>
                 </div>
                 <div style="margin-top:12px;">
         <div class="progress-container" id="progressBox">
@@ -1473,11 +1579,10 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                     <span>官方参数</span>
                     <span style="font-size:12px;color:var(--text-secondary);">端口可选</span>
                 </div>
-                <div class="cfg-fold open" id="officialFoldScan">
-                    <button type="button" class="cfg-fold-head" onclick="nzToggleFold(this)">
-                        <span>扫描参数</span><span class="fold-arrow">▶</span>
-                    </button>
-                    <div class="cfg-fold-body">
+                <div class="cfg-group" id="officialFoldScan">
+                    <div class="cfg-group-head">
+                        <span>扫描参数</span></div>
+                    <div class="cfg-group-body">
                 <div class="option-item">
                     <span class="label">🌐 IP 类型</span>
                     <select id="officialIpType" onchange="renderOfficialDcLibrary()">
@@ -1551,11 +1656,10 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                 </div>
                     </div>
                 </div>
-                <div class="cfg-fold" id="officialFoldSpeed">
-                    <button type="button" class="cfg-fold-head" onclick="nzToggleFold(this)">
-                        <span>测速参数<span class="fold-tip">（关闭测速填 0）</span></span><span class="fold-arrow">▶</span>
-                    </button>
-                    <div class="cfg-fold-body">
+                <div class="cfg-group" id="officialFoldSpeed">
+                    <div class="cfg-group-head">
+                        <span>测速参数<span class="fold-tip">（关闭测速填 0）</span></span></div>
+                    <div class="cfg-group-body">
                 <div class="option-item">
                     <span class="label" title="扫描完成后自动进行详细测试和测速">🧪 自动测速</span>
                     <select id="officialAutoSpeed">
@@ -1589,11 +1693,10 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                 </div>
                     </div>
                 </div>
-                <div class="cfg-fold" id="officialFoldUpload">
-                    <button type="button" class="cfg-fold-head" onclick="nzToggleFold(this)">
-                        <span>上传与维护</span><span class="fold-arrow">▶</span>
-                    </button>
-                    <div class="cfg-fold-body">
+                <div class="cfg-group" id="officialFoldUpload">
+                    <div class="cfg-group-head">
+                        <span>上传与维护</span></div>
+                    <div class="cfg-group-body">
                 <div class="option-item full-width">
                     <span class="label">🧹 精简地址库</span>
                     <div class="field-with-action">
@@ -1622,11 +1725,10 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                     <span style="font-size:12px;color:var(--text-secondary);">支持上传 txt/csv 文件或填写网络
                         URL（二选一）；若识别失败，请整理为每行一个目标，格式：IP 空格 端口，例如 1.2.3.4 443</span>
                 </div>
-                <div class="cfg-fold open" id="nsbFoldScan">
-                    <button type="button" class="cfg-fold-head" onclick="nzToggleFold(this)">
-                        <span>输入与扫描参数</span><span class="fold-arrow">▶</span>
-                    </button>
-                    <div class="cfg-fold-body">
+                <div class="cfg-group" id="nsbFoldScan">
+                    <div class="cfg-group-head">
+                        <span>输入与扫描参数</span></div>
+                    <div class="cfg-group-body">
                 <div class="option-item full-width">
                     <span class="label" title="支持 txt/csv 格式">📄 IP 文件</span>
                     <input id="nsbFileInput" type="file" accept=".txt,.csv,text/plain,text/csv"
@@ -1676,11 +1778,10 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                 </div>
                     </div>
                 </div>
-                <div class="cfg-fold" id="nsbFoldSpeed">
-                    <button type="button" class="cfg-fold-head" onclick="nzToggleFold(this)">
-                        <span>测速参数<span class="fold-tip">（含链路复验）</span></span><span class="fold-arrow">▶</span>
-                    </button>
-                    <div class="cfg-fold-body">
+                <div class="cfg-group" id="nsbFoldSpeed">
+                    <div class="cfg-group-head">
+                        <span>测速参数<span class="fold-tip">（含链路复验）</span></span></div>
+                    <div class="cfg-group-body">
                 <div class="option-item">
                     <span class="label" title="扫描完成后自动进行测速">🧪 自动测速</span>
                     <select id="nsbEnableSpeed" onchange="updateNSBSpeedControls()">
@@ -1734,11 +1835,10 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                 </div>
                     </div>
                 </div>
-                <div class="cfg-fold" id="nsbFoldOutput">
-                    <button type="button" class="cfg-fold-head" onclick="nzToggleFold(this)">
-                        <span>输出与上传</span><span class="fold-arrow">▶</span>
-                    </button>
-                    <div class="cfg-fold-body">
+                <div class="cfg-group" id="nsbFoldOutput">
+                    <div class="cfg-group-head">
+                        <span>输出与上传</span></div>
+                    <div class="cfg-group-body">
                 <div class="option-item">
                     <span class="label" title="表格列数精简或完整">🧾 精简表格</span>
                     <select id="nsbCompactView" onchange="setNSBCompactView(this.value === 'compact')">
@@ -1766,11 +1866,19 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                 <div class="automation-column">
                     <div class="settings-title">自动调度</div>
                     <label class="inline-check"><input type="checkbox" id="scheduleEnabled"> 启用自动调度</label>
-                    <div class="form-group">
+                    <div class="form-group" id="scheduleCronField">
                         <label for="scheduleCron">Cron 表达式</label>
-                        <input id="scheduleCron" type="text" placeholder="优先于检测间隔，例如 0 4 * * *">
+                        <div class="cfg-cron-wrap">
+                            <div class="cfg-cron-display" id="scheduleCronDisplay" tabindex="0" role="textbox" aria-label="Cron 表达式，点击编辑"></div>
+                            <div class="cfg-cron-labels-row" id="scheduleCronLabels" style="display:none;"></div>
+                            <input id="scheduleCron" type="text" placeholder="0 4 */2 * *" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="none" style="display:none;">
+                        </div>
+                        <div class="cfg-cron-badge" id="scheduleCronBadge" role="status"></div>
+                        <div class="automation-hint">优先级高于检测间隔；推荐隔两天的凌晨 4 点执行 <code>0 4 */2 * *</code> ·
+                            <a href="https://crontab.guru/examples.html" target="_blank" rel="noopener noreferrer">Cron 语法文档</a> ·
+                            <a href="https://crontab.guru" target="_blank" rel="noopener noreferrer">在线测试</a></div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="scheduleIntervalField">
                         <label for="scheduleInterval">检测间隔（分钟）</label>
                         <input id="scheduleInterval" type="number" min="0" placeholder="默认 2880">
                     </div>
@@ -1940,11 +2048,10 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                             <pre class="result-preview" id="resultPreview">暂无预览</pre>
                         </div>
                     </div>
-                    <div class="cfg-fold" id="resultFoldFields">
-                        <button type="button" class="cfg-fold-head" onclick="nzToggleFold(this)">
-                            <span>字段与顺序</span><span class="fold-arrow">▶</span>
-                        </button>
-                        <div class="cfg-fold-body">
+                    <div class="cfg-group" id="resultFoldFields">
+                        <div class="cfg-group-head">
+                            <span>字段与顺序</span></div>
+                        <div class="cfg-group-body">
                             <div class="modal-field full">
                                 <div class="field-head">
                                     <label>字段选择</label>
@@ -1987,11 +2094,10 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                             </div>
                         </div>
                     </div>
-                    <div class="cfg-fold" id="resultFoldR2">
-                        <button type="button" class="cfg-fold-head" onclick="nzToggleFold(this)">
-                            <span>R2 上传</span><span class="fold-arrow">▶</span>
-                        </button>
-                        <div class="cfg-fold-body">
+                    <div class="cfg-group" id="resultFoldR2">
+                        <div class="cfg-group-head">
+                            <span>R2 上传</span></div>
+                        <div class="cfg-group-body">
                             <label class="inline-check"><input type="checkbox" id="r2Enabled"> 启用 R2 上传</label>
                             <div class="form-group">
                                 <label for="r2WorkerUrl">Worker 地址</label>
@@ -2021,11 +2127,10 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                             </div>
                         </div>
                     </div>
-                    <div class="cfg-fold" id="resultFoldGitHub">
-                        <button type="button" class="cfg-fold-head" onclick="nzToggleFold(this)">
-                            <span>GitHub 上传</span><span class="fold-arrow">▶</span>
-                        </button>
-                        <div class="cfg-fold-body">
+                    <div class="cfg-group" id="resultFoldGitHub">
+                        <div class="cfg-group-head">
+                            <span>GitHub 上传</span></div>
+                        <div class="cfg-group-body">
                             <div class="modal-field full github-field">
                                 <label>选择已保存账号（切换后「上传账号」面板字段同步更新）</label>
                                 <select id="githubAccountPick" onchange="pickGitHubAccountFromModal()"></select>
@@ -2044,11 +2149,10 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                             </div>
                         </div>
                     </div>
-                    <div class="cfg-fold" id="resultFoldEdgetunnel">
-                        <button type="button" class="cfg-fold-head" onclick="nzToggleFold(this)">
-                            <span>edgetunnel 上传</span><span class="fold-arrow">▶</span>
-                        </button>
-                        <div class="cfg-fold-body">
+                    <div class="cfg-group" id="resultFoldEdgetunnel">
+                        <div class="cfg-group-head">
+                            <span>edgetunnel 上传</span></div>
+                        <div class="cfg-group-body">
                             <div class="modal-field full edgetunnel-field">
                                 <label>选择已保存账号（切换后「上传账号」面板字段同步更新）</label>
                                 <select id="edgetunnelAccountPick" onchange="pickEdgetunnelAccountFromModal()"></select>
@@ -2358,8 +2462,8 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
         const progressBox = document.getElementById('progressBox');
         const progressBar = document.getElementById('progressBar');
 
-        const modeOfficial = document.getElementById('cfgTabOfficial');
-        const modeNSB = document.getElementById('cfgTabNSB');
+        const modeOptionOfficial = document.getElementById('modeOptionOfficial');
+        const modeOptionNSB = document.getElementById('modeOptionNSB');
         const officialControls = document.getElementById('officialControls');
         const nsbControls = document.getElementById('nsbControls');
         const fileInput = document.getElementById('nsbFileInput');
@@ -2637,6 +2741,8 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
             setChecked('scheduleEnabled', payload.scheduleEnabled);
             setValue('scheduleCron', payload.cronExpression || '');
             setValue('scheduleInterval', payload.checkInterval || '');
+            // 回显后按当前值重绘 Cron 分段展示层与间隔联动
+            if (typeof renderScheduleCronDisplay === 'function') renderScheduleCronDisplay();
             setChecked('r2Enabled', payload.r2Enabled);
             setValue('r2WorkerUrl', payload.r2WorkerUrl || '');
             const tokenInput = document.getElementById('r2WorkerToken');
@@ -2695,6 +2801,178 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
             }
             if (payload.warning) parts.push('⚠ ' + payload.warning);
             el.textContent = parts.join(' · ');
+        }
+
+        // ── Cron 分段控件（照 subs-check-pro：分段着色展示 + 点击编辑 + 实时校验 + 间隔联动） ──
+        const CRON_SEGMENTS = [
+            { label: '分钟', title: '分钟 (0-59)', min: 0, max: 59 },
+            { label: '小时', title: '小时 (0-23)', min: 0, max: 23 },
+            { label: '日', title: '日 (1-31)', min: 1, max: 31 },
+            { label: '月份', title: '月份 (1-12)', min: 1, max: 12 },
+            { label: '星期', title: '星期 (0-7，0=周日)', min: 0, max: 7 },
+        ];
+
+        // 校验单个字段（支持 * 、步进 a/b、区间 a-b、列表逗号分隔）
+        function cronValidateSegment(seg, fieldIdx) {
+            const { label: name, min, max } = CRON_SEGMENTS[fieldIdx];
+            const stepMatch = seg.match(/^(.+?)\/(\d+)$/);
+            const base = stepMatch ? stepMatch[1] : seg;
+            const step = stepMatch ? Number(stepMatch[2]) : null;
+            if (step !== null && step < 1) return `${name}：步进值必须 ≥ 1`;
+            const inRange = (n) => { const v = Number(n); return Number.isInteger(v) && v >= min && v <= max; };
+            if (base === '*') return null;
+            const rangeMatch = base.match(/^(\d+)-(\d+)$/);
+            if (rangeMatch) {
+                const [, lo, hi] = rangeMatch;
+                if (!inRange(lo) || !inRange(hi)) return `${name}：范围 ${lo}-${hi} 超出 ${min}–${max}`;
+                if (Number(lo) > Number(hi)) return `${name}：起始值 ${lo} 大于结束值 ${hi}`;
+                return null;
+            }
+            if (/^\d+$/.test(base)) {
+                if (!inRange(base)) return `${name}：${base} 超出范围 ${min}–${max}`;
+                return null;
+            }
+            return `${name}：含非法字符 "${base}"`;
+        }
+
+        // 编辑中：只校验已输入的字段，字段数不足不报错
+        function cronValidatePartial(val) {
+            if (!val || !val.trim()) return null;
+            const parts = val.trim().split(/\s+/);
+            for (let i = 0; i < Math.min(parts.length, 5); i++) {
+                for (const seg of parts[i].split(',')) {
+                    const err = cronValidateSegment(seg, i);
+                    if (err) return err;
+                }
+            }
+            return null;
+        }
+
+        // 失焦：完整校验（含字段数量）
+        function cronValidateFull(val) {
+            if (!val || !val.trim()) return null;
+            const parts = val.trim().split(/\s+/);
+            if (parts.length !== 5) return `需要 5 个字段（分 时 日 月 周），当前 ${parts.length} 个`;
+            return cronValidatePartial(val);
+        }
+
+        function cronIsValid(expr) {
+            if (!expr || !expr.trim()) return false;
+            const parts = expr.trim().split(/\s+/);
+            if (parts.length !== 5) return false;
+            return parts.every((p, i) => p.split(',').every(seg => seg.length > 0 && cronValidateSegment(seg, i) === null));
+        }
+
+        function cronToast(msg) {
+            if (typeof window.nzToast === 'function') window.nzToast(msg, 'error');
+        }
+
+        // 重绘分段展示层，并同步「检测间隔」的灰化联动
+        function renderScheduleCronDisplay() {
+            const display = document.getElementById('scheduleCronDisplay');
+            const labelsRow = document.getElementById('scheduleCronLabels');
+            const input = document.getElementById('scheduleCron');
+            if (!display || !labelsRow || !input) return;
+            const raw = (input.value || '').trim();
+            const parts = raw ? raw.split(/\s+/) : [];
+            const valid = cronIsValid(raw);
+            display.className = 'cfg-cron-display' + (raw && !valid ? ' cfg-cron-display--error' : '');
+            display.innerHTML = '';
+            if (!raw) {
+                labelsRow.style.display = 'none';
+                const ph = document.createElement('span');
+                ph.className = 'cfg-cron-placeholder';
+                ph.textContent = input.placeholder || '0 4 */2 * *';
+                display.appendChild(ph);
+            } else if (valid) {
+                labelsRow.style.display = '';
+                parts.forEach((part, i) => {
+                    const seg = document.createElement('span');
+                    seg.className = `cfg-cron-seg cfg-cron-seg-${i}`;
+                    seg.textContent = part;
+                    seg.title = CRON_SEGMENTS[i].title;
+                    display.appendChild(seg);
+                });
+            } else {
+                labelsRow.style.display = 'none';
+                const rawText = document.createElement('span');
+                rawText.className = 'cfg-cron-raw-text';
+                rawText.textContent = raw;
+                display.appendChild(rawText);
+            }
+            updateScheduleCronLinkage();
+        }
+
+        // Cron 合法 → 检测间隔灰化禁用 + 绿色徽标；为空/非法 → 间隔可编辑 + 橙色徽标
+        function updateScheduleCronLinkage() {
+            const input = document.getElementById('scheduleCron');
+            const intervalField = document.getElementById('scheduleIntervalField');
+            const intervalInput = document.getElementById('scheduleInterval');
+            const badge = document.getElementById('scheduleCronBadge');
+            if (!input || !intervalField || !badge) return;
+            const clockIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>';
+            if (cronIsValid(input.value)) {
+                intervalField.classList.add('cfg-field--muted');
+                if (intervalInput) intervalInput.disabled = true;
+                badge.className = 'cfg-cron-badge cfg-cron-badge--active';
+                badge.innerHTML = clockIcon + '<span>定时计划已启用 · 禁用检测间隔</span>';
+            } else {
+                intervalField.classList.remove('cfg-field--muted');
+                if (intervalInput) intervalInput.disabled = false;
+                badge.className = 'cfg-cron-badge cfg-cron-badge--idle';
+                badge.innerHTML = clockIcon + '<span>定时计划未配置 · 检测间隔生效</span>';
+            }
+        }
+
+        function scheduleCronEnterEdit() {
+            const display = document.getElementById('scheduleCronDisplay');
+            const labelsRow = document.getElementById('scheduleCronLabels');
+            const input = document.getElementById('scheduleCron');
+            if (!display || !input) return;
+            display.style.display = 'none';
+            if (labelsRow) labelsRow.style.display = 'none';
+            input.style.display = '';
+            requestAnimationFrame(() => { input.focus(); input.select(); });
+        }
+
+        function scheduleCronExitEdit() {
+            const display = document.getElementById('scheduleCronDisplay');
+            const labelsRow = document.getElementById('scheduleCronLabels');
+            const input = document.getElementById('scheduleCron');
+            if (!display || !input) return;
+            const err = cronValidateFull(input.value);
+            if (err) cronToast(err);
+            input.classList.remove('cfg-cron-input--error');
+            input.style.display = 'none';
+            display.style.display = '';
+            renderScheduleCronDisplay();
+        }
+
+        function bindScheduleCronControl() {
+            const display = document.getElementById('scheduleCronDisplay');
+            const labelsRow = document.getElementById('scheduleCronLabels');
+            const input = document.getElementById('scheduleCron');
+            if (!display || !labelsRow || !input || display.dataset.bound === '1') return;
+            display.dataset.bound = '1';
+            labelsRow.innerHTML = CRON_SEGMENTS.map((s, i) =>
+                `<span class="cfg-cron-label cfg-cron-label-${i}" title="${s.title}">${s.label}</span>`).join('');
+            let toastTimer = null;
+            display.addEventListener('click', scheduleCronEnterEdit);
+            display.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === 'F2' || (e.key === ' ' && !e.ctrlKey)) {
+                    e.preventDefault();
+                    scheduleCronEnterEdit();
+                }
+            });
+            input.addEventListener('input', () => {
+                const err = cronValidatePartial(input.value);
+                input.classList.toggle('cfg-cron-input--error', err !== null);
+                clearTimeout(toastTimer);
+                if (!err) { updateScheduleCronLinkage(); return; }
+                toastTimer = setTimeout(() => cronToast('Cron 错误：' + err), 700);
+            });
+            input.addEventListener('blur', scheduleCronExitEdit);
+            renderScheduleCronDisplay();
         }
 
         function saveScheduleConfig() {
@@ -3422,9 +3700,9 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
 
         function switchMode(mode) {
             currentMode = mode;
-            modeOfficial.classList.toggle('active', mode === 'official');
-            modeNSB.classList.toggle('active', mode === 'nsb');
-            nzUpdateRunModeLabel(mode);
+            // 模式高亮只反映在任务控制卡的分段选择器上；右侧配置标签纯导航，不再随模式联动
+            if (modeOptionOfficial) modeOptionOfficial.classList.toggle('active', mode === 'official');
+            if (modeOptionNSB) modeOptionNSB.classList.toggle('active', mode === 'nsb');
             nzUpdateStartReadiness();
 
             if (mode === 'official') {
@@ -3464,11 +3742,6 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                 try { syncResultSourceOptions(); } catch (e) { /* 面板未初始化 */ }
             }
             log(`切换至：${mode === 'official' ? '官方优选' : '非标优选'}`);
-        }
-
-        function nzUpdateRunModeLabel(mode) {
-            const el = document.getElementById('nzRunModeLabel');
-            if (el) el.textContent = mode === 'official' ? '官方优选' : '非标优选';
         }
 
         // 启动前就绪校验：非标优选必须有 IP 来源（文件或网络 URL）；
@@ -5323,11 +5596,6 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
             applyResultModeFields();
             renderResultFieldOptions();
             updateResultPreview();
-        }
-
-        // 折叠分组开关
-        function nzToggleFold(btn) {
-            if (btn && btn.parentElement) btn.parentElement.classList.toggle('open');
         }
 
         function openSortModal(mode) {
@@ -7309,6 +7577,7 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
         window.addEventListener('DOMContentLoaded', () => {
             connect();
             initializeUI();
+            bindScheduleCronControl();
             renderGitHubAccounts();
             renderEdgetunnelAccounts();
             switchMode('official');
@@ -7353,7 +7622,7 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
         try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) { /* 旧内核 */ }
     };
 
-    // 右侧配置分组切换；官方/非标分组同时切换任务模式
+    // 右侧配置分组切换；任务模式由任务控制卡的分段模式选择器切换
     window.nzShowConfigPanel = function (name) {
         var tabs = { official: 'cfgTabOfficial', nsb: 'cfgTabNSB', automation: 'cfgTabAutomation', results: 'cfgTabResults', accounts: 'cfgTabAccounts', settings: 'cfgTabSettings' };
         var bodies = { official: 'cfgPanelOfficial', nsb: 'cfgPanelNSB', automation: 'cfgPanelAutomation', results: 'cfgPanelResults', accounts: 'cfgPanelAccounts', settings: 'cfgPanelSettings' };
@@ -7373,9 +7642,6 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
         }
         if (name === 'results' && typeof syncResultSourceOptions === 'function') {
             try { syncResultSourceOptions(); } catch (e) { /* 结果数据未就绪 */ }
-        }
-        if ((name === 'official' || name === 'nsb') && typeof switchMode === 'function') {
-            try { switchMode(name); } catch (e) { console.error(e); }
         }
     };
 
