@@ -123,6 +123,8 @@ func sendTaskRestore(session *appSession) {
 		session.sendWSMessage("task_restore_chunk", chunk)
 	}
 	session.sendWSMessage("task_restore_done", map[string]interface{}{"lastSeq": lastSeq})
+	// 无任务运行时下发最新历史分析记录，重启后分析视图不空白
+	sendLatestHistoryToSession(session)
 }
 
 func handleWebSocket(w http.ResponseWriter, r *http.Request) {
@@ -601,6 +603,54 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 			}
 			payload["saved"] = true
 			session.sendWSMessage("schedule_config", payload)
+		},
+		"history_list": func(data json.RawMessage) {
+			items, err := listHistoryRecords(taskHistoryListLimit)
+			if err != nil {
+				session.sendWSMessage("error", "读取任务历史失败: "+err.Error())
+				return
+			}
+			session.sendWSMessage("history_list_data", map[string]interface{}{"items": items})
+		},
+		"history_get": func(data json.RawMessage) {
+			var params struct {
+				File string `json:"file"`
+			}
+			if err := json.Unmarshal(data, &params); err != nil {
+				session.sendWSMessage("error", "history_get 参数解析失败")
+				return
+			}
+			record, err := readHistoryFile(params.File)
+			if err != nil {
+				session.sendWSMessage("error", "读取历史记录失败: "+err.Error())
+				return
+			}
+			session.sendWSMessage("history_analysis", map[string]interface{}{
+				"record": record,
+				"file":   params.File,
+			})
+		},
+		"history_delete": func(data json.RawMessage) {
+			var params struct {
+				File string `json:"file"`
+			}
+			if err := json.Unmarshal(data, &params); err != nil {
+				session.sendWSMessage("error", "history_delete 参数解析失败")
+				return
+			}
+			if err := deleteHistoryFile(params.File); err != nil {
+				session.sendWSMessage("error", "删除历史记录失败: "+err.Error())
+				return
+			}
+			session.sendWSMessage("history_deleted", map[string]interface{}{"file": params.File, "ok": true})
+		},
+		"history_clear": func(data json.RawMessage) {
+			removed, err := clearHistoryFiles()
+			if err != nil {
+				session.sendWSMessage("error", "清空任务历史失败: "+err.Error())
+				return
+			}
+			session.sendWSMessage("history_cleared", map[string]interface{}{"removed": removed, "ok": true})
 		},
 		"notify_test": func(data json.RawMessage) {
 			var params struct {

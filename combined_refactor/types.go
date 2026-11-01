@@ -244,6 +244,7 @@ type appSession struct {
 	uploadNote           string
 	scanMutex            sync.Mutex
 	scanResults          []ScanResult
+	scanFailureSummary   string
 	testMutex            sync.Mutex
 	testResults          []TestResult
 	nsbMutex             sync.Mutex

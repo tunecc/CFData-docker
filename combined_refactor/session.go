@@ -169,6 +169,7 @@ func (s *appSession) startTaskNamed(label string, mode string, params map[string
 		s.sendWSMessage("error", "已有任务正在运行，请等待完成后再试")
 		return
 	}
+	s.setScanFailureSummary("")
 	safeGo("task", s, func() {
 		defer cancel()
 		defer func() {
@@ -185,9 +186,11 @@ func (s *appSession) startTaskNamed(label string, mode string, params map[string
 				success := ctx.Err() == nil
 				recordLastRun(mode, label, startedAt, success, s.finalResultCount(), s.uploadNoteValue())
 				s.sendWSMessage("last_run", lastRunPayload())
-				// 扫描/测速主任务完成时发送 webhook 通知；被用户停止的不通知
+				// 扫描/测速主任务完成时发送 webhook 通知并落盘历史记录；
+				// 被用户停止的不通知、不写历史
 				if success && (mode == "official" || mode == "nsb") {
 					sendTaskNotifyAsync("complete", mode, label, s.finalResultCount(), startedAt, "")
+					persistTaskHistory(s, mode, label, startedAt, "")
 				}
 			}
 			if ctx.Err() != nil {

@@ -776,12 +776,14 @@ func runScheduledScan(configPath string) string {
 	if pipelineErr != nil {
 		recordProgramDebugError("scheduled_scan", pipelineErr.Error())
 		fmt.Printf("[schedule] 调度扫描失败: %v\n", pipelineErr)
-		// 调度任务失败时发送通知（含失败原因摘要）
+		// 调度任务失败时发送通知（含失败原因摘要）并写入失败历史
 		sendTaskNotifyAsync("failure", mode, "", session.finalResultCount(), scheduledStart, pipelineErr.Error())
+		persistTaskHistory(session, mode, "调度任务", scheduledStart, pipelineErr.Error())
 		return "失败：" + pipelineErr.Error()
 	}
 	fmt.Println("[schedule] 调度扫描完成")
 	sendTaskNotifyAsync("complete", mode, "", session.finalResultCount(), scheduledStart, "")
+	persistTaskHistory(session, mode, "调度任务", scheduledStart, "")
 	return "完成"
 }
 

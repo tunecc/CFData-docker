@@ -942,6 +942,14 @@ h3 {
 .cfg-panel-footer .version-line { white-space: nowrap; }
 .cfg-panel-footer .github-link { color: var(--muted); display: inline-flex; flex-shrink: 0; }
 .cfg-panel-footer .github-link:hover { color: var(--fg); }
+/* 任务历史列表 */
+.history-list { max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
+.history-row { display: flex; align-items: center; gap: 8px; padding: 5px 8px; border: 1px solid var(--border); border-radius: 8px; font-size: 12px; cursor: pointer; }
+.history-row:hover { border-color: var(--accent); }
+.history-row .history-when { flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.history-row .history-mode { flex-shrink: 0; font-weight: 700; }
+.history-row .history-count { flex-shrink: 0; color: var(--text-secondary); }
+.history-row .history-dur { flex-shrink: 0; color: var(--text-secondary); }
 
 /* ---------------- 配置面板常开分组（原折叠分组改为静态分组） ---------------- */
 
@@ -1456,6 +1464,7 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                     <span class="card-tip" id="analysisRankTip"></span>
                 </div>
                 <div class="rank-list" id="analysisRankDC"></div>
+                <div class="card-tip" id="analysisTopResults" style="display:none;"></div>
             </div>
         <div class="tabs">
             <div class="tab active" onclick="switchTab('scan')">📡 扫描结果</div>
@@ -2184,6 +2193,19 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                                 <label>上传失败提示</label>
                                 <div class="upload-status" id="uploadProxyHint">上传失败？可在「设置」标签页配置管理面代理后重试；支持程序配置（socks5://、http:// 等）与系统环境变量代理，扫描测速不受影响。</div>
                             </div>
+                        </div>
+                    </div>
+                    <div class="cfg-group" id="resultFoldHistory">
+                        <div class="cfg-group-head">
+                            <span>任务历史</span></div>
+                        <div class="cfg-group-body">
+                            <div class="automation-hint">任务完成后自动把统计摘要保存到服务器 history/ 目录；点击条目载入分析视图，重启后自动恢复最近一次分析。</div>
+                            <div class="theme-options" style="display:flex;gap:8px;margin:6px 0;">
+                                <button class="menu-btn" style="flex:1;" onclick="nzLoadHistoryList()">🔄 刷新</button>
+                                <button class="menu-btn" style="flex:1;" onclick="nzClearHistory()">🗑️ 清空</button>
+                            </div>
+                            <div id="historyList" class="history-list"><div class="automation-hint">暂无历史记录</div></div>
+                            <div class="automation-hint" id="historyFeedback" style="display:none"></div>
                         </div>
                     </div>
                     <div class="cfg-group" id="resultFoldEdgetunnel">
@@ -3014,6 +3036,44 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
             });
             input.addEventListener('blur', scheduleCronExitEdit);
             renderScheduleCronDisplay();
+        }
+
+        // ---- 任务历史（数据层分析来源 + 列表管理）----
+        function nzLoadHistoryList() {
+            wsSend({ type: 'history_list', data: {} });
+        }
+        function nzHistoryView(file) {
+            if (!file) return;
+            wsSend({ type: 'history_get', data: { file } });
+        }
+        function nzHistoryDelete(file) {
+            if (!file) return;
+            wsSend({ type: 'history_delete', data: { file } });
+        }
+        function nzClearHistory() {
+            showConfirmCard('确定删除全部任务历史记录吗？此操作不可恢复。', () => wsSend({ type: 'history_clear', data: {} }), '清空历史');
+        }
+        function renderHistoryList(items) {
+            const list = document.getElementById('historyList');
+            if (!list) return;
+            if (!items || !items.length) {
+                list.innerHTML = '<div class="automation-hint">暂无历史记录</div>';
+                return;
+            }
+            const rows = items.map((it) => {
+                const date = new Date(it.startedAt);
+                const when = Number.isNaN(date.getTime()) ? String(it.startedAt || '') : date.toLocaleString('zh-CN', { hour12: false });
+                const modeName = it.mode === 'nsb' ? '非标' : '官方';
+                const rate = it.resultCount > 0 ? Math.round((it.qualifiedCount || 0) / it.resultCount * 100) : 0;
+                const dur = it.durationSec >= 60 ? Math.floor(it.durationSec / 60) + 'm' + (it.durationSec % 60) + 's' : (it.durationSec || 0) + 's';
+                const file = escapeHTML(it.file || '');
+                return '<div class="history-row" data-file="' + file + '" onclick="nzHistoryView(\'' + file + '\')">' +
+                    '<span class="history-when">' + when + '</span><span class="history-mode">' + modeName + '</span>' +
+                    '<span class="history-count">' + (it.resultCount || 0) + ' 个 · 达标 ' + rate + '%</span>' +
+                    '<span class="history-dur">' + dur + '</span>' +
+                    '<button class="mini-action-btn" title="删除该记录" onclick="event.stopPropagation(); nzHistoryDelete(\'' + file + '\')">🗑️</button></div>';
+            });
+            list.innerHTML = rows.join('');
         }
 
         function sendNotifyTest(channel) {
@@ -7228,6 +7288,32 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                 case 'proxy_status':
                     applyProxyStatus(msg.data || {});
                     break;
+                case 'history_list_data':
+                    renderHistoryList((msg.data || {}).items || []);
+                    break;
+                case 'history_analysis':
+                    {
+                        const hp = msg.data || {};
+                        window.nzAnalysisData = hp.record || null;
+                        if (typeof window.nzRefreshAnalysis === 'function') window.nzRefreshAnalysis();
+                        if (hp.fromHistory) log('已恢复最近一次任务分析（来自历史记录）');
+                    }
+                    break;
+                case 'history_deleted':
+                case 'history_cleared':
+                    {
+                        const hc = msg.data || {};
+                        const text = msg.type === 'history_cleared' ? ('已清空 ' + (hc.removed || 0) + ' 条历史记录') : '已删除该历史记录';
+                        if (typeof nzToast === 'function') nzToast(text, 'success');
+                        const fb = document.getElementById('historyFeedback');
+                        if (fb) { fb.textContent = text; fb.style.display = ''; }
+                        if (msg.type === 'history_cleared') {
+                            window.nzAnalysisData = null;
+                            if (typeof window.nzRefreshAnalysis === 'function') window.nzRefreshAnalysis();
+                        }
+                        nzLoadHistoryList();
+                    }
+                    break;
                 case 'notify_test_result':
                     {
                         const nr = msg.data || {};
@@ -7278,6 +7364,7 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                     break;
                 case 'scan_result':
                     if (isStoppingTask) break;
+                    window.nzAnalysisData = null; // 实时结果到达后退出历史回显
                     addScanResult(msg.data, currentMode === 'official' && runningTaskMode !== 'nsb');
                     break;
                 case 'scan_complete_wait_dc':
@@ -7435,6 +7522,7 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                     }
                     break;
                 case 'nsb_scan_result':
+                    window.nzAnalysisData = null; // 实时结果到达后退出历史回显
                     if (nsbBatchSpeedRunning) {
                         updateNSBDisplayedResult(msg.data || {});
                     } else {
@@ -7990,6 +8078,13 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
     }
 
     function nzRefreshAnalysis() {
+        // 数据层优先：服务端下发的统计记录（任务完成推送 / 历史查看 / 重启恢复）
+        if (window.nzAnalysisData && typeof nzRenderAnalysisFromStats === 'function') {
+            try {
+                nzRenderAnalysisFromStats(window.nzAnalysisData);
+                return;
+            } catch (e) { /* 记录字段异常时回落 DOM 聚合 */ }
+        }
         var scanRows = nzRows('scanTable');
         var testRows = nzRows('testTable');
         var dcRows = nzRows('dcTable');
@@ -8062,6 +8157,70 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
             if (tip) {
                 tip.textContent = stats.length ? ('共 ' + stats.length + ' 个数据中心 · 按落地 IP 数排序') : '';
             }
+        }
+    }
+
+    // 数据层渲染：用服务端统计记录绘制分析视图（结构与 DOM 聚合路径一致）
+    function nzRenderAnalysisFromStats(stats) {
+        var summaryCard = document.getElementById('analysisSummaryCard');
+        var rankCard = document.getElementById('analysisRankCard');
+        if (!summaryCard || !rankCard || !stats) return;
+        var dcDist = stats.dcDistribution || {};
+        var dcNames = Object.keys(dcDist);
+        var regionCount = Object.keys(stats.regionDistribution || {}).length;
+        var rate = stats.resultCount > 0 ? Math.round((stats.qualifiedCount || 0) / stats.resultCount * 100) : 0;
+        summaryCard.style.display = '';
+        rankCard.style.display = dcNames.length > 0 ? '' : 'none';
+
+        var chips = nzChip('📡', '#0ea5a0', stats.resultCount || 0, '总结果', '本次任务统计');
+        chips += nzChip('🧪', '#8b5cf6', stats.testCount || 0, '详细测试', '丢包与延迟明细');
+        chips += nzChip('🏢', '#0198d3', dcNames.length, '数据中心', '落地点汇总');
+        chips += nzChip('🌍', '#e23b76', regionCount, '覆盖地区', '按地区去重');
+        chips += nzChip('✅', '#0fd056', stats.qualifiedCount || 0, '达标节点', '达标率 ' + rate + '%');
+        var chipsEl = document.getElementById('analysisChips');
+        if (chipsEl) chipsEl.innerHTML = chips;
+
+        var hero = document.getElementById('analysisHero');
+        if (hero) {
+            var when = stats.startedAt ? new Date(stats.startedAt).toLocaleString('zh-CN', { hour12: false }) : '';
+            var modeName = stats.mode === 'nsb' ? '非标优选' : '官方优选';
+            hero.textContent = (stats.label || modeName) + (when ? ' · ' + when : '') +
+                ' · 共 ' + (stats.resultCount || 0) + ' 条结果 · 覆盖 ' + regionCount + ' 个地区 / ' + dcNames.length + ' 个数据中心' +
+                (stats.failureSummary ? ' · ' + stats.failureSummary : '');
+        }
+
+        var rankEl = document.getElementById('analysisRankDC');
+        if (rankEl) {
+            var entries = dcNames.map(function (name) { return { name: name, count: dcDist[name] || 0 }; });
+            entries.sort(function (a, b) { return b.count - a.count; });
+            var max = entries.length ? entries[0].count || 1 : 1;
+            var total = entries.reduce(function (sum, x) { return sum + x.count; }, 0);
+            var html = '';
+            entries.slice(0, 10).forEach(function (entry, i) {
+                var pct = total ? Math.round(entry.count / total * 100) : 0;
+                var nameEsc = nzEscText(entry.name);
+                html += '<div class="rank-row"><div class="rank-no' + (i < 3 ? ' top' : '') + '">' + (i + 1) + '</div>' +
+                    '<div class="rank-name" title="' + nameEsc + '">' + nameEsc + '</div>' +
+                    '<div class="rank-bar"><i style="width:' + Math.round(entry.count / max * 100) + '%"></i></div>' +
+                    '<div class="rank-val">' + entry.count + '</div><div class="rank-pct">' + pct + '%</div></div>';
+            });
+            if (entries.length > 10) {
+                html += '<div class="card-tip" style="text-align:center;">其余 ' + (entries.length - 10) + ' 个数据中心未列出</div>';
+            }
+            rankEl.innerHTML = html || '<div class="analysis-empty">暂无数据</div>';
+            var tip = document.getElementById('analysisRankTip');
+            if (tip) {
+                tip.textContent = entries.length ? ('共 ' + entries.length + ' 个数据中心 · 按落地 IP 数排序') : '';
+            }
+        }
+        // Top 结果提示（有记录时展示在排行下方）
+        var topEl = document.getElementById('analysisTopResults');
+        if (topEl) {
+            var tops = stats.topResults || [];
+            topEl.textContent = tops.length
+                ? ('Top: ' + tops.slice(0, 5).map(function (t) { return t.ip + (t.port ? ':' + t.port : '') + (t.latency ? ' ' + t.latency : ''); }).join(' · '))
+                : '';
+            topEl.style.display = tops.length ? '' : 'none';
         }
     }
 

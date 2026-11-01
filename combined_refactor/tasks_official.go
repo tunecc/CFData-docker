@@ -535,6 +535,7 @@ func runOfficialScanCandidatesWithSource(ctx context.Context, session *appSessio
 		return dcList[i].MinLatency < dcList[j].MinLatency
 	})
 
+	session.setScanFailureSummary(formatFailureSummary("扫描失败分类", failureCounts, failureSamples))
 	session.sendWSMessage("scan_complete_wait_dc", dcList)
 	return wasCanceled, stoppedEarly
 }
