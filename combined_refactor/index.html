@@ -980,12 +980,12 @@ h3 {
 .cfg-fold-body { display: none; padding: 2px 10px 10px; }
 .cfg-fold.open .cfg-fold-body { display: block; }
 
-/* 结果操作面板：窄栏内单列排布原弹窗字段 */
+/* 结果操作面板：主字段区复用参考弹窗 modal-grid 两列交互，窄栏回退单列 */
 .cfg-body .result-panel-grid { display: flex; flex-direction: column; gap: 12px; }
-.result-panel-section { display: flex; flex-direction: column; gap: 10px; }
+.result-panel-section { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .result-panel-actions {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
     gap: 8px;
     padding-top: 10px;
     border-top: 1px solid var(--border);
@@ -1104,6 +1104,7 @@ h3 {
     .background-status-grid { grid-template-columns: 1fr 1fr; }
     .settings-grid { grid-template-columns: 1fr; }
     .modal-grid { grid-template-columns: 1fr; }
+    .result-panel-section { grid-template-columns: 1fr; }
     .option-item { flex-wrap: wrap; }
     .option-item .label { flex-basis: 100%; }
     .log-shell { height: 240px; }
@@ -1527,8 +1528,8 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
             <div class="cfg-tabs" id="cfgTabBar">
                 <button class="cfg-tab active" id="cfgTabOfficial" onclick="nzShowConfigPanel('official')" title="官方优选参数与扫描"><span class="nav-icon">☁️</span>官方优选</button>
                 <button class="cfg-tab" id="cfgTabNSB" onclick="nzShowConfigPanel('nsb')" title="非标优选参数与扫描"><span class="nav-icon">📂</span>非标优选</button>
-                <button class="cfg-tab" id="cfgTabAutomation" onclick="nzShowConfigPanel('automation')" title="自动调度与 R2 上传"><span class="nav-icon">⏱️</span>自动化</button>
-                <button class="cfg-tab" id="cfgTabResults" onclick="nzShowConfigPanel('results')" title="结果导出与上传（R2 命名配置在此）"><span class="nav-icon">📥</span>结果操作</button>
+                <button class="cfg-tab" id="cfgTabAutomation" onclick="nzShowConfigPanel('automation')" title="自动调度"><span class="nav-icon">⏱️</span>自动化</button>
+                <button class="cfg-tab" id="cfgTabResults" onclick="nzShowConfigPanel('results')" title="结果导出与上传（R2 上传配置在此）"><span class="nav-icon">📥</span>结果操作</button>
                 <button class="cfg-tab" id="cfgTabAccounts" onclick="nzShowConfigPanel('accounts')" title="GitHub / edgetunnel 上传账号管理"><span class="nav-icon">📤</span>上传账号</button>
                 <button class="cfg-tab" id="cfgTabSettings" onclick="nzShowConfigPanel('settings')" title="外观、代理与配置管理"><span class="nav-icon">⚙️</span>设置</button>
             </div>
@@ -1843,26 +1844,10 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                         <label for="scheduleInterval">检测间隔（分钟）</label>
                         <input id="scheduleInterval" type="number" min="0" placeholder="默认 2880">
                     </div>
-                </div>
-                <div class="automation-column">
-                    <div class="settings-title">R2 上传</div>
-                    <label class="inline-check"><input type="checkbox" id="r2Enabled"> 启用 R2 上传</label>
-                    <div class="form-group">
-                        <label for="r2WorkerUrl">Worker 地址</label>
-                        <input id="r2WorkerUrl" type="text" placeholder="例如 https://r2.example.com">
-                    </div>
-                    <div class="form-group">
-                        <label for="r2WorkerToken">Worker token</label>
-                        <input id="r2WorkerToken" type="password" autocomplete="off" placeholder="Worker token">
-                    </div>
-                    <div class="automation-hint">R2 上传的「文件名」在「结果操作」分组的「R2 上传命名」中；节点别名由「结果操作 → 字段与顺序」的所选字段与输出顺序自动生成，无需手写模板。此处修改连接信息后一并保存即可。</div>
-                    <div class="automation-hint">
-                        自动调度扫描按规则上传：开启测速只上传测速达标行，未开启测速只上传通过延迟筛选的结果行，与导出文件的筛选和行数设置无关。手动任务需在结果页「⬆ 自动上传」下拉框选择「R2 上传」，同样按该规则筛选；选择 GitHub 账户或关闭时不会上传 R2。
-                    </div>
+                    <div class="automation-hint">R2 上传配置已移至「结果操作」页的「R2 上传」分组；自动调度扫描完成后仍按原规则自动上传。</div>
                 </div>
             </div>
             <button class="menu-btn automation-save-btn" onclick="saveScheduleConfig()">保存自动化设置</button>
-            <div class="automation-hint" id="r2UploadFeedback" style="display:none"></div>
         </div>
             </div>
             <div class="cfg-body hidden" id="cfgPanelAccounts">
@@ -1986,7 +1971,7 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                         </div>
                         <div class="modal-field">
                             <label>文件名</label>
-                            <input id="resultFileName" type="text" value="cfdata-results">
+                            <input id="resultFileName" type="text" value="cfdata-results" oninput="saveResultPanelSettings()">
                         </div>
                         <div class="modal-field">
                             <label>开始行</label>
@@ -2074,9 +2059,18 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                     </div>
                     <div class="cfg-fold" id="resultFoldR2">
                         <button type="button" class="cfg-fold-head" onclick="nzToggleFold(this)">
-                            <span>R2 上传命名</span><span class="fold-arrow">▶</span>
+                            <span>R2 上传</span><span class="fold-arrow">▶</span>
                         </button>
                         <div class="cfg-fold-body">
+                            <label class="inline-check"><input type="checkbox" id="r2Enabled"> 启用 R2 上传</label>
+                            <div class="form-group">
+                                <label for="r2WorkerUrl">Worker 地址</label>
+                                <input id="r2WorkerUrl" type="text" placeholder="例如 https://r2.example.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="r2WorkerToken">Worker token</label>
+                                <input id="r2WorkerToken" type="password" autocomplete="off" placeholder="Worker token">
+                            </div>
                             <div class="form-group">
                                 <label for="r2Filename">文件名</label>
                                 <input id="r2Filename" type="text" placeholder="默认 cfdata-targets.txt">
@@ -2088,7 +2082,13 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                                 <div class="automation-hint">别名 = 「字段与顺序」中勾选的字段按「输出顺序」拼接，字段间分隔符复用「TXT 字段分隔符」；其中 IP:PORT、IP地址、端口号、数据中心、落地区域、地区、城市 参与生成，其余字段（延迟、丢包等）不适用于别名。未选择任何可用字段时使用默认「数据中心-城市」。</div>
                             </div>
                             <input id="r2AliasFormat" type="hidden">
-                            <div class="automation-hint">R2 上传的启用开关与 Worker 地址/token 在「自动化」分组配置；自动调度上传的命名同样使用这里的字段与顺序配置。</div>
+                            <div class="automation-hint">自动调度与「⬆ 自动上传」的 R2 上传按规则筛选：开启测速只上传测速达标行，未开启测速只上传通过延迟筛选的结果行，与导出文件的筛选和行数设置无关；动作区的「上传 R2」按钮则按本面板当前的格式与筛选设置上传。</div>
+                            <button class="menu-btn" onclick="saveScheduleConfig()">💾 保存 R2 设置</button>
+                            <div class="automation-hint" id="r2UploadFeedback" style="display:none"></div>
+                            <div class="modal-field full">
+                                <label>上传状态</label>
+                                <div class="upload-status" id="r2UploadStatus">等待上传</div>
+                            </div>
                         </div>
                     </div>
                     <div class="cfg-fold" id="resultFoldGitHub">
@@ -2131,6 +2131,7 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                     </div>
                     <div class="result-panel-actions">
                         <button class="action-btn export-btn" onclick="downloadSelectedResults()">导出文件</button>
+                        <button class="action-btn export-btn" onclick="uploadResultsToR2()">上传 R2</button>
                         <button class="action-btn export-btn" onclick="uploadSelectedResultsToGitHub()">上传 GitHub</button>
                         <button class="action-btn export-btn" onclick="confirmEdgetunnelUpload('append')">上传 edgetunnel-追加</button>
                         <button class="action-btn export-btn" onclick="confirmEdgetunnelUpload('overwrite')">上传 edgetunnel-覆盖</button>
@@ -2709,6 +2710,7 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
             const tokenInput = document.getElementById('r2WorkerToken');
             if (tokenInput) {
                 tokenInput.value = '';
+                tokenInput.dataset.tokenSet = payload.r2WorkerTokenSet ? '1' : '';
                 tokenInput.placeholder = payload.r2WorkerTokenSet ? '已保存，留空保持不变' : 'Worker token';
             }
             setValue('r2Filename', payload.r2Filename || '');
@@ -6666,6 +6668,101 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
             }
             // R2 别名随「字段与顺序」与分隔符即时同步（预览刷新是所有字段/顺序/分隔符变更的公共路径）
             syncR2AliasTemplate();
+            saveResultPanelSettings();
+        }
+
+        // ---------------- 结果操作面板显示设置持久化 ----------------
+        // 面板显示设置（来源/格式/筛选/字段/顺序/分隔符等）保存在独立 localStorage 键；
+        // 不写入 cfdata-config（任务参数）。恢复必须晚于 switchMode 的初始化渲染：
+        // 初始化期间的自动回写被 resultPanelLoaded 拦截，避免默认值覆盖已存设置；
+        // 恢复时不走 handleResultFormatChange/applyResultModeFields 的重置语义，
+        // 只借用它们的显隐逻辑后再回填已存筛选值。
+
+        const RESULT_PANEL_STORAGE_KEY = 'cfdata-result-panel';
+        let resultPanelLoaded = false;
+
+        function saveResultPanelSettings() {
+            if (!resultPanelLoaded) return;
+            try {
+                const val = (id) => document.getElementById(id)?.value ?? '';
+                const chk = (id) => !!document.getElementById(id)?.checked;
+                localStorage.setItem(RESULT_PANEL_STORAGE_KEY, JSON.stringify({
+                    source: val('resultSourceSelect'),
+                    format: val('resultFormat'),
+                    fileName: val('resultFileName'),
+                    startRow: val('resultStartRow'),
+                    endRow: val('resultEndRow'),
+                    ipType: val('resultIPTypeFilter'),
+                    qualified: val('resultQualifiedFilter'),
+                    latency: val('resultLatencyFilter'),
+                    loss: val('resultLossFilter'),
+                    fieldOrder: (resultFieldOrder || []).slice(),
+                    customFields: val('resultCustomFields'),
+                    separatorPreset: val('resultTextSeparatorPreset'),
+                    separatorCustom: val('resultTextSeparatorCustom'),
+                    ipv6Brackets: chk('resultIPv6Brackets'),
+                }));
+            } catch (e) { /* localStorage 不可用时静默跳过 */ }
+        }
+
+        function restoreResultPanelSettings() {
+            let raw = null;
+            try {
+                raw = localStorage.getItem(RESULT_PANEL_STORAGE_KEY);
+            } catch (e) {
+                raw = null;
+            }
+            let s = null;
+            if (raw) {
+                try {
+                    s = JSON.parse(raw);
+                } catch (e) {
+                    s = null; // 损坏 JSON：忽略并沿用默认值
+                }
+                if (!s || typeof s !== 'object') s = null;
+            }
+            // 无论是否有已存记录，读取之后才允许回写，保证初始化渲染不覆盖存储
+            resultPanelLoaded = true;
+            if (!s) return;
+
+            const setVal = (id, v) => {
+                const el = document.getElementById(id);
+                if (el && typeof v === 'string' && v !== '') el.value = v;
+            };
+            const setChk = (id, v) => {
+                const el = document.getElementById(id);
+                if (el && typeof v === 'boolean') el.checked = v;
+            };
+            // 数据来源：仅在当前模式下可见的选项才恢复，避免隐藏选项导致模式错乱
+            if (typeof s.source === 'string' && s.source) {
+                const sourceEl = document.getElementById('resultSourceSelect');
+                const opt = sourceEl ? Array.from(sourceEl.options).find((o) => o.value === s.source) : null;
+                if (sourceEl && opt && !opt.hidden) {
+                    sourceEl.value = s.source;
+                    resultModalMode = s.source;
+                }
+            }
+            setVal('resultFormat', s.format);
+            // 先按恢复后的模式同步显隐（会把筛选重置为默认），再回填已存值
+            applyResultModeFields();
+            setVal('resultIPTypeFilter', s.ipType);
+            setVal('resultQualifiedFilter', s.qualified);
+            setVal('resultFileName', s.fileName);
+            setVal('resultStartRow', s.startRow);
+            setVal('resultEndRow', s.endRow);
+            setVal('resultLatencyFilter', s.latency);
+            setVal('resultLossFilter', s.loss);
+            setVal('resultTextSeparatorPreset', s.separatorPreset);
+            setVal('resultTextSeparatorCustom', s.separatorCustom);
+            setChk('resultIPv6Brackets', s.ipv6Brackets);
+            setVal('resultCustomFields', s.customFields);
+            handleCustomResultFieldsChange();
+            if (Array.isArray(s.fieldOrder)) {
+                const known = new Set(RESULT_FIELDS.concat(resultCustomFields).map((f) => f.key));
+                const restored = s.fieldOrder.filter((k) => typeof k === 'string' && known.has(k));
+                if (restored.length) resultFieldOrder = restored;
+            }
+            renderResultFieldOptions();
         }
 
         // R2 别名占位符映射：后端 applyR2AliasTemplate 仅支持这 7 个占位符
@@ -6716,6 +6813,48 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
             el.textContent = text;
             el.classList.remove('error', 'success');
             if (type) el.classList.add(type);
+        }
+
+        function setR2UploadStatus(text, type = '') {
+            const el = document.getElementById('r2UploadStatus');
+            if (!el) return;
+            el.textContent = text;
+            el.classList.remove('error', 'success');
+            if (type) el.classList.add(type);
+        }
+
+        function uploadResultsToR2() {
+            const enabled = document.getElementById('r2Enabled')?.checked;
+            const workerUrl = (document.getElementById('r2WorkerUrl')?.value || '').trim();
+            const tokenInput = document.getElementById('r2WorkerToken');
+            const token = (tokenInput?.value || '').trim();
+            const tokenSaved = !!tokenInput?.dataset.tokenSet;
+            if (!enabled) {
+                setR2UploadStatus('R2 上传未启用，请先在「R2 上传」分组开启并保存', 'error');
+                return;
+            }
+            if (!workerUrl) {
+                setR2UploadStatus('R2 上传未配置 Worker 地址，请填写并保存后重试', 'error');
+                return;
+            }
+            if (!token && !tokenSaved) {
+                setR2UploadStatus('R2 上传未配置 Worker token，请填写并保存后重试', 'error');
+                return;
+            }
+            const format = document.getElementById('resultFormat').value;
+            let content;
+            try {
+                content = buildSelectedResultContent(format);
+            } catch (err) {
+                setR2UploadStatus(err.message || '暂无可上传的结果', 'error');
+                return;
+            }
+            if (!wsSend({ type: 'r2_upload', data: { content } })) {
+                setR2UploadStatus('与服务端的连接尚未就绪，请稍后再试', 'error');
+                return;
+            }
+            setR2UploadStatus('R2 上传中…', 'success');
+            log('已提交 R2 上传请求');
         }
 
         function confirmEdgetunnelUpload(mode) {
@@ -7075,6 +7214,22 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                     log(msg.data.message || 'edgetunnel 上传失败');
                     break;
 
+                case 'r2_upload_status':
+                    setR2UploadStatus(msg.data.message || 'R2 上传中', 'success');
+                    break;
+
+                case 'r2_upload_result':
+                    setR2UploadStatus(msg.data.message || 'R2 上传成功', 'success');
+                    log(`R2 上传完成: ${msg.data.filename || ''}`);
+                    showNoticeCard(`R2 上传完成\n${msg.data.filename || ''}`);
+                    break;
+
+                case 'r2_upload_error':
+                    recordWebDebugError('r2_upload_error', msg.data?.message || msg.data || 'R2 上传失败');
+                    setR2UploadStatus(msg.data.message || 'R2 上传失败', 'error');
+                    log(msg.data.message || 'R2 上传失败');
+                    break;
+
                 case 'nsb_progress':
                     if (currentMode === 'nsb') {
                         const p = msg.data || {};
@@ -7359,6 +7514,8 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
             renderGitHubAccounts();
             renderEdgetunnelAccounts();
             switchMode('official');
+            // 面板设置恢复必须晚于 switchMode 的初始化渲染，否则恢复值会被重置
+            restoreResultPanelSettings();
             initThemeFromStorage();
         });
 

@@ -71,6 +71,45 @@ func uploadManualRowsToR2(session *appSession, content string) {
 	session.sendWSMessage("log", fmt.Sprintf("R2 上传完成：%d 条结果已上传到 %s", countSubstoreEntries(content), filename))
 }
 
+// uploadPanelContentToR2 处理结果操作面板「上传 R2」按钮：
+// 内容由前端按导出设置生成，文件名沿用已保存的 R2 文件名，与自动上传规则互不影响。
+func uploadPanelContentToR2(session *appSession, content string) {
+	if session == nil {
+		return
+	}
+	content = strings.TrimSpace(content)
+	if content == "" {
+		session.sendWSMessage("r2_upload_error", map[string]interface{}{"message": "没有可上传的结果，请先运行任务或调整筛选"})
+		return
+	}
+	cfg, err := readScheduleConfigFile(manualR2ConfigPath())
+	if err != nil {
+		session.sendWSMessage("r2_upload_error", map[string]interface{}{"message": "读取 R2 配置失败: " + err.Error()})
+		return
+	}
+	if !cfg.R2Enabled {
+		session.sendWSMessage("r2_upload_error", map[string]interface{}{"message": "R2 上传未启用，请先在「R2 上传」分组开启并保存"})
+		return
+	}
+	if strings.TrimSpace(cfg.R2WorkerURL) == "" || strings.TrimSpace(cfg.R2WorkerToken) == "" {
+		session.sendWSMessage("r2_upload_error", map[string]interface{}{"message": "R2 上传已启用，但 Worker 地址或 token 未配置，请填写并保存后重试"})
+		return
+	}
+	filename := strings.TrimSpace(cfg.R2Filename)
+	if filename == "" {
+		filename = defaultR2Filename
+	}
+	session.sendWSMessage("r2_upload_status", map[string]interface{}{"message": "R2 上传中…"})
+	if err := uploadR2Content(cfg.R2WorkerURL, cfg.R2WorkerToken, filename, content); err != nil {
+		session.sendWSMessage("r2_upload_error", map[string]interface{}{"message": "R2 上传失败，保留 R2 上的旧内容: " + err.Error()})
+		return
+	}
+	session.sendWSMessage("r2_upload_result", map[string]interface{}{
+		"message":  fmt.Sprintf("R2 上传成功：%d 行已写入 %s", countSubstoreEntries(content), filename),
+		"filename": filename,
+	})
+}
+
 // updateSessionUploadNote 把会话内最新的上传说明同步到全局上次运行摘要并推送给页面，
 // 使任务结束后才完成的异步上传也能反映在摘要行中。
 func updateSessionUploadNote(session *appSession) {

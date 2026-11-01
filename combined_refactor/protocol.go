@@ -123,6 +123,12 @@ type githubUploadRequest struct {
 	Silent  bool   `json:"silent"`
 }
 
+// r2UploadRequest 承载结果操作面板「上传 R2」按钮生成的内容；
+// 文件名不从前端传入，始终使用已保存的 r2filename 配置。
+type r2UploadRequest struct {
+	Content string `json:"content"`
+}
+
 // taskConfigUpdateRequest 保存任务参数的请求。指针为 nil 表示不修改该字段。
 type taskConfigUpdateRequest struct {
 	Mode               *string  `json:"mode,omitempty"`

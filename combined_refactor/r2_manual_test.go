@@ -482,12 +482,39 @@ func TestAutomationSectionExplainsGitHubAndR2Upload(t *testing.T) {
 		t.Fatalf("read index.html: %v", err)
 	}
 	html := string(data)
+	// R2 配置迁入「结果操作」面板后：自动化区块不再含 R2 字段/反馈，
+	// 规则说明跟随 R2 分组放在结果操作面板（spec: results-upload-ux）。
+	automationStart := strings.Index(html, `id="cfgPanelAutomation"`)
+	automationEnd := strings.Index(html, `id="cfgPanelAccounts"`)
+	if automationStart < 0 || automationEnd <= automationStart {
+		t.Fatalf("无法定位自动化区块: %d-%d", automationStart, automationEnd)
+	}
+	automation := html[automationStart:automationEnd]
+	for _, banned := range []string{`id="r2Enabled"`, `id="r2WorkerUrl"`, `id="r2WorkerToken"`, `id="r2UploadFeedback"`, `id="r2UploadStatus"`} {
+		if strings.Contains(automation, banned) {
+			t.Fatalf("自动化区块不应再包含 R2 配置元素: %s", banned)
+		}
+	}
+	resultsStart := strings.Index(html, `id="cfgPanelResults"`)
+	resultsEnd := strings.Index(html, "</aside>")
+	if resultsStart < 0 || resultsEnd <= resultsStart {
+		t.Fatalf("无法定位结果操作区块: %d-%d", resultsStart, resultsEnd)
+	}
+	results := html[resultsStart:resultsEnd]
 	for _, want := range []string{
-		"自动调度扫描按规则上传：开启测速只上传测速达标行，未开启测速只上传通过延迟筛选的结果行",
-		"手动任务需在结果页「⬆ 自动上传」下拉框选择「R2 上传」",
+		`id="r2Enabled"`,
+		`id="r2WorkerUrl"`,
+		`id="r2WorkerToken"`,
+		`id="r2Filename"`,
+		`id="r2AliasPreview"`,
+		`id="r2UploadFeedback"`,
+		`id="r2UploadStatus"`,
+		"上传 R2",
+		"开启测速只上传测速达标行，未开启测速只上传通过延迟筛选的结果行",
+		"「⬆ 自动上传」的 R2 上传按规则筛选",
 	} {
-		if !strings.Contains(html, want) {
-			t.Fatalf("自动化区块缺少说明文案: %q", want)
+		if !strings.Contains(results, want) {
+			t.Fatalf("结果操作区块缺少 R2 上传配置或说明: %q", want)
 		}
 	}
 }

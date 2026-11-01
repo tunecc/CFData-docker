@@ -655,6 +655,16 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 				session.sendWSMessage("edgetunnel_upload_result", map[string]interface{}{"message": "上传成功", "silent": params.Silent})
 			})
 		},
+		"r2_upload": func(data json.RawMessage) {
+			var params r2UploadRequest
+			if err := json.Unmarshal(data, &params); err != nil {
+				session.sendWSMessage("error", "r2_upload 参数解析失败")
+				return
+			}
+			safeGo("r2-upload-panel", session, func() {
+				uploadPanelContentToR2(session, params.Content)
+			})
+		},
 	}
 
 	for {
