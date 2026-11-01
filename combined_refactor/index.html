@@ -87,7 +87,8 @@ a { color: var(--accent); text-decoration: none; }
 
 .app {
     display: grid;
-    grid-template-columns: minmax(190px, 230px) minmax(0, 1fr) minmax(300px, 350px);
+    /* 主列与配置列对半分（D10） */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: var(--gap);
     max-width: 1760px;
     margin: 0 auto;
@@ -134,79 +135,9 @@ a { color: var(--accent); text-decoration: none; }
 
 .card-tip { font-size: 11px; color: var(--muted); }
 
-/* ---------------- 侧边栏 ---------------- */
+/* ---------------- 通用徽标（运行日志/分析报告标签页计数） ---------------- */
 
-.sidebar {
-    background: var(--glass-bg);
-    backdrop-filter: blur(var(--glass-blur));
-    -webkit-backdrop-filter: blur(var(--glass-blur));
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    box-shadow: var(--card-shadow);
-    padding: 12px 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    position: sticky;
-    top: var(--gap);
-    max-height: calc(100vh - 2 * var(--gap));
-    overflow-y: auto;
-}
-
-.sidebar-brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 6px 8px 12px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 6px;
-}
-
-.brand-mark {
-    width: 34px;
-    height: 34px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
-    color: #fff;
-    display: grid;
-    place-items: center;
-    font-weight: 800;
-    font-size: 15px;
-    flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(14, 165, 160, 0.35);
-}
-
-.brand-name { font-weight: 800; font-size: 14px; letter-spacing: 0.02em; }
-.brand-sub { font-size: 10px; color: var(--muted); }
-
-.sidebar-list { display: flex; flex-direction: column; gap: 2px; }
-
-.nav-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 9px 10px;
-    border-radius: 10px;
-    border: none;
-    background: transparent;
-    color: var(--fg);
-    font-size: 13px;
-    font-family: inherit;
-    cursor: pointer;
-    text-align: left;
-    width: 100%;
-    transition: background 0.15s ease, color 0.15s ease;
-}
-
-.nav-item:hover { background: color-mix(in srgb, var(--accent) 7%, transparent); }
-.nav-item.active {
-    background: color-mix(in srgb, var(--accent) 12%, transparent);
-    color: var(--accent);
-    font-weight: 700;
-}
-.nav-item .nav-icon { width: 18px; text-align: center; flex-shrink: 0; }
-.nav-item .nav-badge {
-    margin-left: auto;
+.nav-badge {
     min-width: 20px;
     text-align: center;
     font-size: 10px;
@@ -217,25 +148,7 @@ a { color: var(--accent); text-decoration: none; }
     color: var(--accent);
     display: none;
 }
-.nav-item .nav-badge.show { display: inline-block; }
-
-.sidebar-bottom {
-    margin-top: auto;
-    padding-top: 8px;
-    border-top: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.sidebar-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 8px 2px;
-    color: var(--muted);
-    font-size: 11px;
-}
+.nav-badge.show { display: inline-block; }
 
 /* ---------------- 通用控件 ---------------- */
 
@@ -851,8 +764,7 @@ h3 {
     gap: var(--gap);
     position: sticky;
     top: var(--gap);
-    max-height: calc(100vh - 2 * var(--gap));
-    overflow-y: auto;
+    height: calc(100vh - 2 * var(--gap));
     min-width: 0;
 }
 
@@ -921,6 +833,7 @@ h3 {
     box-shadow: var(--card-shadow);
     display: flex;
     flex-direction: column;
+    flex: 1 1 auto;
     min-height: 0;
     overflow: hidden;
 }
@@ -961,12 +874,16 @@ h3 {
     border-color: transparent;
     box-shadow: 0 2px 8px color-mix(in srgb, var(--accent) 35%, transparent);
 }
-.cfg-body { display: none; padding: 12px; overflow-y: auto; min-height: 0; }
-.cfg-body.active { display: block; }
-/* 配置列整体已有滚动（sticky + max-height），面板内层不再单独滚动，避免双滚动条 */
-@media (min-width: 761px) {
-    .cfg-body { overflow-y: visible; }
+.cfg-body {
+    display: none;
+    padding: 12px;
+    /* 面板内唯一滚动区：内容超高时在 cfg-body 内部滚动，修复旧版内容被裁剪的问题 */
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-y: auto;
 }
+.cfg-body.active { display: block; }
+.cfg-tabs { flex-shrink: 0; }
 .cfg-body .settings-grid { grid-template-columns: 1fr; }
 .cfg-panel-head {
     display: flex;
@@ -986,6 +903,94 @@ h3 {
     padding: 6px;
     background: color-mix(in srgb, var(--danger) 6%, transparent);
 }
+
+/* 配置面板底部固定页脚：品牌、版本号与 GitHub 链接（原侧边栏页脚迁移至此） */
+.cfg-panel-footer {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 12px;
+    border-top: 1px solid var(--border);
+    background: color-mix(in srgb, var(--accent) 4%, var(--card));
+    color: var(--muted);
+    font-size: 11px;
+    min-width: 0;
+}
+.cfg-panel-footer .brand-mini {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+.cfg-panel-footer .brand-mark {
+    width: 24px;
+    height: 24px;
+    border-radius: 7px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    font-size: 10px;
+    flex-shrink: 0;
+}
+.cfg-panel-footer .brand-name { font-weight: 700; font-size: 12px; color: var(--fg); white-space: nowrap; }
+.cfg-panel-footer .version-line { white-space: nowrap; }
+.cfg-panel-footer .github-link { color: var(--muted); display: inline-flex; flex-shrink: 0; }
+.cfg-panel-footer .github-link:hover { color: var(--fg); }
+
+/* ---------------- 配置面板折叠分组 ---------------- */
+
+.cfg-fold {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    background: color-mix(in srgb, var(--fg) 2%, transparent);
+}
+.cfg-fold:last-child { margin-bottom: 0; }
+.cfg-fold-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+    padding: 8px 10px;
+    border: none;
+    background: transparent;
+    color: var(--fg);
+    font-size: 13px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    text-align: left;
+    border-radius: 10px;
+    transition: background .15s ease;
+}
+.cfg-fold-head:hover { background: color-mix(in srgb, var(--accent) 7%, transparent); }
+.cfg-fold-head .fold-tip { font-size: 11px; font-weight: 400; color: var(--text-secondary); }
+.cfg-fold-head .fold-arrow {
+    flex-shrink: 0;
+    font-size: 11px;
+    color: var(--muted);
+    transition: transform .18s ease;
+}
+.cfg-fold.open .fold-arrow { transform: rotate(90deg); }
+.cfg-fold-body { display: none; padding: 2px 10px 10px; }
+.cfg-fold.open .cfg-fold-body { display: block; }
+
+/* 结果操作面板：窄栏内单列排布原弹窗字段 */
+.cfg-body .result-panel-grid { display: flex; flex-direction: column; gap: 12px; }
+.result-panel-section { display: flex; flex-direction: column; gap: 10px; }
+.result-panel-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+}
+.result-panel-actions .export-btn { width: 100%; }
 
 /* ---------------- 主列运行标签页（运行日志 / 分析报告） ---------------- */
 
@@ -1087,26 +1092,15 @@ h3 {
 /* ---------------- 响应式 ---------------- */
 
 @media (max-width: 1180px) {
-    .app { grid-template-columns: minmax(0, 1fr) minmax(280px, 340px); }
-    .sidebar {
-        position: static;
-        grid-column: 1 / -1;
-        max-height: none;
-        flex-direction: row;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 4px;
-        padding: 8px;
-    }
-    .sidebar-brand { border-bottom: none; padding: 4px 8px; margin-bottom: 0; }
-    .sidebar-list { flex-direction: row; flex-wrap: wrap; }
-    .sidebar-bottom { margin-top: 0; padding-top: 0; border-top: none; margin-left: auto; flex-direction: row; }
-    .sidebar-footer { display: none; }
+    .app { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
 }
 
 @media (max-width: 760px) {
     .app { grid-template-columns: 1fr; padding: 8px; }
-    .config-col { position: static; max-height: none; }
+    /* 窄屏下面板随页面自然滚动，不锁定视口高度 */
+    .config-col { position: static; height: auto; }
+    .cfg-panel { flex: 0 0 auto; }
+    .cfg-body { flex: 0 0 auto; overflow-y: visible; }
     .background-status-grid { grid-template-columns: 1fr 1fr; }
     .settings-grid { grid-template-columns: 1fr; }
     .modal-grid { grid-template-columns: 1fr; }
@@ -1323,28 +1317,6 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
 
 <body>
 <div class="app">
-    <aside class="sidebar">
-        <div class="sidebar-brand">
-            <div class="brand-mark">CF</div>
-            <div>
-                <div class="brand-name">CFData 控制台</div>
-                <div class="brand-sub">Cloudflare IP 优选 · 数据中心库</div>
-            </div>
-        </div>
-        <nav class="sidebar-list">
-            <button class="nav-item active" id="navViewRun" onclick="nzShowView('run')" title="任务控制与运行日志"><span class="nav-icon">🚀</span>任务运行</button>
-            <button class="nav-item" id="navViewAnalysis" onclick="nzShowView('analysis')" title="结果统计与明细"><span class="nav-icon">📊</span>分析报告<span class="nav-badge" id="navBadgeAnalysis">0</span></button>
-        </nav>
-        <div class="sidebar-bottom">
-            <div class="sidebar-footer">
-                <span class="version-line" id="versionLine">dev</span>
-                <a class="github-link" href="https://github.com/PoemMisty/CFData-WEB" target="_blank" rel="noopener noreferrer" title="打开 GitHub 仓库" aria-label="打开 GitHub 仓库">
-                    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.65 7.65 0 0 1 8 3.86c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
-                </a>
-            </div>
-        </div>
-    </aside>
-
     <main class="main-col">
         <!-- ===== 任务运行 ===== -->
         <section class="view active" id="view-run">
@@ -1556,6 +1528,7 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                 <button class="cfg-tab active" id="cfgTabOfficial" onclick="nzShowConfigPanel('official')" title="官方优选参数与扫描"><span class="nav-icon">☁️</span>官方优选</button>
                 <button class="cfg-tab" id="cfgTabNSB" onclick="nzShowConfigPanel('nsb')" title="非标优选参数与扫描"><span class="nav-icon">📂</span>非标优选</button>
                 <button class="cfg-tab" id="cfgTabAutomation" onclick="nzShowConfigPanel('automation')" title="自动调度与 R2 上传"><span class="nav-icon">⏱️</span>自动化</button>
+                <button class="cfg-tab" id="cfgTabResults" onclick="nzShowConfigPanel('results')" title="结果导出与上传（R2 命名配置在此）"><span class="nav-icon">📥</span>结果操作</button>
                 <button class="cfg-tab" id="cfgTabAccounts" onclick="nzShowConfigPanel('accounts')" title="GitHub / edgetunnel 上传账号管理"><span class="nav-icon">📤</span>上传账号</button>
                 <button class="cfg-tab" id="cfgTabSettings" onclick="nzShowConfigPanel('settings')" title="外观、代理与配置管理"><span class="nav-icon">⚙️</span>设置</button>
             </div>
@@ -1569,6 +1542,11 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                     <span>官方参数</span>
                     <span style="font-size:12px;color:var(--text-secondary);">端口可选</span>
                 </div>
+                <div class="cfg-fold open" id="officialFoldScan">
+                    <button type="button" class="cfg-fold-head" onclick="nzToggleFold(this)">
+                        <span>扫描参数</span><span class="fold-arrow">▶</span>
+                    </button>
+                    <div class="cfg-fold-body">
                 <div class="option-item">
                     <span class="label">🌐 IP 类型</span>
                     <select id="officialIpType" onchange="renderOfficialDcLibrary()">
@@ -1606,20 +1584,15 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                     <span class="label" title="超过此值的连接将被过滤，单位毫秒">⏱️ 扫描合格延迟</span>
                     <input id="officialDelay" type="number" value="500" placeholder="默认 500ms">
                 </div>
-                <div class="option-item">
-                    <span class="label" title="测速达标下限，单位 MB/s">📉 测试合格速度</span>
-                    <input id="officialSpeedMin" type="number" value="0.1" step="0.01" placeholder="默认 0.1MB/s" oninput="syncOfficialSpeedConfigState()">
-                </div>
-                <div class="option-item">
-                    <span class="label" title="测速达标结果的最大数量，关闭测速填 0">🏁 测速结果数量</span>
-                    <input id="officialSpeedLimit" type="number" value="5" placeholder="0 关闭测速">
-                </div>
-                <div class="option-item">
-                    <span class="label" title="扫描完成后自动进行详细测试和测速">🧪 自动测速</span>
-                    <select id="officialAutoSpeed">
-                        <option value="off" selected>关闭</option>
-                        <option value="on">开启</option>
-                    </select>
+                <div class="option-item full-width">
+                    <span class="label">📡 扫描方式</span>
+                    <div class="field-with-action">
+                        <select id="officialScanMode" class="speed-url-select" onchange="updateScanModeHint()">
+                            <option value="tcping" selected>TCPing（默认）</option>
+                            <option value="httping">HTTPing</option>
+                        </select>
+                        <input id="officialScanModeHint" type="text" value="仅测量 TCP 握手延迟" readonly style="flex:1;min-width:0;">
+                    </div>
                 </div>
                 <div class="option-item">
                     <span class="label" title="从数据中心库选择只扫描某个地区；「全部」扫描全部候选">🏢 数据中心</span>
@@ -1645,15 +1618,27 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                     <span class="label" title="达到该数量的目标数据中心 IP 后提前结束扫描；0 表示扫描全部候选">⏹️ 提前结束数量</span>
                     <input id="officialStopCount" type="number" value="20" min="0" placeholder="默认 20，0 不早停">
                 </div>
-                <div class="option-item full-width">
-                    <span class="label">📡 扫描方式</span>
-                    <div class="field-with-action">
-                        <select id="officialScanMode" class="speed-url-select" onchange="updateScanModeHint()">
-                            <option value="tcping" selected>TCPing（默认）</option>
-                            <option value="httping">HTTPing</option>
-                        </select>
-                        <input id="officialScanModeHint" type="text" value="仅测量 TCP 握手延迟" readonly style="flex:1;min-width:0;">
                     </div>
+                </div>
+                <div class="cfg-fold" id="officialFoldSpeed">
+                    <button type="button" class="cfg-fold-head" onclick="nzToggleFold(this)">
+                        <span>测速参数<span class="fold-tip">（关闭测速填 0）</span></span><span class="fold-arrow">▶</span>
+                    </button>
+                    <div class="cfg-fold-body">
+                <div class="option-item">
+                    <span class="label" title="扫描完成后自动进行详细测试和测速">🧪 自动测速</span>
+                    <select id="officialAutoSpeed">
+                        <option value="off" selected>关闭</option>
+                        <option value="on">开启</option>
+                    </select>
+                </div>
+                <div class="option-item">
+                    <span class="label" title="测速达标下限，单位 MB/s">📉 测试合格速度</span>
+                    <input id="officialSpeedMin" type="number" value="0.1" step="0.01" placeholder="默认 0.1MB/s" oninput="syncOfficialSpeedConfigState()">
+                </div>
+                <div class="option-item">
+                    <span class="label" title="测速达标结果的最大数量，关闭测速填 0">🏁 测速结果数量</span>
+                    <input id="officialSpeedLimit" type="number" value="5" placeholder="0 关闭测速">
                 </div>
                 <div class="option-item full-width">
                     <span class="label">🔗 测速网址</span>
@@ -1671,6 +1656,13 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                             onclick="resetDefaultSpeedUrl('officialSpeedUrl', 'officialSpeedUrlPreset')">↺</button>
                     </div>
                 </div>
+                    </div>
+                </div>
+                <div class="cfg-fold" id="officialFoldUpload">
+                    <button type="button" class="cfg-fold-head" onclick="nzToggleFold(this)">
+                        <span>上传与维护</span><span class="fold-arrow">▶</span>
+                    </button>
+                    <div class="cfg-fold-body">
                 <div class="option-item full-width">
                     <span class="label">🧹 精简地址库</span>
                     <div class="field-with-action">
@@ -1683,6 +1675,8 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                 <div class="option-item full-width">
                     <span class="label">⬆ 自动上传</span>
                     <select id="officialAutoUploadAccount" onchange="markAutoUploadTouched('officialAutoUploadAccount')"></select>
+                </div>
+                    </div>
                 </div>
             </div>
             </div>
@@ -1697,6 +1691,11 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                     <span style="font-size:12px;color:var(--text-secondary);">支持上传 txt/csv 文件或填写网络
                         URL（二选一）；若识别失败，请整理为每行一个目标，格式：IP 空格 端口，例如 1.2.3.4 443</span>
                 </div>
+                <div class="cfg-fold open" id="nsbFoldScan">
+                    <button type="button" class="cfg-fold-head" onclick="nzToggleFold(this)">
+                        <span>输入与扫描参数</span><span class="fold-arrow">▶</span>
+                    </button>
+                    <div class="cfg-fold-body">
                 <div class="option-item full-width">
                     <span class="label" title="支持 txt/csv 格式">📄 IP 文件</span>
                     <input id="nsbFileInput" type="file" accept=".txt,.csv,text/plain,text/csv"
@@ -1724,45 +1723,11 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                     <input id="nsbResultLimit" type="number" value="1000" placeholder="非 0 正整数">
                 </div>
                 <div class="option-item">
-                    <span class="label" title="测速达标下限，单位 MB/s">📉 测试合格速度</span>
-                    <input id="nsbSpeedMin" type="number" value="0.1" step="0.01" placeholder="默认 0.1MB/s" oninput="syncNSBSpeedConfigState()">
-                </div>
-                <div class="option-item">
-                    <span class="label" title="测速达标结果的最大数量，关闭测速填 0">🏁 测速结果数量</span>
-                    <input id="nsbSpeedLimit" type="number" value="5" placeholder="0 关闭测速">
-                </div>
-                <div class="option-item">
-                    <span class="label" title="扫描完成后自动进行测速">🧪 自动测速</span>
-                    <select id="nsbEnableSpeed" onchange="updateNSBSpeedControls()">
-                        <option value="on">开启</option>
-                        <option value="off" selected>关闭</option>
-                    </select>
-                </div>
-                <div class="option-item">
-                    <span class="label" title="同时测速的 IP 数量，设为 1 可获得准确速度">⚡ 测速并发</span>
-                    <input id="nsbSpeedTest" type="number" value="0" placeholder="0 关闭测速">
-                </div>
-                <div class="option-item">
-                    <span class="label" title="按数据中心筛选结果">🏢 数据中心</span>
-                    <input id="nsbTargetDC" type="text" value="" placeholder="留空不限制，如 NRT">
-                </div>
-                <div class="option-item">
-                    <span class="label" title="表格列数精简或完整">🧾 精简表格</span>
-                    <select id="nsbCompactView" onchange="setNSBCompactView(this.value === 'compact')">
-                        <option value="compact" selected>精简表格</option>
-                        <option value="full">完整表格</option>
-                    </select>
-                </div>
-                <div class="option-item">
                     <span class="label" title="启用 HTTPS 进行测试">🔗 TLS 模式</span>
                     <select id="nsbTls" onchange="updateNSBFallbackPortDefault()">
                         <option value="on" selected>开启</option>
                         <option value="off">关闭</option>
                     </select>
-                </div>
-                <div class="option-item">
-                    <span class="label" title="CSV 导出文件名">🛠️ 输出文件名</span>
-                    <input id="nsbOutFile" type="text" value="ip.csv" placeholder="ip.csv">
                 </div>
                 <div class="option-item full-width">
                     <span class="label">📡 扫描方式</span>
@@ -1773,6 +1738,36 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                         </select>
                         <input id="nsbScanModeHint" type="text" value="仅测量 TCP 握手延迟" readonly style="flex:1;min-width:0;">
                     </div>
+                </div>
+                <div class="option-item">
+                    <span class="label" title="按数据中心筛选结果">🏢 数据中心</span>
+                    <input id="nsbTargetDC" type="text" value="" placeholder="留空不限制，如 NRT">
+                </div>
+                    </div>
+                </div>
+                <div class="cfg-fold" id="nsbFoldSpeed">
+                    <button type="button" class="cfg-fold-head" onclick="nzToggleFold(this)">
+                        <span>测速参数<span class="fold-tip">（含链路复验）</span></span><span class="fold-arrow">▶</span>
+                    </button>
+                    <div class="cfg-fold-body">
+                <div class="option-item">
+                    <span class="label" title="扫描完成后自动进行测速">🧪 自动测速</span>
+                    <select id="nsbEnableSpeed" onchange="updateNSBSpeedControls()">
+                        <option value="on">开启</option>
+                        <option value="off" selected>关闭</option>
+                    </select>
+                </div>
+                <div class="option-item">
+                    <span class="label" title="测速达标下限，单位 MB/s">📉 测试合格速度</span>
+                    <input id="nsbSpeedMin" type="number" value="0.1" step="0.01" placeholder="默认 0.1MB/s" oninput="syncNSBSpeedConfigState()">
+                </div>
+                <div class="option-item">
+                    <span class="label" title="测速达标结果的最大数量，关闭测速填 0">🏁 测速结果数量</span>
+                    <input id="nsbSpeedLimit" type="number" value="5" placeholder="0 关闭测速">
+                </div>
+                <div class="option-item">
+                    <span class="label" title="同时测速的 IP 数量，设为 1 可获得准确速度">⚡ 测速并发</span>
+                    <input id="nsbSpeedTest" type="number" value="0" placeholder="0 关闭测速">
                 </div>
                 <div class="option-item full-width">
                     <span class="label">🔗 测速网址</span>
@@ -1806,9 +1801,29 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                             onclick="resetRelinkDefault()">↺</button>
                     </div>
                 </div>
+                    </div>
+                </div>
+                <div class="cfg-fold" id="nsbFoldOutput">
+                    <button type="button" class="cfg-fold-head" onclick="nzToggleFold(this)">
+                        <span>输出与上传</span><span class="fold-arrow">▶</span>
+                    </button>
+                    <div class="cfg-fold-body">
+                <div class="option-item">
+                    <span class="label" title="表格列数精简或完整">🧾 精简表格</span>
+                    <select id="nsbCompactView" onchange="setNSBCompactView(this.value === 'compact')">
+                        <option value="compact" selected>精简表格</option>
+                        <option value="full">完整表格</option>
+                    </select>
+                </div>
+                <div class="option-item">
+                    <span class="label" title="CSV 导出文件名">🛠️ 输出文件名</span>
+                    <input id="nsbOutFile" type="text" value="ip.csv" placeholder="ip.csv">
+                </div>
                 <div class="option-item full-width">
                     <span class="label">⬆ 自动上传</span>
                     <select id="nsbAutoUploadAccount" onchange="markAutoUploadTouched('nsbAutoUploadAccount')"></select>
+                </div>
+                    </div>
                 </div>
             </div>
             </div>
@@ -1840,15 +1855,7 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                         <label for="r2WorkerToken">Worker token</label>
                         <input id="r2WorkerToken" type="password" autocomplete="off" placeholder="Worker token">
                     </div>
-                    <div class="form-group">
-                        <label for="r2Filename">文件名</label>
-                        <input id="r2Filename" type="text" placeholder="默认 cfdata-targets.txt">
-                    </div>
-                    <div class="form-group">
-                        <label for="r2AliasFormat">别名模板</label>
-                        <input id="r2AliasFormat" type="text" maxlength="200" placeholder="留空使用默认「数据中心-城市」">
-                        <div class="automation-hint">上传内容中节点别名按模板生成，支持占位符 {dc} {city} {region} {dcCountry} {ip} {port} {ipport}，例如 {region}-{dc}。修改文件名后 R2 上会写入新文件，旧文件不会被自动删除。</div>
-                    </div>
+                    <div class="automation-hint">R2 上传的「文件名」在「结果操作」分组的「R2 上传命名」中；节点别名由「结果操作 → 字段与顺序」的所选字段与输出顺序自动生成，无需手写模板。此处修改连接信息后一并保存即可。</div>
                     <div class="automation-hint">
                         自动调度扫描按规则上传：开启测速只上传测速达标行，未开启测速只上传通过延迟筛选的结果行，与导出文件的筛选和行数设置无关。手动任务需在结果页「⬆ 自动上传」下拉框选择「R2 上传」，同样按该规则筛选；选择 GitHub 账户或关闭时不会上传 R2。
                     </div>
@@ -1955,142 +1962,197 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                 </div>
             </div>
             </div>
+            <div class="cfg-body hidden" id="cfgPanelResults">
+                <div class="cfg-panel-head">
+                    <div class="cfg-panel-title">结果操作</div>
+                </div>
+                <div class="result-panel-grid">
+                    <div class="result-panel-section">
+                        <div class="modal-field">
+                            <label>数据来源</label>
+                            <select id="resultSourceSelect" onchange="handleResultSourceChange(this.value)">
+                                <option value="scan" selected>扫描结果</option>
+                                <option value="test">详细测试</option>
+                                <option value="nsb">NSB 测速</option>
+                            </select>
+                        </div>
+                        <div class="modal-field">
+                            <label>文件格式</label>
+                            <select id="resultFormat" onchange="handleResultFormatChange()">
+                                <option value="txt" selected>TXT</option>
+                                <option value="csv">CSV</option>
+                                <option value="substore">Sub-Store 目标列表</option>
+                            </select>
+                        </div>
+                        <div class="modal-field">
+                            <label>文件名</label>
+                            <input id="resultFileName" type="text" value="cfdata-results">
+                        </div>
+                        <div class="modal-field">
+                            <label>开始行</label>
+                            <input id="resultStartRow" type="number" value="1" min="1" oninput="updateResultPreview()">
+                        </div>
+                        <div class="modal-field">
+                            <label>结束行</label>
+                            <input id="resultEndRow" type="number" value="20" min="1" oninput="updateResultPreview()">
+                        </div>
+                        <div class="modal-field" id="resultIPTypeFilterField">
+                            <label>IP 类型筛选</label>
+                            <select id="resultIPTypeFilter" onchange="updateResultPreview()">
+                                <option value="all" selected>导出全部类型</option>
+                                <option value="ipv4">仅导出IPV4</option>
+                                <option value="ipv6">仅导出IPV6</option>
+                            </select>
+                        </div>
+                        <div class="modal-field" id="resultQualifiedFilterField">
+                            <label>导出合格结果</label>
+                            <select id="resultQualifiedFilter" onchange="updateResultPreview()">
+                                <option value="all" selected>导出全部结果</option>
+                                <option value="qualified">仅导出合格</option>
+                                <option value="unqualified">仅导出不合格</option>
+                            </select>
+                        </div>
+                        <div class="modal-field">
+                            <label>延迟低于（毫秒，0=不限制）</label>
+                            <input id="resultLatencyFilter" type="number" min="0" step="1" value="0" oninput="updateResultPreview()">
+                        </div>
+                        <div class="modal-field">
+                            <label>丢包低于（%，100=不限制）</label>
+                            <input id="resultLossFilter" type="number" min="0" max="100" step="0.01" value="100" oninput="updateResultPreview()">
+                        </div>
+                        <div class="modal-field full">
+                            <label>输出示例</label>
+                            <pre class="result-preview" id="resultPreview">暂无预览</pre>
+                        </div>
+                    </div>
+                    <div class="cfg-fold" id="resultFoldFields">
+                        <button type="button" class="cfg-fold-head" onclick="nzToggleFold(this)">
+                            <span>字段与顺序</span><span class="fold-arrow">▶</span>
+                        </button>
+                        <div class="cfg-fold-body">
+                            <div class="modal-field full">
+                                <div class="field-head">
+                                    <label>字段选择</label>
+                                    <div class="field-head-actions">
+                                        <button class="action-btn" id="resultSelectAllBtn" onclick="toggleAllResultFields()">全选</button>
+                                        <button class="action-btn" onclick="selectIPPortOnly()">仅 IP:PORT</button>
+                                        <button class="action-btn" onclick="selectDefaultResultFields()">默认选择</button>
+                                    </div>
+                                </div>
+                                <div class="field-picker" id="resultFieldPicker"></div>
+                            </div>
+                            <div class="modal-field full">
+                                <label>自定义字段</label>
+                                <input id="resultCustomFields" type="text" placeholder="标题:内容，多项用逗号分隔，例如 备注:测试版,归属:cfdata" oninput="handleCustomResultFieldsChange()">
+                            </div>
+                            <div class="modal-field full" id="resultTextSeparatorField">
+                                <label>TXT 字段分隔符</label>
+                                <div class="separator-row">
+                                    <select id="resultTextSeparatorPreset" onchange="applyTextSeparatorPreset('result', this.value)">
+                                        <option value="-" selected>-</option>
+                                        <option value="|">|</option>
+                                        <option value="space">空格</option>
+                                        <option value="~">~</option>
+                                        <option value="_">_</option>
+                                        <option value="/">/</option>
+                                        <option value="&#92;">&#92;</option>
+                                        <option value=",">,</option>
+                                        <option value=".">.</option>
+                                        <option value="custom">自定义</option>
+                                    </select>
+                                    <input id="resultTextSeparatorCustom" type="text" value="-" placeholder="自定义分隔符" oninput="markTextSeparatorCustom('result')">
+                                </div>
+                            </div>
+                            <div class="modal-field full" id="resultIPv6BracketsField">
+                                <label class="inline-check"><input type="checkbox" id="resultIPv6Brackets" checked onchange="updateResultPreview()"> IPv6 地址添加方括号</label>
+                            </div>
+                            <div class="modal-field full">
+                                <label>输出顺序</label>
+                                <div class="order-list" id="resultOrderList"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cfg-fold" id="resultFoldR2">
+                        <button type="button" class="cfg-fold-head" onclick="nzToggleFold(this)">
+                            <span>R2 上传命名</span><span class="fold-arrow">▶</span>
+                        </button>
+                        <div class="cfg-fold-body">
+                            <div class="form-group">
+                                <label for="r2Filename">文件名</label>
+                                <input id="r2Filename" type="text" placeholder="默认 cfdata-targets.txt">
+                                <div class="automation-hint">修改文件名后 R2 上会写入新文件，旧文件不会被自动删除。</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="r2AliasPreview">节点别名（由「字段与顺序」自动生成）</label>
+                                <input id="r2AliasPreview" type="text" readonly placeholder="展开「字段与顺序」后自动生成">
+                                <div class="automation-hint">别名 = 「字段与顺序」中勾选的字段按「输出顺序」拼接，字段间分隔符复用「TXT 字段分隔符」；其中 IP:PORT、IP地址、端口号、数据中心、落地区域、地区、城市 参与生成，其余字段（延迟、丢包等）不适用于别名。未选择任何可用字段时使用默认「数据中心-城市」。</div>
+                            </div>
+                            <input id="r2AliasFormat" type="hidden">
+                            <div class="automation-hint">R2 上传的启用开关与 Worker 地址/token 在「自动化」分组配置；自动调度上传的命名同样使用这里的字段与顺序配置。</div>
+                        </div>
+                    </div>
+                    <div class="cfg-fold" id="resultFoldGitHub">
+                        <button type="button" class="cfg-fold-head" onclick="nzToggleFold(this)">
+                            <span>GitHub 上传</span><span class="fold-arrow">▶</span>
+                        </button>
+                        <div class="cfg-fold-body">
+                            <div class="modal-field full github-field">
+                                <label>选择已保存账号（切换后「上传账号」面板字段同步更新）</label>
+                                <select id="githubAccountPick" onchange="pickGitHubAccountFromModal()"></select>
+                            </div>
+                            <div class="modal-field full github-field">
+                                <label>快速上传指定文件（不使用上方结果内容）</label>
+                                <input id="githubQuickFile" type="file" accept=".txt,.csv,text/plain,text/csv">
+                            </div>
+                            <div class="modal-field full github-field">
+                                <label>上传状态</label>
+                                <div class="upload-status" id="githubUploadStatus">等待上传</div>
+                            </div>
+                            <div class="modal-field full">
+                                <label>上传失败提示</label>
+                                <div class="upload-status" id="uploadProxyHint">上传失败？可在「设置」标签页配置管理面代理后重试；支持程序配置（socks5://、http:// 等）与系统环境变量代理，扫描测速不受影响。</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cfg-fold" id="resultFoldEdgetunnel">
+                        <button type="button" class="cfg-fold-head" onclick="nzToggleFold(this)">
+                            <span>edgetunnel 上传</span><span class="fold-arrow">▶</span>
+                        </button>
+                        <div class="cfg-fold-body">
+                            <div class="modal-field full edgetunnel-field">
+                                <label>选择已保存账号（切换后「上传账号」面板字段同步更新）</label>
+                                <select id="edgetunnelAccountPick" onchange="pickEdgetunnelAccountFromModal()"></select>
+                            </div>
+                            <div class="modal-field full edgetunnel-field">
+                                <label>上传状态</label>
+                                <div class="upload-status" id="edgetunnelUploadStatus">等待上传</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="result-panel-actions">
+                        <button class="action-btn export-btn" onclick="downloadSelectedResults()">导出文件</button>
+                        <button class="action-btn export-btn" onclick="uploadSelectedResultsToGitHub()">上传 GitHub</button>
+                        <button class="action-btn export-btn" onclick="confirmEdgetunnelUpload('append')">上传 edgetunnel-追加</button>
+                        <button class="action-btn export-btn" onclick="confirmEdgetunnelUpload('overwrite')">上传 edgetunnel-覆盖</button>
+                    </div>
+                </div>
+            </div>
+            <div class="cfg-panel-footer">
+                <div class="brand-mini">
+                    <div class="brand-mark">CF</div>
+                    <span class="brand-name">CFData 控制台</span>
+                </div>
+                <div class="version-line" id="versionLine">dev</div>
+                <a class="github-link" href="https://github.com/PoemMisty/CFData-WEB" target="_blank" rel="noopener noreferrer" title="打开 GitHub 仓库" aria-label="打开 GitHub 仓库">
+                    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.65 7.65 0 0 1 8 3.86c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+                </a>
+            </div>
         </div>
     </aside>
 </div>
 
 <div class="toast-wrap" id="toastWrap"></div>
 
-    <div class="modal-mask" id="resultModalMask">
-        <div class="result-modal">
-            <div class="modal-head">
-                <h3 id="resultModalTitle">结果操作</h3>
-                <button class="modal-close" onclick="closeResultModal()">×</button>
-            </div>
-            <div class="modal-body">
-                <div class="modal-grid">
-                    <div class="modal-field">
-                        <label>文件格式</label>
-                        <select id="resultFormat" onchange="handleResultFormatChange()">
-                            <option value="txt" selected>TXT</option>
-                            <option value="csv">CSV</option>
-                            <option value="substore">Sub-Store 目标列表</option>
-                        </select>
-                    </div>
-                    <div class="modal-field">
-                        <label>文件名</label>
-                        <input id="resultFileName" type="text" value="cfdata-results">
-                    </div>
-                    <div class="modal-field">
-                        <label>开始行</label>
-                        <input id="resultStartRow" type="number" value="1" min="1" oninput="updateResultPreview()">
-                    </div>
-                    <div class="modal-field">
-                        <label>结束行</label>
-                        <input id="resultEndRow" type="number" value="20" min="1" oninput="updateResultPreview()">
-                    </div>
-                    <div class="modal-field" id="resultIPTypeFilterField">
-                        <label>IP 类型筛选</label>
-                        <select id="resultIPTypeFilter" onchange="updateResultPreview()">
-                            <option value="all" selected>导出全部类型</option>
-                            <option value="ipv4">仅导出IPV4</option>
-                            <option value="ipv6">仅导出IPV6</option>
-                        </select>
-                    </div>
-                    <div class="modal-field" id="resultQualifiedFilterField">
-                        <label>导出合格结果</label>
-                        <select id="resultQualifiedFilter" onchange="updateResultPreview()">
-                            <option value="all" selected>导出全部结果</option>
-                            <option value="qualified">仅导出合格</option>
-                            <option value="unqualified">仅导出不合格</option>
-                        </select>
-                    </div>
-                    <div class="modal-field">
-                        <label>延迟低于（毫秒，0=不限制）</label>
-                        <input id="resultLatencyFilter" type="number" min="0" step="1" value="0" oninput="updateResultPreview()">
-                    </div>
-                    <div class="modal-field">
-                        <label>丢包低于（%，100=不限制）</label>
-                        <input id="resultLossFilter" type="number" min="0" max="100" step="0.01" value="100" oninput="updateResultPreview()">
-                    </div>
-                    <div class="modal-field full">
-                        <label>输出示例</label>
-                        <pre class="result-preview" id="resultPreview">暂无预览</pre>
-                    </div>
-                    <div class="modal-field full">
-                        <div class="field-head">
-                            <label>字段选择</label>
-                            <div class="field-head-actions">
-                                <button class="action-btn" id="resultSelectAllBtn" onclick="toggleAllResultFields()">全选</button>
-                                <button class="action-btn" onclick="selectIPPortOnly()">仅 IP:PORT</button>
-                                <button class="action-btn" onclick="selectDefaultResultFields()">默认选择</button>
-                            </div>
-                        </div>
-                        <div class="field-picker" id="resultFieldPicker"></div>
-                    </div>
-                    <div class="modal-field full">
-                        <label>自定义字段</label>
-                        <input id="resultCustomFields" type="text" placeholder="标题:内容，多项用逗号分隔，例如 备注:测试版,归属:cfdata" oninput="handleCustomResultFieldsChange()">
-                    </div>
-                    <div class="modal-field full" id="resultTextSeparatorField">
-                        <label>TXT 字段分隔符</label>
-                        <div class="separator-row">
-                            <select id="resultTextSeparatorPreset" onchange="applyTextSeparatorPreset('result', this.value)">
-                                <option value="-" selected>-</option>
-                                <option value="|">|</option>
-                                <option value="space">空格</option>
-                                <option value="~">~</option>
-                                <option value="_">_</option>
-                                <option value="/">/</option>
-                                <option value="&#92;">&#92;</option>
-                                <option value=",">,</option>
-                                <option value=".">.</option>
-                                <option value="custom">自定义</option>
-                            </select>
-                            <input id="resultTextSeparatorCustom" type="text" value="-" placeholder="自定义分隔符" oninput="markTextSeparatorCustom('result')">
-                        </div>
-                    </div>
-                    <div class="modal-field full" id="resultIPv6BracketsField">
-                        <label class="inline-check"><input type="checkbox" id="resultIPv6Brackets" checked onchange="updateResultPreview()"> IPv6 地址添加方括号</label>
-                    </div>
-                    <div class="modal-field full">
-                        <label>输出顺序</label>
-                        <div class="order-list" id="resultOrderList"></div>
-                    </div>
-                    <div class="modal-field full github-field">
-                        <label>选择已保存账号（切换后「上传账号」面板字段同步更新）</label>
-                        <select id="githubAccountPick" onchange="pickGitHubAccountFromModal()"></select>
-                    </div>
-                    <div class="modal-field full github-field">
-                        <label>快速上传指定文件（不使用上方结果内容）</label>
-                        <input id="githubQuickFile" type="file" accept=".txt,.csv,text/plain,text/csv">
-                    </div>
-                    <div class="modal-field full github-field">
-                        <label>上传状态</label>
-                        <div class="upload-status" id="githubUploadStatus">等待上传</div>
-                    </div>
-                    <div class="modal-field full">
-                        <label>上传失败提示</label>
-                        <div class="upload-status" id="uploadProxyHint">上传失败？可在右上角设置菜单配置代理后重试；支持程序配置（socks5://、http:// 等）与系统环境变量代理，扫描测速不受影响。</div>
-                    </div>
-                    <div class="modal-field full edgetunnel-field">
-                        <label>选择已保存账号（切换后「上传账号」面板字段同步更新）</label>
-                        <select id="edgetunnelAccountPick" onchange="pickEdgetunnelAccountFromModal()"></select>
-                    </div>
-                    <div class="modal-field full edgetunnel-field">
-                        <label>上传状态</label>
-                        <div class="upload-status" id="edgetunnelUploadStatus">等待上传</div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-actions footer">
-                <button class="action-btn export-btn" onclick="downloadSelectedResults()">导出文件</button>
-                <button class="action-btn export-btn" onclick="uploadSelectedResultsToGitHub()">上传 GitHub</button>
-                <button class="action-btn export-btn" onclick="confirmEdgetunnelUpload('append')">上传 edgetunnel-追加</button>
-                <button class="action-btn export-btn" onclick="confirmEdgetunnelUpload('overwrite')">上传 edgetunnel-覆盖</button>
-            </div>
-        </div>
-    </div>
 
     <div class="modal-mask" id="copyModalMask">
         <div class="result-modal">
@@ -2651,6 +2713,8 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
             }
             setValue('r2Filename', payload.r2Filename || '');
             setValue('r2AliasFormat', payload.r2AliasFormat || '');
+            // 别名已字段化：加载后立即按「字段与顺序」重新生成，历史模板值不残留到保存链路
+            if (typeof syncR2AliasTemplate === 'function') syncR2AliasTemplate();
             r2AutoUploadReady = !!(payload.r2Enabled && payload.r2WorkerUrl && payload.r2WorkerTokenSet);
             syncAutoUploadSelection();
             renderScheduleStatus(payload);
@@ -3462,6 +3526,10 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
             }
             if (!isTaskRunning) resetProgress();
             updateScanModeHint();
+            // 结果操作面板的数据来源随任务模式变化（官方：扫描/详细测试；非标：NSB）
+            if (typeof syncResultSourceOptions === 'function') {
+                try { syncResultSourceOptions(); } catch (e) { /* 面板未初始化 */ }
+            }
             log(`切换至：${mode === 'official' ? '官方优选' : '非标优选'}`);
         }
 
@@ -5382,11 +5450,45 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
             resultModalMode = currentMode === 'nsb' ? 'nsb' : mode;
             const rows = getCurrentResultRows(resultModalMode);
             if (!rows.length) return showNoticeCard('暂无可操作结果');
-            document.getElementById('resultModalTitle').textContent = '结果操作';
             const formatSelect = document.getElementById('resultFormat');
             if (formatSelect && !formatSelect.value) formatSelect.value = 'txt';
             const nameInput = document.getElementById('resultFileName');
             if (nameInput && !nameInput.value.trim()) nameInput.value = resultModalMode === 'nsb' ? 'Cloudflare_NSB_Results' : (resultModalMode === 'test' ? 'Cloudflare_SpeedTest_Results' : 'Cloudflare_Scan_Results');
+            applyResultModeFields();
+            if (!resultFieldOrder.length) resultFieldOrder = getDefaultResultFieldOrder(document.getElementById('resultFormat').value);
+            renderGitHubAccounts();
+            renderResultFieldOptions();
+            // 原弹窗改为右侧「结果操作」标签页；跳转时预选数据来源
+            if (typeof nzShowConfigPanel === 'function') nzShowConfigPanel('results');
+        }
+
+        // 结果操作面板：同步数据来源选项可用性与模式相关字段的显隐，并即入即渲染动态配置
+        function syncResultSourceOptions() {
+            const sourceSelect = document.getElementById('resultSourceSelect');
+            if (!sourceSelect) return;
+            Array.from(sourceSelect.options).forEach(opt => {
+                if (opt.value === 'nsb') opt.hidden = currentMode !== 'nsb';
+                else opt.hidden = currentMode === 'nsb';
+            });
+            if (currentMode === 'nsb') {
+                resultModalMode = 'nsb';
+            } else if (resultModalMode === 'nsb' || !resultModalMode) {
+                resultModalMode = 'scan';
+            }
+            if (sourceSelect.value !== resultModalMode) sourceSelect.value = resultModalMode;
+            applyResultModeFields();
+            // 即入即渲染：直接进入面板时字段选择/输出顺序/预览/账号下拉全部就绪，无需先点表格按钮
+            try {
+                if (!resultFieldOrder.length) resultFieldOrder = getDefaultResultFieldOrder((document.getElementById('resultFormat') || {}).value || 'txt');
+                renderResultFieldOptions();
+                renderGitHubAccounts();
+                if (typeof renderEdgetunnelAccounts === 'function') renderEdgetunnelAccounts();
+                syncR2AliasTemplate();
+            } catch (e) { /* 结果数据未就绪时保持当前渲染 */ }
+        }
+
+        // 模式相关字段显隐与默认值（与原弹窗行为一致）
+        function applyResultModeFields() {
             const filterField = document.getElementById('resultIPTypeFilterField');
             if (filterField) filterField.style.display = resultModalMode === 'nsb' ? '' : 'none';
             const filterSelect = document.getElementById('resultIPTypeFilter');
@@ -5395,14 +5497,27 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
             if (qualifiedField) qualifiedField.style.display = '';
             const qualifiedSelect = document.getElementById('resultQualifiedFilter');
             if (qualifiedSelect) qualifiedSelect.value = 'all';
-            if (!resultFieldOrder.length) resultFieldOrder = getDefaultResultFieldOrder(document.getElementById('resultFormat').value);
-            renderGitHubAccounts();
-            renderResultFieldOptions();
-            document.getElementById('resultModalMask').classList.add('active');
+            const nameInput = document.getElementById('resultFileName');
+            if (nameInput && !nameInput.value.trim()) nameInput.value = resultModalMode === 'nsb' ? 'Cloudflare_NSB_Results' : (resultModalMode === 'test' ? 'Cloudflare_SpeedTest_Results' : 'Cloudflare_Scan_Results');
         }
 
-        function closeResultModal() {
-            document.getElementById('resultModalMask').classList.remove('active');
+        // 面板内手动切换数据来源
+        function handleResultSourceChange(mode) {
+            const rows = getCurrentResultRows(mode);
+            if (!rows.length) {
+                showNoticeCard('该来源暂无可操作结果');
+                syncResultSourceOptions();
+                return;
+            }
+            resultModalMode = mode;
+            applyResultModeFields();
+            renderResultFieldOptions();
+            updateResultPreview();
+        }
+
+        // 折叠分组开关
+        function nzToggleFold(btn) {
+            if (btn && btn.parentElement) btn.parentElement.classList.toggle('open');
         }
 
         function openSortModal(mode) {
@@ -6070,6 +6185,7 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
             if (checked && !resultFieldOrder.includes(key)) resultFieldOrder.push(key);
             if (!checked) resultFieldOrder = resultFieldOrder.filter((k) => k !== key);
             renderResultOrderList();
+            syncR2AliasTemplate();
         }
 
         function moveResultField(index, delta) {
@@ -6548,6 +6664,37 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
             } catch (err) {
                 el.textContent = err.message || '预览失败';
             }
+            // R2 别名随「字段与顺序」与分隔符即时同步（预览刷新是所有字段/顺序/分隔符变更的公共路径）
+            syncR2AliasTemplate();
+        }
+
+        // R2 别名占位符映射：后端 applyR2AliasTemplate 仅支持这 7 个占位符
+        const R2_ALIAS_KEY_TO_PLACEHOLDER = {
+            ipport: '{ipport}',
+            ip: '{ip}',
+            port: '{port}',
+            dc: '{dc}',
+            dcCountry: '{dcCountry}',
+            region: '{region}',
+            city: '{city}',
+        };
+
+        // 按「字段与顺序」生成别名模板串：所选字段按输出顺序拼接，分隔符复用 TXT 分隔符
+        function buildR2AliasTemplate() {
+            const sep = getTextSeparator('result');
+            return (resultFieldOrder || [])
+                .map((key) => R2_ALIAS_KEY_TO_PLACEHOLDER[key])
+                .filter(Boolean)
+                .join(sep);
+        }
+
+        // 把生成的模板串写入隐藏的 r2AliasFormat（保存/加载链路按 id 收集，协议不变），并刷新只读示例
+        function syncR2AliasTemplate() {
+            const template = buildR2AliasTemplate();
+            const hidden = document.getElementById('r2AliasFormat');
+            if (hidden) hidden.value = template;
+            const preview = document.getElementById('r2AliasPreview');
+            if (preview) preview.value = template || '';
         }
 
         function setGitHubUploadStatus(text, type = '') {
@@ -7234,14 +7381,6 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
 
     /* ---------------- 视图导航（主列双面板 + 右侧配置分组） ---------------- */
 
-    var VIEW_NAV = { run: 'navViewRun', analysis: 'navViewAnalysis' };
-
-    function nzActivateNav(view) {
-        document.querySelectorAll('.sidebar .nav-item').forEach(function (b) { b.classList.remove('active'); });
-        var nav = document.getElementById(VIEW_NAV[view]);
-        if (nav) nav.classList.add('active');
-    }
-
     // 运行视图内「运行日志 / 分析报告」双面板切换
     window.nzShowRunPanel = function (panel) {
         var panels = { log: 'runPanelLog', report: 'runPanelReport' };
@@ -7253,7 +7392,6 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
         document.querySelectorAll('.run-tab').forEach(function (t) { t.classList.remove('active'); });
         var tab = document.getElementById(tabs[panel]);
         if (tab) tab.classList.add('active');
-        nzActivateNav(panel === 'report' ? 'analysis' : 'run');
         if (panel === 'report' && typeof window.nzRefreshAnalysis === 'function') {
             try { window.nzRefreshAnalysis(); } catch (e) { /* 表格尚未渲染 */ }
         }
@@ -7262,8 +7400,8 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
 
     // 右侧配置分组切换；官方/非标分组同时切换任务模式
     window.nzShowConfigPanel = function (name) {
-        var tabs = { official: 'cfgTabOfficial', nsb: 'cfgTabNSB', automation: 'cfgTabAutomation', accounts: 'cfgTabAccounts', settings: 'cfgTabSettings' };
-        var bodies = { official: 'cfgPanelOfficial', nsb: 'cfgPanelNSB', automation: 'cfgPanelAutomation', accounts: 'cfgPanelAccounts', settings: 'cfgPanelSettings' };
+        var tabs = { official: 'cfgTabOfficial', nsb: 'cfgTabNSB', automation: 'cfgTabAutomation', results: 'cfgTabResults', accounts: 'cfgTabAccounts', settings: 'cfgTabSettings' };
+        var bodies = { official: 'cfgPanelOfficial', nsb: 'cfgPanelNSB', automation: 'cfgPanelAutomation', results: 'cfgPanelResults', accounts: 'cfgPanelAccounts', settings: 'cfgPanelSettings' };
         Object.keys(bodies).forEach(function (key) {
             var body = document.getElementById(bodies[key]);
             if (!body) return;
@@ -7278,13 +7416,16 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
         if (name === 'settings') {
             try { wsSend({ type: 'get_management_proxy', data: {} }); } catch (e) { /* 连接未就绪 */ }
         }
+        if (name === 'results' && typeof syncResultSourceOptions === 'function') {
+            try { syncResultSourceOptions(); } catch (e) { /* 结果数据未就绪 */ }
+        }
         if ((name === 'official' || name === 'nsb') && typeof switchMode === 'function') {
             try { switchMode(name); } catch (e) { console.error(e); }
         }
     };
 
     window.nzShowView = function (view) {
-        if (view === 'official' || view === 'nsb' || view === 'settings' || view === 'automation' || view === 'accounts') {
+        if (view === 'official' || view === 'nsb' || view === 'settings' || view === 'automation' || view === 'accounts' || view === 'results') {
             window.nzShowConfigPanel(view);
             return;
         }
@@ -7599,11 +7740,6 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
     function nzUpdateNavBadge() {
         var n = nzRows('scanTable').length + nzRows('testTable').length;
         var text = n > 999 ? '999+' : String(n);
-        var badge = document.getElementById('navBadgeAnalysis');
-        if (badge) {
-            badge.textContent = text;
-            badge.classList.toggle('show', n > 0);
-        }
         var reportBadge = document.getElementById('reportBadge');
         if (reportBadge) {
             reportBadge.textContent = text;
