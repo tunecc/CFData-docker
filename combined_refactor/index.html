@@ -906,7 +906,7 @@ h3 {
     background: color-mix(in srgb, var(--danger) 6%, transparent);
 }
 
-/* 配置面板底部固定页脚：品牌、版本号与 GitHub 链接（原侧边栏页脚迁移至此） */
+/* 设置面板底部页脚：品牌、版本号与 GitHub 链接（仅「设置」页显示） */
 .cfg-panel-footer {
     flex-shrink: 0;
     display: flex;
@@ -1651,7 +1651,7 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                     </div>
                 </div>
                 <div class="option-item">
-                    <span class="label" title="达到该数量的目标数据中心 IP 后提前结束扫描；0 表示扫描全部候选">⏹️ 提前结束数量</span>
+                    <span class="label" title="仅当选定具体数据中心时生效：收集到该数量的目标数据中心 IP 后停止派发扫描任务（已扫描到的 IP 仍会按「自动测速」设置继续详细测试与测速）；数据中心为「全部」时本项不生效，0 表示扫描全部候选">⏹️ 提前结束数量</span>
                     <input id="officialStopCount" type="number" value="20" min="0" placeholder="默认 20，0 不早停">
                 </div>
                     </div>
@@ -1984,6 +1984,16 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
 
                 </div>
             </div>
+            <div class="cfg-panel-footer">
+                <div class="brand-mini">
+                    <div class="brand-mark">CF</div>
+                    <span class="brand-name">CFData 控制台</span>
+                </div>
+                <div class="version-line" id="versionLine">dev</div>
+                <a class="github-link" href="https://github.com/PoemMisty/CFData-WEB" target="_blank" rel="noopener noreferrer" title="打开 GitHub 仓库" aria-label="打开 GitHub 仓库">
+                    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.65 7.65 0 0 1 8 3.86c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+                </a>
+            </div>
             </div>
             <div class="cfg-body hidden" id="cfgPanelResults">
                 <div class="cfg-panel-head">
@@ -2171,16 +2181,6 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                         <button class="action-btn export-btn" onclick="confirmEdgetunnelUpload('overwrite')">上传 edgetunnel-覆盖</button>
                     </div>
                 </div>
-            </div>
-            <div class="cfg-panel-footer">
-                <div class="brand-mini">
-                    <div class="brand-mark">CF</div>
-                    <span class="brand-name">CFData 控制台</span>
-                </div>
-                <div class="version-line" id="versionLine">dev</div>
-                <a class="github-link" href="https://github.com/PoemMisty/CFData-WEB" target="_blank" rel="noopener noreferrer" title="打开 GitHub 仓库" aria-label="打开 GitHub 仓库">
-                    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.65 7.65 0 0 1 8 3.86c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
-                </a>
             </div>
         </div>
     </aside>
@@ -3700,7 +3700,7 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
 
         function switchMode(mode) {
             currentMode = mode;
-            // 模式高亮只反映在任务控制卡的分段选择器上；右侧配置标签纯导航，不再随模式联动
+            // 模式高亮反映在任务控制卡的分段选择器上，并联动右侧官方/非标参数页
             if (modeOptionOfficial) modeOptionOfficial.classList.toggle('active', mode === 'official');
             if (modeOptionNSB) modeOptionNSB.classList.toggle('active', mode === 'nsb');
             nzUpdateStartReadiness();
@@ -3740,6 +3740,10 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
             // 结果操作面板的数据来源随任务模式变化（官方：扫描/详细测试；非标：NSB）
             if (typeof syncResultSourceOptions === 'function') {
                 try { syncResultSourceOptions(); } catch (e) { /* 面板未初始化 */ }
+            }
+            // 模式与参数页联动：切到对应模式即打开右侧对应参数页（currentMode 已同步，不会递归）
+            if (typeof window.nzShowConfigPanel === 'function') {
+                try { window.nzShowConfigPanel(mode); } catch (e) { /* 面板未初始化 */ }
             }
             log(`切换至：${mode === 'official' ? '官方优选' : '非标优选'}`);
         }
@@ -7622,8 +7626,22 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
         try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) { /* 旧内核 */ }
     };
 
-    // 右侧配置分组切换；任务模式由任务控制卡的分段模式选择器切换
+    // 右侧配置分组切换；官方/非标参数页与任务模式绑定：
+    // 切换模式自动打开对应参数页，点参数页也会切换到对应模式，避免另一模式下面板空白
     window.nzShowConfigPanel = function (name) {
+        if ((name === 'official' || name === 'nsb') && !window.nzModePanelSyncing) {
+            var curMode = null;
+            try { curMode = currentMode; } catch (e) { curMode = null; }
+            if (curMode !== null && curMode !== name && typeof switchMode === 'function') {
+                window.nzModePanelSyncing = true;
+                try {
+                    switchMode(name);
+                    return; // switchMode 内部已完成面板与参数区切换
+                } finally {
+                    window.nzModePanelSyncing = false;
+                }
+            }
+        }
         var tabs = { official: 'cfgTabOfficial', nsb: 'cfgTabNSB', automation: 'cfgTabAutomation', results: 'cfgTabResults', accounts: 'cfgTabAccounts', settings: 'cfgTabSettings' };
         var bodies = { official: 'cfgPanelOfficial', nsb: 'cfgPanelNSB', automation: 'cfgPanelAutomation', results: 'cfgPanelResults', accounts: 'cfgPanelAccounts', settings: 'cfgPanelSettings' };
         Object.keys(bodies).forEach(function (key) {
