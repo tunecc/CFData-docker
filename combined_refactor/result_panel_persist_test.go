@@ -1,7 +1,6 @@
 package main
 
 import (
-	"os"
 	"strings"
 	"testing"
 )
@@ -10,11 +9,7 @@ import (
 // 回归点：恢复必须晚于 switchMode 初始化渲染，且不被默认值回写覆盖。
 
 func TestResultPanelPersistenceInitOrder(t *testing.T) {
-	data, err := os.ReadFile("index.html")
-	if err != nil {
-		t.Fatalf("read index.html: %v", err)
-	}
-	html := string(data)
+	html := readFrontendSource(t)
 
 	start := strings.Index(html, "window.addEventListener('DOMContentLoaded'")
 	if start < 0 {
@@ -37,11 +32,7 @@ func TestResultPanelPersistenceInitOrder(t *testing.T) {
 }
 
 func TestResultPanelPersistenceSaveGate(t *testing.T) {
-	data, err := os.ReadFile("index.html")
-	if err != nil {
-		t.Fatalf("read index.html: %v", err)
-	}
-	html := string(data)
+	html := readFrontendSource(t)
 
 	if !strings.Contains(html, "let resultPanelLoaded = false;") {
 		t.Fatal("缺少 resultPanelLoaded 门控标记")
@@ -55,11 +46,7 @@ func TestResultPanelPersistenceSaveGate(t *testing.T) {
 }
 
 func TestResultPanelRestoreKeepsFieldOrder(t *testing.T) {
-	data, err := os.ReadFile("index.html")
-	if err != nil {
-		t.Fatalf("read index.html: %v", err)
-	}
-	html := string(data)
+	html := readFrontendSource(t)
 
 	start := strings.Index(html, "function restoreResultPanelSettings()")
 	end := strings.Index(html[start:], "\n        }")

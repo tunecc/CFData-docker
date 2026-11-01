@@ -458,11 +458,7 @@ func TestRunNSBTaskTriggersManualR2Upload(t *testing.T) {
 // 自动测速开启但测速上限为 0 时，批量测速不会启动，详细测试阶段必须自己上传，
 // 否则该任务不会有任何 R2 上传（A2 的「未执行测速」场景）。
 func TestOfficialAutoSpeedWithoutLimitKeepsDetailedUpload(t *testing.T) {
-	data, err := os.ReadFile("index.html")
-	if err != nil {
-		t.Fatalf("read index.html: %v", err)
-	}
-	html := string(data)
+	html := readFrontendSource(t)
 	want := "deferR2Upload: officialAutoSpeedPending && officialSpeedLimitForAuto() > 0"
 	if !strings.Contains(html, want) {
 		t.Fatalf("start_test 的 deferR2Upload 必须受测速上限约束，缺少: %q", want)
@@ -477,11 +473,7 @@ func TestOfficialAutoSpeedWithoutLimitKeepsDetailedUpload(t *testing.T) {
 }
 
 func TestAutomationSectionExplainsGitHubAndR2Upload(t *testing.T) {
-	data, err := os.ReadFile("index.html")
-	if err != nil {
-		t.Fatalf("read index.html: %v", err)
-	}
-	html := string(data)
+	html := readFrontendSource(t)
 	// R2 配置迁入「结果操作」面板后：自动化区块不再含 R2 字段/反馈，
 	// 规则说明跟随 R2 分组放在结果操作面板（spec: results-upload-ux）。
 	automationStart := strings.Index(html, `id="cfgPanelAutomation"`)

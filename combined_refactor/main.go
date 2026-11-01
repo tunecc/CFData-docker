@@ -7,6 +7,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"io/fs"
 	"net"
 	"net/http"
 	"os"
@@ -281,6 +282,14 @@ func main() {
 		w.Header().Set("Cache-Control", "no-cache")
 		_, _ = w.Write(renderIndexHTML(data, appVersionLabel()))
 	}))
+	// 拆分后的前端静态资源（styles/common/app/enhance），与 index.html 同源嵌入
+	webFS, err := fs.Sub(staticFiles, "web")
+	if err != nil {
+		fmt.Printf("前端静态资源初始化失败: %v\n", err)
+		os.Exit(1)
+	}
+	staticHandler := http.StripPrefix("/static/", http.FileServer(http.FS(webFS)))
+	http.Handle("/static/", requireAuth(staticHandler.ServeHTTP))
 	http.HandleFunc("/ws", requireAuth(handleWebSocket))
 
 	addr := fmt.Sprintf(":%d", listenPort)
