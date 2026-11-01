@@ -431,7 +431,8 @@ func runNSBScanWorkers(ctx context.Context, total, maxWorkers, resultLimit int, 
 	if resultLimit > 0 && resultLimit < effectiveTotal {
 		effectiveTotal = resultLimit
 	}
-eta := newEtaEstimator()
+
+	eta := newEtaEstimator()
 	jobs := make(chan int)
 	var wg sync.WaitGroup
 	var mu sync.Mutex
@@ -756,6 +757,15 @@ func runNSBTask(ctx context.Context, session *appSession, fileName, fileContent,
 	if resultLimit > 0 && resultLimit < total {
 		total = resultLimit
 	}
+	// 扫描期间启动网络健康探针：拥塞时 worker 自动放慢节奏，扫描结束清理
+	stopNetHealth := startScanNetHealth()
+
+	// 并发数量 0=自动：按候选规模自适应
+	if maxThreads <= 0 {
+		resolved := resolveScanThreads(maxThreads, len(expandedEntries))
+		session.sendWSMessage("log", fmt.Sprintf("并发数量 0=自动：按 %d 条候选自适应为 %d 线程", len(expandedEntries), resolved))
+		maxThreads = resolved
+	}
 	reportNSBProgress(session, "scan", 0, total, "扫描中")
 	wasCanceled := runNSBScanWorkers(ctx, len(expandedEntries), maxThreads, resultLimit, func(current, etaSeconds int) {
 		reportNSBProgressWithETA(session, "scan", min(current, total), total, etaSeconds, "扫描中")
@@ -797,6 +807,8 @@ func runNSBTask(ctx context.Context, session *appSession, fileName, fileContent,
 		session.sendWSMessage("nsb_scan_result", res.toNSBLiveMessage("", compact))
 		return accepted
 	})
+
+	stopNetHealth() // 扫描结束（含取消），停止网络健康探针
 
 	if wasCanceled || ctx.Err() != nil {
 		session.sendWSMessage("log", "非标优选延迟扫描已终止，正在整理已扫描到的数据...")

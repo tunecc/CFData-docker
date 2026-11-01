@@ -939,7 +939,8 @@ func prepareOfficialCLIConfig(cfg *cliConfig) error {
 	if cfg.ipType != 4 && cfg.ipType != 6 {
 		return errors.New("官方模式 -offiptype 仅支持 4 或 6")
 	}
-	if cfg.threads <= 0 {
+	// 0=自动并发：透传给扫描入口的 resolveScanThreads；负数回落默认 100
+	if cfg.threads < 0 {
 		cfg.threads = 100
 	}
 	if cfg.port <= 0 {
@@ -1023,7 +1024,8 @@ func prepareNSBCLIConfig(cfg *cliConfig) error {
 	if strings.TrimSpace(cfg.file) == "" && strings.TrimSpace(cfg.sourceURL) == "" {
 		return errors.New("非标模式需要通过 -nsbfile 或 -nsbsourceurl 指定输入来源")
 	}
-	if cfg.threads <= 0 {
+	// 0=自动并发：透传给扫描入口的 resolveScanThreads；负数回落默认 100
+	if cfg.threads < 0 {
 		cfg.threads = 100
 	}
 	if cfg.speedTest < 0 {

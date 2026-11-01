@@ -1,0 +1,14 @@
+# 本地 golangci-lint 配置（仅供本地使用，CI 门禁为 go vet + go test）。
+# errcheck 暂不启用以匹配存量代码风格；新增代码建议显式处理错误。
+version: "2"
+
+run:
+  timeout: 5m
+
+linters:
+  default: none
+  enable:
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused

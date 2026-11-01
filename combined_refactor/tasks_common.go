@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"math"
 	"runtime/debug"
 	"sync"
 	"time"
@@ -93,6 +94,15 @@ func runBoundedWorkersUntil(ctx context.Context, total, maxWorkers, progressEver
 			default:
 			}
 
+			// 网络拥塞时放慢取任务节奏（探测连续失败才触发，恢复后自动停止）
+			if delay := currentNetHealthThrottle(); delay > 0 {
+				select {
+				case <-ctx.Done():
+					return
+				case <-time.After(delay):
+				}
+			}
+
 			work(idx)
 		}(i)
 	}
@@ -122,4 +132,25 @@ func reportNSBProgressWithETA(session *appSession, phase string, current, total,
 		payload["etaSeconds"] = etaSeconds
 	}
 	session.sendWSMessage("nsb_progress", payload)
+}
+
+// resolveScanThreads 解析扫描并发数：显式正数原样生效；
+// 0 表示按候选规模自适应（对数衰减，8-400 上下限），
+// 学习 subs-check-pro 的衰减自适应思路（docs/analyses/subs-check-pro-learnings.md 建议⑨）。
+func resolveScanThreads(requested, candidates int) int {
+	if requested > 0 {
+		return requested
+	}
+	if candidates <= 0 {
+		return 8
+	}
+	scale := 80.0 * math.Log(1+float64(candidates)/100.0)
+	resolved := int(scale + 0.5)
+	if resolved < 8 {
+		resolved = 8
+	}
+	if resolved > 400 {
+		resolved = 400
+	}
+	return resolved
 }

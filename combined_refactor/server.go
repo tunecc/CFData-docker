@@ -202,7 +202,8 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 				session.sendWSMessage("error", "start_task 参数解析失败")
 				return
 			}
-			if params.Threads <= 0 {
+			// 0=自动并发：透传给扫描入口的 resolveScanThreads；负数回落默认 100
+			if params.Threads < 0 {
 				params.Threads = 100
 			}
 			if params.Port <= 0 {
@@ -340,7 +341,8 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 				session.sendWSMessage("error", "start_nsb_task 参数解析失败")
 				return
 			}
-			if params.MaxThreads <= 0 {
+			// 0=自动并发：透传给扫描入口的 resolveScanThreads；负数回落默认
+			if params.MaxThreads < 0 {
 				params.MaxThreads = speedTestWorkers
 			}
 			if params.SpeedTest < 0 {

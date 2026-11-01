@@ -211,8 +211,9 @@ func validateTaskConfigUpdate(update *taskConfigUpdate) error {
 		}
 	}
 	validateThreads := func(count *int, name string) error {
-		if *count < 1 || *count > 100000 {
-			return fmt.Errorf("%s 必须在 1-100000 之间", name)
+		// 0 表示按候选规模自动适配
+		if *count < 0 || *count > 100000 {
+			return fmt.Errorf("%s 必须在 0-100000 之间（0 表示自动）", name)
 		}
 		return nil
 	}

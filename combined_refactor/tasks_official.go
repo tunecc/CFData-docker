@@ -365,6 +365,16 @@ func runOfficialTaskWithPool(ctx context.Context, session *appSession, ipList []
 	if stopCount < 0 {
 		stopCount = 0
 	}
+	// 扫描期间启动网络健康探针：拥塞时 worker 自动放慢节奏，任务结束清理
+	stopNetHealth := startScanNetHealth()
+	defer stopNetHealth()
+
+	// 并发数量 0=自动：按候选规模自适应，Web 与调度路径共用本入口
+	if scanMaxThreads <= 0 {
+		resolved := resolveScanThreads(scanMaxThreads, len(ipList))
+		session.sendWSMessage("log", fmt.Sprintf("并发数量 0=自动：按 %d 条候选自适应为 %d 线程", len(ipList), resolved))
+		scanMaxThreads = resolved
+	}
 	if targetDC == "" {
 		session.sendWSMessage("log", fmt.Sprintf("开始扫描：%d 条记录", len(ipList)))
 	} else if stopCount > 0 {

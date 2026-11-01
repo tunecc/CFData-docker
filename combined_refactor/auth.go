@@ -5,6 +5,7 @@ import (
 	"crypto/subtle"
 	"encoding/hex"
 	"encoding/json"
+	"net"
 	"net/http"
 	"strings"
 	"sync"
@@ -141,6 +142,17 @@ func handleLoginPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// 登录失败限速：同 IP 固定窗口内失败达阈值后拒绝，防止无限暴力尝试
+	limiterIP := clientIPForLimiter(r)
+	if !authLoginLimiter.allowed(limiterIP) {
+		if contentTypeJSON(r) {
+			http.Error(w, "登录失败次数过多，请稍后再试", http.StatusTooManyRequests)
+		} else {
+			http.Redirect(w, r, "/auth/login?error=rate", http.StatusFound)
+		}
+		return
+	}
+
 	secureCookie := r.TLS != nil
 	var user, pass string
 	contentType := strings.ToLower(strings.TrimSpace(strings.Split(r.Header.Get("Content-Type"), ";")[0]))
@@ -165,6 +177,7 @@ func handleLoginPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !constantTimeEqual(user, webUser) || !constantTimeEqual(pass, webPassword) {
+		authLoginLimiter.recordFailure(limiterIP)
 		if c, err := r.Cookie(sessionCookieName); err == nil {
 			deleteAuthSession(c.Value)
 		}
@@ -186,6 +199,7 @@ func handleLoginPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	setSessionCookie(w, token, expiresAt, secureCookie)
+	authLoginLimiter.recordSuccess(limiterIP)
 
 	if contentType == "application/json" {
 		w.Header().Set("Content-Type", "application/json")
@@ -193,6 +207,23 @@ func handleLoginPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	http.Redirect(w, r, "/", http.StatusFound)
+}
+
+// authLoginLimiter 限制 Web 登录的暴力尝试；仅认证启用时生效。
+var authLoginLimiter = newLoginRateLimiter()
+
+// clientIPForLimiter 提取限速用的客户端 IP（RemoteAddr 去端口）。
+func clientIPForLimiter(r *http.Request) string {
+	host, _, err := net.SplitHostPort(strings.TrimSpace(r.RemoteAddr))
+	if err != nil {
+		return strings.TrimSpace(r.RemoteAddr)
+	}
+	return host
+}
+
+func contentTypeJSON(r *http.Request) bool {
+	ct := strings.ToLower(strings.TrimSpace(strings.Split(r.Header.Get("Content-Type"), ";")[0]))
+	return ct == "application/json"
 }
 
 func constantTimeEqual(a, b string) bool {

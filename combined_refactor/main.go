@@ -7,10 +7,13 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"os"
+	"os/signal"
 	"strconv"
 	"strings"
+	"syscall"
 	"time"
 )
 
@@ -317,7 +320,37 @@ func main() {
 		Addr:              addr,
 		ReadHeaderTimeout: 10 * time.Second,
 	}
-	if err := server.ListenAndServe(); err != nil {
+
+	// 端口预检：占用时给出明确错误并以非零退出，避免裸 stack
+	listener, err := net.Listen("tcp", addr)
+	if err != nil {
+		fmt.Printf("启动失败：端口不可用 %s（%v）。请检查端口是否被其他进程占用。\n", addr, err)
+		os.Exit(1)
+	}
+
+	// 优雅停机：SIGTERM/SIGINT → HTTP 优雅关闭（10s 超时，在途请求收尾）
+	// → 取消运行中任务 → 有界等待（最多 30s）→ 退出；正常运行期间不触发
+	shutdownCtx, stopSignal := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stopSignal()
+	go func() {
+		<-shutdownCtx.Done()
+		fmt.Println("\n收到退出信号，正在优雅关闭...")
+		shutdownTimeoutCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		if err := server.Shutdown(shutdownTimeoutCtx); err != nil {
+			fmt.Printf("HTTP 优雅关闭未在超时内完成: %v\n", err)
+		}
+		cancelAllTasks()
+		deadline := time.Now().Add(30 * time.Second)
+		for anyTaskRunning() && time.Now().Before(deadline) {
+			time.Sleep(500 * time.Millisecond)
+		}
+		_ = server.Close()
+		os.Exit(0)
+	}()
+
+	if err := server.Serve(listener); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		fmt.Printf("启动失败: %v\n", err)
+		os.Exit(1)
 	}
 }

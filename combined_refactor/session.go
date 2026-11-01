@@ -14,6 +14,9 @@ import (
 var globalRunningTasks int32
 var globalTaskMutex sync.Mutex
 
+// taskCancels 登记所有活跃任务的取消函数，供优雅停机统一取消（含 CLI/调度会话）。
+var taskCancels sync.Map
+
 // 回放缓冲上限：全局任务会话在内存中为“当前/上一次任务”保留的各类数据条数。
 const (
 	taskLogReplayLimit  = 500
@@ -268,7 +271,18 @@ func (s *appSession) beginTask(cancel context.CancelFunc, label string, mode str
 		s.resetReplayState()
 	}
 	atomic.AddInt32(&globalRunningTasks, 1)
+	taskCancels.Store(s, cancel)
 	return true
+}
+
+// cancelAllTasks 取消所有活跃任务（优雅停机时调用）。
+func cancelAllTasks() {
+	taskCancels.Range(func(_, value any) bool {
+		if cancel, ok := value.(context.CancelFunc); ok {
+			cancel()
+		}
+		return true
+	})
 }
 
 func (s *appSession) endTask() {
@@ -279,6 +293,7 @@ func (s *appSession) endTask() {
 	if s.isTaskRunning {
 		atomic.AddInt32(&globalRunningTasks, -1)
 	}
+	taskCancels.Delete(s)
 	s.isTaskRunning = false
 	s.taskCancel = nil
 	s.backgroundSnapshot.Running = false

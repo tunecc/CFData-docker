@@ -378,11 +378,11 @@ func scheduleConfigPayload(configPath string) (map[string]interface{}, error) {
 		"r2Enabled":       cfg.R2Enabled,
 		"r2WorkerUrl":     cfg.R2WorkerURL,
 		// token 不回传前端，仅提示是否已保存
-		"r2WorkerToken":            "",
-		"r2WorkerTokenSet":         strings.TrimSpace(cfg.R2WorkerToken) != "",
-		"r2Filename":               cfg.R2Filename,
-		"r2AliasFormat":            cfg.R2AliasFormat,
-		"notifyBarkServer":         cfg.NotifyBarkServer,
+		"r2WorkerToken":    "",
+		"r2WorkerTokenSet": strings.TrimSpace(cfg.R2WorkerToken) != "",
+		"r2Filename":       cfg.R2Filename,
+		"r2AliasFormat":    cfg.R2AliasFormat,
+		"notifyBarkServer": cfg.NotifyBarkServer,
 		// 通知凭据不回传前端，仅提示是否已保存（与 R2 token 约定一致）
 		"notifyBarkKey":            "",
 		"notifyBarkKeySet":         strings.TrimSpace(cfg.NotifyBarkKey) != "",

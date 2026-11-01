@@ -1613,8 +1613,8 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                     </select>
                 </div>
                 <div class="option-item">
-                    <span class="label" title="同时扫描的线程数">🚀 并发数量</span>
-                    <input id="officialThreads" type="number" value="100" placeholder="默认 100">
+                    <span class="label" title="同时扫描的线程数；填 0 表示按候选规模自动适配">🚀 并发数量</span>
+                    <input id="officialThreads" type="number" value="100" placeholder="默认 100，0=自动">
                 </div>
                 <div class="option-item">
                     <span class="label" title="超过此值的连接将被过滤，单位毫秒">⏱️ 扫描合格延迟</span>
@@ -1744,8 +1744,8 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                     <input id="nsbFallbackPort" type="number" value="443" placeholder="关闭 TLS 默认 80，开启 TLS 默认 443">
                 </div>
                 <div class="option-item">
-                    <span class="label" title="同时扫描的线程数">🚀 并发数量</span>
-                    <input id="nsbThreads" type="number" value="100" placeholder="默认 100">
+                    <span class="label" title="同时扫描的线程数；填 0 表示按候选规模自动适配">🚀 并发数量</span>
+                    <input id="nsbThreads" type="number" value="100" placeholder="默认 100，0=自动">
                 </div>
                 <div class="option-item">
                     <span class="label" title="超过此值的连接将被过滤，单位毫秒">⏱️ 扫描合格延迟</span>
@@ -3360,7 +3360,7 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                 payload.officialScanMode = o.scanMode;
                 payload.officialIpType = parseInt(o.ipType, 10) || 4;
                 payload.officialPort = parseInt(o.port, 10) || 443;
-                payload.officialThreads = parseInt(o.threads, 10) || 100;
+                payload.officialThreads = parseThreadsValue(o.threads);
                 payload.officialDelay = parseInt(o.delay, 10) || 0;
                 payload.officialSpeedMin = parseFloat(o.speedMin) || 0;
                 payload.officialSpeedLimit = Math.max(0, parseInt(o.speedLimit, 10) || 0);
@@ -3371,7 +3371,7 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
             } else if (scope === 'nsb') {
                 const n = config.nsb;
                 payload.nsbScanMode = n.scanMode;
-                payload.nsbThreads = parseInt(n.threads, 10) || 100;
+                payload.nsbThreads = parseThreadsValue(n.threads);
                 payload.nsbDelay = parseInt(n.delay, 10) || 0;
                 payload.nsbResultLimit = Math.max(0, parseInt(n.resultLimit, 10) || 0);
                 payload.nsbFallbackPort = parseInt(n.fallbackPort, 10) || 443;
@@ -3886,6 +3886,13 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
             }
             renderScanHeaders('nsb');
             renderAllNSBLiveRows();
+        }
+
+        // 并发数量解析：0=自动按候选规模自适应；非法/负值回落默认 100
+        function parseThreadsValue(raw) {
+            const v = parseInt(raw, 10);
+            if (!Number.isFinite(v) || v < 0) return 100;
+            return v;
         }
 
         // ETA 可选字段（etaSeconds >= 0 时显示），缺失或 -1 自动隐藏
@@ -5380,7 +5387,7 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
             }
             if (requireProxyWarning(() => startDcLibraryScan())) return;
             const ipType = getOfficialIpType();
-            const threads = parseInt(document.getElementById('officialThreads').value) || 100;
+            const threads = parseThreadsValue(document.getElementById('officialThreads').value);
             const port = parseInt(document.getElementById('officialTestPort').value) || 443;
             const delay = parseInt(document.getElementById('officialDelay').value) || 0;
             const scanMode = getScanMode();
@@ -5404,7 +5411,7 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
 
         function startOfficialTask() {
             const ipType = parseInt(document.getElementById('officialIpType').value);
-            const threads = parseInt(document.getElementById('officialThreads').value) || 100;
+            const threads = parseThreadsValue(document.getElementById('officialThreads').value);
             const port = parseInt(document.getElementById('officialTestPort').value) || 443;
             const delay = parseInt(document.getElementById('officialDelay').value) || 0;
             const officialSpeedConfig = syncOfficialSpeedConfigState();
@@ -5476,7 +5483,7 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                 return;
             }
 
-            const maxThreads = parseInt(document.getElementById('nsbThreads').value) || 100;
+            const maxThreads = parseThreadsValue(document.getElementById('nsbThreads').value);
             const fallbackPort = parseInt(document.getElementById('nsbFallbackPort').value) || 0;
             const speedEnabled = String(document.getElementById('nsbEnableSpeed').value || 'off').toLowerCase() === 'on';
             const speedTestInput = parseInt(document.getElementById('nsbSpeedTest').value) || 0;
