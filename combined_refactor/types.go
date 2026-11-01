@@ -245,6 +245,9 @@ type appSession struct {
 	scanMutex            sync.Mutex
 	scanResults          []ScanResult
 	scanFailureSummary   string
+	flowFailureMutex     sync.Mutex
+	flowFailure          string
+	scheduleRun          bool
 	testMutex            sync.Mutex
 	testResults          []TestResult
 	nsbMutex             sync.Mutex

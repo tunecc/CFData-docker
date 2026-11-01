@@ -123,7 +123,7 @@ func TestBuildTaskHistoryRecordOfficial(t *testing.T) {
 	// 写一份配置文件供 SpeedMin 读取（defaultCLIConfigPath 指向 exe 目录，
 	// 单测环境读不到则按 >0 兜底；此处直接校验兜底口径）
 	started := time.Now().Add(-time.Minute)
-	session := newCLISession(&cliConfig{})
+	session := &appSession{}
 	session.scanMutex.Lock()
 	session.scanResults = []ScanResult{
 		{IP: "1.2.3.4", Port: 443, DataCenter: "HKG", Region: "香港", LatencyStr: "12ms", TCPDuration: 12 * time.Millisecond},
@@ -160,7 +160,7 @@ func TestBuildTaskHistoryRecordOfficial(t *testing.T) {
 func TestBuildTaskHistoryRecordNSB(t *testing.T) {
 	withTempHistoryDir(t)
 	started := time.Now().Add(-time.Minute)
-	session := newCLISession(&cliConfig{})
+	session := &appSession{}
 	session.nsbMutex.Lock()
 	session.nsbRows = [][]string{
 		{"1.2.3.4", "443", "TLS", "0%", "TCPing", "12ms", "-", "1.2.3.4", "v4", "1.2.3.4 443", "HKG", "香港", "香港", "AS123", "Org"},

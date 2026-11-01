@@ -406,3 +406,16 @@ func sendLatestHistoryToSession(s *appSession) {
 		"fromHistory": true,
 	})
 }
+
+// flowFailure 记录本次任务的管线错误（非用户停止），供任务收尾区分成败。
+func (s *appSession) setFlowFailure(text string) {
+	s.flowFailureMutex.Lock()
+	defer s.flowFailureMutex.Unlock()
+	s.flowFailure = text
+}
+
+func (s *appSession) flowFailureValue() string {
+	s.flowFailureMutex.Lock()
+	defer s.flowFailureMutex.Unlock()
+	return s.flowFailure
+}

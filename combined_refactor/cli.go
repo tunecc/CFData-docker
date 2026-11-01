@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"context"
 	"encoding/csv"
 	"encoding/json"
@@ -416,23 +415,6 @@ func cliFileConfigJSONKeys() map[string]bool {
 	return keys
 }
 
-// 配置迁移等共享流程的终端输入助手（原 menu.go，CLI 菜单删除后保留）
-const (
-	promptOK = iota
-	promptQuit
-)
-
-var menuInputReader = bufio.NewReader(os.Stdin)
-
-func readMenuLine() (string, int) {
-	line, err := menuInputReader.ReadString('\n')
-	trimmed := strings.TrimSpace(line)
-	if trimmed == "" && err != nil {
-		return "", promptQuit
-	}
-	return trimmed, promptOK
-}
-
 func migrateConfigFileToLatest(path string, data []byte) ([]byte, error) {
 	var raw map[string]interface{}
 	if err := json.Unmarshal(data, &raw); err != nil {
@@ -470,14 +452,11 @@ func migrateConfigFileToLatest(path string, data []byte) ([]byte, error) {
 			fmt.Printf("[migrate] 配置文件存在更新（旧变量名: %s），非交互环境跳过迁移，继续使用当前文件\n", strings.Join(unknown, ", "))
 			return data, nil
 		}
+		// 纯 Web 定位：非交互环境一律自动跳过迁移提示（原 CLI 交互已删除）
 		fmt.Println("[migrate] 检测到配置文件存在更新（变量名有变化）")
 		fmt.Printf("[migrate] 新模板中不存在的旧变量名: %s\n", strings.Join(unknown, ", "))
-		fmt.Print("[migrate] 是否迁移同变量名的配置？(y=迁移并备份原文件，新增/改名项为默认值请自行设置 / n=跳过，下次启动再提示) > ")
-		line, outcome := readMenuLine()
-		if outcome != promptOK || !strings.EqualFold(strings.TrimSpace(line), "y") {
-			fmt.Println("[migrate] 已跳过迁移，下次启动将再次提示")
-			return data, nil
-		}
+		fmt.Println("[migrate] 已跳过迁移，下次启动将再次提示")
+		return data, nil
 	}
 	backupPath := path + ".bak"
 	if err := os.WriteFile(backupPath, data, 0600); err != nil {
@@ -781,160 +760,6 @@ func firstNonEmpty(values ...string) string {
 	return ""
 }
 
-func newCLISession(cfg *cliConfig) *appSession {
-	session := &appSession{progressState: map[string][2]int{}}
-	session.emit = func(msgType string, data interface{}) {
-		handleCLIMessage(cfg, session, msgType, data)
-	}
-	return session
-}
-
-func handleCLIMessage(cfg *cliConfig, session *appSession, msgType string, data interface{}) {
-	debugWrongType := func(expected string) {
-		if debugMode {
-			fmt.Fprintf(os.Stderr, "%s[cli-debug]%s 消息 %s 类型断言失败，期望 %s，实际 %T\n", ansiYellow, ansiReset, msgType, expected, data)
-		}
-	}
-	switch msgType {
-	case "log":
-		fmt.Println(data)
-	case "error":
-		recordProgramDebugError("cli_message_error", data)
-		fmt.Fprintln(os.Stderr, colorize(fmt.Sprint(data), ansiRed))
-	case "scan_progress":
-		if cfg.showProgress {
-			m, ok := data.(map[string]interface{})
-			if !ok {
-				debugWrongType("map[string]interface{}")
-				break
-			}
-			current := asInt(m["current"])
-			total := asInt(m["total"])
-			setCLIProgress(session, "scan", current, total)
-		}
-	case "test_progress":
-		if cfg.showProgress {
-			m, ok := data.(map[string]interface{})
-			if !ok {
-				debugWrongType("map[string]interface{}")
-				break
-			}
-			current := asInt(m["current"])
-			total := asInt(m["total"])
-			setCLIProgress(session, "test", current, total)
-		}
-	case "nsb_progress":
-		if cfg.showProgress {
-			m, ok := data.(map[string]interface{})
-			if !ok {
-				debugWrongType("map[string]interface{}")
-				break
-			}
-			phase := fmt.Sprint(m["phase"])
-			label := "scan"
-			if phase == "speed" {
-				label = "speed"
-			}
-			current := asInt(m["current"])
-			total := asInt(m["total"])
-			setCLIProgress(session, label, current, total)
-		}
-	case "scan_result":
-		res, ok := data.(ScanResult)
-		if !ok {
-			debugWrongType("ScanResult")
-			break
-		}
-		fmt.Printf("%s[scan-result]%s %s %s:%d %s %s %s\n", ansiMagenta, ansiReset, advanceCLIProgress(session, "scan"), res.IP, res.Port, res.DataCenter, res.City, colorizeLatencyString(res.LatencyStr))
-	case "nsb_scan_result":
-		m, ok := data.(nsbScanMessage)
-		if !ok {
-			debugWrongType("nsbScanMessage")
-			break
-		}
-		if m.Speed != "" && m.Speed != "-" {
-			progress := advanceCLIProgress(session, "speed")
-			fmt.Printf("%s[speed]%s %s %s:%s %s\n", ansiMagenta, ansiReset, progress, m.IP, m.Port, colorizeSpeedString(m.Speed))
-		} else {
-			progress := advanceCLIProgress(session, "scan")
-			fmt.Printf("%s[scan-result]%s %s %s:%s %s\n", ansiMagenta, ansiReset, progress, m.IP, m.Port, colorizeLatencyString(m.Latency))
-		}
-	case "test_result":
-		res, ok := data.(TestResult)
-		if !ok {
-			debugWrongType("TestResult")
-			break
-		}
-		fmt.Printf("%s[test-result]%s %s %s loss=%s avg=%s\n", ansiMagenta, ansiReset, advanceCLIProgress(session, "test"), res.IP, colorizeLossRate(res.LossRate), colorizeLatencyMS(int(res.AvgLatency/time.Millisecond)))
-	case "test_complete":
-		results, ok := data.([]TestResult)
-		if !ok {
-			debugWrongType("[]TestResult")
-			break
-		}
-		session.testMutex.Lock()
-		session.testResults = append([]TestResult(nil), results...)
-		session.testMutex.Unlock()
-		fmt.Printf("%s[test-complete]%s %d results\n", ansiCyan, ansiReset, len(results))
-	case "nsb_csv_complete":
-		payload, ok := data.(nsbCSVCompletePayload)
-		if !ok {
-			debugWrongType("nsbCSVCompletePayload")
-			break
-		}
-		session.nsbMutex.Lock()
-		session.nsbHeaders = append([]string(nil), payload.Headers...)
-		session.nsbRows = append([][]string(nil), payload.Rows...)
-		session.nsbMutex.Unlock()
-		fmt.Printf("%s[nsb-output]%s %s (%d rows)\n", ansiGreen, ansiReset, payload.File, len(payload.Rows))
-		if payload.Status == "failed" {
-			fmt.Printf("%s[nsb]%s 任务失败: 测试%s\n", ansiRed, ansiReset, payload.Message)
-		} else if payload.Status == "partial" {
-			fmt.Printf("%s[nsb]%s 任务结束: %s\n", ansiYellow, ansiReset, payload.Message)
-		}
-	case "speed_test_result":
-		m, ok := data.(map[string]string)
-		if !ok {
-			debugWrongType("map[string]string")
-			break
-		}
-		endpoint := m["endpoint"]
-		if endpoint == "" {
-			endpoint = m["ip"]
-		}
-		fmt.Printf("%s[speed]%s %s %s\n", ansiMagenta, ansiReset, endpoint, colorizeSpeedString(m["speed"]))
-	case "compact_ipv4_progress":
-		if cfg.showProgress {
-			m, ok := data.(map[string]interface{})
-			if !ok {
-				debugWrongType("map[string]interface{}")
-				break
-			}
-			current := asInt(m["current"])
-			total := asInt(m["total"])
-			setCLIProgress(session, "compact", current, total)
-			maybePrintCLIProgress(session, "compact", current, total)
-		}
-	case "compact_ipv4_hit":
-		if !debugMode {
-			break
-		}
-		m, ok := data.(map[string]interface{})
-		if !ok {
-			debugWrongType("map[string]interface{}")
-			break
-		}
-		fmt.Printf("%s[compact-hit]%s pass=%v %v\n", ansiMagenta, ansiReset, m["pass"], m["ip"])
-	case "compact_ipv4_done":
-		m, ok := data.(map[string]interface{})
-		if !ok {
-			debugWrongType("map[string]interface{}")
-			break
-		}
-		fmt.Printf("%s[compact-done]%s 保留 %v 个子网 → %v\n", ansiGreen, ansiReset, m["count"], m["file"])
-	}
-}
-
 func prepareOfficialCLIConfig(cfg *cliConfig) error {
 	if cfg.ipType != 4 && cfg.ipType != 6 {
 		return errors.New("官方模式 -offiptype 仅支持 4 或 6")
@@ -959,65 +784,6 @@ func prepareOfficialCLIConfig(cfg *cliConfig) error {
 		cfg.speedMin = 0.1
 	}
 	return nil
-}
-
-func runOfficialPipeline(ctx context.Context, session *appSession, cfg *cliConfig, speedURL string) error {
-	scanMode := cfg.scanMode
-	if scanMode == "" {
-		scanMode = scanModeTCPing
-	}
-	runOfficialTask(ctx, session, cfg.ipType, cfg.threads, cfg.port, cfg.delay, scanMode, cfg.dc, cfg.offStop)
-	if ctx.Err() != nil {
-		return ctx.Err()
-	}
-
-	session.scanMutex.Lock()
-	scanResults := append([]ScanResult(nil), session.scanResults...)
-	session.scanMutex.Unlock()
-	if len(scanResults) == 0 {
-		return errors.New("官方模式未发现有效 IP")
-	}
-
-	dc := normalizeOfficialTargetDC(cfg.dc)
-	if dc == "" {
-		dc = pickBestDataCenter(scanResults)
-		if dc == "" {
-			fmt.Printf("%s[official]%s 无法确定数据中心，仅输出扫描结果\n", ansiYellow, ansiReset)
-			return writeCLIExportAndMaybeUpload(cfg, applyCLIExportFilters(cfg, officialScanRows(scanResults, scanMode), cfg.speedMin), nil, "official-scan")
-		}
-		fmt.Printf("%s[official]%s 自动选择数据中心: %s\n", ansiGreen, ansiReset, colorize(dc, ansiBold+ansiGreen))
-	}
-	if ctx.Err() != nil {
-		return ctx.Err()
-	}
-
-	session.testMutex.Lock()
-	session.testResults = nil
-	session.testMutex.Unlock()
-	runDetailedTest(ctx, session, dc, cfg.port, cfg.delay, scanMode, false)
-	if ctx.Err() != nil {
-		return ctx.Err()
-	}
-
-	session.testMutex.Lock()
-	results := append([]TestResult(nil), session.testResults...)
-	session.testMutex.Unlock()
-	if cfg.speedLimit <= 0 {
-		fmt.Printf("%s[official]%s 官方测速已关闭（-offspeedlimit 0）\n", ansiYellow, ansiReset)
-	} else if len(results) == 0 {
-		fmt.Printf("%s[official]%s 没有可用的详细测试结果，跳过测速\n", ansiYellow, ansiReset)
-	} else {
-		sortOfficialTestResults(results)
-		setCLIProgress(session, "speed", 0, cfg.speedLimit)
-		fmt.Printf("%s[official]%s 开始测速：目标上限=%d，测速阈值=%.2fMB/s\n", ansiGreen, ansiReset, cfg.speedLimit, cfg.speedMin)
-		results = runOfficialSpeedTests(ctx, session, results, cfg.port, cfg.speedLimit, cfg.speedMin, speedURL)
-	}
-	allRows := officialResultRows(scanResults, results, scanMode)
-	var r2Rows []cliResultRow
-	if len(results) > 0 {
-		r2Rows = scheduledR2Rows(allRows, cfg.speedLimit > 0, cfg.speedMin)
-	}
-	return writeCLIExportAndMaybeUpload(cfg, applyCLIExportFilters(cfg, allRows, cfg.speedMin), r2Rows, "official")
 }
 
 func prepareNSBCLIConfig(cfg *cliConfig) error {
@@ -1071,40 +837,6 @@ func loadNSBInput(ctx context.Context, cfg *cliConfig) (string, string, error) {
 	return cfg.sourceURL, content, nil
 }
 
-func runNSBPipeline(ctx context.Context, session *appSession, cfg *cliConfig, speedURL string) error {
-	inputName, content, err := loadNSBInput(ctx, cfg)
-	if err != nil {
-		return err
-	}
-	if ctx.Err() != nil {
-		return ctx.Err()
-	}
-	scanMode := cfg.scanMode
-	if scanMode == "" {
-		scanMode = scanModeTCPing
-	}
-	runNSBTask(ctx, session, inputName, content, cfg.outFile, cfg.threads, cfg.nsbFallbackPort, cfg.speedTest, speedURL, cfg.enableTLS, cfg.delay, cfg.resultLimit, cfg.nsbDC, cfg.nsbSpeedMin, cfg.nsbSpeedLimit, cfg.compactNSB, scanMode, func() string {
-		if !cfg.relink {
-			return ""
-		}
-		return cfg.relinkHost
-	}())
-	if ctx.Err() != nil {
-		return ctx.Err()
-	}
-	session.nsbMutex.Lock()
-	rows := nsbPayloadRows(session.nsbHeaders, session.nsbRows)
-	session.nsbMutex.Unlock()
-	speedRan := cfg.speedTest > 0 && cfg.nsbSpeedLimit > 0
-	r2Rows := scheduledR2Rows(rows, speedRan, cfg.nsbSpeedMin)
-	rows = applyCLIExportFilters(cfg, rows, cfg.nsbSpeedMin)
-	if len(rows) == 0 && len(r2Rows) == 0 {
-		fmt.Printf("%s[nsb]%s 没有符合导出条件的结果\n", ansiYellow, ansiReset)
-		return nil
-	}
-	return writeCLIExportAndMaybeUpload(cfg, rows, r2Rows, "nsb")
-}
-
 func pickBestDataCenter(scanResults []ScanResult) string {
 	dcLatency := map[string]time.Duration{}
 	for _, res := range scanResults {
@@ -1126,97 +858,6 @@ func pickBestDataCenter(scanResults []ScanResult) string {
 		return ""
 	}
 	return items[0].dc
-}
-
-func runOfficialSpeedTests(ctx context.Context, session *appSession, results []TestResult, port int, limit int, speedMinMB float64, speedURL string) []TestResult {
-	updated, _ := runOfficialSpeedTestsCore(ctx, results, port, limit, speedMinMB, speedURL, func(current, total, qualifiedCount int, result TestResult) {
-		setCLIProgress(session, "speed", min(qualifiedCount, limit), limit)
-		fmt.Printf("%s[speed]%s %s %s:%d %s\n", ansiMagenta, ansiReset, renderCLIProgress(session, "speed"), result.IP, port, colorizeSpeedString(result.Speed))
-		if speedMB, ok := parseSpeedMBForSort(result.Speed); ok && speedMB >= speedMinMB {
-			fmt.Printf("%s[official]%s 达标 %d/%d\n", ansiGreen, ansiReset, qualifiedCount, limit)
-		}
-	}, func() {
-		fmt.Printf("%s[official]%s %s\n", ansiYellow, ansiReset, speedRateLimitMessage)
-	})
-	return updated
-}
-
-func colorize(text string, code string) string {
-	if text == "" {
-		return text
-	}
-	return code + text + ansiReset
-}
-
-func colorizeLatencyString(latency string) string {
-	ms, err := strconv.Atoi(strings.TrimSuffix(strings.TrimSpace(latency), " ms"))
-	if err != nil {
-		return latency
-	}
-	return colorizeLatencyMS(ms)
-}
-
-func colorizeLatencyMS(ms int) string {
-	text := fmt.Sprintf("%dms", ms)
-	if ms <= 50 {
-		return colorize(text, ansiGreen)
-	}
-	if ms <= 100 {
-		return colorize(text, ansiBrightGreen)
-	}
-	if ms <= 200 {
-		return colorize(text, ansiYellow)
-	}
-	if ms <= 250 {
-		return colorize(text, ansiYellow)
-	}
-	if ms <= 3000 {
-		return colorize(text, ansiYellow)
-	}
-	return colorize(text, ansiRed)
-}
-
-func colorizeLossRate(lossRate float64) string {
-	text := fmt.Sprintf("%.0f%%", lossRate*100)
-	if lossRate <= 0 {
-		return colorize(text, ansiGreen)
-	}
-	if lossRate < 0.5 {
-		return colorize(text, ansiYellow)
-	}
-	return colorize(text, ansiRed)
-}
-
-func colorizeSpeedString(speed string) string {
-	if strings.Contains(speed, "MB/s") {
-		value, err := strconv.ParseFloat(strings.TrimSpace(strings.TrimSuffix(speed, "MB/s")), 64)
-		if err == nil {
-			if value > 10 {
-				return colorize(speed, ansiGreen)
-			}
-			return colorize(speed, ansiYellow)
-		}
-	}
-	if strings.Contains(strings.ToLower(speed), "错误") || strings.Contains(speed, "失败") || strings.Contains(speed, "0MB/s") {
-		return colorize(speed, ansiRed)
-	}
-	return speed
-}
-
-func setCLIProgress(session *appSession, phase string, current int, total int) {
-	session.progressMutex.Lock()
-	defer session.progressMutex.Unlock()
-	if session.progressState == nil {
-		session.progressState = map[string][2]int{}
-	}
-	state := session.progressState[phase]
-	if total <= 0 {
-		total = state[1]
-	}
-	if current < state[0] {
-		current = state[0]
-	}
-	session.progressState[phase] = [2]int{current, total}
 }
 
 func maybePrintCLIProgress(session *appSession, phase string, current, total int) {
@@ -1259,39 +900,12 @@ func maybePrintCLIProgress(session *appSession, phase string, current, total int
 	fmt.Printf("%s[%s-progress]%s %s\n", ansiCyan, phase, ansiReset, colorize(fmt.Sprintf("[%d/%d %.2f%%]", current, total, percent), ansiCyan))
 }
 
-func renderCLIProgress(session *appSession, phase string) string {
-	session.progressMutex.Lock()
-	defer session.progressMutex.Unlock()
-	if session.progressState == nil {
-		return colorize("[0/0]", ansiCyan)
+// colorize 为终端输出包裹 ANSI 颜色码；disableANSIColors 后 code 为空，原样返回。
+func colorize(text string, code string) string {
+	if code == "" {
+		return text
 	}
-	state, ok := session.progressState[phase]
-	if !ok {
-		return colorize("[0/0]", ansiCyan)
-	}
-	if state[1] <= 0 {
-		return colorize(fmt.Sprintf("[%d/0]", state[0]), ansiCyan)
-	}
-	percent := float64(state[0]) / float64(state[1]) * 100
-	return colorize(fmt.Sprintf("[%d/%d %.2f%%]", state[0], state[1], percent), ansiCyan)
-}
-
-func advanceCLIProgress(session *appSession, phase string) string {
-	session.progressMutex.Lock()
-	defer session.progressMutex.Unlock()
-	if session.progressState == nil {
-		session.progressState = map[string][2]int{}
-	}
-	state := session.progressState[phase]
-	if state[1] > 0 && state[0] < state[1] {
-		state[0]++
-		session.progressState[phase] = state
-	}
-	if state[1] <= 0 {
-		return colorize(fmt.Sprintf("[%d/0]", state[0]), ansiCyan)
-	}
-	percent := float64(state[0]) / float64(state[1]) * 100
-	return colorize(fmt.Sprintf("[%d/%d %.2f%%]", state[0], state[1], percent), ansiCyan)
+	return code + text + ansiReset
 }
 
 func asInt(v interface{}) int {

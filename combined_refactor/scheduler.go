@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/url"
 	"os"
@@ -754,36 +753,88 @@ func runScheduledScan(configPath string) string {
 	}
 
 	fmt.Printf("[schedule] 开始调度扫描（模式 %s）\n", mode)
-	session := newCLISession(cfg)
 	speedURL := scheduledSpeedURL(cfg)
-	scheduledStart := time.Now()
-	var pipelineErr error
-	if err := session.runTaskSync(func(ctx context.Context, session *appSession) {
-		if mode == "official" {
-			pipelineErr = runOfficialPipeline(ctx, session, cfg, speedURL)
-			return
-		}
-		pipelineErr = runNSBPipeline(ctx, session, cfg, speedURL)
-	}); err != nil {
-		if errors.Is(err, context.Canceled) {
-			fmt.Println("[schedule] 跳过本次触发：已有任务运行中")
-			return "跳过：已有任务运行"
-		}
-		recordProgramDebugError("scheduled_scan", err.Error())
-		fmt.Printf("[schedule] 调度扫描启动失败: %v\n", err)
-		return "失败：" + err.Error()
+	// 调度任务跑在全局任务会话上：Web 端可实时查看进度/结果并恢复（seq 回放），
+	// 完成通知与历史落盘由 startTaskNamed 统一钩子单点触发
+	done := make(chan error, 1)
+	var delivered sync.Once
+	deliver := func(err error) {
+		delivered.Do(func() { done <- err })
 	}
+	run := func(ctx context.Context, session *appSession) {
+		// 管线 panic 时也必须投递结果，否则调度器在 <-done 上永久悬挂
+		defer func() {
+			if r := recover(); r != nil {
+				deliver(fmt.Errorf("调度任务 panic: %v", r))
+			}
+		}()
+		var pipelineErr error
+		if mode == "official" {
+			// R2 上传由导出收尾统一处理，关闭测速批次自动上传避免双发
+			taskSession.r2AutoUpload = false
+			stopCount := cfg.offStop
+			pipelineErr = runOfficialTaskFlow(ctx, session, officialFlowOptions{
+				ipType:          cfg.ipType,
+				threads:         cfg.threads,
+				port:            cfg.port,
+				delay:           cfg.delay,
+				scanMode:        cfg.scanMode,
+				targetDC:        cfg.dc,
+				stopCount:       stopCount,
+				autoSpeed:       true,
+				speedPort:       cfg.port,
+				speedURL:        speedURL,
+				speedLimit:      cfg.speedLimit,
+				speedMin:        cfg.speedMin,
+				exportAndUpload: true,
+				cfg:             cfg,
+				onDone:          deliver,
+			})
+		} else {
+			pipelineErr = runNSBTaskFlow(ctx, session, nsbFlowOptions{
+				fileName:     cfg.file,
+				sourceURL:    cfg.sourceURL,
+				outFile:      cfg.outFile,
+				threads:      cfg.threads,
+				fallbackPort: cfg.nsbFallbackPort,
+				speedTest:    cfg.speedTest,
+				speedURL:     speedURL,
+				enableTLS:    cfg.enableTLS,
+				delay:        cfg.nsbDelay,
+				resultLimit:  cfg.resultLimit,
+				targetDC:     cfg.nsbDC,
+				speedMin:     cfg.nsbSpeedMin,
+				speedLimit:   cfg.nsbSpeedLimit,
+				compact:      cfg.compactNSB,
+				scanMode:     cfg.scanMode,
+				relinkHost: func() string {
+					if !cfg.relink {
+						return ""
+					}
+					return cfg.relinkHost
+				}(),
+				exportAndUpload: true,
+				cfg:             cfg,
+				onDone:          deliver,
+			})
+		}
+		if pipelineErr != nil && ctx.Err() == nil {
+			session.setFlowFailure(pipelineErr.Error())
+		}
+	}
+	taskSession.scheduleRun = true
+	if !taskSession.startTaskNamed("调度任务", mode, map[string]interface{}{"scheduled": true, "mode": mode}, run) {
+		fmt.Println("[schedule] 跳过本次触发：已有任务运行中")
+		taskSession.scheduleRun = false
+		return "跳过：已有任务运行"
+	}
+	pipelineErr := <-done
 	if pipelineErr != nil {
 		recordProgramDebugError("scheduled_scan", pipelineErr.Error())
 		fmt.Printf("[schedule] 调度扫描失败: %v\n", pipelineErr)
-		// 调度任务失败时发送通知（含失败原因摘要）并写入失败历史
-		sendTaskNotifyAsync("failure", mode, "", session.finalResultCount(), scheduledStart, pipelineErr.Error())
-		persistTaskHistory(session, mode, "调度任务", scheduledStart, pipelineErr.Error())
 		return "失败：" + pipelineErr.Error()
 	}
 	fmt.Println("[schedule] 调度扫描完成")
-	sendTaskNotifyAsync("complete", mode, "", session.finalResultCount(), scheduledStart, "")
-	persistTaskHistory(session, mode, "调度任务", scheduledStart, "")
 	return "完成"
 }
 

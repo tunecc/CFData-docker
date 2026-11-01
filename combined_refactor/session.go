@@ -161,18 +161,24 @@ func (s *appSession) startTask(run taskStarter) {
 
 // startTaskNamed 在当前会话上启动任务。在全局任务会话上启动的任务独立于
 // 任何 WebSocket 连接运行，关闭页面不会中断。
-func (s *appSession) startTaskNamed(label string, mode string, params map[string]interface{}, run taskStarter) {
+// startTaskNamed 在当前会话上启动任务。在全局任务会话上启动的任务独立于
+// 任何 WebSocket 连接运行，关闭页面不会中断。返回是否成功启动（调度路径
+// 据此判断防重入跳过；既有调用方忽略返回值不受影响）。
+func (s *appSession) startTaskNamed(label string, mode string, params map[string]interface{}, run taskStarter) bool {
 	ctx, cancel := context.WithCancel(context.Background())
 	started := s.beginTask(cancel, label, mode, params)
 	if !started {
 		cancel()
 		s.sendWSMessage("error", "已有任务正在运行，请等待完成后再试")
-		return
+		return false
 	}
 	s.setScanFailureSummary("")
+	s.setFlowFailure("")
 	safeGo("task", s, func() {
 		defer cancel()
 		defer func() {
+			// 先捕获调度标志：endTask 会复位 scheduleRun，而失败分支在其之后
+			scheduled := s.scheduleRun
 			snapshot := s.backgroundSummary()
 			// 先把终态写入快照再结束任务计数，保证恢复视图能看到最终阶段
 			s.markTaskFinished(ctx.Err() != nil)
@@ -184,6 +190,13 @@ func (s *appSession) startTaskNamed(label string, mode string, params map[string
 					startedAt = time.Now()
 				}
 				success := ctx.Err() == nil
+				// 管线错误（非用户停止）把任务归类为失败：调度路径发失败通知
+				// 并写失败历史；Web 路径错误仍走 WS error，不发失败通知
+				failureText := ""
+				if success {
+					failureText = s.flowFailureValue()
+					success = failureText == ""
+				}
 				recordLastRun(mode, label, startedAt, success, s.finalResultCount(), s.uploadNoteValue())
 				s.sendWSMessage("last_run", lastRunPayload())
 				// 扫描/测速主任务完成时发送 webhook 通知并落盘历史记录；
@@ -191,6 +204,9 @@ func (s *appSession) startTaskNamed(label string, mode string, params map[string
 				if success && (mode == "official" || mode == "nsb") {
 					sendTaskNotifyAsync("complete", mode, label, s.finalResultCount(), startedAt, "")
 					persistTaskHistory(s, mode, label, startedAt, "")
+				} else if !success && failureText != "" && scheduled {
+					sendTaskNotifyAsync("failure", mode, label, s.finalResultCount(), startedAt, failureText)
+					persistTaskHistory(s, mode, label, startedAt, failureText)
 				}
 			}
 			if ctx.Err() != nil {
@@ -201,19 +217,7 @@ func (s *appSession) startTaskNamed(label string, mode string, params map[string
 		}()
 		run(ctx, s)
 	})
-}
-
-func (s *appSession) runTaskSync(run taskStarter) error {
-	ctx, cancel := context.WithCancel(context.Background())
-	started := s.beginTask(cancel, "", "", nil)
-	if !started {
-		cancel()
-		return context.Canceled
-	}
-	defer cancel()
-	defer s.endTask()
-	run(ctx, s)
-	return nil
+	return true
 }
 
 func (s *appSession) stopTask() {
@@ -297,6 +301,7 @@ func (s *appSession) endTask() {
 		atomic.AddInt32(&globalRunningTasks, -1)
 	}
 	taskCancels.Delete(s)
+	s.scheduleRun = false
 	s.isTaskRunning = false
 	s.taskCancel = nil
 	s.backgroundSnapshot.Running = false

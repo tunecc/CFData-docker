@@ -223,60 +223,39 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 			stopCount := resolveOfficialStopCount(params.OfficialStopCount)
 			fromLibrary := params.OfficialDCFromLib
 			taskSession.r2AutoUpload = params.R2AutoUpload
+			var libraryIPs []string
+			if fromLibrary {
+				if targetDC == "" {
+					session.sendWSMessage("error", "请选择数据中心库中的数据中心")
+					return
+				}
+				libraryIPs = libraryIPsForDC(params.IPType, targetDC)
+				if len(libraryIPs) == 0 {
+					session.sendWSMessage("error", fmt.Sprintf("数据中心库中没有 %s 的可用 IP，请先更新数据中心库", targetDC))
+					return
+				}
+			}
+			// 自动测速流水线统一由服务端在任务内续跑（扫描 → 详细测试 → 批量测速），
+			// 与浏览器连接解耦：页面关闭或刷新都不会中断后续阶段
+			opts := officialFlowOptions{
+				ipType:      params.IPType,
+				threads:     params.Threads,
+				port:        params.Port,
+				delay:       params.Delay,
+				scanMode:    scanMode,
+				targetDC:    targetDC,
+				stopCount:   stopCount,
+				libraryIPs:  libraryIPs,
+				fromLibrary: fromLibrary,
+				autoSpeed:   autoSpeed,
+				speedPort:   params.OfficialSpeedPort,
+				speedURL:    params.OfficialSpeedURL,
+				speedLimit:  params.OfficialSpeedLimit,
+				speedMin:    params.OfficialSpeedMin,
+			}
 			taskSession.startTaskNamed("官方优选扫描", "official", map[string]interface{}{"ipType": params.IPType, "threads": params.Threads, "port": params.Port, "delay": params.Delay, "scanMode": scanMode, "autoSpeed": autoSpeed, "targetDC": targetDC, "stopCount": stopCount, "fromLibrary": fromLibrary}, func(ctx context.Context, session *appSession) {
-				if fromLibrary {
-					if targetDC == "" {
-						session.sendWSMessage("error", "请选择数据中心库中的数据中心")
-						return
-					}
-					libraryIPs := libraryIPsForDC(params.IPType, targetDC)
-					if len(libraryIPs) == 0 {
-						session.sendWSMessage("error", fmt.Sprintf("数据中心库中没有 %s 的可用 IP，请先更新数据中心库", targetDC))
-						return
-					}
-					session.sendWSMessage("log", fmt.Sprintf("使用数据中心库：%s 共 %d 个 IP", targetDC, len(libraryIPs)))
-					runOfficialTaskWithPool(ctx, session, libraryIPs, params.Threads, params.Port, params.Delay, scanMode, targetDC, stopCount, true)
-				} else {
-					runOfficialTask(ctx, session, params.IPType, params.Threads, params.Port, params.Delay, scanMode, targetDC, stopCount)
-				}
-				// 自动测速流水线统一由服务端在任务内续跑（扫描 → 详细测试 → 批量测速），
-				// 与浏览器连接解耦：页面关闭或刷新都不会中断后续阶段
-				if ctx.Err() != nil || !autoSpeed {
-					return
-				}
-				dc := targetDC
-				if dc == "" {
-					session.scanMutex.Lock()
-					copy := append([]ScanResult(nil), session.scanResults...)
-					session.scanMutex.Unlock()
-					dc = pickBestDataCenter(copy)
-				}
-				if dc == "" || ctx.Err() != nil {
-					return
-				}
-				runDetailedTest(ctx, session, dc, params.OfficialSpeedPort, params.Delay, scanMode, true)
-				if ctx.Err() != nil || params.OfficialSpeedLimit <= 0 {
-					return
-				}
-				speedURL := strings.TrimSpace(params.OfficialSpeedURL)
-				if speedURL == "" || isAutoSpeedURL(speedURL) {
-					speedURL = speedTestURL
-				}
-				session.testMutex.Lock()
-				results := append([]TestResult(nil), session.testResults...)
-				session.testMutex.Unlock()
-				if len(results) == 0 {
-					return
-				}
-				runOfficialSpeedBatch(ctx, session, params.OfficialSpeedPort, speedURL, params.OfficialSpeedLimit, params.OfficialSpeedMin, results, false)
-				// 测速在产出任何结果之前被取消时，测速阶段不会上传（tasks_speed.go 仅在 ctx 未取消时上传），
-				// 而详细测试阶段已延后上传。只在一条测速结果都没有时补传延迟筛选结果，
-				// 避免与测速中途取消时已写回的部分结果重复上传。
-				if ctx.Err() != nil && !officialSpeedAttempted(session) {
-					session.testMutex.Lock()
-					fallback := append([]TestResult(nil), session.testResults...)
-					session.testMutex.Unlock()
-					triggerManualR2Upload(session, officialResultRows(nil, fallback, scanMode))
+				if err := runOfficialTaskFlow(ctx, session, opts); err != nil && ctx.Err() == nil {
+					session.setFlowFailure(err.Error())
 				}
 			})
 		},
@@ -386,23 +365,29 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 				scanMode = scanModeTCPing
 			}
 			taskSession.r2AutoUpload = params.R2AutoUpload
+			opts := nsbFlowOptions{
+				fileName:     params.FileName,
+				fileContent:  params.FileContent,
+				sourceURL:    params.SourceURL,
+				outFile:      params.OutFile,
+				threads:      params.MaxThreads,
+				fallbackPort: params.FallbackPort,
+				speedTest:    params.SpeedTest,
+				speedURL:     params.SpeedURL,
+				enableTLS:    params.EnableTLS,
+				delay:        params.Delay,
+				resultLimit:  params.ResultLimit,
+				targetDC:     params.DC,
+				speedMin:     params.SpeedMin,
+				speedLimit:   params.SpeedLimit,
+				compact:      params.Compact,
+				scanMode:     scanMode,
+				relinkHost:   params.RelinkHost,
+			}
 			taskSession.startTaskNamed("非标优选", "nsb", map[string]interface{}{"fileName": params.FileName, "sourceURL": params.SourceURL, "outFile": params.OutFile, "maxThreads": params.MaxThreads, "fallbackPort": params.FallbackPort, "speedTest": params.SpeedTest, "speedURL": params.SpeedURL, "enableTLS": params.EnableTLS, "delay": params.Delay, "resultLimit": params.ResultLimit, "dc": params.DC, "speedMin": params.SpeedMin, "speedLimit": params.SpeedLimit, "compact": params.Compact, "scanMode": scanMode}, func(ctx context.Context, session *appSession) {
-				fileName := params.FileName
-				fileContent := params.FileContent
-				if hasSourceURL {
-					session.sendWSMessage("log", "正在获取非标网络输入: "+params.SourceURL)
-					content, err := getURLContentViaProxy(ctx, params.SourceURL)
-					if err != nil {
-						if ctx.Err() != nil {
-							return
-						}
-						session.sendWSMessage("error", "获取非标网络输入失败: "+err.Error())
-						return
-					}
-					fileName = params.SourceURL
-					fileContent = content
+				if err := runNSBTaskFlow(ctx, session, opts); err != nil && ctx.Err() == nil {
+					session.setFlowFailure(err.Error())
 				}
-				runNSBTask(ctx, session, fileName, fileContent, params.OutFile, params.MaxThreads, params.FallbackPort, params.SpeedTest, params.SpeedURL, params.EnableTLS, params.Delay, params.ResultLimit, params.DC, params.SpeedMin, params.SpeedLimit, params.Compact, scanMode, params.RelinkHost)
 			})
 		},
 		"start_nsb_reallink": func(data json.RawMessage) {
