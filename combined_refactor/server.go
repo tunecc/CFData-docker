@@ -552,28 +552,36 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 		},
 		"set_schedule_config": func(data json.RawMessage) {
 			var params struct {
-				ScheduleEnabled *bool   `json:"scheduleEnabled"`
-				CronExpression  *string `json:"cronExpression"`
-				CheckInterval   *int    `json:"checkInterval"`
-				R2Enabled       *bool   `json:"r2Enabled"`
-				R2WorkerURL     *string `json:"r2WorkerUrl"`
-				R2WorkerToken   *string `json:"r2WorkerToken"`
-				R2Filename      *string `json:"r2Filename"`
-				R2AliasFormat   *string `json:"r2AliasFormat"`
+				ScheduleEnabled      *bool   `json:"scheduleEnabled"`
+				CronExpression       *string `json:"cronExpression"`
+				CheckInterval        *int    `json:"checkInterval"`
+				R2Enabled            *bool   `json:"r2Enabled"`
+				R2WorkerURL          *string `json:"r2WorkerUrl"`
+				R2WorkerToken        *string `json:"r2WorkerToken"`
+				R2Filename           *string `json:"r2Filename"`
+				R2AliasFormat        *string `json:"r2AliasFormat"`
+				NotifyBarkServer     *string `json:"notifyBarkServer"`
+				NotifyBarkKey        *string `json:"notifyBarkKey"`
+				NotifyTelegramToken  *string `json:"notifyTelegramToken"`
+				NotifyTelegramChatID *string `json:"notifyTelegramChatID"`
 			}
 			if err := json.Unmarshal(data, &params); err != nil {
 				session.sendWSMessage("error", "set_schedule_config 参数解析失败")
 				return
 			}
 			update := scheduleConfigUpdate{
-				ScheduleEnabled: params.ScheduleEnabled,
-				CronExpression:  params.CronExpression,
-				CheckInterval:   params.CheckInterval,
-				R2Enabled:       params.R2Enabled,
-				R2WorkerURL:     params.R2WorkerURL,
-				R2WorkerToken:   params.R2WorkerToken,
-				R2Filename:      params.R2Filename,
-				R2AliasFormat:   params.R2AliasFormat,
+				ScheduleEnabled:      params.ScheduleEnabled,
+				CronExpression:       params.CronExpression,
+				CheckInterval:        params.CheckInterval,
+				R2Enabled:            params.R2Enabled,
+				R2WorkerURL:          params.R2WorkerURL,
+				R2WorkerToken:        params.R2WorkerToken,
+				R2Filename:           params.R2Filename,
+				R2AliasFormat:        params.R2AliasFormat,
+				NotifyBarkServer:     params.NotifyBarkServer,
+				NotifyBarkKey:        params.NotifyBarkKey,
+				NotifyTelegramToken:  params.NotifyTelegramToken,
+				NotifyTelegramChatID: params.NotifyTelegramChatID,
 			}
 			if err := validateScheduleConfigUpdate(&update); err != nil {
 				session.sendWSMessage("error", err.Error())
@@ -591,6 +599,21 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 			}
 			payload["saved"] = true
 			session.sendWSMessage("schedule_config", payload)
+		},
+		"notify_test": func(data json.RawMessage) {
+			var params struct {
+				Channel string `json:"channel"`
+			}
+			if err := json.Unmarshal(data, &params); err != nil {
+				session.sendWSMessage("error", "notify_test 参数解析失败")
+				return
+			}
+			channel, sendErr := sendTestNotification(params.Channel)
+			result := map[string]interface{}{"channel": channel, "ok": sendErr == ""}
+			if sendErr != "" {
+				result["error"] = sendErr
+			}
+			session.sendWSMessage("notify_test_result", result)
 		},
 		"get_config": func(data json.RawMessage) {
 			payload, err := buildConfigDataPayload(defaultCLIConfigPath())
@@ -1009,5 +1032,12 @@ func sanitizeConfigDataForWeb(parsed interface{}) interface{} {
 func blankR2WorkerToken(container map[string]interface{}) {
 	if _, exists := container["r2workertoken"]; exists {
 		container["r2workertoken"] = ""
+	}
+	// 通知凭据同样不回传前端明文
+	if _, exists := container["notifybarkkey"]; exists {
+		container["notifybarkkey"] = ""
+	}
+	if _, exists := container["notifytgtoken"]; exists {
+		container["notifytgtoken"] = ""
 	}
 }

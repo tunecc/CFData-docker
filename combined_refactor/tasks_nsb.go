@@ -420,13 +420,18 @@ func sortNSBResults(results []iptestResult, speedTest int) {
 	})
 }
 
-func runNSBScanWorkers(ctx context.Context, total, maxWorkers, resultLimit int, onProgress func(current int), work func(idx int) int) bool {
+func runNSBScanWorkers(ctx context.Context, total, maxWorkers, resultLimit int, onProgress func(current, etaSeconds int), work func(idx int) int) bool {
 	if total == 0 {
 		return false
 	}
 	if maxWorkers <= 0 {
 		maxWorkers = 1
 	}
+	effectiveTotal := total
+	if resultLimit > 0 && resultLimit < effectiveTotal {
+		effectiveTotal = resultLimit
+	}
+eta := newEtaEstimator()
 	jobs := make(chan int)
 	var wg sync.WaitGroup
 	var mu sync.Mutex
@@ -481,8 +486,10 @@ func runNSBScanWorkers(ctx context.Context, total, maxWorkers, resultLimit int, 
 			}
 			currentAccepted := accepted
 			mu.Unlock()
+			now := time.Now()
+			eta.record(now)
 			if onProgress != nil {
-				onProgress(currentAccepted)
+				onProgress(currentAccepted, eta.etaSeconds(currentAccepted, effectiveTotal, now))
 			}
 		case jobs <- next:
 			mu.Lock()
@@ -515,8 +522,10 @@ func runNSBScanWorkers(ctx context.Context, total, maxWorkers, resultLimit int, 
 		}
 		currentAccepted := accepted
 		mu.Unlock()
+		now := time.Now()
+		eta.record(now)
 		if onProgress != nil {
-			onProgress(currentAccepted)
+			onProgress(currentAccepted, eta.etaSeconds(currentAccepted, effectiveTotal, now))
 		}
 	}
 	return wasCanceled
@@ -748,8 +757,8 @@ func runNSBTask(ctx context.Context, session *appSession, fileName, fileContent,
 		total = resultLimit
 	}
 	reportNSBProgress(session, "scan", 0, total, "扫描中")
-	wasCanceled := runNSBScanWorkers(ctx, len(expandedEntries), maxThreads, resultLimit, func(current int) {
-		reportNSBProgress(session, "scan", min(current, total), total, "扫描中")
+	wasCanceled := runNSBScanWorkers(ctx, len(expandedEntries), maxThreads, resultLimit, func(current, etaSeconds int) {
+		reportNSBProgressWithETA(session, "scan", min(current, total), total, etaSeconds, "扫描中")
 	}, func(idx int) int {
 		itemCtx, itemCancel := context.WithTimeout(ctx, 10*time.Second)
 		defer itemCancel()
@@ -970,7 +979,7 @@ func runNSBReallinkFilter(ctx context.Context, session *appSession, results []ip
 	var failures []nsbFailureRecord
 	var failMutex sync.Mutex
 
-	wasCanceled := runBoundedWorkers(ctx, total, 10, 10, func(current, total int) {
+	wasCanceled := runBoundedWorkers(ctx, total, 10, 10, func(current, total, _ int) {
 		reportNSBProgress(session, "reallink", min(current, total), total, "链路复验中")
 	}, func(idx int) {
 		defer func() {

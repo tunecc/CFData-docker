@@ -156,6 +156,11 @@ type cliFileConfig struct {
 	R2WorkerToken   string  `json:"r2workertoken"`
 	R2Filename      string  `json:"r2filename"`
 	R2AliasFormat   string  `json:"r2aliasformat"`
+	// 任务通知渠道（Bark / Telegram webhook），凭据不回传前端明文
+	NotifyBarkServer     string `json:"notifybarkserver"`
+	NotifyBarkKey        string `json:"notifybarkkey"`
+	NotifyTelegramToken  string `json:"notifytgtoken"`
+	NotifyTelegramChatID string `json:"notifytgchatid"`
 }
 
 type cliResultRow map[string]string

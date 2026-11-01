@@ -10,13 +10,14 @@ import (
 
 const progressEmitInterval = 250 * time.Millisecond
 
-func runBoundedWorkers(ctx context.Context, total, maxWorkers, progressEvery int, onProgress func(current, total int), work func(idx int)) bool {
+func runBoundedWorkers(ctx context.Context, total, maxWorkers, progressEvery int, onProgress func(current, total, etaSeconds int), work func(idx int)) bool {
 	wasCanceled, _ := runBoundedWorkersUntil(ctx, total, maxWorkers, progressEvery, onProgress, nil, work)
 	return wasCanceled
 }
 
-// runBoundedWorkersUntil 在调度新任务前检查 shouldStop；返回时仍会等待已在途任务结束
-func runBoundedWorkersUntil(ctx context.Context, total, maxWorkers, progressEvery int, onProgress func(current, total int), shouldStop func() bool, work func(idx int)) (bool, bool) {
+// runBoundedWorkersUntil 在调度新任务前检查 shouldStop；返回时仍会等待已在途任务结束。
+// onProgress 的 etaSeconds 为按窗口速率估算的剩余秒数，-1 表示样本不足无法估算。
+func runBoundedWorkersUntil(ctx context.Context, total, maxWorkers, progressEvery int, onProgress func(current, total, etaSeconds int), shouldStop func() bool, work func(idx int)) (bool, bool) {
 	if total <= 0 {
 		return false, false
 	}
@@ -30,6 +31,7 @@ func runBoundedWorkersUntil(ctx context.Context, total, maxWorkers, progressEver
 	var countMutex sync.Mutex
 	var lastEmit time.Time
 	stoppedEarly := false
+	eta := newEtaEstimator()
 
 	for i := 0; i < total; i++ {
 		if shouldStop != nil && shouldStop() {
@@ -66,7 +68,12 @@ func runBoundedWorkersUntil(ctx context.Context, total, maxWorkers, progressEver
 				if shouldEmit {
 					lastEmit = now
 				}
+				etaSeconds := -1
+				if shouldEmit {
+					etaSeconds = eta.etaSeconds(current, total, now)
+				}
 				countMutex.Unlock()
+				eta.record(now)
 
 				if onProgress != nil && shouldEmit {
 					func() {
@@ -75,7 +82,7 @@ func runBoundedWorkersUntil(ctx context.Context, total, maxWorkers, progressEver
 								fmt.Printf("onProgress panic: %v\n%s\n", r, debug.Stack())
 							}
 						}()
-						onProgress(current, total)
+						onProgress(current, total, etaSeconds)
 					}()
 				}
 			}()
@@ -95,15 +102,24 @@ func runBoundedWorkersUntil(ctx context.Context, total, maxWorkers, progressEver
 }
 
 func reportNSBProgress(session *appSession, phase string, current, total int, text string) {
+	reportNSBProgressWithETA(session, phase, current, total, -1, text)
+}
+
+// reportNSBProgressWithETA 在 nsb_progress 消息上附带可选 etaSeconds（-1 表示省略字段）
+func reportNSBProgressWithETA(session *appSession, phase string, current, total, etaSeconds int, text string) {
 	percentage := 0.0
 	if total > 0 {
 		percentage = float64(current) / float64(total) * 100
 	}
-	session.sendWSMessage("nsb_progress", map[string]interface{}{
+	payload := map[string]interface{}{
 		"phase":   phase,
 		"current": current,
 		"total":   total,
 		"percent": fmt.Sprintf("%.2f", percentage),
 		"text":    text,
-	})
+	}
+	if etaSeconds >= 0 {
+		payload["etaSeconds"] = etaSeconds
+	}
+	session.sendWSMessage("nsb_progress", payload)
 }

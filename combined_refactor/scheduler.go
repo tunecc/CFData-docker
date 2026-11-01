@@ -186,14 +186,18 @@ func readScheduleConfigFile(path string) (cliFileConfig, error) {
 }
 
 type scheduleConfigUpdate struct {
-	ScheduleEnabled *bool
-	CronExpression  *string
-	CheckInterval   *int
-	R2Enabled       *bool
-	R2WorkerURL     *string
-	R2WorkerToken   *string
-	R2Filename      *string
-	R2AliasFormat   *string
+	ScheduleEnabled      *bool
+	CronExpression       *string
+	CheckInterval        *int
+	R2Enabled            *bool
+	R2WorkerURL          *string
+	R2WorkerToken        *string
+	R2Filename           *string
+	R2AliasFormat        *string
+	NotifyBarkServer     *string
+	NotifyBarkKey        *string
+	NotifyTelegramToken  *string
+	NotifyTelegramChatID *string
 }
 
 func saveScheduleConfigFields(path string, update scheduleConfigUpdate) error {
@@ -244,6 +248,18 @@ func saveScheduleConfigFields(path string, update scheduleConfigUpdate) error {
 	}
 	if update.R2AliasFormat != nil {
 		set("r2aliasformat", *update.R2AliasFormat)
+	}
+	if update.NotifyBarkServer != nil {
+		set("notifybarkserver", *update.NotifyBarkServer)
+	}
+	if update.NotifyBarkKey != nil {
+		set("notifybarkkey", *update.NotifyBarkKey)
+	}
+	if update.NotifyTelegramToken != nil {
+		set("notifytgtoken", *update.NotifyTelegramToken)
+	}
+	if update.NotifyTelegramChatID != nil {
+		set("notifytgchatid", *update.NotifyTelegramChatID)
 	}
 	encoded, err := json.MarshalIndent(root, "", "  ")
 	if err != nil {
@@ -299,6 +315,52 @@ func validateScheduleConfigUpdate(update *scheduleConfigUpdate) error {
 		}
 		update.R2AliasFormat = &alias
 	}
+	if update.NotifyBarkServer != nil {
+		raw := strings.TrimSpace(*update.NotifyBarkServer)
+		if raw != "" {
+			parsed, err := url.Parse(raw)
+			if err != nil || (parsed.Scheme != "http" && parsed.Scheme != "https") || parsed.Host == "" {
+				return fmt.Errorf("Bark 服务器必须是有效的 http/https 地址")
+			}
+		}
+		update.NotifyBarkServer = &raw
+	}
+	if update.NotifyBarkKey != nil {
+		key := strings.TrimSpace(*update.NotifyBarkKey)
+		if key == "" {
+			// 留空表示保留已保存的 key
+			update.NotifyBarkKey = nil
+		} else if strings.ContainsAny(key, " \t\r\n") {
+			return fmt.Errorf("Bark key 不能包含空白字符")
+		} else {
+			update.NotifyBarkKey = &key
+		}
+	}
+	if update.NotifyTelegramToken != nil {
+		token := strings.TrimSpace(*update.NotifyTelegramToken)
+		if token == "" {
+			// 留空表示保留已保存的 token
+			update.NotifyTelegramToken = nil
+		} else {
+			update.NotifyTelegramToken = &token
+		}
+	}
+	if update.NotifyTelegramChatID != nil {
+		chatID := strings.TrimSpace(*update.NotifyTelegramChatID)
+		if chatID != "" {
+			// Telegram chat ID 允许负数（群组），如 123456789 / -1001234567890
+			normalized := chatID
+			if strings.HasPrefix(normalized, "-") {
+				normalized = normalized[1:]
+			}
+			for _, r := range normalized {
+				if r < '0' || r > '9' {
+					return fmt.Errorf("Telegram chat ID 只能是数字（群组可带负号）")
+				}
+			}
+		}
+		update.NotifyTelegramChatID = &chatID
+	}
 	return nil
 }
 
@@ -320,6 +382,13 @@ func scheduleConfigPayload(configPath string) (map[string]interface{}, error) {
 		"r2WorkerTokenSet":         strings.TrimSpace(cfg.R2WorkerToken) != "",
 		"r2Filename":               cfg.R2Filename,
 		"r2AliasFormat":            cfg.R2AliasFormat,
+		"notifyBarkServer":         cfg.NotifyBarkServer,
+		// 通知凭据不回传前端，仅提示是否已保存（与 R2 token 约定一致）
+		"notifyBarkKey":            "",
+		"notifyBarkKeySet":         strings.TrimSpace(cfg.NotifyBarkKey) != "",
+		"notifyTelegramToken":      "",
+		"notifyTelegramTokenSet":   strings.TrimSpace(cfg.NotifyTelegramToken) != "",
+		"notifyTelegramChatID":     cfg.NotifyTelegramChatID,
 		"effectiveMode":            string(plan.Mode),
 		"effectiveIntervalMinutes": int(plan.Interval / time.Minute),
 		"warning":                  plan.Warning,
@@ -687,6 +756,7 @@ func runScheduledScan(configPath string) string {
 	fmt.Printf("[schedule] 开始调度扫描（模式 %s）\n", mode)
 	session := newCLISession(cfg)
 	speedURL := scheduledSpeedURL(cfg)
+	scheduledStart := time.Now()
 	var pipelineErr error
 	if err := session.runTaskSync(func(ctx context.Context, session *appSession) {
 		if mode == "official" {
@@ -706,9 +776,12 @@ func runScheduledScan(configPath string) string {
 	if pipelineErr != nil {
 		recordProgramDebugError("scheduled_scan", pipelineErr.Error())
 		fmt.Printf("[schedule] 调度扫描失败: %v\n", pipelineErr)
+		// 调度任务失败时发送通知（含失败原因摘要）
+		sendTaskNotifyAsync("failure", mode, "", session.finalResultCount(), scheduledStart, pipelineErr.Error())
 		return "失败：" + pipelineErr.Error()
 	}
 	fmt.Println("[schedule] 调度扫描完成")
+	sendTaskNotifyAsync("complete", mode, "", session.finalResultCount(), scheduledStart, "")
 	return "完成"
 }
 

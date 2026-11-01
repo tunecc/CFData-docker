@@ -28,7 +28,7 @@ func runDCLibraryScan(ctx context.Context, session *appSession, ipType int, scan
 	var resultMutex sync.Mutex
 	total := len(ipList)
 	session.sendWSMessage("dc_library_progress", map[string]interface{}{"current": 0, "total": total})
-	wasCanceled := runBoundedWorkers(ctx, total, scanMaxThreads, 10, func(current, total int) {
+	wasCanceled := runBoundedWorkers(ctx, total, scanMaxThreads, 10, func(current, total, _ int) {
 		session.sendWSMessage("dc_library_progress", map[string]interface{}{"current": current, "total": total})
 	}, func(idx int) {
 		select {

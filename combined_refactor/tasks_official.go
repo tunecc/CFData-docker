@@ -420,11 +420,16 @@ func runOfficialScanCandidatesWithSource(ctx context.Context, session *appSessio
 		"current": 0,
 		"total":   total,
 	})
-	wasCanceled, stoppedEarly := runBoundedWorkersUntil(ctx, total, scanMaxThreads, 10, func(current, total int) {
-		session.sendWSMessage("scan_progress", map[string]interface{}{
+	wasCanceled, stoppedEarly := runBoundedWorkersUntil(ctx, total, scanMaxThreads, 10, func(current, total, etaSeconds int) {
+		payload := map[string]interface{}{
 			"current": current,
 			"total":   total,
-		})
+		}
+		if etaSeconds >= 0 {
+			// 可选字段：旧消费者忽略即可，速率不可用时省略
+			payload["etaSeconds"] = etaSeconds
+		}
+		session.sendWSMessage("scan_progress", payload)
 	}, shouldStop, func(idx int) {
 		ip := ipList[idx]
 		select {
@@ -569,7 +574,7 @@ func runDetailedTest(ctx context.Context, session *appSession, selectedDC string
 		"current": 0,
 		"total":   total,
 	})
-	wasCanceled := runBoundedWorkers(ctx, total, 50, 5, func(current, total int) {
+	wasCanceled := runBoundedWorkers(ctx, total, 50, 5, func(current, total, _ int) {
 		session.sendWSMessage("test_progress", map[string]interface{}{
 			"current": current,
 			"total":   total,

@@ -220,7 +220,7 @@ func scanCompactIPv4(ctx context.Context, session *appSession, ipList []string, 
 	results := make([]string, 0, total)
 	var resultsMutex sync.Mutex
 
-	canceled := runBoundedWorkers(ctx, total, maxThreads, 10, func(current, total int) {
+	canceled := runBoundedWorkers(ctx, total, maxThreads, 10, func(current, total, _ int) {
 		resultsMutex.Lock()
 		currentFound := foundCount + len(results)
 		resultsMutex.Unlock()

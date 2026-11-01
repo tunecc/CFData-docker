@@ -1885,6 +1885,33 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                     <div class="automation-hint">R2 上传配置已移至「结果操作」页的「R2 上传」分组；自动调度扫描完成后仍按原规则自动上传。</div>
                 </div>
             </div>
+            <div class="automation-grid">
+                <div class="automation-column">
+                    <div class="settings-title">任务通知（Webhook）</div>
+                    <div class="form-group">
+                        <label for="notifyBarkServer">Bark 服务器（可选，默认官方）</label>
+                        <input id="notifyBarkServer" type="url" placeholder="https://api.day.app">
+                    </div>
+                    <div class="form-group">
+                        <label for="notifyBarkKey">Bark key</label>
+                        <input id="notifyBarkKey" type="password" autocomplete="off" placeholder="Bark key">
+                    </div>
+                    <div class="form-group">
+                        <label for="notifyTelegramToken">Telegram bot token</label>
+                        <input id="notifyTelegramToken" type="password" autocomplete="off" placeholder="Telegram bot token">
+                    </div>
+                    <div class="form-group">
+                        <label for="notifyTelegramChatID">Telegram chat ID</label>
+                        <input id="notifyTelegramChatID" type="text" placeholder="例如 123456789（群组可带负号）">
+                    </div>
+                    <div class="automation-hint">手动任务完成与调度任务完成/失败时推送结果摘要；Bark key 与 bot token 保存后不回传明文，留空保持不变。通知走管理面代理，发送失败只记日志、不影响任务。</div>
+                    <div class="theme-options" style="display:flex;gap:8px;margin-top:6px;">
+                        <button class="menu-btn" style="flex:1;" onclick="sendNotifyTest('bark')">测试 Bark</button>
+                        <button class="menu-btn" style="flex:1;" onclick="sendNotifyTest('telegram')">测试 Telegram</button>
+                    </div>
+                    <div class="automation-hint" id="notifyTestFeedback" style="display:none"></div>
+                </div>
+            </div>
             <button class="menu-btn automation-save-btn" onclick="saveScheduleConfig()">保存自动化设置</button>
         </div>
             </div>
@@ -2753,6 +2780,20 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
             }
             setValue('r2Filename', payload.r2Filename || '');
             setValue('r2AliasFormat', payload.r2AliasFormat || '');
+            setValue('notifyBarkServer', payload.notifyBarkServer || '');
+            const barkInput = document.getElementById('notifyBarkKey');
+            if (barkInput) {
+                barkInput.value = '';
+                barkInput.dataset.tokenSet = payload.notifyBarkKeySet ? '1' : '';
+                barkInput.placeholder = payload.notifyBarkKeySet ? '已保存，留空保持不变' : 'Bark key';
+            }
+            const tgTokenInput = document.getElementById('notifyTelegramToken');
+            if (tgTokenInput) {
+                tgTokenInput.value = '';
+                tgTokenInput.dataset.tokenSet = payload.notifyTelegramTokenSet ? '1' : '';
+                tgTokenInput.placeholder = payload.notifyTelegramTokenSet ? '已保存，留空保持不变' : 'Telegram bot token';
+            }
+            setValue('notifyTelegramChatID', payload.notifyTelegramChatID || '');
             // 别名已字段化：加载后立即按「字段与顺序」重新生成，历史模板值不残留到保存链路
             if (typeof syncR2AliasTemplate === 'function') syncR2AliasTemplate();
             r2AutoUploadReady = !!(payload.r2Enabled && payload.r2WorkerUrl && payload.r2WorkerTokenSet);
@@ -2975,6 +3016,17 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
             renderScheduleCronDisplay();
         }
 
+        function sendNotifyTest(channel) {
+            const feedback = document.getElementById('notifyTestFeedback');
+            if (feedback) {
+                feedback.textContent = '正在发送测试通知…';
+                feedback.style.display = '';
+            }
+            if (!wsSend({ type: 'notify_test', data: { channel } })) {
+                if (feedback) feedback.textContent = '与服务端的连接尚未就绪，请稍后再试';
+            }
+        }
+
         function saveScheduleConfig() {
             const textValue = (id) => document.getElementById(id)?.value ?? '';
             const checkedValue = (id) => !!document.getElementById(id)?.checked;
@@ -2987,10 +3039,17 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                 r2WorkerUrl: textValue('r2WorkerUrl').trim(),
                 r2Filename: textValue('r2Filename').trim(),
                 r2AliasFormat: textValue('r2AliasFormat').trim(),
+                notifyBarkServer: textValue('notifyBarkServer').trim(),
+                notifyTelegramChatID: textValue('notifyTelegramChatID').trim(),
             };
             // 留空表示不修改已保存的 token
             const token = textValue('r2WorkerToken').trim();
             if (token) payload.r2WorkerToken = token;
+            // 通知凭据同样留空保持不变
+            const barkKey = textValue('notifyBarkKey').trim();
+            if (barkKey) payload.notifyBarkKey = barkKey;
+            const tgToken = textValue('notifyTelegramToken').trim();
+            if (tgToken) payload.notifyTelegramToken = tgToken;
             if (!wsSend({ type: 'set_schedule_config', data: payload })) {
                 showNoticeCard('与服务端的连接尚未就绪，请稍后再试');
             }
@@ -3829,17 +3888,27 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
             renderAllNSBLiveRows();
         }
 
-        function updateProgress(current, total, text) {
+        // ETA 可选字段（etaSeconds >= 0 时显示），缺失或 -1 自动隐藏
+        function formatEtaText(etaSeconds) {
+            if (!Number.isFinite(etaSeconds) || etaSeconds < 0) return '';
+            const totalSec = Math.max(0, Math.round(etaSeconds));
+            const mm = Math.floor(totalSec / 60);
+            const ss = totalSec % 60;
+            return ` · 预计剩余 ${mm}:${String(ss).padStart(2, '0')}`;
+        }
+
+        function updateProgress(current, total, text, etaSeconds) {
+            const etaSuffix = formatEtaText(etaSeconds);
             if (!total) {
                 progressBar.style.width = '100%';
                 progressBar.style.animation = 'none';
-                progressBar.textContent = `${text || ''} ${current || 0}`;
+                progressBar.textContent = `${text || ''} ${current || 0}${etaSuffix}`;
                 return;
             }
             const p = Math.min(Math.max((current / total) * 100, 0), 100);
             progressBar.style.width = `${Math.round(p)}%`;
             const displayCurrent = p >= 100 ? total : (current || 0);
-            progressBar.textContent = `${text || ''} ${displayCurrent}/${total} (${Math.round(p)}%)`;
+            progressBar.textContent = `${text || ''} ${displayCurrent}/${total} (${Math.round(p)}%)${etaSuffix}`;
             progressBar.style.animation = p >= 100 ? 'none' : 'stripe 1s linear infinite';
         }
 
@@ -7152,6 +7221,19 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                 case 'proxy_status':
                     applyProxyStatus(msg.data || {});
                     break;
+                case 'notify_test_result':
+                    {
+                        const nr = msg.data || {};
+                        const channelName = nr.channel === 'bark' ? 'Bark' : 'Telegram';
+                        const text = nr.ok ? channelName + ' 测试通知已发送' : channelName + ' 测试失败：' + (nr.error || '未知错误');
+                        if (typeof nzToast === 'function') nzToast(text, nr.ok ? 'success' : 'error');
+                        const feedback = document.getElementById('notifyTestFeedback');
+                        if (feedback) {
+                            feedback.textContent = text;
+                            feedback.style.display = '';
+                        }
+                    }
+                    break;
                 case 'schedule_config':
                     applyScheduleConfig(msg.data || {});
                     if (msg.data && msg.data.saved) showNoticeCard('调度设置已保存');
@@ -7185,7 +7267,7 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                     break;
                 case 'scan_progress':
                     if (isStoppingTask) break;
-                    updateProgress(msg.data.current || 0, msg.data.total || 0, '扫描中');
+                    updateProgress(msg.data.current || 0, msg.data.total || 0, '扫描中', msg.data.etaSeconds);
                     break;
                 case 'scan_result':
                     if (isStoppingTask) break;
@@ -7340,7 +7422,7 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
                         if (p.phase === 'speed') {
                             updateQualifiedSpeedProgress(p.current || 0, p.total || 1);
                         } else {
-                            updateProgress(p.current || 0, p.total || 1, `${txt}`);
+                            updateProgress(p.current || 0, p.total || 1, `${txt}`, p.etaSeconds);
                             if (p.phase === 'reallink') progressBar.style.animation = 'none';
                         }
                     }

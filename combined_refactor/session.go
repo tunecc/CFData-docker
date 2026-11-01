@@ -182,6 +182,10 @@ func (s *appSession) startTaskNamed(label string, mode string, params map[string
 				success := ctx.Err() == nil
 				recordLastRun(mode, label, startedAt, success, s.finalResultCount(), s.uploadNoteValue())
 				s.sendWSMessage("last_run", lastRunPayload())
+				// 扫描/测速主任务完成时发送 webhook 通知；被用户停止的不通知
+				if success && (mode == "official" || mode == "nsb") {
+					sendTaskNotifyAsync("complete", mode, label, s.finalResultCount(), startedAt, "")
+				}
 			}
 			if ctx.Err() != nil {
 				s.sendWSMessage("task_stopped", nil)
