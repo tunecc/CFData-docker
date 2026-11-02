@@ -24,39 +24,43 @@
         try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) { /* 旧内核 */ }
     };
 
-    // 右侧配置分组切换；官方/非标参数页与任务模式绑定：
-    // 切换模式自动打开对应参数页，点参数页也会切换到对应模式，避免另一模式下面板空白
+    // 右侧配置分组切换；任务模式唯一切换入口在任务控制卡：
+    // official/nsb/mode 入参只跟随当前模式显示对应参数页，MUST NOT 反向切换任务模式
     window.nzShowConfigPanel = function (name) {
-        if ((name === 'official' || name === 'nsb') && !window.nzModePanelSyncing) {
-            var curMode = null;
-            try { curMode = currentMode; } catch (e) { curMode = null; }
-            if (curMode !== null && curMode !== name && typeof switchMode === 'function') {
-                window.nzModePanelSyncing = true;
-                try {
-                    switchMode(name);
-                    return; // switchMode 内部已完成面板与参数区切换
-                } finally {
-                    window.nzModePanelSyncing = false;
-                }
-            }
+        var key = name;
+        if (key === 'mode' || key === 'official' || key === 'nsb') {
+            var curMode = 'official';
+            try { curMode = currentMode === 'nsb' ? 'nsb' : 'official'; } catch (e) { curMode = 'official'; }
+            key = curMode;
         }
-        var tabs = { official: 'cfgTabOfficial', nsb: 'cfgTabNSB', automation: 'cfgTabAutomation', results: 'cfgTabResults', accounts: 'cfgTabAccounts', settings: 'cfgTabSettings' };
+        var tabs = { automation: 'cfgTabAutomation', results: 'cfgTabResults', accounts: 'cfgTabAccounts', settings: 'cfgTabSettings' };
         var bodies = { official: 'cfgPanelOfficial', nsb: 'cfgPanelNSB', automation: 'cfgPanelAutomation', results: 'cfgPanelResults', accounts: 'cfgPanelAccounts', settings: 'cfgPanelSettings' };
-        Object.keys(bodies).forEach(function (key) {
-            var body = document.getElementById(bodies[key]);
+        Object.keys(bodies).forEach(function (k) {
+            var body = document.getElementById(bodies[k]);
             if (!body) return;
-            var isActive = key === name;
+            var isActive = k === key;
             // 面板初始 HTML 自带 hidden 类，切换时必须同步增删
             body.classList.toggle('active', isActive);
             body.classList.toggle('hidden', !isActive);
         });
         document.querySelectorAll('.cfg-tab').forEach(function (t) { t.classList.remove('active'); });
-        var tab = document.getElementById(tabs[name]);
+        // 当前模式参数标签：文字/图标/说明跟随任务控制卡选择的模式，两个模式只有一个标签
+        var modeTab = document.getElementById('cfgTabMode');
+        if (modeTab) {
+            var icon = document.getElementById('cfgTabModeIcon');
+            var label = document.getElementById('cfgTabModeLabel');
+            var isNSB = key === 'nsb';
+            if (icon) icon.textContent = isNSB ? '📂' : '☁️';
+            if (label) label.textContent = isNSB ? '非标优选' : '官方优选';
+            modeTab.title = (isNSB ? '非标优选参数与扫描' : '官方优选参数与扫描') + '（模式切换只在任务控制卡）';
+            if (isNSB || key === 'official') modeTab.classList.add('active');
+        }
+        var tab = document.getElementById(tabs[key]);
         if (tab) tab.classList.add('active');
-        if (name === 'settings') {
+        if (key === 'settings') {
             try { wsSend({ type: 'get_management_proxy', data: {} }); } catch (e) { /* 连接未就绪 */ }
         }
-        if (name === 'results' && typeof syncResultSourceOptions === 'function') {
+        if (key === 'results' && typeof syncResultSourceOptions === 'function') {
             try { syncResultSourceOptions(); } catch (e) { /* 结果数据未就绪 */ }
         }
     };
@@ -71,10 +75,6 @@
         var el = document.getElementById('view-run');
         if (el) el.classList.add('active');
         window.nzShowRunPanel(view === 'analysis' ? 'report' : 'log');
-    };
-
-    window.nzNavMode = function (mode) {
-        window.nzShowConfigPanel(mode === 'official' ? 'official' : 'nsb');
     };
 
     /* ---------------- Toast ---------------- */
@@ -679,6 +679,15 @@
         try {
             var pref = localStorage.getItem('cfdata-autoload');
             if (pref !== 'off' && pref !== 'localStorage') localStorage.setItem('cfdata-autoload', 'off');
+        } catch (e) { /* ignore */ }
+        // 清理日志框内源码缩进残留的空白文本节点，避免 pre-wrap 把它们渲染成多余空行
+        try {
+            var logBoxEl = document.getElementById('logBox');
+            if (logBoxEl) {
+                Array.prototype.slice.call(logBoxEl.childNodes).forEach(function (node) {
+                    if (node.nodeType === 3 && !node.textContent.trim()) logBoxEl.removeChild(node);
+                });
+            }
         } catch (e) { /* ignore */ }
         // 初始日志过滤级别与启动就绪校验
         try { nzSetLogFilter('brief'); } catch (e) { /* ignore */ }
