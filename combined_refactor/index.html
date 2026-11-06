@@ -212,7 +212,7 @@
             <div class="cfg-body active" id="cfgPanelOfficial">
                 <div class="cfg-panel-head">
                     <div class="cfg-panel-title">官方优选参数</div>
-                    <button class="menu-btn cfg-save-btn" onclick="saveTaskConfigToServer('official')" title="保存官方优选参数到服务器配置文件">💾 保存参数</button>
+                    <button class="menu-btn cfg-save-btn" onclick="saveTaskConfigToServer('official')" title="保存当前页面的官方优选参数到服务器配置文件">💾 保存</button>
                 </div>
 <div id="officialControls">
                 <div class="control-title">
@@ -357,7 +357,7 @@
             <div class="cfg-body hidden" id="cfgPanelNSB">
                 <div class="cfg-panel-head">
                     <div class="cfg-panel-title">非标优选参数</div>
-                    <button class="menu-btn cfg-save-btn" onclick="saveTaskConfigToServer('nsb')" title="保存非标优选参数到服务器配置文件">💾 保存参数</button>
+                    <button class="menu-btn cfg-save-btn" onclick="saveTaskConfigToServer('nsb')" title="保存当前页面的非标优选参数到服务器配置文件">💾 保存</button>
                 </div>
 <div id="nsbControls" class="hidden">
                 <div class="control-title">
@@ -499,6 +499,10 @@
             </div>
             </div>
             <div class="cfg-body hidden" id="cfgPanelAutomation">
+                <div class="cfg-panel-head">
+                    <div class="cfg-panel-title">自动化</div>
+                    <button class="menu-btn cfg-save-btn" onclick="saveAutomationPage()" title="保存当前页面的调度、通知与 R2 设置">💾 保存</button>
+                </div>
 <div class="section-box" id="automationSection">
             <h3>⏱️ 自动化</h3>
             <div class="upload-status" id="scheduleStatusText">调度未启用</div>
@@ -552,10 +556,13 @@
                     <div class="automation-hint" id="notifyTestFeedback" style="display:none"></div>
                 </div>
             </div>
-            <button class="menu-btn automation-save-btn" onclick="saveScheduleConfig()">保存自动化设置</button>
         </div>
             </div>
             <div class="cfg-body hidden" id="cfgPanelAccounts">
+                <div class="cfg-panel-head">
+                    <div class="cfg-panel-title">上传账号</div>
+                    <button class="menu-btn cfg-save-btn" onclick="saveAccountsPage()" title="保存当前页面中已填写的 GitHub 与 edgetunnel 账号">💾 保存</button>
+                </div>
                 <div class="section-box">
                     <h3>GitHub 上传账号</h3>
                     <div class="modal-field github-field"><label>GitHub 账户</label>
@@ -571,7 +578,6 @@
                     <div class="modal-field github-field"><label>目标路径</label><input id="githubPath" type="text" placeholder="results/ip.csv 或 results/ip.txt"></div>
                     <div class="modal-field full github-field"><label>提交信息</label><input id="githubMessage" type="text" value="update cfdata results"></div>
                     <div class="modal-field full github-field"><label class="inline-check"><input id="githubSaveToken" type="checkbox"> 保存 token 到本机浏览器（使用 WebCrypto 加密存储）</label></div>
-                    <button class="menu-btn" onclick="saveGithubAccountFromPanel()">💾 保存当前 GitHub 账号</button>
                     <div class="automation-hint">账号只保存在本机浏览器加密存储；结果操作弹窗内可通过「选择已保存账号」下拉直接切换账号（面板字段同步更新），上传时按「保存 token」勾选状态更新账号。</div>
                 </div>
                 <div class="section-box">
@@ -592,11 +598,14 @@
                         </select>
                     </div>
                     <div class="modal-field full edgetunnel-field"><label class="inline-check"><input id="edgetunnelSavePassword" type="checkbox"> 保存密码到本机浏览器（使用 WebCrypto 加密存储）</label></div>
-                    <button class="menu-btn" onclick="saveEdgetunnelAccountFromPanel()">💾 保存当前 edgetunnel 账号</button>
                     <div class="automation-hint">结果操作弹窗内的「上传 edgetunnel-追加 / 覆盖」按钮会使用此处当前填写的账号信息；弹窗内也可通过「选择已保存账号」下拉切换，面板字段同步更新。</div>
                 </div>
             </div>
             <div class="cfg-body hidden" id="cfgPanelSettings">
+                <div class="cfg-panel-head">
+                    <div class="cfg-panel-title">设置</div>
+                    <button class="menu-btn cfg-save-btn" onclick="saveSettingsPage()" title="保存当前页面的本地配置、自动加载偏好与管理面代理">💾 保存</button>
+                </div>
 <div class="settings-grid">
                 <div class="card">
                     <div class="card-head"><div class="card-title">外观与代理</div></div>
@@ -615,7 +624,6 @@
             <div id="proxySourceText" style="font-size:11px;color:var(--text-secondary);margin-top:2px;"></div>
             <input id="proxyInput" type="text" placeholder="socks5://127.0.0.1:1080 或 http://127.0.0.1:8080" style="width:100%;margin-top:6px;">
             <div class="theme-options" style="display:flex;gap:8px;margin-top:6px;">
-                <button class="menu-btn" style="flex:1;" onclick="saveManagementProxy()">保存</button>
                 <button class="menu-btn" style="flex:1;" onclick="clearManagementProxy()">清除</button>
             </div>
             <div style="font-size:11px;line-height:1.5;color:var(--text-secondary);margin-top:6px;">
@@ -627,9 +635,6 @@
                 <div class="card">
                     <div class="card-head"><div class="card-title">配置管理</div></div>
         <div id="configMenu" class="settings-panel">
-            <div class="settings-title">💾 保存配置</div>
-            <button class="menu-btn" onclick="saveConfigToLS()">保存当前配置</button>
-
             <div class="settings-title" style="margin-top:12px;">📂 加载配置</div>
             <button class="menu-btn" onclick="loadConfigFromLS()">加载保存配置</button>
 
@@ -639,7 +644,7 @@
                 <option value="localStorage">本地保存参数（覆盖服务器参数）</option>
             </select>
             <div style="font-size:11px;line-height:1.5;color:var(--text-secondary);margin-top:6px;">
-                服务器配置文件是任务参数的主载体：在「官方优选 / 非标优选」分组点击「💾 保存参数」写入服务器，换浏览器或重启容器后自动回显。
+                服务器配置文件是任务参数的主载体：在「官方优选 / 非标优选」页面右上角点击「💾 保存」写入服务器，换浏览器或重启容器后自动回显。
             </div>
 
             <div class="settings-title" style="margin-top:12px;">📄 从服务器同步</div>
@@ -665,6 +670,7 @@
             <div class="cfg-body hidden" id="cfgPanelResults">
                 <div class="cfg-panel-head">
                     <div class="cfg-panel-title">结果操作</div>
+                    <button class="menu-btn cfg-save-btn" onclick="saveResultsPage()" title="保存当前页面的结果面板设置与 R2 配置">💾 保存</button>
                 </div>
                 <div class="result-panel-grid">
                     <div class="result-panel-section">
@@ -796,7 +802,6 @@
                             </div>
                             <input id="r2AliasFormat" type="hidden">
                             <div class="automation-hint">自动调度与「⬆ 自动上传」的 R2 上传按规则筛选：开启测速只上传测速达标行，未开启测速只上传通过延迟筛选的结果行，与导出文件的筛选和行数设置无关；动作区的「上传 R2」按钮则按本面板当前的格式与筛选设置上传。</div>
-                            <button class="menu-btn" onclick="saveScheduleConfig()">💾 保存 R2 设置</button>
                             <div class="automation-hint" id="r2UploadFeedback" style="display:none"></div>
                             <div class="modal-field full">
                                 <label>上传状态</label>

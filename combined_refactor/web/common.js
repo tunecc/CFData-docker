@@ -39,7 +39,14 @@
         }
 
 
+        // 表单级判断：任一字段有非空值即视为已填写（页面级保存据此跳过空白表单）
+        function hasAnyFieldValue(values) {
+            return (Array.isArray(values) ? values : []).some((v) => String(v ?? '').trim() !== '');
+        }
+
+
 window.formatEtaText = formatEtaText;
 window.parseThreadsValue = parseThreadsValue;
 window.buildResultFieldChoices = buildResultFieldChoices;
 window.resultFieldChoiceKeys = resultFieldChoiceKeys;
+window.hasAnyFieldValue = hasAnyFieldValue;

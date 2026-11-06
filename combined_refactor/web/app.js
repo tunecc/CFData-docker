@@ -350,10 +350,15 @@
         function saveManagementProxy() {
             const input = document.getElementById('proxyInput');
             const value = input ? input.value.trim() : '';
-            if (!value) return showNoticeCard('请输入代理地址，例如 socks5://127.0.0.1:1080；(清除请用「清除」按钮)');
+            if (!value) {
+                showNoticeCard('请输入代理地址，例如 socks5://127.0.0.1:1080；(清除请用「清除」按钮)');
+                return false;
+            }
             if (!wsSend({ type: 'set_management_proxy', data: { value } })) {
                 showNoticeCard('与服务端的连接尚未就绪，请稍后再试');
+                return false;
             }
+            return true;
         }
 
         function clearManagementProxy() {
@@ -698,7 +703,9 @@
             if (tgToken) payload.notifyTelegramToken = tgToken;
             if (!wsSend({ type: 'set_schedule_config', data: payload })) {
                 showNoticeCard('与服务端的连接尚未就绪，请稍后再试');
+                return false;
             }
+            return true;
         }
 
         function applySpeedURLStatus(payload) {
@@ -833,9 +840,10 @@
                 localStorage.setItem('cfdata-config', JSON.stringify(config));
             } catch (e) {
                 showNoticeCard('保存配置失败: ' + (e.message || String(e)));
-                return;
+                return false;
             }
             log('当前配置已保存到 localStorage');
+            return true;
         }
 
         function loadConfigFromLS() {
@@ -917,18 +925,21 @@
             return result;
         }
 
-        // 「上传账号」分组内的账号保存入口：复用结果弹窗的保存逻辑与加密存储
-        async function saveGithubAccountFromPanel() {
+        // 「上传账号」分组内的账号保存入口：复用结果弹窗的保存逻辑与加密存储。
+        // silent=true 时由页面级保存汇总提示；成功返回 true，校验失败返回提示文本。
+        async function saveGithubAccountFromPanel(silent = false) {
+            const fail = (msg) => {
+                if (!silent) showNoticeCard(msg);
+                return msg;
+            };
             const repoRaw = document.getElementById('githubRepo').value.trim();
             const parts = repoRaw.split('/');
             if (parts.length !== 2 || !parts[0] || !parts[1]) {
-                showNoticeCard('请先填写仓库 owner/repo，例如 myname/myrepo');
-                return;
+                return fail('请先填写仓库 owner/repo，例如 myname/myrepo');
             }
             const token = document.getElementById('githubToken').value.trim();
             if (!token) {
-                showNoticeCard('请先填写 GitHub Token');
-                return;
+                return fail('请先填写 GitHub Token');
             }
             const payload = {
                 owner: parts[0],
@@ -940,20 +951,82 @@
             };
             await saveCurrentGitHubAccount(payload);
             renderGitHubAccounts();
-            showNoticeCard('GitHub 账号已保存到本机浏览器加密存储');
-            log('GitHub 账号已保存到本机浏览器加密存储');
+            const okMsg = 'GitHub 账号已保存到本机浏览器加密存储';
+            if (!silent) showNoticeCard(okMsg);
+            log(okMsg);
+            return true;
         }
 
-        async function saveEdgetunnelAccountFromPanel() {
+        async function saveEdgetunnelAccountFromPanel(silent = false) {
+            const fail = (msg) => {
+                if (!silent) showNoticeCard(msg);
+                return msg;
+            };
             const host = document.getElementById('edgetunnelHost').value.trim();
             const password = document.getElementById('edgetunnelPassword').value.trim();
             if (!host || !password) {
-                showNoticeCard('请先填写 edgetunnel 域名与密码');
-                return;
+                return fail('请先填写 edgetunnel 域名与密码');
             }
             await saveCurrentEdgetunnelAccount();
-            showNoticeCard('edgetunnel 账号已保存到本机浏览器加密存储');
-            log('edgetunnel 账号已保存到本机浏览器加密存储');
+            const okMsg = 'edgetunnel 账号已保存到本机浏览器加密存储';
+            if (!silent) showNoticeCard(okMsg);
+            log(okMsg);
+            return true;
+        }
+
+        // 当前页面的账号表单是否填写过（名称/token/仓库 任一非空即视为要保存）
+        function accountFormHasInput(ids) {
+            return hasAnyFieldValue(ids.map((id) => document.getElementById(id)?.value));
+        }
+
+        // 页面级保存：结果操作页（结果面板设置 + R2 上传设置）
+        function saveResultsPage() {
+            saveResultPanelSettings();
+            const sent = saveScheduleConfig();
+            showNoticeCard(sent
+                ? '结果操作配置已保存'
+                : '结果面板设置已保存到本机浏览器；R2 设置因连接未就绪未提交');
+        }
+
+        // 页面级保存：自动化页（调度、通知与 R2 与自动化共用同一配置）
+        function saveAutomationPage() {
+            saveScheduleConfig();
+        }
+
+        // 页面级保存：上传账号页（两个表单中的有效账号，空白表单跳过）
+        async function saveAccountsPage() {
+            const hasGithub = accountFormHasInput(['githubAccountName', 'githubToken', 'githubRepo']);
+            const hasEdgetunnel = accountFormHasInput(['edgetunnelAccountName', 'edgetunnelHost', 'edgetunnelPassword']);
+            if (!hasGithub && !hasEdgetunnel) {
+                showNoticeCard('请先填写要保存的 GitHub 或 edgetunnel 账号信息');
+                return;
+            }
+            const failures = [];
+            if (hasGithub) {
+                const result = await saveGithubAccountFromPanel(true);
+                if (result !== true) failures.push(result);
+            }
+            if (hasEdgetunnel) {
+                const result = await saveEdgetunnelAccountFromPanel(true);
+                if (result !== true) failures.push(result);
+            }
+            if (failures.length) {
+                showNoticeCard(failures[0]);
+                return;
+            }
+            showNoticeCard('上传账号已保存到本机浏览器加密存储');
+        }
+
+        // 页面级保存：设置页（本地配置 + 自动加载偏好 + 已填写的管理面代理）
+        function saveSettingsPage() {
+            if (!saveConfigToLS()) return;
+            const autoLoad = document.getElementById('configAutoLoad');
+            if (autoLoad) saveAutoLoadPreference(autoLoad.value);
+            const proxyInput = document.getElementById('proxyInput');
+            const proxy = proxyInput ? proxyInput.value.trim() : '';
+            if (!proxy || saveManagementProxy()) {
+                showNoticeCard('设置已保存');
+            }
         }
 
         function deleteSavedConfig() {

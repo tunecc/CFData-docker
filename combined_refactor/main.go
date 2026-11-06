@@ -289,7 +289,11 @@ func main() {
 		os.Exit(1)
 	}
 	staticHandler := http.StripPrefix("/static/", http.FileServer(http.FS(webFS)))
-	http.Handle("/static/", requireAuth(staticHandler.ServeHTTP))
+	// 前端静态资源随镜像更新：要求浏览器每次回源，避免升级后仍执行缓存的旧 app.js / enhance.js
+	http.Handle("/static/", requireAuth(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Cache-Control", "no-cache")
+		staticHandler.ServeHTTP(w, r)
+	}))
 	http.HandleFunc("/ws", requireAuth(handleWebSocket))
 
 	addr := fmt.Sprintf(":%d", listenPort)
