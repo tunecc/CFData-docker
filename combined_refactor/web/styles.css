@@ -728,9 +728,24 @@ h3 {
     border-radius: var(--radius-sm);
     padding: 10px;
     max-height: 160px;
+    /* 预览至少展示 3 行，避免只有一行时看起来像空白 */
+    min-height: 66px;
     overflow: auto;
     white-space: pre-wrap;
     word-break: break-all;
+}
+
+/* 预览为示例数据时的标识 */
+.preview-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 1px 6px;
+    border-radius: 999px;
+    font-size: 10px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    border: 1px solid var(--border, #d0d0d0);
+    background: transparent;
 }
 
 .field-head { display: flex; align-items: center; justify-content: space-between; }

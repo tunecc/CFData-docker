@@ -4501,21 +4501,38 @@
             return el ? el.checked : true;
         }
 
+        // 预览最多展示的行数；无结果时用内置示例展示格式效果（使用文档保留地址，避免与真实结果混淆）
+        const RESULT_PREVIEW_MAX_ROWS = 5;
+        const RESULT_PREVIEW_SAMPLE_ROWS = [
+            { ip: '192.0.2.10', port: '443', ipport: '192.0.2.10:443', dc: 'HKG', dcCountry: 'HK', region: '香港', city: '香港', latency: '12ms', lossRate: '0%', speed: '25.30MB/s', ipType: 'IPv4', tls: 'on' },
+            { ip: '192.0.2.20', port: '443', ipport: '192.0.2.20:443', dc: 'NRT', dcCountry: 'JP', region: '日本', city: '东京', latency: '35ms', lossRate: '0%', speed: '18.40MB/s', ipType: 'IPv4', tls: 'on' },
+            { ip: '192.0.2.30', port: '443', ipport: '192.0.2.30:443', dc: 'SJC', dcCountry: 'US', region: '美国', city: '圣何塞', latency: '128ms', lossRate: '1%', speed: '6.20MB/s', ipType: 'IPv4', tls: 'on' },
+        ];
+        let resultPreviewShowingSample = false;
+
         function buildResultPreview(format) {
-            const rows = getSelectedResultRows();
+            let rows = getSelectedResultRows();
+            resultPreviewShowingSample = false;
+            if (!rows.length) {
+                // 没有真实结果时展示示例，让用户仍能看到字段顺序与分隔符效果
+                rows = RESULT_PREVIEW_SAMPLE_ROWS;
+                resultPreviewShowingSample = true;
+            }
+            rows = takePreviewRows(rows, RESULT_PREVIEW_MAX_ROWS);
             if (!rows.length) return '暂无预览';
             const fields = resultFieldOrder.length ? resultFieldOrder : getDefaultResultFieldOrder(format);
-            const first = rows[0];
-            if (format === 'substore') return buildSubstoreContent([first]).trimEnd();
+            if (format === 'substore') return buildSubstoreContent(rows).trimEnd();
             if (format === 'txt') {
-                const ipport = first.ip ? formatIPPort(first.ip, first.port, useIPv6BracketsFor('result')) : (first.ipport || `${first.ip || ''}:${first.port || ''}`);
-                const extras = fields.filter((k) => k !== 'ipport').map((k) => first[k]).filter((v) => String(v ?? '').trim() !== '');
-                return extras.length ? `${ipport}#${extras.join(getTextSeparator('result'))}` : ipport;
+                return rows.map((row) => {
+                    const ipport = row.ip ? formatIPPort(row.ip, row.port, useIPv6BracketsFor('result')) : (row.ipport || `${row.ip || ''}:${row.port || ''}`);
+                    const extras = fields.filter((k) => k !== 'ipport').map((k) => row[k]).filter((v) => String(v ?? '').trim() !== '');
+                    return extras.length ? `${ipport}#${extras.join(getTextSeparator('result'))}` : ipport;
+                }).join('\n');
             }
             const byKey = Object.fromEntries(RESULT_FIELDS.concat(resultCustomFields).map((f) => [f.key, f]));
             const headers = fields.map((k) => byKey[k]?.label || k).join(',');
-            const values = fields.map((k) => formatCSVCell(first[k])).join(',');
-            return `${headers}\n${values}`;
+            const lines = rows.map((row) => fields.map((k) => formatCSVCell(row[k])).join(','));
+            return [headers, ...lines].join('\n');
         }
 
         function updateResultPreview() {
@@ -4525,7 +4542,10 @@
                 el.textContent = buildResultPreview(document.getElementById('resultFormat').value);
             } catch (err) {
                 el.textContent = err.message || '预览失败';
+                resultPreviewShowingSample = false;
             }
+            const badge = document.getElementById('resultPreviewBadge');
+            if (badge) badge.style.display = resultPreviewShowingSample ? '' : 'none';
             // R2 别名随「字段与顺序」与分隔符即时同步（预览刷新是所有字段/顺序/分隔符变更的公共路径）
             syncR2AliasTemplate();
             saveResultPanelSettings();

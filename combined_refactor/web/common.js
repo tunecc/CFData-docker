@@ -45,8 +45,17 @@
         }
 
 
+        // 预览行截断：只取前 limit 行，非数组按空处理
+        function takePreviewRows(rows, limit) {
+            if (!Array.isArray(rows)) return [];
+            const max = Number.isFinite(limit) && limit > 0 ? Math.floor(limit) : rows.length;
+            return rows.slice(0, max);
+        }
+
+
 window.formatEtaText = formatEtaText;
 window.parseThreadsValue = parseThreadsValue;
 window.buildResultFieldChoices = buildResultFieldChoices;
 window.resultFieldChoiceKeys = resultFieldChoiceKeys;
 window.hasAnyFieldValue = hasAnyFieldValue;
+window.takePreviewRows = takePreviewRows;

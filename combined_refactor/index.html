@@ -727,7 +727,10 @@
                             <input id="resultLossFilter" type="number" min="0" max="100" step="0.01" value="100" oninput="updateResultPreview()">
                         </div>
                         <div class="modal-field full">
-                            <label>输出示例</label>
+                            <label style="display:flex;align-items:center;gap:6px;">输出示例
+                                <span class="preview-badge" id="resultPreviewBadge" style="display:none;">示例</span>
+                                <span style="font-size:11px;color:var(--text-secondary);">（无结果时按当前设置展示示例）</span>
+                            </label>
                             <pre class="result-preview" id="resultPreview">暂无预览</pre>
                         </div>
                     </div>
