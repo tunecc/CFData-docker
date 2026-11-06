@@ -981,11 +981,17 @@
 
         // 页面级保存：结果操作页（结果面板设置 + R2 上传设置）
         function saveResultsPage() {
-            saveResultPanelSettings();
-            const sent = saveScheduleConfig();
-            showNoticeCard(sent
-                ? '结果操作配置已保存'
-                : '结果面板设置已保存到本机浏览器；R2 设置因连接未就绪未提交');
+            const localOK = saveResultPanelSettings();
+            const panelSent = flushResultPanelServerSync(true);
+            suppressScheduleSavedNotice = true;
+            // 响应丢失时兜底：5 秒后自动解除抑制，避免永久屏蔽调度保存提示
+            setTimeout(() => { suppressScheduleSavedNotice = false; }, 5000);
+            if (!saveScheduleConfig()) suppressScheduleSavedNotice = false;
+            if (!localOK && !panelSent) {
+                suppressScheduleSavedNotice = false;
+                showNoticeCard('结果面板设置保存失败：本地与服务器均不可用');
+            }
+            // 成功提示由 result_panel_config_saved 统一给出，避免两条提示互相覆盖
         }
 
         // 页面级保存：自动化页（调度、通知与 R2 与自动化共用同一配置）
@@ -4534,51 +4540,146 @@
 
         const RESULT_PANEL_STORAGE_KEY = 'cfdata-result-panel';
         let resultPanelLoaded = false;
+        // 服务器持久化：localStorage 只是本地缓存，服务器设置是跨访问地址/浏览器的权威来源。
+        // 应用服务器值期间抑制回写，避免把刚读到的设置又推回服务器。
+        let resultPanelApplying = false;
+        let resultPanelSyncTimer = null;
+        let resultPanelManualSavePending = false;
+        // 结果操作页保存同时提交 R2 配置时，抑制调度页面那条独立提示，只显示合并后的「结果操作配置已保存」
+        let suppressScheduleSavedNotice = false;
+        let resultPanelSyncOfflineNotified = false;
 
-        function saveResultPanelSettings() {
-            if (!resultPanelLoaded) return;
-            try {
-                const val = (id) => document.getElementById(id)?.value ?? '';
-                const chk = (id) => !!document.getElementById(id)?.checked;
-                localStorage.setItem(RESULT_PANEL_STORAGE_KEY, JSON.stringify({
-                    source: val('resultSourceSelect'),
-                    format: val('resultFormat'),
-                    fileName: val('resultFileName'),
-                    startRow: val('resultStartRow'),
-                    endRow: val('resultEndRow'),
-                    ipType: val('resultIPTypeFilter'),
-                    qualified: val('resultQualifiedFilter'),
-                    latency: val('resultLatencyFilter'),
-                    loss: val('resultLossFilter'),
-                    fieldOrder: (resultFieldOrder || []).slice(),
-                    customFields: val('resultCustomFields'),
-                    separatorPreset: val('resultTextSeparatorPreset'),
-                    separatorCustom: val('resultTextSeparatorCustom'),
-                    ipv6Brackets: chk('resultIPv6Brackets'),
-                }));
-            } catch (e) { /* localStorage 不可用时静默跳过 */ }
+        function collectResultPanelSettings() {
+            const val = (id) => document.getElementById(id)?.value ?? '';
+            const chk = (id) => !!document.getElementById(id)?.checked;
+            return {
+                source: val('resultSourceSelect'),
+                format: val('resultFormat'),
+                fileName: val('resultFileName'),
+                startRow: val('resultStartRow'),
+                endRow: val('resultEndRow'),
+                ipType: val('resultIPTypeFilter'),
+                qualified: val('resultQualifiedFilter'),
+                latency: val('resultLatencyFilter'),
+                loss: val('resultLossFilter'),
+                fieldOrder: (resultFieldOrder || []).slice(),
+                customFields: val('resultCustomFields'),
+                separatorPreset: val('resultTextSeparatorPreset'),
+                separatorCustom: val('resultTextSeparatorCustom'),
+                ipv6Brackets: chk('resultIPv6Brackets'),
+            };
         }
 
-        function restoreResultPanelSettings() {
+        function saveResultPanelSettings() {
+            if (!resultPanelLoaded) return false;
+            let localOK = true;
+            try {
+                localStorage.setItem(RESULT_PANEL_STORAGE_KEY, JSON.stringify(collectResultPanelSettings()));
+            } catch (e) {
+                localOK = false; // 本地缓存不可用时仍尝试同步服务器
+            }
+            if (!resultPanelApplying) scheduleResultPanelServerSync();
+            return localOK;
+        }
+
+        // 改动后防抖同步服务器；显式保存走 flush 立即发送
+        function scheduleResultPanelServerSync(delay = 500) {
+            if (!resultPanelLoaded || resultPanelApplying) return;
+            if (resultPanelSyncTimer) clearTimeout(resultPanelSyncTimer);
+            resultPanelSyncTimer = setTimeout(() => {
+                resultPanelSyncTimer = null;
+                flushResultPanelServerSync(false);
+            }, delay);
+        }
+
+        function flushResultPanelServerSync(manual) {
+            if (resultPanelSyncTimer) {
+                clearTimeout(resultPanelSyncTimer);
+                resultPanelSyncTimer = null;
+            }
+            if (!resultPanelLoaded) return false;
+            const sent = wsSend({ type: 'save_result_panel_config', data: collectResultPanelSettings() });
+            if (!sent) {
+                if (manual) {
+                    showNoticeCard('与服务端的连接尚未就绪，结果面板设置暂存在本机浏览器');
+                } else if (!resultPanelSyncOfflineNotified) {
+                    // 自动同步失败只提示一次，避免连续改动反复弹窗
+                    resultPanelSyncOfflineNotified = true;
+                    showNoticeCard('与服务端的连接尚未就绪，结果面板设置暂存在本机浏览器；连接恢复后可再次保存');
+                }
+                return false;
+            }
+            resultPanelSyncOfflineNotified = false;
+            if (manual) resultPanelManualSavePending = true;
+            return true;
+        }
+
+        function handleResultPanelSaved(data) {
+            const saved = !!(data && data.saved);
+            if (saved) {
+                if (resultPanelManualSavePending) {
+                    resultPanelManualSavePending = false;
+                    showNoticeCard('结果操作配置已保存');
+                }
+                return;
+            }
+            resultPanelManualSavePending = false;
+            showNoticeCard((data && data.error) || '结果面板设置保存失败');
+        }
+
+        // 服务器尚无记录时，把浏览器里已有的旧设置上送，完成一次性迁移
+        function migrateLocalResultPanelSettings() {
+            if (resultPanelApplying || !resultPanelLoaded) return;
+            flushResultPanelServerSync(false);
+        }
+
+        function readLocalResultPanelSettings() {
             let raw = null;
             try {
                 raw = localStorage.getItem(RESULT_PANEL_STORAGE_KEY);
             } catch (e) {
                 raw = null;
             }
-            let s = null;
-            if (raw) {
-                try {
-                    s = JSON.parse(raw);
-                } catch (e) {
-                    s = null; // 损坏 JSON：忽略并沿用默认值
-                }
-                if (!s || typeof s !== 'object') s = null;
+            if (!raw) return null;
+            try {
+                const parsed = JSON.parse(raw);
+                return parsed && typeof parsed === 'object' ? parsed : null;
+            } catch (e) {
+                return null; // 损坏 JSON：忽略并沿用默认值
             }
+        }
+
+        function restoreResultPanelSettings() {
+            const s = readLocalResultPanelSettings();
             // 无论是否有已存记录，读取之后才允许回写，保证初始化渲染不覆盖存储
             resultPanelLoaded = true;
             if (!s) return;
+            applyResultPanelSettings(s);
+        }
 
+        // 服务器设置是权威来源：应用后回写本地缓存（应用期间抑制回推服务器）
+        function applyServerResultPanelSettings(settings) {
+            if (!settings || typeof settings !== 'object') return false;
+            if (!resultPanelLoaded) resultPanelLoaded = true;
+            applyResultPanelSettings(settings);
+            try {
+                localStorage.setItem(RESULT_PANEL_STORAGE_KEY, JSON.stringify(collectResultPanelSettings()));
+            } catch (e) { /* localStorage 不可用时仅保留服务器值 */ }
+            return true;
+        }
+
+        function applyResultPanelSettings(s) {
+            if (!s || typeof s !== 'object') return false;
+            resultPanelApplying = true;
+            try {
+                applyResultPanelSettingsFields(s);
+            } finally {
+                resultPanelApplying = false;
+            }
+            return true;
+        }
+
+        function applyResultPanelSettingsFields(s) {
             const setVal = (id, v) => {
                 const el = document.getElementById(id);
                 if (el && typeof v === 'string' && v !== '') el.value = v;
@@ -4912,6 +5013,25 @@
                         scheduleConfigLoaded = true;
                         wsSend({ type: 'get_schedule_config' });
                     }
+                    // 结果面板设置以服务器为准（localStorage 只是本地兜底）
+                    wsSend({ type: 'get_result_panel_config' });
+                    break;
+                case 'result_panel_config':
+                    {
+                        const panelData = msg.data || {};
+                        const serverSettings = panelData.settings;
+                        if (serverSettings && typeof serverSettings === 'object' && Object.keys(serverSettings).length) {
+                            applyServerResultPanelSettings(serverSettings);
+                        } else if (panelData.error) {
+                            log('读取服务器结果面板设置失败：' + panelData.error);
+                        } else {
+                            // 服务器尚无记录：把浏览器里已有的旧设置上送，完成迁移
+                            migrateLocalResultPanelSettings();
+                        }
+                    }
+                    break;
+                case 'result_panel_config_saved':
+                    handleResultPanelSaved(msg.data || {});
                     break;
                 case 'last_run':
                     renderLastRun(msg.data || null);
@@ -4965,10 +5085,13 @@
                         }
                     }
                     break;
-                case 'schedule_config':
+                case 'schedule_config': {
                     applyScheduleConfig(msg.data || {});
-                    if (msg.data && msg.data.saved) showNoticeCard('调度设置已保存');
+                    const noticeSuppressed = suppressScheduleSavedNotice;
+                    suppressScheduleSavedNotice = false;
+                    if (msg.data && msg.data.saved && !noticeSuppressed) showNoticeCard('调度设置已保存');
                     break;
+                }
                 case 'proxy_updated':
                     applyProxyStatus(msg.data || {}); {
                         const input = document.getElementById('proxyInput');

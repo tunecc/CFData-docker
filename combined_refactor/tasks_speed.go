@@ -158,14 +158,69 @@ func runSpeedTest(ctx context.Context, session *appSession, ip string, port int,
 
 const speedRateLimitMessage = "检测到触发速率限制，请稍后重试或更换网络环境"
 
+// 连续多少个 IP 仍触发限流才终止整批测速；429 时先退避重试并尝试换源。
+const officialSpeedMaxConsecutiveRateLimited = 6
+
+// 单个 IP 命中 429 后的重试等待序列（测试可覆盖）。
+var speedRateLimitBackoff = []time.Duration{3 * time.Second, 6 * time.Second}
+
 func isSpeedRateLimited(speedErr string) bool {
 	return strings.Contains(speedErr, "速率限制")
 }
 
-func runOfficialSpeedTestsCore(ctx context.Context, results []TestResult, port int, limit int, speedMinMB float64, customURL string, onResult func(current, total, qualified int, result TestResult), onRateLimited func()) ([]TestResult, []TestResult) {
+// sleepCtx 等待指定时长；任务取消时立即返回 false。
+func sleepCtx(ctx context.Context, d time.Duration) bool {
+	if d <= 0 {
+		return ctx.Err() == nil
+	}
+	select {
+	case <-ctx.Done():
+		return false
+	case <-time.After(d):
+		return true
+	}
+}
+
+type speedTestRunner func(ctx context.Context, ip string, port int, customURL string) (float64, string)
+
+type officialSpeedOptions struct {
+	port           int
+	limit          int
+	speedMinMB     float64
+	speedURL       string
+	run            speedTestRunner
+	onResult       func(current, total, qualified int, result TestResult)
+	onRateLimited  func()
+	onSourceSwitch func(from, to string)
+	switchSource   func(current string) (string, bool)
+}
+
+// speedWithRateLimitRetry 执行一次测速；遇到 429 按退避序列重试，返回最后一次结果。
+func speedWithRateLimitRetry(ctx context.Context, run speedTestRunner, ip string, port int, speedURL string) (float64, string, bool) {
+	speedMB, speedErr := run(ctx, ip, port, speedURL)
+	if !isSpeedRateLimited(speedErr) {
+		return speedMB, speedErr, false
+	}
+	for _, wait := range speedRateLimitBackoff {
+		if !sleepCtx(ctx, wait) {
+			return speedMB, speedErr, true
+		}
+		speedMB, speedErr = run(ctx, ip, port, speedURL)
+		if !isSpeedRateLimited(speedErr) {
+			return speedMB, speedErr, true
+		}
+	}
+	return speedMB, speedErr, true
+}
+
+func runOfficialSpeedTestsCore(ctx context.Context, results []TestResult, opts officialSpeedOptions) ([]TestResult, []TestResult) {
+	run := opts.run
+	if run == nil {
+		run = runWindowedSpeedTest
+	}
 	capacity := len(results)
-	if limit > 0 && limit < capacity {
-		capacity = limit
+	if opts.limit > 0 && opts.limit < capacity {
+		capacity = opts.limit
 	}
 	qualified := make([]TestResult, 0, capacity)
 	interSpeedPause := func() bool {
@@ -177,16 +232,28 @@ func runOfficialSpeedTestsCore(ctx context.Context, results []TestResult, port i
 		}
 	}
 	consecutiveRateLimited := 0
+	currentURL := opts.speedURL
 	for i := range results {
 		select {
 		case <-ctx.Done():
 			return results, qualified
 		default:
 		}
-		if limit > 0 && len(qualified) >= limit {
+		if opts.limit > 0 && len(qualified) >= opts.limit {
 			break
 		}
-		speedMB, speedErr := runWindowedSpeedTest(ctx, results[i].IP, port, customURL)
+		speedMB, speedErr, retried := speedWithRateLimitRetry(ctx, run, results[i].IP, opts.port, currentURL)
+		if ctx.Err() != nil {
+			return results, qualified
+		}
+		if retried && isSpeedRateLimited(speedErr) && opts.switchSource != nil {
+			if next, ok := opts.switchSource(currentURL); ok && next != "" && next != currentURL {
+				if opts.onSourceSwitch != nil {
+					opts.onSourceSwitch(currentURL, next)
+				}
+				currentURL = next
+			}
+		}
 		if speedErr != "" {
 			results[i].Speed = speedErr
 			if isSpeedRateLimited(speedErr) {
@@ -197,22 +264,22 @@ func runOfficialSpeedTestsCore(ctx context.Context, results []TestResult, port i
 		} else {
 			consecutiveRateLimited = 0
 			results[i].Speed = fmt.Sprintf("%.2fMB/s", speedMB)
-			if speedMB >= speedMinMB {
+			if speedMB >= opts.speedMinMB {
 				qualified = append(qualified, results[i])
 			}
 		}
-		if onResult != nil {
+		if opts.onResult != nil {
 			if ctx.Err() != nil {
 				return results, qualified
 			}
-			onResult(i+1, len(results), len(qualified), results[i])
+			opts.onResult(i+1, len(results), len(qualified), results[i])
 		}
 		if !interSpeedPause() {
 			return results, qualified
 		}
-		if consecutiveRateLimited >= 3 {
-			if onRateLimited != nil {
-				onRateLimited()
+		if consecutiveRateLimited >= officialSpeedMaxConsecutiveRateLimited {
+			if opts.onRateLimited != nil {
+				opts.onRateLimited()
 			}
 			break
 		}
@@ -267,12 +334,41 @@ func runOfficialSpeedBatch(ctx context.Context, session *appSession, port int, c
 	session.sendWSMessage("log", fmt.Sprintf("开始测速：%d 条记录，目标上限=%d，测速阈值=%.2fMB/s", len(results), speedLimit, speedMin))
 	session.sendWSMessage("official_speed_progress", map[string]interface{}{"current": 0, "total": len(results), "qualified": 0, "limit": speedLimit})
 	rateLimited := false
-	updated, qualified := runOfficialSpeedTestsCore(ctx, results, port, speedLimit, speedMin, customURL, func(current, total, qualified int, result TestResult) {
-		session.sendWSMessage("speed_test_result", map[string]string{"ip": result.IP, "speed": result.Speed})
-		session.sendWSMessage("official_speed_progress", map[string]interface{}{"current": current, "total": total, "qualified": qualified, "limit": speedLimit})
-	}, func() {
-		rateLimited = true
-		session.sendWSMessage("log", speedRateLimitMessage)
+	sourceSwitched := false
+	triedSources := map[string]bool{}
+	updated, qualified := runOfficialSpeedTestsCore(ctx, results, officialSpeedOptions{
+		port:       port,
+		limit:      speedLimit,
+		speedMinMB: speedMin,
+		speedURL:   customURL,
+		onResult: func(current, total, qualified int, result TestResult) {
+			session.sendWSMessage("speed_test_result", map[string]string{"ip": result.IP, "speed": result.Speed})
+			session.sendWSMessage("official_speed_progress", map[string]interface{}{"current": current, "total": total, "qualified": qualified, "limit": speedLimit})
+		},
+		onRateLimited: func() {
+			rateLimited = true
+			session.sendWSMessage("log", speedRateLimitMessage)
+		},
+		onSourceSwitch: func(from, to string) {
+			sourceSwitched = true
+			session.sendWSMessage("log", fmt.Sprintf("测速源触发限流，已切换测速源：%s → %s", speedURLLabel(from), speedURLLabel(to)))
+		},
+		switchSource: func(current string) (string, bool) {
+			if current != "" {
+				triedSources[current] = true
+			}
+			for _, candidate := range speedURLCandidates() {
+				if candidate == current || triedSources[candidate] {
+					continue
+				}
+				if available, known := isSpeedURLAvailable(candidate); known && !available {
+					triedSources[candidate] = true
+					continue
+				}
+				return candidate, true
+			}
+			return "", false
+		},
 	})
 
 	session.testMutex.Lock()
@@ -290,7 +386,11 @@ func runOfficialSpeedBatch(ctx context.Context, session *appSession, port int, c
 	if ctx.Err() != nil {
 		session.sendWSMessage("log", "官方批量测速已终止")
 	} else if rateLimited {
-		session.sendWSMessage("log", fmt.Sprintf("官方批量测速已因速率限制停止，达标 %d/%d，总达标 %d", len(qualified), speedLimit, totalQualified))
+		message := fmt.Sprintf("官方批量测速已因速率限制停止，达标 %d/%d，总达标 %d", len(qualified), speedLimit, totalQualified)
+		if sourceSwitched {
+			message += "（已尝试更换测速源）"
+		}
+		session.sendWSMessage("log", message)
 	} else {
 		session.sendWSMessage("log", fmt.Sprintf("官方批量测速完成，达标 %d/%d，总达标 %d", len(qualified), speedLimit, totalQualified))
 	}

@@ -37,7 +37,7 @@ func TestResultPanelPersistenceSaveGate(t *testing.T) {
 	if !strings.Contains(html, "let resultPanelLoaded = false;") {
 		t.Fatal("缺少 resultPanelLoaded 门控标记")
 	}
-	if !strings.Contains(html, "if (!resultPanelLoaded) return;") {
+	if !strings.Contains(html, "if (!resultPanelLoaded) return") {
 		t.Fatal("saveResultPanelSettings 必须在初始化读取完成前跳过回写，避免默认值覆盖已存设置")
 	}
 	if !strings.Contains(html, "resultPanelLoaded = true;") {
@@ -48,7 +48,7 @@ func TestResultPanelPersistenceSaveGate(t *testing.T) {
 func TestResultPanelRestoreKeepsFieldOrder(t *testing.T) {
 	html := readFrontendSource(t)
 
-	start := strings.Index(html, "function restoreResultPanelSettings()")
+	start := strings.Index(html, "function applyResultPanelSettingsFields(")
 	end := strings.Index(html[start:], "\n        }")
 	if start < 0 || end < 0 {
 		t.Fatal("未找到 restoreResultPanelSettings 函数体")

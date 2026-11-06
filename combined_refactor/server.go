@@ -660,6 +660,26 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 			}
 			session.sendWSMessage("config_data", payload)
 		},
+		"get_result_panel_config": func(data json.RawMessage) {
+			settings, err := readResultPanelSettings(defaultResultPanelConfigPath())
+			if err != nil {
+				session.sendWSMessage("result_panel_config", map[string]interface{}{"settings": nil, "error": err.Error()})
+				return
+			}
+			session.sendWSMessage("result_panel_config", map[string]interface{}{"settings": settings})
+		},
+		"save_result_panel_config": func(data json.RawMessage) {
+			var params resultPanelSettings
+			if err := json.Unmarshal(data, &params); err != nil {
+				session.sendWSMessage("result_panel_config_saved", map[string]interface{}{"saved": false, "error": "结果面板设置参数解析失败"})
+				return
+			}
+			if err := saveResultPanelSettings(defaultResultPanelConfigPath(), params); err != nil {
+				session.sendWSMessage("result_panel_config_saved", map[string]interface{}{"saved": false, "error": "保存结果面板设置失败: " + err.Error()})
+				return
+			}
+			session.sendWSMessage("result_panel_config_saved", map[string]interface{}{"saved": true})
+		},
 		"save_task_config": func(data json.RawMessage) {
 			var params taskConfigUpdateRequest
 			if err := json.Unmarshal(data, &params); err != nil {
