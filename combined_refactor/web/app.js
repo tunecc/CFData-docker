@@ -4740,24 +4740,10 @@
             renderResultFieldOptions();
         }
 
-        // R2 别名占位符映射：后端 applyR2AliasTemplate 仅支持这 7 个占位符
-        const R2_ALIAS_KEY_TO_PLACEHOLDER = {
-            ipport: '{ipport}',
-            ip: '{ip}',
-            port: '{port}',
-            dc: '{dc}',
-            dcCountry: '{dcCountry}',
-            region: '{region}',
-            city: '{city}',
-        };
-
-        // 按「字段与顺序」生成别名模板串：所选字段按输出顺序拼接，分隔符复用 TXT 分隔符
+        // 按「字段与顺序」生成别名模板串：IP:PORT 已在每行地址中，别名只取其余字段；
+        // 没有其他字段时生成 {none}，后端据此只输出地址。
         function buildR2AliasTemplate() {
-            const sep = getTextSeparator('result');
-            return (resultFieldOrder || [])
-                .map((key) => R2_ALIAS_KEY_TO_PLACEHOLDER[key])
-                .filter(Boolean)
-                .join(sep);
+            return buildR2AliasTemplateFromOrder(resultFieldOrder, getTextSeparator('result'));
         }
 
         // 把生成的模板串写入隐藏的 r2AliasFormat（保存/加载链路按 id 收集，协议不变），并刷新只读示例
@@ -4766,7 +4752,11 @@
             const hidden = document.getElementById('r2AliasFormat');
             if (hidden) hidden.value = template;
             const preview = document.getElementById('r2AliasPreview');
-            if (preview) preview.value = template || '';
+            if (preview) {
+                preview.value = template === R2_ALIAS_NONE_TEMPLATE
+                    ? '（仅输出 IP:PORT，不加别名）'
+                    : (template || '');
+            }
         }
 
         function setGitHubUploadStatus(text, type = '') {

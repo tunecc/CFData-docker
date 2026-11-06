@@ -53,9 +53,36 @@
         }
 
 
+        // R2 / Sub-Store 别名占位符（与后端 applyR2AliasTemplate 支持集合一致）
+        const R2_ALIAS_PLACEHOLDERS = {
+            ipport: '{ipport}',
+            ip: '{ip}',
+            port: '{port}',
+            dc: '{dc}',
+            dcCountry: '{dcCountry}',
+            region: '{region}',
+            city: '{city}',
+        };
+        // 显式“无别名”标记：与“旧配置未设置模板（回落默认别名）”区分
+        const R2_ALIAS_NONE_TEMPLATE = '{none}';
+
+        // 按字段与顺序生成别名模板：IP:PORT 已在行首地址中，不参与别名；
+        // 没有其他可用字段时返回 {none}，由后端只输出地址。
+        function buildR2AliasTemplateFromOrder(fieldOrder, separator) {
+            const sep = typeof separator === 'string' && separator !== '' ? separator : '-';
+            const keys = (Array.isArray(fieldOrder) ? fieldOrder : [])
+                .filter((key) => key !== 'ipport' && Object.prototype.hasOwnProperty.call(R2_ALIAS_PLACEHOLDERS, key));
+            if (!keys.length) return R2_ALIAS_NONE_TEMPLATE;
+            return keys.map((key) => R2_ALIAS_PLACEHOLDERS[key]).join(sep);
+        }
+
+
 window.formatEtaText = formatEtaText;
 window.parseThreadsValue = parseThreadsValue;
 window.buildResultFieldChoices = buildResultFieldChoices;
 window.resultFieldChoiceKeys = resultFieldChoiceKeys;
 window.hasAnyFieldValue = hasAnyFieldValue;
 window.takePreviewRows = takePreviewRows;
+window.R2_ALIAS_PLACEHOLDERS = R2_ALIAS_PLACEHOLDERS;
+window.R2_ALIAS_NONE_TEMPLATE = R2_ALIAS_NONE_TEMPLATE;
+window.buildR2AliasTemplateFromOrder = buildR2AliasTemplateFromOrder;

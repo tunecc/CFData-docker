@@ -305,7 +305,8 @@ func validateScheduleConfigUpdate(update *scheduleConfigUpdate) error {
 		update.R2Filename = &name
 	}
 	if update.R2AliasFormat != nil {
-		alias := strings.TrimSpace(*update.R2AliasFormat)
+		// 别名不重复 IP:PORT：保存时净化 {ipport}，旧配置也会在下次保存后写为净化值
+		alias := sanitizeR2AliasTemplate(strings.TrimSpace(*update.R2AliasFormat))
 		if utf8.RuneCountInString(alias) > 200 {
 			return fmt.Errorf("R2 别名模板过长（最多 200 字符）")
 		}

@@ -13,6 +13,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -1079,6 +1080,7 @@ func formatSubstoreResults(rows []cliResultRow) string {
 }
 
 func formatSubstoreResultsWithAlias(rows []cliResultRow, aliasTemplate string) string {
+	template := sanitizeR2AliasTemplate(aliasTemplate)
 	var b strings.Builder
 	for _, row := range rows {
 		endpoint := substoreEndpoint(row)
@@ -1086,8 +1088,10 @@ func formatSubstoreResultsWithAlias(rows []cliResultRow, aliasTemplate string) s
 			continue
 		}
 		b.WriteString(endpoint)
-		b.WriteString("#")
-		b.WriteString(substoreAliasWithTemplate(row, aliasTemplate))
+		if alias := substoreAliasWithTemplate(row, template); alias != "" {
+			b.WriteString("#")
+			b.WriteString(alias)
+		}
 		b.WriteString("\n")
 	}
 	return b.String()
@@ -1178,6 +1182,37 @@ func substoreAlias(row cliResultRow) string {
 	return sanitizeSubstoreAliasPart(row["ipport"])
 }
 
+// 显式“无别名”标记：前端只选 IP:PORT 时发送，表示只输出地址。
+const r2AliasNoneTemplate = "{none}"
+
+var (
+	r2AliasSeparatorRun  = regexp.MustCompile(`[-|_/~,.\s]{2,}`)
+	r2AliasSeparatorTrim = "-|_/~,. \t\r\n"
+)
+
+// sanitizeR2AliasTemplate 净化别名模板：每行地址已包含 IP:PORT，别名不再重复地址。
+// 移除 {ipport} 占位符并清理因此残留的分隔符，保留其余占位符与字面量。
+func sanitizeR2AliasTemplate(template string) string {
+	trimmed := strings.TrimSpace(template)
+	if trimmed == "" || trimmed == r2AliasNoneTemplate {
+		return trimmed
+	}
+	if !strings.Contains(trimmed, "{ipport}") {
+		return trimmed
+	}
+	stripped := strings.ReplaceAll(trimmed, "{ipport}", "")
+	stripped = r2AliasSeparatorRun.ReplaceAllStringFunc(stripped, func(run string) string {
+		return string([]rune(run)[0])
+	})
+	stripped = strings.Trim(stripped, r2AliasSeparatorTrim)
+	stripped = strings.TrimSpace(stripped)
+	if stripped == "" {
+		// 旧配置只含 {ipport}：地址已在行首，按“无别名”处理，与重新保存后的行为一致
+		return r2AliasNoneTemplate
+	}
+	return stripped
+}
+
 // applyR2AliasTemplate 按模板生成节点别名：占位符替换为行字段净化值，
 // 未识别占位符按字面保留；模板为空返回空串，由调用方回落默认别名。
 func applyR2AliasTemplate(template string, row cliResultRow) string {
@@ -1198,6 +1233,9 @@ func applyR2AliasTemplate(template string, row cliResultRow) string {
 
 // substoreAliasWithTemplate 模板非空时按模板生成别名，替换结果为空或模板为空时回落默认别名。
 func substoreAliasWithTemplate(row cliResultRow, template string) string {
+	if template == r2AliasNoneTemplate {
+		return ""
+	}
 	if template != "" {
 		// 模板字面量可能携带 #（手工编辑配置绕过校验），最终统一剥离保证别名不含分隔符
 		if alias := strings.ReplaceAll(applyR2AliasTemplate(template, row), "#", ""); alias != "" {

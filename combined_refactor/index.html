@@ -801,7 +801,7 @@
                             <div class="form-group">
                                 <label for="r2AliasPreview">节点别名（由「字段与顺序」自动生成）</label>
                                 <input id="r2AliasPreview" type="text" readonly placeholder="展开「字段与顺序」后自动生成">
-                                <div class="automation-hint">别名 = 「字段与顺序」中勾选的字段按「输出顺序」拼接，字段间分隔符复用「TXT 字段分隔符」；其中 IP:PORT、IP地址、端口号、数据中心、落地区域、地区、城市 参与生成，其余字段（延迟、丢包等）不适用于别名。未选择任何可用字段时使用默认「数据中心-城市」。</div>
+                                <div class="automation-hint">别名 = 「字段与顺序」中勾选的字段按「输出顺序」拼接，字段间分隔符复用「TXT 字段分隔符」；IP:PORT 已包含在每行地址中，不再参与别名；IP地址、端口号、数据中心、落地区域、地区、城市 参与生成，其余字段（延迟、丢包等）不适用于别名。未选择任何其他字段时只输出 IP:PORT，不加别名。</div>
                             </div>
                             <input id="r2AliasFormat" type="hidden">
                             <div class="automation-hint">自动调度与「⬆ 自动上传」的 R2 上传按规则筛选：开启测速只上传测速达标行，未开启测速只上传通过延迟筛选的结果行，与导出文件的筛选和行数设置无关；动作区的「上传 R2」按钮则按本面板当前的格式与筛选设置上传。</div>

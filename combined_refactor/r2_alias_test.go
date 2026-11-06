@@ -231,3 +231,50 @@ func TestValidateScheduleConfigUpdateAliasFormat(t *testing.T) {
 		t.Errorf("alias not trimmed: %q", *update.R2AliasFormat)
 	}
 }
+
+func TestSanitizeR2AliasTemplate(t *testing.T) {
+	cases := []struct {
+		in   string
+		want string
+	}{
+		{"{ipport}-{dc}", "{dc}"},
+		{"{dc}-{ipport}", "{dc}"},
+		{"{region}-{ipport}-{dc}", "{region}-{dc}"},
+		{"{ipport}", r2AliasNoneTemplate},
+		{"{ipport}-", r2AliasNoneTemplate},
+		{"{dc}", "{dc}"},
+		{"", ""},
+		{"  {dc}-{city}  ", "{dc}-{city}"},
+		{"{none}", "{none}"},
+		{"{ipport}|{dcCountry}", "{dcCountry}"},
+	}
+	for _, tc := range cases {
+		if got := sanitizeR2AliasTemplate(tc.in); got != tc.want {
+			t.Errorf("sanitizeR2AliasTemplate(%q) = %q, want %q", tc.in, got, tc.want)
+		}
+	}
+}
+
+func TestFormatSubstoreResultsWithAliasDedupesIPPort(t *testing.T) {
+	rows := []cliResultRow{{"ip": "1.2.3.4", "port": "443", "ipport": "1.2.3.4:443", "dc": "HKG", "dcCountry": "HK", "region": "香港"}}
+	cases := []struct {
+		template string
+		want     string
+	}{
+		{"{ipport}-{dc}", "1.2.3.4:443#HKG\n"},
+		{"{dc}-{ipport}", "1.2.3.4:443#HKG\n"},
+		{"{region}-{ipport}-{dc}", "1.2.3.4:443#香港-HKG\n"},
+	}
+	for _, tc := range cases {
+		if got := formatSubstoreResultsWithAlias(rows, tc.template); got != tc.want {
+			t.Errorf("template %q = %q, want %q", tc.template, got, tc.want)
+		}
+	}
+}
+
+func TestFormatSubstoreResultsWithNoneAlias(t *testing.T) {
+	rows := []cliResultRow{{"ip": "1.2.3.4", "port": "443", "ipport": "1.2.3.4:443", "dc": "HKG"}}
+	if got, want := formatSubstoreResultsWithAlias(rows, r2AliasNoneTemplate), "1.2.3.4:443\n"; got != want {
+		t.Errorf("none alias = %q, want %q", got, want)
+	}
+}
