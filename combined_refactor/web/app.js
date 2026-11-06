@@ -3496,12 +3496,7 @@
         }
 
         function getAllResultFieldOrder() {
-            const rows = getCurrentResultRows(resultModalMode);
-            if (!rows.length) return ['ipport'];
-            if (resultModalMode !== 'nsb') {
-                return getOfficialResultFieldOrder().filter((key) => rows.some((r) => String(r[key] ?? '').trim() !== ''));
-            }
-            return RESULT_FIELDS.filter((f) => rows.some((r) => String(r[f.key] ?? '').trim() !== '') && f.key !== 'ipport').map((f) => f.key);
+            return resultFieldChoiceKeys(RESULT_FIELDS, resultCustomFields);
         }
 
         function getCompactResultFieldOrder() {
@@ -3527,8 +3522,9 @@
             if (separatorField) separatorField.style.display = format === 'txt' ? '' : 'none';
             const bracketsField = document.getElementById('resultIPv6BracketsField');
             if (bracketsField) bracketsField.style.display = format === 'txt' ? '' : 'none';
-            const rows = getCurrentResultRows(resultModalMode);
-            const available = RESULT_FIELDS.filter((f) => f.key === 'ipport' || rows.some((r) => String(r[f.key] ?? '').trim() !== '')).concat(resultCustomFields);
+            // 字段选择固定列出全部内置字段 + 自定义字段，不按当前结果行裁剪：
+            // 刷新页面或程序重启后前端没有结果行时，仍可预先勾选要导出的列。
+            const available = buildResultFieldChoices(RESULT_FIELDS, resultCustomFields);
             document.querySelectorAll('.github-field').forEach((el) => el.style.display = '');
             document.querySelectorAll('.edgetunnel-field').forEach((el) => el.style.display = '');
             document.getElementById('resultFieldPicker').innerHTML = available.map((f) => `<label class="field-pill"><input type="checkbox" value="${f.key}" ${resultFieldOrder.includes(f.key) ? 'checked' : ''} onchange="toggleResultField('${f.key}', this.checked)"> ${f.label}</label>`).join('');
@@ -3989,8 +3985,7 @@
         }
 
         function getAvailableResultFieldKeys() {
-            const rows = getCurrentResultRows(resultModalMode);
-            return RESULT_FIELDS.filter((f) => f.key === 'ipport' || rows.some((r) => String(r[f.key] ?? '').trim() !== '')).concat(resultCustomFields).map((f) => f.key);
+            return resultFieldChoiceKeys(RESULT_FIELDS, resultCustomFields);
         }
 
         function areAllResultFieldsSelected() {

@@ -18,5 +18,28 @@
         }
 
 
+        // 结果面板字段选择清单：固定输出全部内置字段 + 自定义字段。
+        // 不读取当前结果行，避免刷新页面/重启后没有结果数据时字段选择只剩 IP:PORT。
+        function buildResultFieldChoices(resultFields, customFields) {
+            const builtin = Array.isArray(resultFields) ? resultFields : [];
+            const custom = Array.isArray(customFields) ? customFields : [];
+            return builtin.concat(custom).filter((field) => field && typeof field.key === 'string' && field.key !== '');
+        }
+
+        // 结果面板字段清单对应的 key 列表（保持清单顺序，重复 key 只保留首次出现）
+        function resultFieldChoiceKeys(resultFields, customFields) {
+            const keys = [];
+            const seen = new Set();
+            for (const field of buildResultFieldChoices(resultFields, customFields)) {
+                if (seen.has(field.key)) continue;
+                seen.add(field.key);
+                keys.push(field.key);
+            }
+            return keys;
+        }
+
+
 window.formatEtaText = formatEtaText;
 window.parseThreadsValue = parseThreadsValue;
+window.buildResultFieldChoices = buildResultFieldChoices;
+window.resultFieldChoiceKeys = resultFieldChoiceKeys;
