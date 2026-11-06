@@ -1,0 +1,388 @@
+schema: comet.native.v4
+name: unified-config-page-save
+language: zh-CN
+phase: archive
+status: done
+state_version: 8
+brief: brief.md
+document_constraints_version: 3
+shape_confirmation_hash: 8f5ca06042b63ce1219ca3236de62e5d56f16eb3eb64c4b6c62d68f296091fb8
+shape_semantic_snapshot:
+  schema: comet.native.shape-semantics.v1
+  artifacts:
+    - source: brief.md
+      contentHash: 8951e75f3e0ab1c3e1252dc9d358b9ed43fb1032ea0ad2ad5da8982cac823e1b
+      inputHash: ad544f9e0955bfa38035017a0a7e0709d8ebe4ac3591b642a36f67e36c370e28
+      legacyFingerprint: 285d56fce585bbd21f7b334531fd50ec6b456356d58b3f72f5e66c0c095ea462
+      contractHash: 776fa0f8fadf36a1a2b08738554fae4dc12f575c2e89a100dd5c0b016e8e90b0
+      commentsHash: cda738d4fb7d0dbdff20df1cd09b859740e0671de31bcf78b8ddc8ff818dab92
+      auxiliary: []
+    - source: specs/config-page-save/spec.md
+      contentHash: 0e187d8ce9cd2dae16cd8660dfe04862719dd6b6efbf38c593bfa0ad5e1b1c12
+      inputHash: 05791898698206cd8913cb83aaa9e810e8a33096e9e50b6c365b29da55feee5c
+      legacyFingerprint: e857ba7e7f8948a84d5d7ea85f09e0c94a7eba253d366dc5ce5d97422c8ef189
+      contractHash: 10f09440275d455cd9f74f236d328d4343a97dac0af6789dd7a0fbd65157d5ae
+      commentsHash: cda738d4fb7d0dbdff20df1cd09b859740e0671de31bcf78b8ddc8ff818dab92
+      auxiliary: []
+spec_changes:
+  - capability: config-page-save
+    operation: create
+    source: specs/config-page-save/spec.md
+workspace:
+  isolation: current
+  change_branch: main
+  target_branch: main
+  finish: null
+loop:
+  stage: done
+  goal_cycle: 1
+  iteration: 1
+  attempt: 1
+  retry_epoch: 0
+  failed_iteration_count: 0
+  no_progress_count: 0
+  execution_failure_count: 0
+  previous_unresolved_ids: []
+  next_action: null
+acceptance:
+  - id: A1
+    source: brief.md
+    text: A1：官方优选、自动化、结果操作、上传账号、设置五个页面顶部都有同一结构的头部：左侧页面标题，右侧「💾
+      保存」按钮，位置与样式一致；点击后给出保存成功或失败的可见提示。
+    result: passed
+    reason:
+      text: 五个配置页均使用相同 cfg-panel-head/cfg-panel-title/menu-btn cfg-save-btn
+        结构（index.html:213,358,502,562,605,671；styles.css:881-889），按钮文案统一为「💾
+        保存」；成功/失败反馈分别由 task_config_saved toast、schedule_config/proxy_updated
+        提示及页面保存函数的 showNoticeCard 提供。
+      truncated: false
+  - id: A2
+    source: brief.md
+    text: A2：结果操作页改动字段勾选、输出顺序、自定义字段、数据来源、格式、行范围、筛选、分隔符或 IPv6
+      方括号后刷新页面，设置全部保留（自动保存）；点击右上角「保存」同样落盘并提示成功。
+    result: passed
+    reason:
+      text: 字段勾选、顺序、自定义字段、来源、格式、行范围、筛选、分隔符、IPv6 等改动最终都经过
+        updateResultPreview→saveResultPanelSettings 写入 cfdata-result-panel；恢复在
+        switchMode 之后执行并按现有容错逻辑过滤未知字段；右上角保存显式调用同一落盘函数并提示。
+      truncated: false
+  - id: A3
+    source: brief.md
+    text: A3：自动化页右上角「保存」提交调度、通知与 R2 字段并在界面上回显，等同于原「保存自动化设置」；页面底部重复的保存按钮被移除。
+    result: passed
+    reason:
+      text: saveAutomationPage 复用 saveScheduleConfig，载荷覆盖调度、Bark/Telegram 与 R2；服务端保存后回
+        schedule_config(saved:true) 并回显；原底部「保存自动化设置」按钮已删除。
+      truncated: false
+  - id: A4
+    source: brief.md
+    text: A4：上传账号页右上角「保存」分别保存 GitHub 与 edgetunnel
+      表单中已填写且校验通过的账号；空白表单跳过不报错；填写但校验失败时给出与现有分区按钮一致的提示，且不写入无效账号。
+    result: passed
+    reason:
+      text: saveAccountsPage 以 hasAnyFieldValue 分别判定 GitHub 与 edgetunnel
+        是否填写；空白表单跳过，填写但校验失败返回与原分区按钮相同的提示且在任何写入之前返回，两表单各自尝试并汇总失败。
+      truncated: false
+  - id: A5
+    source: brief.md
+    text: A5：设置页右上角「保存」写入当前表单参数到本地、保存自动加载偏好，并在代理输入框非空时保存管理面代理；主题切换仍即时生效，现有加载/删除配置按钮行为不变。
+    result: passed
+    reason:
+      text: saveSettingsPage 依次执行
+        saveConfigToLS（失败即提示并中止）、saveAutoLoadPreference、代理非空时
+        saveManagementProxy；代理为空保持现状；setTheme 与加载/同步/删除/清除代理按钮均未改动。
+      truncated: false
+  - id: A6
+    source: brief.md
+    text: "A6：升级镜像后刷新页面，`/static/app.js` 与 `/static/enhance.js` 响应带 `Cache-Control:
+      no-cache`，页面加载的是新前端（含统一保存入口）。"
+    result: passed
+    reason:
+      text: "main.go:293-296 对 /static/ 响应统一设置 Cache-Control: no-cache 后再交给
+        FileServer；HTML 与 API 处理器未变；embed 列表含
+        web/app.js、web/enhance.js。仅做代码级核实，未启动服务做 HTTP 实测。"
+      truncated: false
+  - id: A7
+    source: brief.md
+    text: A7：`combined_refactor` 下 `go build ./...`、`go test ./...` 与 `node --test
+      web/test/*.test.js` 通过，既有配置保存/回显测试不回归。
+    result: passed
+    reason:
+      text: Runtime 记录中 go build（exit 0）、go test（ok cfdata）与 node --test（13
+        pass）均在候选文件写入后执行；本次重跑 node --test 为 13/13 pass，node --check 通过，git diff
+        --check 无输出。
+      truncated: false
+builder_handoff:
+  candidate_id: 2a4602ee-a07a-4274-8015-cdd1eb85157a
+  identity_provider: skill-coordinated
+  builder_execution_ref: skill-coordinated:builder:1fd2c992-efeb-4093-8a6a-a4e122c14ab9
+  iteration: 1
+  summary:
+    text: "五个配置页统一为「左侧标题 + 右上角💾保存」：官方/非标按钮文案统一为「保存」；自动化、上传账号、设置补
+      cfg-panel-head；结果操作头部新增保存按钮。移除页面内重复保存按钮（自动化底部、R2
+      分区、两个账号分区、设置页「保存当前配置」与代理「保存」）。新增页面级函数
+      saveResultsPage/saveAutomationPage/saveAccountsPage/saveSettingsPage；save\
+      ScheduleConfig/saveManagementProxy/saveConfigToLS 改为返回布尔，账号保存支持 silent
+      与返回校验文本。main.go 为 /static 增加 Cache-Control:
+      no-cache。开发期已在浏览器实测：六处头部与按钮存在；结果操作页全选 27 字段后点保存并刷新仍为 27 项（含自定义字段 备注:测试版、格式
+      csv）；账号页空白/校验失败/有效三条路径提示正确；设置页保存显示「设置已保存」、非空代理保存收到服务器
+      ack；自动化保存收到「调度设置已保存」；curl 确认 /static/app.js 带 Cache-Control: no-cache。"
+    truncated: false
+  addressed_acceptance_ids:
+    - A1
+    - A2
+    - A3
+    - A4
+    - A5
+    - A6
+    - A7
+  acceptance_review:
+    - id: A1
+      status: implemented-with-evidence
+      evidence:
+        - combined_refactor/index.html:212-216 / 357-361：官方与非标统一为「💾 保存」并更新 title
+        - index.html:502-505 / 562-565 / 605-608 / 670-673：自动化、上传账号、设置、结果操作均新增
+          cfg-panel-head + cfg-save-btn
+        - 浏览器实测：cfgPanelOfficial/cfgPanelNSB/cfgPanelAutomation/cfgPanelResults/cfgPanelAccounts/cfgPanelSettings
+          六个面板均存在 > .cfg-panel-head .cfg-save-btn，文案一致为「💾 保存」
+        - 保存反馈：saveResultsPage 显示「结果操作配置已保存」；saveSettingsPage
+          显示「设置已保存」；账号与自动化保存显示既有提示
+      note: 六个面板（官方/非标算两类）统一头部结构与按钮文案；保存成功与失败都有可见提示
+    - id: A2
+      status: implemented-with-evidence
+      evidence:
+        - combined_refactor/web/app.js:977-985 saveResultsPage：先
+          saveResultPanelSettings() 再 saveScheduleConfig()（R2），并按发送结果显示不同提示
+        - 浏览器实测：结果操作页执行 toggleAllResultFields 后调用 saveResultsPage，localStorage
+          cfdata-result-panel.fieldOrder 长度 27；刷新后 resultFieldOrder 恢复 27 项、勾选
+          27、customFields 为「备注:测试版」、format 为 csv
+        - 既有自动保存路径 updateResultPreview → saveResultPanelSettings 未改动
+      note: 结果操作页改动后刷新完整保留，右上角保存可再次落盘并提示成功
+    - id: A3
+      status: implemented-with-evidence
+      evidence:
+        - combined_refactor/web/app.js:992-994 saveAutomationPage 复用
+          saveScheduleConfig()
+        - index.html 移除 .automation-save-btn 底部按钮（diff 中删除）
+        - 浏览器实测：点击 saveAutomationPage 后收到服务器提示「调度设置已保存」
+      note: 自动化保存行为与原来一致，入口移到右上角，底部重复按钮移除
+    - id: A4
+      status: implemented-with-evidence
+      evidence:
+        - combined_refactor/web/app.js:921-1018：saveGithubAccountFromPanel/saveEdgetunnelAccountFromPanel
+          支持 silent 并返回 true 或校验提示；saveAccountsPage 按表单是否填写决定处理并汇总失败
+        - combined_refactor/web/common.js:42-45 hasAnyFieldValue
+          判断表单是否填写，web/test/page-save.test.js 覆盖空白/部分填写/非法输入
+        - 浏览器实测：两表单空白 → 「请先填写要保存的 GitHub 或 edgetunnel 账号信息」；GitHub 填 badrepo →
+          「请先填写仓库 owner/repo…」；GitHub 有效 + edgetunnel 空白 → 保存成功且账号写入本地存储
+      note: 空白表单跳过、无效表单提示且不写入、单表单失败不影响另一个表单的逻辑已实现；edgetunnel 有效路径沿用原保存函数
+    - id: A5
+      status: implemented-with-evidence
+      evidence:
+        - combined_refactor/web/app.js:1020-1030 saveSettingsPage：saveConfigToLS
+          → saveAutoLoadPreference → 非空代理时 saveManagementProxy，成功显示「设置已保存」
+        - saveConfigToLS、saveManagementProxy 改为返回布尔，失败时保留原有提示并中止成功提示
+        - 浏览器实测：代理留空点保存显示「设置已保存」且 cfdata-config 写入；填写 socks5://127.0.0.1:1080
+          后保存收到服务器「代理设置已保存并生效」
+        - index.html 移除设置页「保存当前配置」与代理「保存」按钮，主题即时切换与清除代理按钮保留
+      note: 设置页三项内容按要求保存，主题与既有加载/同步/删除配置行为不变
+    - id: A6
+      status: implemented-with-evidence
+      evidence:
+        - "combined_refactor/main.go:291-296：/static 处理器写入 Cache-Control:
+          no-cache"
+        - "新构建实例 curl -sI http://127.0.0.1:52598/static/app.js 返回 Cache-Control:
+          no-cache"
+        - HTML 与 /favicon.png 既有 no-cache 策略未改动
+      note: 升级镜像后浏览器会回源获取新的前端静态文件
+    - id: A7
+      status: implemented-with-evidence
+      evidence:
+        - combined_refactor 下 go build ./... 成功、go test ./... 输出 ok cfdata
+        - node --test web/test/*.test.js：13 项通过（含新增 page-save.test.js 3 项）
+        - 现有 result_panel_persist_test.go、web_static_test.go 等测试随 go test 一同通过
+      note: 构建、Go 测试与前端 Node 测试全部通过，无回归
+  checks:
+    - name:
+        text: go build ./... (combined_refactor)
+        truncated: false
+      result: passed
+      note:
+        text: 退出码 0
+        truncated: false
+    - name:
+        text: go test ./... (combined_refactor)
+        truncated: false
+      result: passed
+      note:
+        text: ok cfdata
+        truncated: false
+    - name:
+        text: node --test web/test/*.test.js
+        truncated: false
+      result: passed
+      note:
+        text: 13 项全部通过
+        truncated: false
+    - name:
+        text: 浏览器实测（新构建 localhost:52598）
+        truncated: false
+      result: passed
+      note:
+        text: 头部统一、结果页刷新保留、账号三路径提示、设置与自动化保存 ack
+        truncated: false
+    - name:
+        text: curl /static/app.js Cache-Control
+        truncated: false
+      result: passed
+      note:
+        text: 返回 no-cache
+        truncated: false
+  checks_truncated: false
+  known_limits:
+    - text: edgetunnel 有效账号的页面级保存沿用原有加密存储函数，本次只实测了空白跳过路径
+      truncated: false
+    - text: localStorage 写入失败的异常分支未在浏览器中实测（由 saveConfigToLS 返回 false 中止成功提示）
+      truncated: false
+    - text: 设置页代理保存会写入测试实例服务器配置，仅影响临时实例
+      truncated: false
+  known_limits_truncated: false
+  review: null
+  submitted_at: 2026-11-06T04:21:53.532Z
+verifier_action:
+  attempt: 1
+  claim:
+    executorId: skill-coordinated
+    token: skill-coordinated:verifier:bde8013b-2e2b-45d7-82e6-a3ae8ea98e48
+  id: ee7dbd38-4567-4b48-8bfa-1fadc22e4170
+  input:
+    builderExecutionRef: skill-coordinated:builder:1fd2c992-efeb-4093-8a6a-a4e122c14ab9
+    candidateId: 2a4602ee-a07a-4274-8015-cdd1eb85157a
+    goalCycle: 1
+    identityProvider: skill-coordinated
+    iteration: 1
+    registeredAt: 2026-11-06T04:22:00.680Z
+    verifierExecutionRef: skill-coordinated:verifier:bde8013b-2e2b-45d7-82e6-a3ae8ea98e48
+  inputHash: 39a28c827f9743a8b97cfe29dbe1a8a9141ff75bbfe2686d16845154362fafb8
+  outcome:
+    actionId: ee7dbd38-4567-4b48-8bfa-1fadc22e4170
+    attempt: 1
+    claimToken: skill-coordinated:verifier:bde8013b-2e2b-45d7-82e6-a3ae8ea98e48
+    inputHash: 39a28c827f9743a8b97cfe29dbe1a8a9141ff75bbfe2686d16845154362fafb8
+    outcomeId: 5d9642c69c283a29cabd803f4c83c2bdfdf9878dc6c36b6a7fb620527804b103
+    output:
+      responseHash: 5d9642c69c283a29cabd803f4c83c2bdfdf9878dc6c36b6a7fb620527804b103
+    status: succeeded
+  protocolVersion: 1
+  receipts:
+    - hash: e93e50eab22c6d4cf55eed2e5aa004b592a5a07b06bbbd81ce8ae71ab51c3628
+      outcomeId: 5d9642c69c283a29cabd803f4c83c2bdfdf9878dc6c36b6a7fb620527804b103
+  reconciliations: []
+  ref: native-verifier
+  requiredCapabilities: []
+  retry: manual
+  runId: unified-config-page-save
+  status: succeeded
+  stepId: native-verifier
+  type: handoff
+blockers: []
+verification:
+  candidate_id: 2a4602ee-a07a-4274-8015-cdd1eb85157a
+  identity_provider: skill-coordinated
+  verifier_execution_ref: skill-coordinated:verifier:bde8013b-2e2b-45d7-82e6-a3ae8ea98e48
+  iteration: 1
+  attempt: 1
+  assurance: skill-coordinated
+  verdict: pass
+  checks:
+    - id: go-build
+      name:
+        text: go build ./...
+        truncated: false
+      argv_display:
+        - text: build
+          truncated: false
+        - text: ./...
+          truncated: false
+      argv_truncated: false
+      cwd_ref: combined_refactor
+      status: passed
+      exit_code: 0
+      duration_ms: 701
+    - id: go-test
+      name:
+        text: go test ./...
+        truncated: false
+      argv_display:
+        - text: test
+          truncated: false
+        - text: ./...
+          truncated: false
+      argv_truncated: false
+      cwd_ref: combined_refactor
+      status: passed
+      exit_code: 0
+      duration_ms: 5493
+    - id: web-node-test
+      name:
+        text: node --test web/test/*.test.js
+        truncated: false
+      argv_display:
+        - text: -c
+          truncated: false
+        - text: node --test web/test/*.test.js
+          truncated: false
+      argv_truncated: false
+      cwd_ref: combined_refactor
+      status: passed
+      exit_code: 0
+      duration_ms: 144
+  summary:
+    text: 当前候选实现达到
+      A1–A7：五页头部与保存入口统一，结果页改动均自动落盘并在初始化时恢复，自动化/账号/设置页保存复用既有存储与提示链路，/static/ 已加
+      no-cache，构建与前后端测试记录与本次候选一致且前端测试重跑 13/13 通过。主要残留是 localStorage
+      失败路径的静默提示与结果页保存顺带提交调度配置的时序风险，均不阻塞验收。
+    truncated: false
+  risks:
+    - text: saveResultPanelSettings 对 localStorage 异常仍静默吞掉，而 saveResultsPage
+        随后提示保存成功；与 Spec「localStorage 不可用不得静默失败」存在边角差距。
+      truncated: false
+    - text: 结果操作页右上角保存会顺带调用 saveScheduleConfig，读取隐藏面板中的调度/通知/R2 字段；若在初始
+        get_schedule_config 返回前点击，可能用空默认值覆盖服务器配置（旧 R2 保存按钮已有同类风险）。
+      truncated: false
+    - text: 新增 Node 测试只覆盖 hasAnyFieldValue，未覆盖页面保存路由与账号校验分支。
+      truncated: false
+    - text: A6 无自动化测试覆盖：web_static_test.go 自建 handler 未包含新的 Cache-Control
+        包装，目前仅靠代码审阅确认。
+      truncated: false
+    - text: TXT 格式下取消 ipport 后刷新会被 renderResultFieldOptions 重新补回（既有行为）。
+      truncated: false
+  risks_truncated: false
+  completed_at: 2026-11-06T04:31:55.801Z
+history:
+  - goal_cycle: 1
+    iteration: 1
+    attempt: 1
+    outcome: pass
+    unresolved_ids: []
+    summary:
+      text: 当前候选实现达到
+        A1–A7：五页头部与保存入口统一，结果页改动均自动落盘并在初始化时恢复，自动化/账号/设置页保存复用既有存储与提示链路，/static/ 已加
+        no-cache，构建与前后端测试记录与本次候选一致且前端测试重跑 13/13 通过。主要残留是 localStorage
+        失败路径的静默提示与结果页保存顺带提交调度配置的时序风险，均不阻塞验收。
+      truncated: false
+    completed_at: 2026-11-06T04:31:55.801Z
+history_overflow:
+  dropped_entries: 0
+  first_dropped_at: null
+  last_dropped_at: null
+  outcome_counts:
+    pass: 0
+    fail: 0
+    blocked: 0
+    execution-error: 0
+    recovery: 0
+verification_result: pass
+verification_report: verification.md
+archived: true
+created_at: 2026-11-06T04:02:11.435Z
