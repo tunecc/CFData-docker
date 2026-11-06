@@ -1,0 +1,323 @@
+schema: comet.native.v4
+name: allow-excluding-ipport
+language: zh-CN
+phase: archive
+status: done
+state_version: 8
+brief: brief.md
+document_constraints_version: 3
+shape_confirmation_hash: ef0cf016534166419b5bb99281be20ff6fbe9f234b158057fe31a51a9f613cb9
+shape_semantic_snapshot:
+  schema: comet.native.shape-semantics.v1
+  artifacts:
+    - source: brief.md
+      contentHash: a63cd58a6bfa8a7414bf81a35b2e7ec9fb918e48e700acf4d88687c995d93da6
+      inputHash: a6ffec576afac2e19018f645e33d6f3a92690ee3101515bd0dbad3672ed70cd0
+      legacyFingerprint: 502731c4da3f1c3af85001ed0ecd387030ba7a1405128c4340daa2d01fce7795
+      contractHash: 9f695c7661d4a4622428a4949192f7d94d4a9581e54b0494968b418c5b134642
+      commentsHash: cda738d4fb7d0dbdff20df1cd09b859740e0671de31bcf78b8ddc8ff818dab92
+      auxiliary: []
+    - source: specs/result-preview/spec.md
+      contentHash: 86680272986ff248d383233c4b4705306be214ce2f002dd251487c2a08392f96
+      inputHash: 8a71e7f9fe450ff30a81076facc79c2392afae22af5f75beb396715a96ed5abe
+      legacyFingerprint: 1697cd9772173be76f5398e99d877aecfd5a2cd95075fc7150926dbfcd03df90
+      contractHash: 8d0138b2cdea5f50d60f91c37b409eb0a42ff9dee69c406eae59cfa326e3c8bf
+      commentsHash: cda738d4fb7d0dbdff20df1cd09b859740e0671de31bcf78b8ddc8ff818dab92
+      auxiliary: []
+spec_changes:
+  - capability: result-preview
+    operation: create
+    source: specs/result-preview/spec.md
+workspace:
+  isolation: current
+  change_branch: main
+  target_branch: main
+  finish: null
+loop:
+  stage: done
+  goal_cycle: 1
+  iteration: 1
+  attempt: 1
+  retry_epoch: 0
+  failed_iteration_count: 0
+  no_progress_count: 0
+  execution_failure_count: 0
+  previous_unresolved_ids: []
+  next_action: null
+acceptance:
+  - id: A1
+    source: brief.md
+    text: A1：没有任何结果行时打开「结果操作」，预览区显示 3 行示例结果（使用当前字段顺序、分隔符与格式），并有「示例」标识，不再是「暂无预览」。
+    result: passed
+    reason:
+      text: 无可用行时改用 3 条 TEST-NET 示例（192.0.2.10/.20/.30）并置
+        resultPreviewShowingSample；index.html 新增「示例」badge，updateResultPreview
+        仅在示例态显示；右侧结果操作标签进入即刷新，不再停留「暂无预览」。
+      truncated: false
+  - id: A2
+    source: brief.md
+    text: A2：存在真实结果时预览显示前 5 行（受当前数据来源、筛选与起止行影响），按 TXT 规则每行含 `IP:PORT#字段`；超过 5
+      行时预览框可滚动。
+    result: passed
+    reason:
+      text: buildResultPreview 经 getSelectedResultRows（来源/筛选/起止行）取行后由 takePreviewRows
+        截断到 5 行；TXT 逐行按 IP:PORT#字段 生成，与导出拼接一致；预览框 min-height 66px、max-height
+        160px、overflow auto。
+      truncated: false
+  - id: A3
+    source: brief.md
+    text: A3：切换字段勾选、输出顺序、分隔符或 IPv6 方括号后，示例/真实预览立即按新设置重新生成。
+    result: passed
+    reason:
+      text: 字段勾选、顺序、分隔符、IPv6、格式切换均汇聚到 updateResultPreview，示例与真实行共用同一分支，改动后立即重建文本。
+      truncated: false
+  - id: A4
+    source: brief.md
+    text: A4：CSV 预览显示表头 + 前 5 行，Sub-Store 预览显示前 5 条目标，与导出规则一致。
+    result: passed
+    reason:
+      text: CSV 预览为表头 + 前 5 行，复用同一 label/字段顺序/formatCSVCell；Sub-Store 预览直接调用
+        buildSubstoreContent(rows)，与导出同一函数。
+      truncated: false
+  - id: A5
+    source: brief.md
+    text: A5：`go build ./...`、`go test ./...` 与前端 Node 测试通过，导出与持久化测试不回归。
+    result: passed
+    reason:
+      text: Runtime 记录 candidateId/executionId 对应、时间晚于文件修改且 exitCode 0（go-test ok
+        cfdata 22.517s）；独立重跑 node --test 17/17 通过；导出与持久化代码未被 diff 触及。
+      truncated: false
+builder_handoff:
+  candidate_id: dcefa4cd-396d-44b9-95d2-b881c60d76e0
+  identity_provider: skill-coordinated
+  builder_execution_ref: skill-coordinated:builder:1b44527b-d835-4af7-b745-9dfdd0695bf2
+  iteration: 1
+  summary:
+    text: 结果操作页预览改为：无可用结果行时用内置示例（192.0.2.10/20/30:443，HKG/NRT/SJC）按当前字段顺序、分隔符与格式生成 3
+      行，并显示「示例」标识；有真实结果时按数据来源/筛选/起止行取前 5 行，CSV 为表头+5 行、Sub-Store 为前 5 条。预览框最小高度
+      66px（约 3 行）、最大 160px 可滚动。IP:PORT 始终保留，导出拼接与字段规则未改动。新增 common.js
+      takePreviewRows 纯函数与 4 项前端测试。开发期浏览器实测：无结果显示 3 行示例且 badge 可见；注入 7 条结果后显示 5
+      行且 badge 隐藏；切换分隔符为 | 后预览变为 HKG|HK；CSV 显示表头+5 行；Sub-Store 真实/示例均按行输出。
+    truncated: false
+  addressed_acceptance_ids:
+    - A1
+    - A2
+    - A3
+    - A4
+    - A5
+  acceptance_review:
+    - id: A1
+      status: implemented-with-evidence
+      evidence:
+        - "web/app.js: RESULT_PREVIEW_SAMPLE_ROWS + buildResultPreview 在
+          getSelectedResultRows() 为空时改用示例并置 resultPreviewShowingSample"
+        - index.html:731 新增 resultPreviewBadge；updateResultPreview 按示例状态显隐
+        - 浏览器实测：无结果时预览为 3 行（192.0.2.10:443#HKG-HK / …NRT-JP / …SJC-US），badge
+          display 为空（可见）
+      note: 无结果时展示 3 行示例并标注「示例」，不再是「暂无预览」
+    - id: A2
+      status: implemented-with-evidence
+      evidence:
+        - buildResultPreview 使用 takePreviewRows(rows, RESULT_PREVIEW_MAX_ROWS=5)
+        - 浏览器实测：注入 7 条结果后预览为 5 行，badge 隐藏，预览高度 109px；TXT 行仍为
+          162.159.147.10:443#HKG-HK
+      note: 有真实结果时显示前 5 行，数据来源与筛选/起止行沿用 getSelectedResultRows 现有语义
+    - id: A3
+      status: implemented-with-evidence
+      evidence:
+        - updateResultPreview 仍由字段勾选/顺序/分隔符/IPv6 的现有事件路径触发
+        - 浏览器实测：applyTextSeparatorPreset('result','|') 后预览立即变为
+          162.159.147.10:443#HKG|HK
+      note: 改动字段/顺序/分隔符/IPv6 后预览即时刷新
+    - id: A4
+      status: implemented-with-evidence
+      evidence:
+        - buildResultPreview 的 CSV 分支改为 [headers, ...rows.map(...)]；substore
+          分支改为 buildSubstoreContent(rows)
+        - 浏览器实测：CSV 预览为表头 + 5 行；Sub-Store 有 7 条结果时输出 5
+          条（104.20.25.10:443#NRT-东京…），无结果时 3 条示例
+      note: CSV/Sub-Store 预览与导出规则一致，且同样限制 5 行
+    - id: A5
+      status: implemented-with-evidence
+      evidence:
+        - combined_refactor 下 go build ./... 成功、go test ./... 输出 ok cfdata
+        - node --test web/test/*.test.js：17 项通过（新增 preview.test.js 4 项）
+        - 既有 result_panel_persist / web_static / 导出相关测试随 go test 通过
+      note: 构建、Go 测试与前端 Node 测试全部通过，导出与持久化未回归
+  checks:
+    - name:
+        text: go build ./... (combined_refactor)
+        truncated: false
+      result: passed
+      note:
+        text: 退出码 0
+        truncated: false
+    - name:
+        text: go test ./... (combined_refactor)
+        truncated: false
+      result: passed
+      note:
+        text: ok cfdata 22.4s
+        truncated: false
+    - name:
+        text: node --test web/test/*.test.js
+        truncated: false
+      result: passed
+      note:
+        text: 17 项通过
+        truncated: false
+    - name:
+        text: 浏览器实测（本地新构建 52640）
+        truncated: false
+      result: passed
+      note:
+        text: 示例 3 行/真实 5 行/CSV/分隔符/Sub-Store 均符合
+        truncated: false
+  checks_truncated: false
+  known_limits:
+    - text: 预览最多 5 行；更多结果不展示，导出仍按起止行与筛选生成完整内容
+      truncated: false
+    - text: 示例预览使用文档保留地址 192.0.2.x，不代表真实扫描结果
+      truncated: false
+    - text: "未覆盖 RTL/超长字段的排版；预览沿用 word-break: break-all"
+      truncated: false
+    - text: 字段选择持久化与服务器同步逻辑未改动
+      truncated: false
+  known_limits_truncated: false
+  review: null
+  submitted_at: 2026-11-06T09:06:52.929Z
+verifier_action:
+  attempt: 1
+  claim:
+    executorId: skill-coordinated
+    token: skill-coordinated:verifier:13a9da01-101e-47f4-b358-45da424f26b2
+  id: 186be58e-1647-4b58-b7de-1d7728a9021e
+  input:
+    builderExecutionRef: skill-coordinated:builder:1b44527b-d835-4af7-b745-9dfdd0695bf2
+    candidateId: dcefa4cd-396d-44b9-95d2-b881c60d76e0
+    goalCycle: 1
+    identityProvider: skill-coordinated
+    iteration: 1
+    registeredAt: 2026-11-06T09:07:17.830Z
+    verifierExecutionRef: skill-coordinated:verifier:13a9da01-101e-47f4-b358-45da424f26b2
+  inputHash: d71b397f39967de423e75e78d1f10e7671def11308513923fb616f7090171fda
+  outcome:
+    actionId: 186be58e-1647-4b58-b7de-1d7728a9021e
+    attempt: 1
+    claimToken: skill-coordinated:verifier:13a9da01-101e-47f4-b358-45da424f26b2
+    inputHash: d71b397f39967de423e75e78d1f10e7671def11308513923fb616f7090171fda
+    outcomeId: 7d9c8d44aaf19c657abd566600a25241fd6e135b6e37e3e3157918719721b1cd
+    output:
+      responseHash: 7d9c8d44aaf19c657abd566600a25241fd6e135b6e37e3e3157918719721b1cd
+    status: succeeded
+  protocolVersion: 1
+  receipts:
+    - hash: 172b621c1f065891d558cd83671ad2f54b395c2856e0c2302abb91e6a6d27523
+      outcomeId: 7d9c8d44aaf19c657abd566600a25241fd6e135b6e37e3e3157918719721b1cd
+  reconciliations: []
+  ref: native-verifier
+  requiredCapabilities: []
+  retry: manual
+  runId: allow-excluding-ipport
+  status: succeeded
+  stepId: native-verifier
+  type: handoff
+blockers: []
+verification:
+  candidate_id: dcefa4cd-396d-44b9-95d2-b881c60d76e0
+  identity_provider: skill-coordinated
+  verifier_execution_ref: skill-coordinated:verifier:13a9da01-101e-47f4-b358-45da424f26b2
+  iteration: 1
+  attempt: 1
+  assurance: skill-coordinated
+  verdict: pass
+  checks:
+    - id: go-build
+      name:
+        text: go build ./...
+        truncated: false
+      argv_display:
+        - text: build
+          truncated: false
+        - text: ./...
+          truncated: false
+      argv_truncated: false
+      cwd_ref: combined_refactor
+      status: passed
+      exit_code: 0
+      duration_ms: 457
+    - id: go-test
+      name:
+        text: go test ./...
+        truncated: false
+      argv_display:
+        - text: test
+          truncated: false
+        - text: ./...
+          truncated: false
+      argv_truncated: false
+      cwd_ref: combined_refactor
+      status: passed
+      exit_code: 0
+      duration_ms: 23534
+    - id: web-node-test
+      name:
+        text: node --test web/test/*.test.js
+        truncated: false
+      argv_display:
+        - text: -c
+          truncated: false
+        - text: node --test web/test/*.test.js
+          truncated: false
+      argv_truncated: false
+      cwd_ref: combined_refactor
+      status: passed
+      exit_code: 0
+      duration_ms: 141
+  summary:
+    text: 实现符合 Spec：无结果时以 192.0.2.x 示例生成 3
+      行并按当前字段顺序/分隔符/格式渲染并显示「示例」badge；有结果时按规定取行并截断到前 5 行，TXT/CSV/Sub-Store
+      与导出规则一致；预览框最小约 3 行、超出可滚动；设置变更即时刷新。导出、字段选择与持久化未改动，示例不会混入导出。整体 pass。
+    truncated: false
+  risks:
+    - text: Node 单测只覆盖 takePreviewRows，未覆盖 buildResultPreview 的示例生成、多行 TXT、CSV 表头+5
+        行、Sub-Store 分支。
+      truncated: false
+    - text: 示例行只提供部分字段，NSB 默认顺序里的 loc、自定义字段不会出现在示例中。
+      truncated: false
+    - text: 示例 IP 全为 IPv4，切换「IPv6 方括号」时示例预览不变，可能被误以为开关无效。
+      truncated: false
+    - text: .result-preview 的 min-height 同时作用于复制弹窗预览，复制预览高度也变为约 3 行。
+      truncated: false
+    - text: 预览的 TXT/CSV 拼接与 buildResultContent 是重复实现，未来改导出规则可能漂移。
+      truncated: false
+    - text: 记录中的 evidenceDigest 与日志文件明文 sha256 不一致，检查记录按命令、cwd、时间与日志内容核对。
+      truncated: false
+  risks_truncated: false
+  completed_at: 2026-11-06T09:14:51.243Z
+history:
+  - goal_cycle: 1
+    iteration: 1
+    attempt: 1
+    outcome: pass
+    unresolved_ids: []
+    summary:
+      text: 实现符合 Spec：无结果时以 192.0.2.x 示例生成 3
+        行并按当前字段顺序/分隔符/格式渲染并显示「示例」badge；有结果时按规定取行并截断到前 5 行，TXT/CSV/Sub-Store
+        与导出规则一致；预览框最小约 3 行、超出可滚动；设置变更即时刷新。导出、字段选择与持久化未改动，示例不会混入导出。整体 pass。
+      truncated: false
+    completed_at: 2026-11-06T09:14:51.243Z
+history_overflow:
+  dropped_entries: 0
+  first_dropped_at: null
+  last_dropped_at: null
+  outcome_counts:
+    pass: 0
+    fail: 0
+    blocked: 0
+    execution-error: 0
+    recovery: 0
+verification_result: pass
+verification_report: verification.md
+archived: true
+created_at: 2026-11-06T08:37:57.731Z
