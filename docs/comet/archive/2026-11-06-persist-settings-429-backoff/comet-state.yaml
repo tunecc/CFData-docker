@@ -1,0 +1,408 @@
+schema: comet.native.v4
+name: persist-settings-429-backoff
+language: zh-CN
+phase: archive
+status: done
+state_version: 12
+brief: brief.md
+document_constraints_version: 3
+shape_confirmation_hash: cf743401e85b3c39a147ef86a2fd48c77c7785d54338129ae5c1d4c9bb0700dc
+shape_semantic_snapshot:
+  schema: comet.native.shape-semantics.v1
+  artifacts:
+    - source: brief.md
+      contentHash: 2847b37c82224fd0dc1ff9b05905ba2862a8e87318e341658d2e50dacad794bd
+      inputHash: f4823445ac5be0d5059410b0575314ab97424ed1e336f84c4a8c624bb79176be
+      legacyFingerprint: 9b003cafd00f5596dececa65704fc64041c3067beac66aaf85ec102a1efc4ff5
+      contractHash: 8bb335c74e80312891d44d15900bab25bd11270cb7c8bdfdb6c406a83eec74af
+      commentsHash: cda738d4fb7d0dbdff20df1cd09b859740e0671de31bcf78b8ddc8ff818dab92
+      auxiliary: []
+    - source: specs/result-panel-config/spec.md
+      contentHash: 554bb381bc04115211752161e36295c2b5c5e2ce347e03d8cd3550670abe1794
+      inputHash: 04024940b1dbc6bdec0b218b66e9a17878b494882f3b6ec7e32fd66aeb8cdc44
+      legacyFingerprint: fa5350fab13086cee6f7c62f7a4cdb729577b8496f98905c444fa9823ca3862d
+      contractHash: 3f846286e28b54190fef93f38ab988700ff30f6ff4e7f8e7ae188e17e0282da9
+      commentsHash: cda738d4fb7d0dbdff20df1cd09b859740e0671de31bcf78b8ddc8ff818dab92
+      auxiliary: []
+    - source: specs/speed-rate-limit/spec.md
+      contentHash: a2218a342faf1f67aa1d6c27942cd92462da740bcc38c06ca8e04575e6654d15
+      inputHash: ce6640bbcbb9468687e703cd4098949a60d2e7b8b5fa0b43ffd79b9da2175134
+      legacyFingerprint: f37556453a9b6a92709933785678756de64c27f718a64a65061b2223d48bc464
+      contractHash: c43e66b6d28b8c6aa7e16ae653b1bc3648cd1c3b54f8cdfda8a43650a7970871
+      commentsHash: cda738d4fb7d0dbdff20df1cd09b859740e0671de31bcf78b8ddc8ff818dab92
+      auxiliary: []
+spec_changes:
+  - capability: result-panel-config
+    operation: create
+    source: specs/result-panel-config/spec.md
+  - capability: speed-rate-limit
+    operation: create
+    source: specs/speed-rate-limit/spec.md
+workspace:
+  isolation: current
+  change_branch: main
+  target_branch: main
+  finish: null
+loop:
+  stage: done
+  goal_cycle: 1
+  iteration: 2
+  attempt: 1
+  retry_epoch: 0
+  failed_iteration_count: 0
+  no_progress_count: 0
+  execution_failure_count: 0
+  previous_unresolved_ids: []
+  next_action: null
+acceptance:
+  - id: A1
+    source: brief.md
+    text: A1：结果操作页改动字段勾选/顺序/自定义字段/格式/来源/行范围/筛选/分隔符/IPv6
+      后，刷新页面设置全部保留；右上角「保存」同样落盘并提示成功。
+    result: passed
+    reason:
+      text: 字段勾选/顺序/自定义字段/格式/来源/行范围/筛选/分隔符/IPv6 均汇入 updateResultPreview 或
+        renderResultFieldOptions→saveResultPanelSettings（写 localStorage + 500ms
+        防抖同步）；右上角保存 flush 后由 result_panel_config_saved 显示「结果操作配置已保存」。
+      truncated: false
+  - id: A2
+    source: brief.md
+    text: A2：换浏览器，或改用另一个访问地址（如 `http://localhost:端口` 与
+      `http://局域网IP:端口`）打开页面，仍恢复服务器上最后一次保存的结果面板设置。
+    result: passed
+    reason:
+      text: server.go 提供 get/save_result_panel_config，写入与 cfdata-config.json 同目录的
+        result-panel.json（容器 /data）；init_config 后前端请求并
+        applyServerResultPanelSettings 以服务器值覆盖本地并回写缓存。
+      truncated: false
+  - id: A3
+    source: brief.md
+    text: A3：服务器没有设置记录、但浏览器本地已有旧设置时，首次加载沿用本地设置并自动写入服务器（迁移），刷新与换浏览器后不再丢失。
+    result: passed
+    reason:
+      text: readResultPanelSettings 对缺失、不可读与 JSON 损坏均返回 (nil,nil) 并打印日志；前端收到空设置时调用
+        migrateLocalResultPanelSettings 上送本地旧设置，实现自愈；对应测试通过。
+      truncated: false
+  - id: A4
+    source: brief.md
+    text: A4：服务器写入失败（如 `/data` 不可写）时界面给出可见提示，不显示保存成功；本地 localStorage 仍保留当前设置。
+    result: passed
+    reason:
+      text: wsSend 失败时手动保存每次提示、自动同步首次提示并置标记、成功同步清零；服务器写入失败返回 saved:false+error
+        并显示错误不显示成功；suppressScheduleSavedNotice 有 5 秒超时兜底。上一轮两处 MUST 偏差已修复。
+      truncated: false
+  - id: A5
+    source: brief.md
+    text: A5：批量测速中单个 IP 返回 429 时，先等待 3 秒重试、仍 429 再等 6 秒重试；重试成功则正常记录速度并按阈值判定达标。
+    result: passed
+    reason:
+      text: speedRateLimitBackoff={3s,6s}，最多重试 2 次，sleepCtx
+        响应取消；重试成功进入正常记录与达标判定；三个退避测试均通过。
+      truncated: false
+  - id: A6
+    source: brief.md
+    text: A6：重试后仍为 429 时自动切换到另一个可用测速源继续测速，日志说明「已切换测速源」。
+    result: passed
+    reason:
+      text: 仍 429 时从 speedURLCandidates 选与当前不同、未尝试且非不可用的源并更新 currentURL；onSourceSwitch
+        输出「测速源触发限流，已切换测速源：A → B」，不改用户配置。
+      truncated: false
+  - id: A7
+    source: brief.md
+    text: A7：连续多个 IP（6 个）在换源后仍全部 429 时才停止批量测速，并提示已尝试更换测速源，达标统计与已测结果保持一致。
+    result: passed
+    reason:
+      text: 阈值为连续 6 个 429，非 429 或成功即清零；终止日志在换源时追加「（已尝试更换测速源）」；结果按 IP
+        合并，qualified/totalQualified 与 rateLimited 如实反映；两个核心测试通过。
+      truncated: false
+  - id: A8
+    source: brief.md
+    text: A8：`go build ./...`、`go test ./...` 与前端 Node 测试通过；新增测试覆盖 429
+      退避/换源/终止与设置文件读写。
+    result: passed
+    reason:
+      text: 独立重跑 go build、go test（ok cfdata 22.4s）、node
+        --test（13/13）均通过；新增测试覆盖退避/取消/换源/终止/计数重置与设置文件往返/缺失/损坏/字段清洗。
+      truncated: false
+builder_handoff:
+  candidate_id: c513f7cf-cb4f-4d7a-b3c4-0b2d06fc4e64
+  identity_provider: skill-coordinated
+  builder_execution_ref: skill-coordinated:builder:dbc68645-f1b6-4e7b-a869-6885079443c7
+  iteration: 2
+  summary:
+    text: 本轮修复 Verifier 指出的两处 Spec MUST 偏差：① readResultPanelSettings
+      对损坏/不可读配置文件改为打印日志并按空配置返回 (nil,nil)，前端收到空设置后自动上送本地设置，实现自愈；②
+      防抖自动同步失败（连接未就绪）时给出一次性可见提示，成功同步后重置标记；③ 结果操作页保存对「调度设置已保存」的抑制加了 5
+      秒兜底解除。开发期实测：写入损坏 result-panel.json 并预置旧
+      localStorage，刷新后服务器文件被重写为有效设置；停止服务器后改动字段只弹一次「结果面板设置暂存在本机浏览器」提示，再次改动不再重复弹窗。其余实现与上一轮一致（服务器持久化
+      + 429 退避/换源）。
+    truncated: false
+  addressed_acceptance_ids:
+    - A1
+    - A2
+    - A3
+    - A4
+    - A5
+    - A6
+    - A7
+    - A8
+  acceptance_review:
+    - id: A1
+      status: implemented-with-evidence
+      evidence:
+        - collectResultPanelSettings 统一采集 14 个键；改动经
+          updateResultPreview→saveResultPanelSettings 写 localStorage 并 500ms
+          防抖同步服务器；saveResultsPage 立即 flush，ack 后显示「结果操作配置已保存」
+        - 浏览器实测（本地新构建）：改动字段/顺序/自定义字段后保存并刷新均保留
+      note: 设置改动自动与显式保存都落服务器，刷新恢复完整
+    - id: A2
+      status: implemented-with-evidence
+      evidence:
+        - 设置存储在 executable 目录 result-panel.json（容器 /data），与访问 origin 无关
+        - 浏览器实测：清空 localStorage 后刷新，仍从服务器恢复 27 项字段顺序与自定义字段
+      note: 换浏览器/换访问地址以服务器值为准
+    - id: A3
+      status: implemented-with-evidence
+      evidence:
+        - 服务器无记录时 migrateLocalResultPanelSettings 上送当前 DOM 值
+        - 本轮补充：损坏文件现在也按空配置处理并触发同样的迁移；实测写入损坏文件后刷新，文件被重写为本地旧设置（valid
+          JSON，fieldOrder=[ipport,dc]，fileName=self-heal）
+      note: 服务器无记录或文件损坏时都能从本地迁移并自愈
+    - id: A4
+      status: implemented-with-evidence
+      evidence:
+        - "目录只读时服务端返回 saved:false+error，界面显示「保存结果面板设置失败: … permission
+          denied」，本地仍保留设置"
+        - 本轮补充：自动同步在连接未就绪时也会提示一次「结果面板设置暂存在本机浏览器」，再次改动不重复弹窗（mask 未激活）
+      note: 服务器写入失败与连接未就绪均有可见反馈，不谎报成功
+    - id: A5
+      status: implemented-with-evidence
+      evidence:
+        - speedWithRateLimitRetry 仅对限流结果按 3s/6s 重试，最多 2 次，sleepCtx 响应取消
+        - TestSpeedRateLimitRetryRecovers / GivesUpAfterTwoRetries /
+          StopsOnCancel 通过
+      note: 单 IP 429 退避重试后成功即正常记录速度
+    - id: A6
+      status: implemented-with-evidence
+      evidence:
+        - 仍 429 时 switchSource 从 speedURLCandidates 中排除当前与不可用源，切换源用于后续 IP
+        - onSourceSwitch 输出「测速源触发限流，已切换测速源：… →
+          …」；TestOfficialSpeedCoreSwitchesSourceAndStopsAfterSix 验证一次切换
+      note: 自动换源并记录日志，不修改用户配置
+    - id: A7
+      status: implemented-with-evidence
+      evidence:
+        - officialSpeedMaxConsecutiveRateLimited=6；成功/非 429 失败重置计数
+        - 测试断言 8 个 IP 全 429 时处理 6 个后终止、onRateLimited 一次；成功一次后 3 个 429 不终止
+        - 终止日志在换源后追加「（已尝试更换测速源）」，达标统计基于合并结果
+      note: 终止条件与统计符合 Spec
+    - id: A8
+      status: implemented-with-evidence
+      evidence:
+        - combined_refactor 下 go build ./... 通过、go test ./... 输出 ok cfdata（22.4s）
+        - node --test web/test/*.test.js 13/13 通过
+        - 新增测试：result_panel_config_test.go 5 项（含损坏文件按空配置处理）、tasks_speed_test.go
+          5 项
+      note: 构建与前后端测试全部通过
+  checks:
+    - name:
+        text: go build ./... (combined_refactor)
+        truncated: false
+      result: passed
+      note:
+        text: 退出码 0
+        truncated: false
+    - name:
+        text: go test ./... (combined_refactor)
+        truncated: false
+      result: passed
+      note:
+        text: ok cfdata 22.4s
+        truncated: false
+    - name:
+        text: node --test web/test/*.test.js
+        truncated: false
+      result: passed
+      note:
+        text: 13 项通过
+        truncated: false
+    - name:
+        text: 浏览器实测（本地新构建 52631）
+        truncated: false
+      result: passed
+      note:
+        text: 损坏文件自愈、离线自动同步提示一次
+        truncated: false
+  checks_truncated: false
+  known_limits:
+    - text: 429 退避真实环境端到端未实测，依赖注入 runner 的单元测试
+      truncated: false
+    - text: 服务器设置对所有浏览器共享，多人同时使用会互相覆盖
+      truncated: false
+    - text: 500ms 防抖窗口内刷新可能被服务器旧值覆盖（符合服务器权威设计）
+      truncated: false
+    - text: applyResultPanelSettingsFields 的 setVal 跳过空字符串，空值不回填（沿用旧恢复语义）
+      truncated: false
+    - text: gofmt 报告的 geo_warning.go 为仓库既有未格式化文件，本次未改动
+      truncated: false
+  known_limits_truncated: false
+  review: null
+  submitted_at: 2026-11-06T07:23:53.946Z
+verifier_action:
+  attempt: 1
+  claim:
+    executorId: skill-coordinated
+    token: skill-coordinated:verifier:70ed46cf-1b95-4c96-b805-096438333f19
+  id: 3493b802-db5d-49bc-a3b4-6400af6842d1
+  input:
+    builderExecutionRef: skill-coordinated:builder:dbc68645-f1b6-4e7b-a869-6885079443c7
+    candidateId: c513f7cf-cb4f-4d7a-b3c4-0b2d06fc4e64
+    goalCycle: 1
+    identityProvider: skill-coordinated
+    iteration: 2
+    registeredAt: 2026-11-06T07:24:19.114Z
+    verifierExecutionRef: skill-coordinated:verifier:70ed46cf-1b95-4c96-b805-096438333f19
+  inputHash: 4dc9446be3b0ab0cd25f30883b5d21fd4874b1a4304e47824cfa153f9d249ca9
+  outcome:
+    actionId: 3493b802-db5d-49bc-a3b4-6400af6842d1
+    attempt: 1
+    claimToken: skill-coordinated:verifier:70ed46cf-1b95-4c96-b805-096438333f19
+    inputHash: 4dc9446be3b0ab0cd25f30883b5d21fd4874b1a4304e47824cfa153f9d249ca9
+    outcomeId: 87967f2fde324c78520a0975db6b164780f4ceb226293a4c7dee6876ecd84a41
+    output:
+      responseHash: 87967f2fde324c78520a0975db6b164780f4ceb226293a4c7dee6876ecd84a41
+    status: succeeded
+  protocolVersion: 1
+  receipts:
+    - hash: af132a5b14de217db412fbcfd6f14e2121f713abba0028578c856a34d18c3147
+      outcomeId: 87967f2fde324c78520a0975db6b164780f4ceb226293a4c7dee6876ecd84a41
+  reconciliations: []
+  ref: native-verifier
+  requiredCapabilities: []
+  retry: manual
+  runId: persist-settings-429-backoff
+  status: succeeded
+  stepId: native-verifier
+  type: handoff
+blockers: []
+verification:
+  candidate_id: c513f7cf-cb4f-4d7a-b3c4-0b2d06fc4e64
+  identity_provider: skill-coordinated
+  verifier_execution_ref: skill-coordinated:verifier:70ed46cf-1b95-4c96-b805-096438333f19
+  iteration: 2
+  attempt: 1
+  assurance: skill-coordinated
+  verdict: pass
+  checks:
+    - id: go-build
+      name:
+        text: go build ./...
+        truncated: false
+      argv_display:
+        - text: build
+          truncated: false
+        - text: ./...
+          truncated: false
+      argv_truncated: false
+      cwd_ref: combined_refactor
+      status: passed
+      exit_code: 0
+      duration_ms: 411
+    - id: go-test
+      name:
+        text: go test ./...
+        truncated: false
+      argv_display:
+        - text: test
+          truncated: false
+        - text: ./...
+          truncated: false
+      argv_truncated: false
+      cwd_ref: combined_refactor
+      status: passed
+      exit_code: 0
+      duration_ms: 23786
+    - id: web-node-test
+      name:
+        text: node --test web/test/*.test.js
+        truncated: false
+      argv_display:
+        - text: -c
+          truncated: false
+        - text: node --test web/test/*.test.js
+          truncated: false
+      argv_truncated: false
+      cwd_ref: combined_refactor
+      status: passed
+      exit_code: 0
+      duration_ms: 150
+  summary:
+    text: 第二轮候选已修复上一轮两处 Spec MUST
+      偏差：损坏/不可读设置文件按空配置处理并由本地设置自愈；自动同步连接未就绪时一次性可见提示且成功同步重置；suppressScheduleSavedNotice
+      增加 5 秒超时兜底。429 退避、自动换源与连续 6 个终止均未回归。A1–A8 全部
+      passed，独立重跑构建与前后端测试通过，未对仓库产生改动。
+    truncated: false
+  risks:
+    - text: A1–A4 为代码路径 + 单元/前端 Node 测试核验，未做真实浏览器 E2E；建议部署实例手动再走一遍。
+      truncated: false
+    - text: 窄竞态：主动保存与已发出的防抖自动保存共用无请求 ID 的 result_panel_config_saved
+        响应，服务器响应乱序且写盘失败叠加时可能提前弹出成功提示。
+      truncated: false
+    - text: 测速地址为「自动选择」时，换源日志可能显示「自定义 → Cloudflare」等标签差异，不影响配置与换源。
+      truncated: false
+    - text: brief 计划改 protocol.go 与 speed_url.go，实际改为 server.go 内联处理器与 tasks_speed.go
+        内联 switchSource，功能等价但与文件级计划有偏差。
+      truncated: false
+    - text: get_result_panel_config 的 error 分支在 readResultPanelSettings 永不返回 error
+        后成为死代码，无功能影响。
+      truncated: false
+  risks_truncated: false
+  completed_at: 2026-11-06T07:49:40.765Z
+history:
+  - goal_cycle: 1
+    iteration: 1
+    attempt: 1
+    outcome: pass
+    unresolved_ids: []
+    summary:
+      text: 候选实现达到 A1–A8：结果面板设置落盘服务器并在连接后以服务器值恢复，支持旧本地设置迁移与写入失败提示；429 退避重试与自动换源、连续 6
+        个才终止均按 Spec 实现并有单元测试。整体判定 pass；存在两处与 Spec MUST
+        的边角偏差（损坏文件未按空配置处理、自动同步离线静默），建议修复。
+      truncated: false
+    completed_at: 2026-11-06T07:16:40.864Z
+  - goal_cycle: 1
+    iteration: 1
+    attempt: 1
+    outcome: recovery
+    unresolved_ids: []
+    summary:
+      text: 用户选择先修两处 Must 偏差：损坏配置文件按空配置处理并允许本地迁移自愈；自动同步在连接未就绪时给出可见提示；另给
+        suppressScheduleSavedNotice 加超时清理。修复后重新验收。
+      truncated: false
+    completed_at: 2026-11-06T07:16:59.587Z
+  - goal_cycle: 1
+    iteration: 2
+    attempt: 1
+    outcome: pass
+    unresolved_ids: []
+    summary:
+      text: 第二轮候选已修复上一轮两处 Spec MUST
+        偏差：损坏/不可读设置文件按空配置处理并由本地设置自愈；自动同步连接未就绪时一次性可见提示且成功同步重置；suppressScheduleSavedNotice
+        增加 5 秒超时兜底。429 退避、自动换源与连续 6 个终止均未回归。A1–A8 全部
+        passed，独立重跑构建与前后端测试通过，未对仓库产生改动。
+      truncated: false
+    completed_at: 2026-11-06T07:49:40.765Z
+history_overflow:
+  dropped_entries: 0
+  first_dropped_at: null
+  last_dropped_at: null
+  outcome_counts:
+    pass: 0
+    fail: 0
+    blocked: 0
+    execution-error: 0
+    recovery: 0
+verification_result: pass
+verification_report: verification.md
+archived: true
+created_at: 2026-11-06T06:24:58.081Z
