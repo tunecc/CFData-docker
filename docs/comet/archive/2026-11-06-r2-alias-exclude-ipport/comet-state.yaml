@@ -1,0 +1,369 @@
+schema: comet.native.v4
+name: r2-alias-exclude-ipport
+language: zh-CN
+phase: archive
+status: done
+state_version: 15
+brief: brief.md
+document_constraints_version: 3
+shape_confirmation_hash: 41b6a884f3afc04d841f44c3b236f3fdc67d5fa299985cd70be1e71a834325f2
+shape_semantic_snapshot:
+  schema: comet.native.shape-semantics.v1
+  artifacts:
+    - source: brief.md
+      contentHash: ed22f9482876325fc069608d01ec0249887eef0e874dd19124cff65b50b3f475
+      inputHash: fee20d07d5ba70375abb70135634d46c3e44de2b2fce7d602d75bd87ed5e6345
+      legacyFingerprint: 5351a24a693037ca06ddf033711501c9ef7f88241bba930c69f6b6571a1dbb32
+      contractHash: ca2655d372615ee25d0de2ae75edfe2964c4baf1e55ff9a142a350ede8687155
+      commentsHash: cda738d4fb7d0dbdff20df1cd09b859740e0671de31bcf78b8ddc8ff818dab92
+      auxiliary: []
+    - source: specs/r2-alias/spec.md
+      contentHash: 4f08c9596ac805a2e65f868521d020e18dde6dbe2d2c5c1f80d9ac99ef1c3430
+      inputHash: 33a004540e5cafaadebc70361f34d6399a1984a4a817edd2be73a789e4ddc8b4
+      legacyFingerprint: 3e1bd7ed1a0f4af6104b137e6e96f73ca92cfe7d907e514608122ddc777ff1b9
+      contractHash: 3f45e1a03b7860e27dd52393d81a3bcaf3a0ceb3f824d2d897838d9234a65690
+      commentsHash: cda738d4fb7d0dbdff20df1cd09b859740e0671de31bcf78b8ddc8ff818dab92
+      auxiliary: []
+spec_changes:
+  - capability: r2-alias
+    operation: create
+    source: specs/r2-alias/spec.md
+workspace:
+  isolation: current
+  change_branch: main
+  target_branch: main
+  finish: null
+loop:
+  stage: done
+  goal_cycle: 3
+  iteration: 1
+  attempt: 1
+  retry_epoch: 0
+  failed_iteration_count: 0
+  no_progress_count: 0
+  execution_failure_count: 0
+  previous_unresolved_ids: []
+  next_action: null
+acceptance:
+  - id: A1
+    source: brief.md
+    text: A1：字段顺序为 `IP:PORT, 数据中心`、分隔符 `-` 时，R2 上传内容每行为 `IP:PORT#HKG`，不再出现重复的
+      `IP:PORT-` 别名。
+    result: passed
+    reason:
+      text: buildR2AliasTemplateFromOrder 过滤 ipport，['ipport','dc'] →
+        {dc}；formatSubstoreResultsWithAlias 统一净化后生成，{ipport}-{dc} 与
+        {dc}-{ipport} 均输出 1.2.3.4:443#HKG。
+      truncated: false
+  - id: A2
+    source: brief.md
+    text: A2：字段顺序为 `IP:PORT, 数据中心, 落地区域` 时，别名为 `HKG-HK`；顺序调整后别名顺序随之变化。
+    result: passed
+    reason:
+      text: 占位符按 resultFieldOrder 顺序拼接，['ipport','dc','dcCountry'] →
+        {dc}-{dcCountry}；换序测试覆盖 {dc}|{region}，Go 测试覆盖 {region}-{ipport}-{dc}
+        保留顺序。
+      truncated: false
+  - id: A3
+    source: brief.md
+    text: A3：配置文件中已保存 `{ipport}-{dc}` 的旧模板，升级后无需手动保存即可按 `{dc}`
+      生成（服务端读取时净化）；界面保存后配置文件也写为净化后的模板。
+    result: passed
+    reason:
+      text: 读取时 formatSubstoreResultsWithAlias 入口净化、保存时 scheduler.go
+        净化；{ipport}-{dc}→{dc}、{region}-{ipport}-{dc}→{region}-{dc}、仅
+        {ipport}/{ipport}-→{none}，均有测试覆盖。
+      truncated: false
+  - id: A4
+    source: brief.md
+    text: A4：字段只选 `IP:PORT` 时每行只输出地址（如 `172.67.76.64:443`），不带 `#` 与别名。
+    result: passed
+    reason:
+      text: "前端只选 IP:PORT 或无可识别字段时返回 {none}；后端对 {none}
+        返回空别名，formatSubstoreResultsWithAlias 仅在别名非空时写 #；预览与说明文案已同步；空模板仍回落默认别名。"
+      truncated: false
+  - id: A5
+    source: brief.md
+    text: A5：R2 自动上传（自动调度/CLI 管线）与 Web 手动上传使用同一别名规则，输出一致；Sub-Store
+      目标列表导出保持现有默认别名，不在本次范围。
+    result: passed
+    reason:
+      text: R2 自动路径 cli.go:993 与 Web 手动路径 r2_manual.go:25 都调用
+        formatSubstoreResultsWithAlias 并读取同一
+        cfg.R2AliasFormat，别名规则与净化一致；Sub-Store 导出仍走默认 dc-city，符合 D5。
+      truncated: false
+  - id: A6
+    source: brief.md
+    text: A6：`go build ./...`、`go test ./...` 与前端 Node 测试通过，现有 R2 别名与导出测试不回归。
+    result: passed
+    reason:
+      text: Runtime 检查记录对应当前候选（cwd、命令、时间晚于源码修改），go build 退出码 0、go test ok cfdata
+        22.556s、node 21 项全过；独立只读重跑 node 21/21 与 4 个 Go 别名用例均通过，TXT/CSV 导出未改动。
+      truncated: false
+builder_handoff:
+  candidate_id: 50de882a-8a09-418b-b5b5-d354675b8410
+  identity_provider: skill-coordinated
+  builder_execution_ref: skill-coordinated:builder:1c4badf8-ac4a-46dc-a252-fea6257b1174
+  iteration: 1
+  summary:
+    text: 本轮按收窄后的 Shape 完成：① A5 明确为 R2 自动（cli.go:993）与手动（r2_manual.go:18-25）共用
+      formatSubstoreResultsWithAlias 与同一净化模板，Sub-Store 导出一致性不再要求；② 旧配置只含
+      {ipport} 时净化结果为空，按“无别名”返回 {none}，实测通过 WS 提交 {ipport} 后服务器配置落盘为 {none}；③
+      index.html 的 R2 别名说明文案同步为「IP:PORT 不参与别名；未选其他字段不加别名」。其余实现（前端排除
+      ipport、{none} 语义、净化 {ipport} 与分隔符、保存时净化、R2 内容生成）沿用上一轮并新增对应测试。go build/go
+      test/node 21 项全部通过。
+    truncated: false
+  addressed_acceptance_ids:
+    - A1
+    - A2
+    - A3
+    - A4
+    - A5
+    - A6
+  acceptance_review:
+    - id: A1
+      status: implemented-with-evidence
+      evidence:
+        - web/common.js buildR2AliasTemplateFromOrder 过滤 ipport；app.js
+          buildR2AliasTemplate 写入隐藏 r2AliasFormat
+        - Go 测试 TestFormatSubstoreResultsWithAliasDedupesIPPort：{ipport}-{dc} 与
+          {dc}-{ipport} 均输出 1.2.3.4:443#HKG
+        - 浏览器实测：IP:PORT + 数据中心 → 模板 {dc}，预览 {dc}
+      note: R2 内容不再重复地址，输出 IP:PORT#HKG
+    - id: A2
+      status: implemented-with-evidence
+      evidence:
+        - 浏览器实测：IP:PORT + 数据中心 + 落地区域 → {dc}-{dcCountry}；换序覆盖在
+          web/test/r2-alias.test.js
+        - Go 测试 {region}-{ipport}-{dc} → 1.2.3.4:443#香港-HKG
+      note: 别名按字段输出顺序生成
+    - id: A3
+      status: implemented-with-evidence
+      evidence:
+        - formatSubstoreResultsWithAlias 入口调用
+          sanitizeR2AliasTemplate；scheduler.go 保存前净化
+        - 实测：WS 提交 {ipport}-{dc}（上一轮）与 {ipport}（本轮）后，配置分别落盘为 {dc} 与 {none}
+        - TestSanitizeR2AliasTemplate 覆盖
+          {ipport}-{dc}/{dc}-{ipport}/{region}-{ipport}-{dc}/{ipport}/{ipport}-/空/{none}
+      note: 旧配置无需手改即可生效；只含 {ipport} 的旧模板按无别名处理
+    - id: A4
+      status: implemented-with-evidence
+      evidence:
+        - 只选 IP:PORT 时前端返回 {none}，预览显示「仅输出 IP:PORT，不加别名」
+        - "Go 测试 TestFormatSubstoreResultsWithNoneAlias：{none} → 1.2.3.4:443（无
+          #）"
+        - 空模板（未设置）仍回退默认别名
+      note: 只选地址时只输出 IP:PORT
+    - id: A5
+      status: implemented-with-evidence
+      evidence:
+        - cli.go:993 自动管道与 r2_manual.go:18-25 手动上传都调用
+          formatSubstoreResultsWithAlias，模板均经 sanitizeR2AliasTemplate
+        - Sub-Store 目标列表导出（formatSubstoreResults / buildSubstoreContent）按 D5
+          保持默认别名，未改动
+        - 既有 TestFormatSubstoreResultsWithAlias 空模板断言仍通过
+      note: 收窄后 A5 为 R2 自动/手动一致；Sub-Store 导出保持现状
+    - id: A6
+      status: implemented-with-evidence
+      evidence:
+        - combined_refactor 下 go build ./... 成功、go test ./... 输出 ok cfdata（22.5s）
+        - node --test web/test/*.test.js：21 项通过（含 r2-alias.test.js 4 项）
+        - 既有 r2_alias / r2_manual / 导出相关测试全部通过
+      note: 构建与前后端测试全部通过
+  checks:
+    - name:
+        text: go build ./... (combined_refactor)
+        truncated: false
+      result: passed
+      note:
+        text: 退出码 0
+        truncated: false
+    - name:
+        text: go test ./... (combined_refactor)
+        truncated: false
+      result: passed
+      note:
+        text: ok cfdata 22.5s
+        truncated: false
+    - name:
+        text: node --test web/test/*.test.js
+        truncated: false
+      result: passed
+      note:
+        text: 21 项通过
+        truncated: false
+    - name:
+        text: 实测（本地新构建 52660）
+        truncated: false
+      result: passed
+      note:
+        text: 旧 {ipport} 保存后落盘 {none}；界面文案已更新
+        truncated: false
+  checks_truncated: false
+  known_limits:
+    - text: Sub-Store 目标列表导出（Web/CLI）按用户确认保持默认别名，与 R2 别名不同（范围外）
+      truncated: false
+    - text: 未做真实 R2 网络上传端到端验证，内容生成由单测覆盖
+      truncated: false
+    - text: 切换结果格式为 substore 会重置字段顺序为仅 IP:PORT，此时别名模板为 {none}；属于既有字段重置行为
+      truncated: false
+    - text: 选择 IP地址+端口号 作为别名会输出 1.2.3.4-443，属用户显式选择
+      truncated: false
+  known_limits_truncated: false
+  review: null
+  submitted_at: 2026-11-06T11:37:24.227Z
+verifier_action:
+  attempt: 1
+  claim:
+    executorId: skill-coordinated
+    token: skill-coordinated:verifier:653a7489-077f-409d-8969-63bf0661190a
+  id: f05a45dd-a94a-4c75-97db-4ea1f2f753dd
+  input:
+    builderExecutionRef: skill-coordinated:builder:1c4badf8-ac4a-46dc-a252-fea6257b1174
+    candidateId: 50de882a-8a09-418b-b5b5-d354675b8410
+    goalCycle: 3
+    identityProvider: skill-coordinated
+    iteration: 1
+    registeredAt: 2026-11-06T11:37:48.237Z
+    verifierExecutionRef: skill-coordinated:verifier:653a7489-077f-409d-8969-63bf0661190a
+  inputHash: daf6716b4ae0fd136a4d64acb49697c39a8fe83ac75c4c40df2409515e7d24fe
+  outcome:
+    actionId: f05a45dd-a94a-4c75-97db-4ea1f2f753dd
+    attempt: 1
+    claimToken: skill-coordinated:verifier:653a7489-077f-409d-8969-63bf0661190a
+    inputHash: daf6716b4ae0fd136a4d64acb49697c39a8fe83ac75c4c40df2409515e7d24fe
+    outcomeId: eac343ddfd79cb9e47fcdacd3799db07b1cdb2b856bbd44ef201e55b0f1eb86d
+    output:
+      responseHash: eac343ddfd79cb9e47fcdacd3799db07b1cdb2b856bbd44ef201e55b0f1eb86d
+    status: succeeded
+  protocolVersion: 1
+  receipts:
+    - hash: f45c67b871c77376f7a63296a5e4273d1af46f8198acab8bde82228b590a2c88
+      outcomeId: eac343ddfd79cb9e47fcdacd3799db07b1cdb2b856bbd44ef201e55b0f1eb86d
+  reconciliations: []
+  ref: native-verifier
+  requiredCapabilities: []
+  retry: manual
+  runId: r2-alias-exclude-ipport
+  status: succeeded
+  stepId: native-verifier
+  type: handoff
+blockers: []
+verification:
+  candidate_id: 50de882a-8a09-418b-b5b5-d354675b8410
+  identity_provider: skill-coordinated
+  verifier_execution_ref: skill-coordinated:verifier:653a7489-077f-409d-8969-63bf0661190a
+  iteration: 1
+  attempt: 1
+  assurance: skill-coordinated
+  verdict: pass
+  checks:
+    - id: go-build
+      name:
+        text: go build ./...
+        truncated: false
+      argv_display:
+        - text: build
+          truncated: false
+        - text: ./...
+          truncated: false
+      argv_truncated: false
+      cwd_ref: combined_refactor
+      status: passed
+      exit_code: 0
+      duration_ms: 199
+    - id: go-test
+      name:
+        text: go test ./...
+        truncated: false
+      argv_display:
+        - text: test
+          truncated: false
+        - text: ./...
+          truncated: false
+      argv_truncated: false
+      cwd_ref: combined_refactor
+      status: passed
+      exit_code: 0
+      duration_ms: 23003
+    - id: web-node-test
+      name:
+        text: node --test web/test/*.test.js
+        truncated: false
+      argv_display:
+        - text: -c
+          truncated: false
+        - text: node --test web/test/*.test.js
+          truncated: false
+      argv_truncated: false
+      cwd_ref: combined_refactor
+      status: passed
+      exit_code: 0
+      duration_ms: 132
+  summary:
+    text: 收窄后的候选与 brief/Spec 一致：前端排除 ipport 并引入 {none}；服务端读取与保存双侧净化
+      {ipport}、清理残留分隔符、仅 {ipport} 旧模板转 {none}；R2 自动与手动共用同一函数，Sub-Store
+      导出维持默认别名。A1–A6 全部通过，检查记录对应当前候选，独立复跑通过。
+    truncated: false
+  risks:
+    - text: 初始化/格式切换边界：字段顺序为空或切到 Sub-Store 格式时可能生成 {none} 并写回配置，等于关闭 R2 别名。
+      truncated: false
+    - text: 净化分隔符集合不含反斜杠 \，旧模板 {ipport}\{dc} 会残留前导反斜杠。
+      truncated: false
+    - text: 用户显式勾选 IP地址+端口号 时别名可能出现 {ip}:{port} 形式重复地址成分。
+      truncated: false
+    - text: web/test/r2-alias.test.js 仍为未跟踪文件，提交时需纳入。
+      truncated: false
+    - text: 结果面板「上传 R2」按钮在 substore 格式下走默认别名，属 D5 范围外行为。
+      truncated: false
+  risks_truncated: false
+  completed_at: 2026-11-06T11:49:43.194Z
+history:
+  - goal_cycle: 1
+    iteration: 1
+    attempt: 1
+    outcome: recovery
+    unresolved_ids: []
+    summary:
+      text: 用户确认收窄验收 A5：只要求 R2 自动/手动别名一致，Sub-Store 目标列表导出保持现状（默认别名不变）；据此更新 brief/spec
+        并重新确认 Shape。
+      truncated: false
+    completed_at: 2026-11-06T11:24:33.003Z
+  - goal_cycle: 2
+    iteration: 0
+    attempt: 0
+    outcome: recovery
+    unresolved_ids: []
+    summary:
+      text: Native Shape artifacts changed; acceptance is unchanged, but the complete
+        approved brief, specifications, and child plan remain bound. Restore the
+        approved documents, or reconcile any running Builder with its original
+        Action and claim before using the latest continuation to
+        revise-requirements on this change and confirm the edits.
+      truncated: false
+    completed_at: 2026-11-06T11:30:20.265Z
+  - goal_cycle: 3
+    iteration: 1
+    attempt: 1
+    outcome: pass
+    unresolved_ids: []
+    summary:
+      text: 收窄后的候选与 brief/Spec 一致：前端排除 ipport 并引入 {none}；服务端读取与保存双侧净化
+        {ipport}、清理残留分隔符、仅 {ipport} 旧模板转 {none}；R2 自动与手动共用同一函数，Sub-Store
+        导出维持默认别名。A1–A6 全部通过，检查记录对应当前候选，独立复跑通过。
+      truncated: false
+    completed_at: 2026-11-06T11:49:43.194Z
+history_overflow:
+  dropped_entries: 0
+  first_dropped_at: null
+  last_dropped_at: null
+  outcome_counts:
+    pass: 0
+    fail: 0
+    blocked: 0
+    execution-error: 0
+    recovery: 0
+verification_result: pass
+verification_report: verification.md
+archived: true
+created_at: 2026-11-06T10:56:55.435Z
