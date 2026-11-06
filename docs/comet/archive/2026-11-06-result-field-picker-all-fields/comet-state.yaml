@@ -1,0 +1,351 @@
+schema: comet.native.v4
+name: result-field-picker-all-fields
+language: zh-CN
+phase: archive
+status: done
+state_version: 8
+brief: brief.md
+document_constraints_version: 3
+shape_confirmation_hash: 076229ee464fd67d2802eb2f3ef3f9d6215cc2c2d08b84fd2f18b335b9796ad4
+shape_semantic_snapshot:
+  schema: comet.native.shape-semantics.v1
+  artifacts:
+    - source: brief.md
+      contentHash: 922e46b5eb98799b72e516fcc110796c296b0d2d340362fb9e13c8aff0c76cb6
+      inputHash: a4dc61e6f59ec32d3edc295ffcc43861c0f803585d365c5803d8ef103ea84378
+      legacyFingerprint: 17e6cce9a37bd010e4ef35ede66a207f107537f1dbda04eb9d89871d92926502
+      contractHash: aa353781aeac2a1a1f62eeca72c604557cdf49491bb9c69437084ba0f0d735b1
+      commentsHash: cda738d4fb7d0dbdff20df1cd09b859740e0671de31bcf78b8ddc8ff818dab92
+      auxiliary: []
+    - source: specs/result-field-picker/spec.md
+      contentHash: 1a85a1250d2b367f28ae891692b2f6ee3876204ee3871aaef0405304eeff9c99
+      inputHash: af4fbdf552117a0bbe1bf269641e193400661e0678ae97156dc32ca96c28e39c
+      legacyFingerprint: 64d73d49220d220e5bde4e27bf6ac3c8c4dc85606f2ccbce7d2f4ae2ce1fafad
+      contractHash: 317489eba9f1caeda8ba30b3cf2d6a924e2c8658d49d9338cdb505d83a2a0e62
+      commentsHash: cda738d4fb7d0dbdff20df1cd09b859740e0671de31bcf78b8ddc8ff818dab92
+      auxiliary: []
+spec_changes:
+  - capability: result-field-picker
+    operation: create
+    source: specs/result-field-picker/spec.md
+workspace:
+  isolation: current
+  change_branch: main
+  target_branch: main
+  finish: null
+loop:
+  stage: done
+  goal_cycle: 1
+  iteration: 1
+  attempt: 1
+  retry_epoch: 0
+  failed_iteration_count: 0
+  no_progress_count: 0
+  execution_failure_count: 0
+  previous_unresolved_ids: []
+  next_action: null
+acceptance:
+  - id: A1
+    source: brief.md
+    text: A1：在前端没有任何结果行时（刷新页面或重启程序后未运行任务）打开「结果操作」面板，字段选择列出全部内置字段（26 个，含
+      `IP地址`、`端口号`、`延迟`、`数据中心`、`落地区域` 等）与已定义的自定义字段，不再只有 `IP:PORT`。
+    result: passed
+    reason:
+      text: renderResultFieldOptions 改为 buildResultFieldChoices(RESULT_FIELDS,
+        resultCustomFields)，不再调用 getCurrentResultRows。以实际函数源码在 Node
+        中执行、getCurrentResultRows 返回 [] 时渲染 27 个 checkbox（26 个内置 + 1 自定义），包含
+        IP地址/端口号/网络延迟/数据中心/落地区域，自定义字段位于末尾。无结果行时通过「结果操作」标签进入：enhance.js
+        nzShowConfigPanel('results') -> syncResultSourceOptions() ->
+        renderResultFieldOptions()，该路径不依赖结果行。
+      truncated: false
+  - id: A2
+    source: brief.md
+    text: A2：在已有扫描结果时打开面板，字段选择列出与无结果行时相同的完整字段清单；默认勾选仍为
+      `IP:PORT`、`数据中心`、`落地区域`（TXT），输出顺序列表与预览不受影响。
+    result: passed
+    reason:
+      text: 同一函数在 rows=[] 与 rows=[{ip,port,dc}] 两种输入下产生的 picker HTML 完全一致（均 27 个
+        checkbox）。TXT 默认勾选实测为 ['ipport','dc','dcCountry']。git diff 显示 app.js 仅改动
+        getAllResultFieldOrder、renderResultFieldOptions、getAvailableResultFieldKeys
+        三处，getDefaultResultFieldOrderFor、renderResultOrderList、预览路径未改动。
+      truncated: false
+  - id: A3
+    source: brief.md
+    text: A3：「全部选」在无结果行时选中全部字段，如齐全时按钮显示「全部选」；「仅 IP:PORT」把输出顺序收敛为
+      `IP:PORT`；「默认选择」恢复当前格式的默认勾选。
+    result: passed
+    reason:
+      text: getAllResultFieldOrder() 实跑返回 26 个唯一 key（ipport 首、timestamp
+        末）；toggleAllResultFields 后 26 项全部选中；按钮文案未全选时为「全选」，全选后为「全部选」且 title
+        为「恢复默认选择」；selectIPPortOnly() 实测
+        resultFieldOrder=['ipport']；selectDefaultResultFields() 实测为
+        ['ipport','dc','dcCountry']。这些函数均不再读取结果行。
+      truncated: false
+  - id: A4
+    source: brief.md
+    text: A4：勾选当前结果中没有数据的字段后导出 TXT/CSV，对应列输出空值，拼接规则与现有导出一致；未勾选字段仍不出现。
+    result: passed
+    reason:
+      text: buildResultContent 未改动。用实际源码执行：CSV 勾选当前行无数据的 latency 时输出表头
+        'IP:PORT,网络延迟,数据中心' 与行 ',,SJC'（对应列空值），未勾选的 dc 不出现；TXT
+        中勾选但无数据的字段按现有规则过滤，未勾选字段不出现，分隔符/IPv6/起止行逻辑未触及。
+      truncated: false
+  - id: A5
+    source: brief.md
+    text: A5：`combined_refactor` 下 `go build ./...` 与 `go test ./...` 通过，前端 Node
+      测试通过，现有结果面板与导出测试不回归。
+    result: passed
+    reason:
+      text: Runtime 检查记录 operationId 2981890a-767f-4234-97eb-d672d8bd4370、candidateId
+        与 workspace 均匹配当前候选，时间晚于候选文件 mtime；日志显示 go build exit 0、go test 'ok
+        cfdata 4.392s'、node --test 10/10 通过。独立重跑 node --test web/test/*.test.js
+        仍为 10 pass / 0 fail。按指令未重跑匹配的 Go 检查。
+      truncated: false
+builder_handoff:
+  candidate_id: f9808408-2b04-478f-83a9-e5a1e6ba8055
+  identity_provider: skill-coordinated
+  builder_execution_ref: skill-coordinated:builder:053c1a6c-61c2-4918-8652-4f725a877a33
+  iteration: 1
+  summary:
+    text: 结果操作面板的字段选择不再按当前结果行裁剪：新增纯函数
+      buildResultFieldChoices/resultFieldChoiceKeys（web/common.js），renderResultFieldOptions
+      改用完整清单，getAllResultFieldOrder/getAvailableResultFieldKeys
+      也改为固定清单，因此「全选/全部选」在任意数据状态下都覆盖全部字段。默认勾选、输出顺序、TXT/CSV 拼接、分隔符与 IPv6
+      方括号逻辑均未改动；复制弹窗与历史落盘不在本次范围内。开发期已运行 go build、go test 与 node
+      --test（均通过），并在本机启动新构建用浏览器实测：无结果行时字段选择列出 26 个内置字段、默认勾选
+      IP:PORT/数据中心/落地区域；注入模拟结果行后清单仍为完整清单且默认勾选不变；全选=26 项、仅 IP:PORT=1 项、默认选择=3
+      项；自定义字段追加在末尾（28 项）；TXT 跳过无数据字段、CSV 输出空单元格。
+    truncated: false
+  addressed_acceptance_ids:
+    - A1
+    - A2
+    - A3
+    - A4
+    - A5
+  acceptance_review:
+    - id: A1
+      status: implemented-with-evidence
+      evidence:
+        - combined_refactor/web/app.js:3522 renderResultFieldOptions 使用
+          buildResultFieldChoices(RESULT_FIELDS, resultCustomFields)，不再读取
+          getCurrentResultRows
+        - combined_refactor/web/common.js:23 buildResultFieldChoices 固定输出内置字段 +
+          自定义字段
+        - 浏览器实测（新构建、无结果行、scanData=0）：#resultFieldPicker 渲染 26 个字段，标签从 IP:PORT 到
+          时间戳
+      note: 字段清单与结果行完全解耦：没有任何结果行时仍渲染全部 26 个内置字段，自定义字段追加在末尾（实测 26+2=28）
+    - id: A2
+      status: implemented-with-evidence
+      evidence:
+        - 浏览器实测：注入
+          scanData=[{IP,Port,DataCenter,DCCountry,Region,City,LatencyStr,LossRate}]
+          后调用 renderResultFieldOptions，字段胶囊数量不变、默认勾选仍是
+          ipport/dc/dcCountry，输出顺序列表仍为 IP:PORT/数据中心/落地区域
+        - getDefaultResultFieldOrderFor 未修改，TXT/CSV/订阅默认顺序保持原样
+      note: 有结果行时清单与无结果行时一致，默认勾选、输出顺序与预览逻辑未改动
+    - id: A3
+      status: implemented-with-evidence
+      evidence:
+        - combined_refactor/web/app.js:3498 getAllResultFieldOrder 返回
+          resultFieldChoiceKeys 全部字段；app.js:3987 getAvailableResultFieldKeys
+          同样返回全部字段
+        - 浏览器实测：toggleAllResultFields 后勾选 26 项且按钮显示「全部选」；selectIPPortOnly 后
+          order=['ipport']、按钮「全选」；selectDefaultResultFields 后
+          order=['ipport','dc','dcCountry']
+      note: 三个快捷按钮在无结果行与有结果行时语义一致，不再受数据过滤影响
+    - id: A4
+      status: implemented-with-evidence
+      evidence:
+        - 浏览器实测 buildResultContent('txt',[row],['ipport','dc','latency']) 输出
+          1.2.3.4:443#HKG（无数据字段按现有规则跳过）
+        - 浏览器实测 buildResultContent('csv',[row],['ipport','dc','latency']) 输出表头
+          IP:PORT,数据中心,网络延迟 与行 1.2.3.4:443,HKG,（空单元格）
+        - buildResultContent 与 formatCSVCell 未修改
+      note: 勾选无数据字段后导出遵循现有拼接规则：TXT 跳过空字段，CSV 输出空单元格，未勾选字段不出现
+    - id: A5
+      status: implemented-with-evidence
+      evidence:
+        - combined_refactor 下 go build ./... 通过、go test ./... 通过（ok cfdata）
+        - node --test web/test/common.test.js web/test/result-fields.test.js：10
+          项全部通过
+        - 新增 combined_refactor/web/test/result-fields.test.js 覆盖清单完整性、顺序、去重与非法输入
+      note: 构建、Go 测试与前端 Node 测试全部通过，无既有测试回归
+  checks:
+    - name:
+        text: go build ./... (combined_refactor)
+        truncated: false
+      result: passed
+      note:
+        text: 开发期运行，退出码 0
+        truncated: false
+    - name:
+        text: go test ./... (combined_refactor)
+        truncated: false
+      result: passed
+      note:
+        text: 开发期运行：ok cfdata
+        truncated: false
+    - name:
+        text: node --test web/test/common.test.js web/test/result-fields.test.js
+        truncated: false
+      result: passed
+      note:
+        text: 开发期运行：10 项通过
+        truncated: false
+    - name:
+        text: 浏览器实测（localhost 新构建）
+        truncated: false
+      result: passed
+      note:
+        text: 字段清单 26 项、默认勾选与三个快捷按钮行为符合验收
+        truncated: false
+  checks_truncated: false
+  known_limits:
+    - text: 复制弹窗（一键复制）的字段选择仍按当前结果行过滤，本次按非目标未改动
+      truncated: false
+    - text: 重启后历史记录仍只恢复统计摘要，不提供全量结果行导出
+      truncated: false
+    - text: TXT 导出对勾选但无数据的字段仍按现有规则跳过，不输出占位空值
+      truncated: false
+  known_limits_truncated: false
+  review: null
+  submitted_at: 2026-11-06T02:40:38.486Z
+verifier_action:
+  attempt: 1
+  claim:
+    executorId: skill-coordinated
+    token: skill-coordinated:verifier:aa5445b9-a5f2-4052-85d3-302196877c49
+  id: 2981890a-767f-4234-97eb-d672d8bd4370
+  input:
+    builderExecutionRef: skill-coordinated:builder:053c1a6c-61c2-4918-8652-4f725a877a33
+    candidateId: f9808408-2b04-478f-83a9-e5a1e6ba8055
+    goalCycle: 1
+    identityProvider: skill-coordinated
+    iteration: 1
+    registeredAt: 2026-11-06T02:40:45.130Z
+    verifierExecutionRef: skill-coordinated:verifier:aa5445b9-a5f2-4052-85d3-302196877c49
+  inputHash: 03d3fe46400d48839da060dc7b32ed364015cdcfc998895f6e14d5822ac45bc6
+  outcome:
+    actionId: 2981890a-767f-4234-97eb-d672d8bd4370
+    attempt: 1
+    claimToken: skill-coordinated:verifier:aa5445b9-a5f2-4052-85d3-302196877c49
+    inputHash: 03d3fe46400d48839da060dc7b32ed364015cdcfc998895f6e14d5822ac45bc6
+    outcomeId: 77166e805bd82e97b8b141cd7a8e6621c8214d90da5293b8e6982b3c0b8be311
+    output:
+      responseHash: 77166e805bd82e97b8b141cd7a8e6621c8214d90da5293b8e6982b3c0b8be311
+    status: succeeded
+  protocolVersion: 1
+  receipts:
+    - hash: 8ecfe6bbf33096a5f36cb2d687c799f89a350f81dfd492fe9abcd8f056ca0f01
+      outcomeId: 77166e805bd82e97b8b141cd7a8e6621c8214d90da5293b8e6982b3c0b8be311
+  reconciliations: []
+  ref: native-verifier
+  requiredCapabilities: []
+  retry: manual
+  runId: result-field-picker-all-fields
+  status: succeeded
+  stepId: native-verifier
+  type: handoff
+blockers: []
+verification:
+  candidate_id: f9808408-2b04-478f-83a9-e5a1e6ba8055
+  identity_provider: skill-coordinated
+  verifier_execution_ref: skill-coordinated:verifier:aa5445b9-a5f2-4052-85d3-302196877c49
+  iteration: 1
+  attempt: 1
+  assurance: skill-coordinated
+  verdict: pass
+  checks:
+    - id: go-build
+      name:
+        text: go build ./...
+        truncated: false
+      argv_display:
+        - text: build
+          truncated: false
+        - text: ./...
+          truncated: false
+      argv_truncated: false
+      cwd_ref: combined_refactor
+      status: passed
+      exit_code: 0
+      duration_ms: 401
+    - id: go-test
+      name:
+        text: go test ./...
+        truncated: false
+      argv_display:
+        - text: test
+          truncated: false
+        - text: ./...
+          truncated: false
+      argv_truncated: false
+      cwd_ref: combined_refactor
+      status: passed
+      exit_code: 0
+      duration_ms: 5411
+    - id: web-node-test
+      name:
+        text: node --test web/test/*.test.js
+        truncated: false
+      argv_display:
+        - text: -c
+          truncated: false
+        - text: node --test web/test/*.test.js
+          truncated: false
+      argv_truncated: false
+      cwd_ref: combined_refactor
+      status: passed
+      exit_code: 0
+      duration_ms: 130
+  summary:
+    text: 候选实现将结果面板字段清单从“按当前结果行裁剪”改为固定的 RESULT_FIELDS 全量 +
+      自定义字段：renderResultFieldOptions、getAllResultFieldOrder、getAvailableResultFieldKeys
+      全部改用 common.js 中无 DOM 依赖的
+      buildResultFieldChoices/resultFieldChoiceKeys。以实际源码执行确认无结果行时渲染 26 个内置字段 +
+      自定义字段，有/无结果行清单完全一致，TXT 默认勾选不变；全选/仅 IP:PORT/默认选择语义正确；导出拼接逻辑未改动。Runtime
+      三项检查对应当前候选且均通过，独立重跑 Node 测试 10/10 通过。整体判定 pass。
+    truncated: false
+  risks:
+    - text: Verifier 未做真实浏览器端到端实测，结论来自源码执行、DOM 桩与代码路径核对；建议归档前按 brief 验证预期手工点一遍。
+      truncated: false
+    - text: combined_refactor/web/test/result-fields.test.js 目前为未跟踪文件，提交时需纳入。
+      truncated: false
+    - text: Node 单测使用合成字段数组，未锁定真实 RESULT_FIELDS 的 26 项数量与 app.js 接线。
+      truncated: false
+    - text: 「全部选」现在按 RESULT_FIELDS 全量顺序包含 ipport，与此前官方/非标分支不同，符合 D3/A3 意图但属可见行为变化。
+      truncated: false
+    - text: getDefaultResultFieldOrderFor 仍保留按结果行裁剪的兜底分支，仅对 txt/csv/substore 以外格式可达，当前
+        UI 无此类格式。
+      truncated: false
+  risks_truncated: false
+  completed_at: 2026-11-06T02:48:07.358Z
+history:
+  - goal_cycle: 1
+    iteration: 1
+    attempt: 1
+    outcome: pass
+    unresolved_ids: []
+    summary:
+      text: 候选实现将结果面板字段清单从“按当前结果行裁剪”改为固定的 RESULT_FIELDS 全量 +
+        自定义字段：renderResultFieldOptions、getAllResultFieldOrder、getAvailableResultFieldKeys
+        全部改用 common.js 中无 DOM 依赖的
+        buildResultFieldChoices/resultFieldChoiceKeys。以实际源码执行确认无结果行时渲染 26 个内置字段
+        + 自定义字段，有/无结果行清单完全一致，TXT 默认勾选不变；全选/仅 IP:PORT/默认选择语义正确；导出拼接逻辑未改动。Runtime
+        三项检查对应当前候选且均通过，独立重跑 Node 测试 10/10 通过。整体判定 pass。
+      truncated: false
+    completed_at: 2026-11-06T02:48:07.358Z
+history_overflow:
+  dropped_entries: 0
+  first_dropped_at: null
+  last_dropped_at: null
+  outcome_counts:
+    pass: 0
+    fail: 0
+    blocked: 0
+    execution-error: 0
+    recovery: 0
+verification_result: pass
+verification_report: verification.md
+archived: true
+created_at: 2026-11-06T02:27:54.768Z
