@@ -924,7 +924,12 @@ func runNSBTask(ctx context.Context, session *appSession, fileName, fileContent,
 	session.sendWSMessage("log", fmt.Sprintf("非标优选完成，结果文件: %s", outFile))
 	uploadRows := nsbPayloadRows(headers, rows)
 	if speedTest > 0 && speedLimit > 0 {
-		uploadRows = filterR2QualifiedRows(uploadRows, speedMin)
+		if wasCanceled {
+			// 手动终止后不启用达标 0 回退，保持仅上传达标结果的旧行为
+			uploadRows = filterCLIResultRowsByQualified(uploadRows, "qualified", speedMin)
+		} else {
+			uploadRows = speedUploadRows(uploadRows, speedMin, speedLimit)
+		}
 	}
 	triggerManualR2Upload(session, uploadRows)
 }
@@ -1138,7 +1143,12 @@ func runNSBReallinkTask(ctx context.Context, session *appSession, rows []nsbScan
 	session.sendWSMessage("log", fmt.Sprintf("链路复验完成，结果文件: %s", outFile))
 	uploadRows := nsbPayloadRows(headers, csvRows)
 	if speedTest > 0 && speedLimit > 0 {
-		uploadRows = filterR2QualifiedRows(uploadRows, speedMin)
+		if wasCanceled {
+			// 手动终止后不启用达标 0 回退，保持仅上传达标结果的旧行为
+			uploadRows = filterCLIResultRowsByQualified(uploadRows, "qualified", speedMin)
+		} else {
+			uploadRows = speedUploadRows(uploadRows, speedMin, speedLimit)
+		}
 	}
 	triggerManualR2Upload(session, uploadRows)
 }
@@ -1208,7 +1218,7 @@ func runNSBSpeedBatch(ctx context.Context, session *appSession, rows []nsbScanMe
 	totalQualified := countNSBTotalQualified(rows, results, speedMin)
 	session.sendWSMessage("log", fmt.Sprintf("非标批量测速完成，达标 %d/%d，总达标 %d", qualifiedCount, speedLimit, totalQualified))
 	session.sendWSMessage("nsb_speed_complete", map[string]interface{}{"qualified": qualifiedCount, "totalQualified": totalQualified, "limit": speedLimit})
-	triggerManualR2Upload(session, filterR2QualifiedRows(nsbSpeedResultRows(rows, results), speedMin))
+	triggerManualR2Upload(session, speedUploadRows(nsbSpeedResultRows(rows, results), speedMin, speedLimit))
 }
 
 func countNSBTotalQualified(rows []nsbScanMessage, updated []iptestResult, speedMin float64) int {

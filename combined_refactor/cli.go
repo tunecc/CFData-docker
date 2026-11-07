@@ -933,11 +933,47 @@ func cliExportFileExtension(format string) string {
 	return format
 }
 
-func scheduledR2Rows(rows []cliResultRow, speedEnabled bool, speedMin float64) []cliResultRow {
+func scheduledR2Rows(rows []cliResultRow, speedEnabled bool, speedMin float64, speedLimit int) []cliResultRow {
 	if !speedEnabled {
 		return rows
 	}
-	return filterCLIResultRowsByQualified(rows, "qualified", speedMin)
+	return speedUploadRows(rows, speedMin, speedLimit)
+}
+
+// speedUploadRows 返回自动上传使用的行：存在达标行时保持按阈值筛选；
+// 总达标为 0 时回退为按测得速度降序取前 speedLimit 条有效测速结果。
+func speedUploadRows(rows []cliResultRow, speedMin float64, speedLimit int) []cliResultRow {
+	qualified := filterCLIResultRowsByQualified(rows, "qualified", speedMin)
+	if len(qualified) > 0 {
+		return qualified
+	}
+	return topRowsByMeasuredSpeed(rows, speedLimit)
+}
+
+// topRowsByMeasuredSpeed 过滤出 Speed 可解析为 MB/s 的行，按速度降序（稳定排序）取前 limit 条。
+func topRowsByMeasuredSpeed(rows []cliResultRow, limit int) []cliResultRow {
+	if limit <= 0 {
+		return nil
+	}
+	type speedRow struct {
+		row   cliResultRow
+		speed float64
+	}
+	valid := make([]speedRow, 0, len(rows))
+	for _, row := range rows {
+		if speed, ok := parseSpeedMBForSort(row["speed"]); ok {
+			valid = append(valid, speedRow{row: row, speed: speed})
+		}
+	}
+	sort.SliceStable(valid, func(i, j int) bool { return valid[i].speed > valid[j].speed })
+	if len(valid) > limit {
+		valid = valid[:limit]
+	}
+	out := make([]cliResultRow, 0, len(valid))
+	for _, entry := range valid {
+		out = append(out, entry.row)
+	}
+	return out
 }
 
 func writeCLIExportAndMaybeUpload(cfg *cliConfig, rows []cliResultRow, r2Rows []cliResultRow, mode string) error {

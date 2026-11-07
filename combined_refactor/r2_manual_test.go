@@ -633,12 +633,32 @@ func TestScheduledR2RowsFollowSpeedRule(t *testing.T) {
 		{"ip": "5.6.7.8", "port": "443", "dc": "HKG", "speed": "0.05MB/s"},
 		{"ip": "9.9.9.9", "port": "443", "dc": "NRT", "speed": ""},
 	}
-	if got := scheduledR2Rows(rows, false, 0.1); len(got) != 3 {
+	if got := scheduledR2Rows(rows, false, 0.1, 20); len(got) != 3 {
 		t.Fatalf("未开启测速应保留全部行，实际 %d", len(got))
 	}
-	got := scheduledR2Rows(rows, true, 0.1)
+	got := scheduledR2Rows(rows, true, 0.1, 20)
 	if len(got) != 1 || got[0]["ip"] != "1.2.3.4" {
 		t.Fatalf("开启测速只应保留达标行，实际 %#v", got)
+	}
+}
+
+func TestScheduledR2RowsZeroQualifiedFallsBackToTopSpeed(t *testing.T) {
+	rows := []cliResultRow{
+		{"ip": "1.2.3.4", "port": "443", "dc": "LAX", "speed": "0.50MB/s"},
+		{"ip": "5.6.7.8", "port": "443", "dc": "HKG", "speed": "4.20MB/s"},
+		{"ip": "6.6.7.8", "port": "443", "dc": "HKG", "speed": "0.05MB/s"},
+		{"ip": "9.9.9.9", "port": "443", "dc": "NRT", "speed": "测速失败"},
+	}
+	got := scheduledR2Rows(rows, true, 5.0, 2)
+	if len(got) != 2 || got[0]["ip"] != "5.6.7.8" || got[1]["ip"] != "1.2.3.4" {
+		t.Fatalf("总达标 0 应回退为速度降序前 2 条，实际 %#v", got)
+	}
+	got = scheduledR2Rows(rows, true, 5.0, 20)
+	if len(got) != 3 || got[0]["ip"] != "5.6.7.8" || got[1]["ip"] != "1.2.3.4" || got[2]["ip"] != "6.6.7.8" {
+		t.Fatalf("有效结果不足上限时应全部回退，实际 %#v", got)
+	}
+	if got := scheduledR2Rows(rows, true, 5.0, 0); got != nil {
+		t.Fatalf("测速上限为 0 时不应回退，实际 %#v", got)
 	}
 }
 

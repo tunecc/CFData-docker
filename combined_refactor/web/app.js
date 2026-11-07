@@ -4295,6 +4295,27 @@
             return scanData.map(scanResultToObject).slice().sort(compareOfficialResultObjects);
         }
 
+        // parseSpeedMBValue 解析「x.xxMB/s」格式的测速文本，返回数值或 null（未测速/失败行）。
+        function parseSpeedMBValue(speed) {
+            const text = String(speed || '').trim();
+            if (!text.endsWith('MB/s')) return null;
+            const value = parseFloat(text.slice(0, -4).trim());
+            return Number.isFinite(value) ? value : null;
+        }
+
+        // topRowsByMeasuredSpeed 达标 0 回退：有效测速行按速度降序取前 limit 条。
+        function topRowsByMeasuredSpeed(rows, limit, speedKey) {
+            if (!(limit > 0) || !Array.isArray(rows)) return [];
+            const key = speedKey || 'speed';
+            const valid = [];
+            for (const row of rows) {
+                const speed = parseSpeedMBValue(row ? row[key] : '');
+                if (speed !== null) valid.push({ row, speed });
+            }
+            valid.sort((a, b) => b.speed - a.speed);
+            return valid.slice(0, limit).map((entry) => entry.row);
+        }
+
         function getCurrentExportRows(mode) {
             const rows = getCurrentResultRows(mode);
             const filter = document.getElementById('resultIPTypeFilter')?.value || 'all';
@@ -4933,17 +4954,17 @@
             log('已提交 GitHub 上传请求');
         }
 
-        async function autoUploadNSBResults() {
+        async function autoUploadNSBResults(speedFallback) {
             const value = document.getElementById('nsbAutoUploadAccount')?.value || '';
-            await autoUploadResults(value, 'nsb', '自动上传已提交');
+            await autoUploadResults(value, 'nsb', '自动上传已提交', speedFallback);
         }
 
-        async function autoUploadOfficialResults() {
+        async function autoUploadOfficialResults(speedFallback) {
             const value = document.getElementById('officialAutoUploadAccount')?.value || '';
-            await autoUploadResults(value, 'test', '官方自动上传已提交');
+            await autoUploadResults(value, 'test', '官方自动上传已提交', speedFallback);
         }
 
-        async function autoUploadResults(value, mode, logPrefix) {
+        async function autoUploadResults(value, mode, logPrefix, speedFallback) {
             if (!value || value === 'r2') return;
             const [idxText, format] = value.split(':');
             const idx = parseInt(idxText, 10);
@@ -4962,6 +4983,10 @@
             }
             const fields = getDefaultResultFieldOrderFor(mode, format || 'txt');
             let rows = getCurrentResultRows(mode);
+            if (speedFallback && speedFallback.limit > 0) {
+                // 测速达标 0 回退：按测得速度降序取前 limit 条有效结果
+                rows = topRowsByMeasuredSpeed(rows, speedFallback.limit, mode === 'nsb' ? '下载速度' : 'speed');
+            }
             if (!rows.length) {
                 log('自动上传跳过: 没有可上传结果');
                 return;
@@ -5247,7 +5272,7 @@
                     } else {
                         updateProgress(msg.data?.qualified || 0, msg.data?.limit || 1, '测速完成');
                     }
-                    autoUploadOfficialResults();
+                    autoUploadOfficialResults(!officialSpeedEnabledForResults && (msg.data?.limit || 0) > 0 ? { limit: msg.data.limit } : null);
                     break;
                 case 'github_upload_result':
                     if (!msg.data.silent) {
@@ -5349,7 +5374,7 @@
                     updateNSBSpeedButtons();
                     if (nsbSpeedEnabledForResults) setNSBTableQualifiedFilter('qualified');
                     updateProgress(msg.data?.qualified || 0, msg.data?.limit || 1, '测速完成');
-                    autoUploadNSBResults();
+                    autoUploadNSBResults(!nsbSpeedEnabledForResults && (msg.data?.limit || 0) > 0 ? { limit: msg.data.limit } : null);
                     break;
 
                 case 'nsb_csv_ready':

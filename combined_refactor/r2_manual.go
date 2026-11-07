@@ -120,10 +120,6 @@ func updateSessionUploadNote(session *appSession) {
 	session.sendWSMessage("last_run", lastRunPayload())
 }
 
-func filterR2QualifiedRows(rows []cliResultRow, speedMin float64) []cliResultRow {
-	return filterCLIResultRowsByQualified(rows, "qualified", speedMin)
-}
-
 func countSubstoreEntries(content string) int {
 	count := 0
 	for _, line := range strings.Split(content, "\n") {

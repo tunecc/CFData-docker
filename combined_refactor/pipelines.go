@@ -177,7 +177,7 @@ func runOfficialTaskFlow(ctx context.Context, session *appSession, opts official
 		allRows := officialResultRows(scanResults, results, scanMode)
 		var r2Rows []cliResultRow
 		if len(results) > 0 {
-			r2Rows = scheduledR2Rows(allRows, opts.speedLimit > 0, opts.speedMin)
+			r2Rows = scheduledR2Rows(allRows, opts.speedLimit > 0, opts.speedMin, opts.speedLimit)
 		}
 		err = writeCLIExportAndMaybeUpload(opts.cfg, applyCLIExportFilters(opts.cfg, allRows, opts.speedMin), r2Rows, "official")
 	}
@@ -240,7 +240,7 @@ func runNSBTaskFlow(ctx context.Context, session *appSession, opts nsbFlowOption
 		rows := nsbPayloadRows(session.nsbHeaders, session.nsbRows)
 		session.nsbMutex.Unlock()
 		speedRan := opts.speedTest > 0 && opts.speedLimit > 0
-		r2Rows := scheduledR2Rows(rows, speedRan, opts.speedMin)
+		r2Rows := scheduledR2Rows(rows, speedRan, opts.speedMin, opts.speedLimit)
 		rows = applyCLIExportFilters(opts.cfg, rows, opts.speedMin)
 		if len(rows) == 0 && len(r2Rows) == 0 {
 			session.sendWSMessage("log", "没有符合导出条件的结果")

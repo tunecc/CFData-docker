@@ -399,7 +399,7 @@ func runOfficialSpeedBatch(ctx context.Context, session *appSession, port int, c
 		session.testMutex.Lock()
 		rows := officialResultRows(nil, append([]TestResult(nil), session.testResults...), "")
 		session.testMutex.Unlock()
-		triggerManualR2Upload(session, filterR2QualifiedRows(rows, speedMin))
+		triggerManualR2Upload(session, speedUploadRows(rows, speedMin, speedLimit))
 	}
 }
 
