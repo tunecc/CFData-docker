@@ -2888,6 +2888,9 @@
         }
 
         function copyToClipboard(text, event) {
+            // A5：按钮类复制入口做三段式反馈（对勾→停留→还原），反馈期间防重复触发
+            const feedbackEl = event ? (event.currentTarget || (event.target && event.target.closest ? event.target.closest('button') : null)) : null;
+            if (feedbackEl && typeof window.nzCopyFeedback === 'function' && !window.nzCopyFeedback(feedbackEl)) return;
             const showHint = (msg, color) => {
                 const hint = document.createElement('span');
                 hint.className = 'copy-hint';
@@ -4238,11 +4241,29 @@
 
         function updateCopyPreview() {
             const el = document.getElementById('copyPreview');
-            if (!el) return;
-            try {
-                el.textContent = buildCopyPreview();
-            } catch (err) {
-                el.textContent = err.message || '预览失败';
+            if (el) {
+                try {
+                    // A9：长示例中间截断显示（保头去中），title 悬浮保留全文
+                    const full = buildCopyPreview();
+                    if (typeof window.truncateMiddle === 'function' && full.length > 160) {
+                        el.textContent = window.truncateMiddle(full, 160);
+                        el.title = full;
+                    } else {
+                        el.textContent = full;
+                        el.removeAttribute('title');
+                    }
+                } catch (err) {
+                    el.textContent = err.message || '预览失败';
+                    el.removeAttribute('title');
+                }
+            }
+            // A9：主复制按钮实时显示当前筛选与字段下将复制的条数（0 条禁用）
+            const countBtn = document.getElementById('copyResultsBtn');
+            if (countBtn) {
+                let n = 0;
+                try { n = getSelectedCopyRows().length; } catch (e) { n = 0; }
+                countBtn.textContent = '复制结果 (' + n + ')';
+                countBtn.disabled = n === 0;
             }
         }
 
@@ -5057,7 +5078,15 @@
                     applyProxyStatus(msg.data || {});
                     break;
                 case 'history_list_data':
-                    renderHistoryList((msg.data || {}).items || []);
+                    {
+                        const items = (msg.data || {}).items || [];
+                        renderHistoryList(items);
+                        // A10：跨标签页同步时顺带载入最新一条历史分析（列表已按最新在前排序）
+                        if (nzFetchLatestOnHistory) {
+                            nzFetchLatestOnHistory = false;
+                            if (items.length && items[0].file) nzHistoryView(items[0].file);
+                        }
+                    }
                     break;
                 case 'history_analysis':
                     {
@@ -5526,16 +5555,172 @@
             }
         }
 
+        /* ---------------- 配置活校验（A4）：建议不拦截 ---------------- */
+
+        // 校验器注册表在 web/validators.js（纯函数，node 可测）；此处只做接线与行内提示渲染
+        function nzValidateField(input) {
+            if (!input || !window.CFDataValidators) return;
+            const res = window.CFDataValidators.validateConfigField(input.id, input.value);
+            // 提示插在字段容器之后（.option-item 是横排 flex，提示放里面会挤进同一行）
+            const host = input.closest('.form-group') || input.closest('.option-item') || input.parentElement;
+            if (!host) return;
+            let hint = document.querySelector('.cfg-field-hint[data-for="' + input.id + '"]');
+            if (res.level === 'ok') {
+                if (hint) hint.remove();
+                return;
+            }
+            if (!hint) {
+                hint = document.createElement('div');
+                hint.className = 'cfg-field-hint';
+                hint.dataset.for = input.id;
+                hint.setAttribute('role', 'status');
+                host.insertAdjacentElement('afterend', hint);
+            }
+            hint.className = 'cfg-field-hint ' + res.level;
+            hint.innerHTML = '<span class="hint-icon">' + (res.level === 'warn' ? '⚠' : 'ℹ') + '</span><span>' + escapeHTML(res.msg) + '</span>';
+        }
+
+        function bindConfigValidators() {
+            if (!window.CFDataValidators) return;
+            Object.keys(window.CFDataValidators.FIELD_VALIDATORS).forEach((id) => {
+                const input = document.getElementById(id);
+                if (!input || input.dataset.validatorBound === '1') return;
+                input.dataset.validatorBound = '1';
+                input.addEventListener('input', () => nzValidateField(input));
+                input.addEventListener('change', () => nzValidateField(input));
+                input.addEventListener('blur', () => nzValidateField(input));
+            });
+        }
+
+        /* ---------------- 配置体检面板（A7，诊断即导航） ---------------- */
+
+        // 只读体检：按分组展示当前表单值 + 活校验结论；⚠ 项点击跳转对应配置 tab 并聚焦字段
+        const HEALTH_ITEMS = [
+            { group: '扫描参数（官方优选）', tab: 'official', fields: [
+                { id: 'officialThreads', label: '并发数量' },
+                { id: 'officialDelay', label: '扫描合格延迟' },
+                { id: 'officialStopCount', label: '提前结束数量' },
+            ] },
+            { group: '扫描参数（非标优选）', tab: 'nsb', fields: [
+                { id: 'nsbSourceUrl', label: '订阅源', requiredNote: '未配置订阅源，非标模式无法启动' },
+                { id: 'nsbThreads', label: '并发数量' },
+                { id: 'nsbDelay', label: '扫描合格延迟' },
+                { id: 'nsbResultLimit', label: '扫描合格数量' },
+                { id: 'nsbFallbackPort', label: '备用端口' },
+            ] },
+            { group: '测速与阈值', tab: 'official', fields: [
+                { id: 'officialSpeedMin', label: '官方测试合格速度' },
+                { id: 'nsbSpeedMin', label: '非标测试合格速度', tab: 'nsb' },
+            ] },
+            { group: '自动化', tab: 'automation', fields: [
+                { id: 'scheduleInterval', label: '检测间隔（分钟）' },
+            ] },
+            { group: '上传与账号', tab: 'accounts', fields: [
+                { id: 'r2WorkerUrl', label: 'R2 Worker 地址', optional: true },
+            ] },
+        ];
+
+        function nzHealthInputValue(id) {
+            const input = document.getElementById(id);
+            return input ? String(input.value ?? '').trim() : '';
+        }
+
+        function nzRenderHealthPanel() {
+            const panel = document.getElementById('healthPanel');
+            if (!panel || !window.CFDataValidators) return;
+            let warnCount = 0;
+            let html = '';
+            HEALTH_ITEMS.forEach((group) => {
+                html += '<div class="health-group-title">' + escapeHTML(group.group) + '</div>';
+                group.fields.forEach((field) => {
+                    const tab = field.tab || group.tab;
+                    const value = nzHealthInputValue(field.id);
+                    let icon = '✓';
+                    let cls = 'is-ok';
+                    let msg = '';
+                    if (field.requiredNote && value === '') {
+                        icon = '⚠'; cls = 'is-warn'; msg = field.requiredNote; warnCount++;
+                    } else if (value === '' && field.optional) {
+                        icon = 'ℹ'; cls = 'is-info'; msg = '未配置（可选）';
+                    } else {
+                        const res = window.CFDataValidators.validateConfigField(field.id, value);
+                        if (res.level === 'warn') { icon = '⚠'; cls = 'is-warn'; msg = res.msg; warnCount++; }
+                        else if (res.level === 'info') { icon = 'ℹ'; cls = 'is-info'; msg = res.msg; }
+                    }
+                    const display = value === '' ? '（空）' : value;
+                    const row = '<div class="health-row ' + cls + '"' +
+                        (cls === 'is-warn' ? ' data-tab="' + tab + '" data-field="' + field.id + '" role="button" tabindex="0" title="点击前往配置"' : '') +
+                        '><span class="health-icon">' + icon + '</span><span class="health-label">' + escapeHTML(field.label) +
+                        '</span><span class="health-value" title="' + escapeHTML(display) + '">' + escapeHTML(display) +
+                        (msg ? ' <em class="health-msg">' + escapeHTML(msg) + '</em>' : '') + '</span></div>';
+                    html += row;
+                });
+            });
+            const summary = document.getElementById('healthPanelSummary');
+            if (summary) {
+                summary.className = 'health-summary ' + (warnCount > 0 ? 'has-warn' : 'all-ok');
+                summary.textContent = warnCount > 0 ? ('发现 ' + warnCount + ' 项待优化，点击 ⚠ 行可前往对应配置') : '配置正常';
+            }
+            panel.innerHTML = html;
+            // 诊断即导航：⚠ 行点击/回车跳转配置 tab 并聚焦字段
+            panel.querySelectorAll('.health-row.is-warn').forEach((row) => {
+                const go = () => {
+                    const tab = row.dataset.tab;
+                    const fieldId = row.dataset.field;
+                    try { nzShowConfigPanel(tab); } catch (e) { /* 面板缺失时忽略 */ }
+                    const input = document.getElementById(fieldId);
+                    if (input) {
+                        try { input.focus({ preventScroll: false }); } catch (e) { try { input.focus(); } catch (e2) { /* ignore */ } }
+                        input.classList.add('health-target-flash');
+                        setTimeout(() => input.classList.remove('health-target-flash'), 1600);
+                    }
+                    nzToggleHealthPanel(false);
+                };
+                row.addEventListener('click', go);
+                row.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+            });
+        }
+
+        function nzToggleHealthPanel(force) {
+            const wrap = document.getElementById('healthPanelWrap');
+            if (!wrap) return;
+            const show = typeof force === 'boolean' ? force : wrap.classList.contains('hidden');
+            wrap.classList.toggle('hidden', !show);
+            if (show) nzRenderHealthPanel();
+        }
+        window.nzToggleHealthPanel = nzToggleHealthPanel;
+
+        /* ---------------- 跨标签页任务完成同步（A10） ---------------- */
+
+        let nzFetchLatestOnHistory = false;
+        // 其他标签页完成任务时触发：拉历史列表并顺带载入最新一条分析
+        function nzRefreshAfterOtherTabDone() {
+            nzFetchLatestOnHistory = true;
+            wsSend({ type: 'history_list', data: {} });
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
             connect();
             initializeUI();
             bindScheduleCronControl();
+            bindConfigValidators();
             renderGitHubAccounts();
             renderEdgetunnelAccounts();
             switchMode('official');
             // 面板设置恢复必须晚于 switchMode 的初始化渲染，否则恢复值会被重置
             restoreResultPanelSettings();
             initThemeFromStorage();
+            // A10：接收其他标签页的任务完成广播（本页正忙时忽略，存储异常静默）
+            let nzLastTaskDoneTs = 0;
+            window.addEventListener('storage', (e) => {
+                const key = window.TASK_DONE_BROADCAST_KEY || 'cfdata_task_done';
+                if (!e || e.key !== key || !e.newValue) return;
+                const payload = typeof window.parseTaskDoneBroadcast === 'function' ? window.parseTaskDoneBroadcast(e.newValue, nzLastTaskDoneTs) : null;
+                if (!payload) return;
+                nzLastTaskDoneTs = payload.ts;
+                if (isTaskRunning || officialBatchSpeedRunning || nsbBatchSpeedRunning) return;
+                try { nzRefreshAfterOtherTabDone(); } catch (err) { /* 连接未就绪时忽略 */ }
+            });
         });
 
         function autoThemeBySystem() {

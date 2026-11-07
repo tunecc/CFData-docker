@@ -161,7 +161,6 @@ button { font-family: inherit; }
     box-shadow: 0 4px 14px rgba(14, 165, 160, 0.3);
     transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
 }
-.btn:hover { filter: brightness(1.05); transform: translateY(-1px); }
 .btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
 
 .action-btn {
@@ -178,10 +177,8 @@ button { font-family: inherit; }
     transition: background 0.15s ease, border-color 0.15s ease;
     backdrop-filter: blur(6px);
 }
-.action-btn:hover { background: var(--accent-soft); border-color: var(--accent); }
 .action-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 .action-btn.danger { color: var(--danger); }
-.action-btn.danger:hover { background: color-mix(in srgb, var(--danger) 8%, transparent); border-color: var(--danger); }
 
 .mini-action-btn {
     padding: 6px 10px;
@@ -194,12 +191,12 @@ button { font-family: inherit; }
     flex-shrink: 0;
     transition: background 0.15s ease;
 }
-.mini-action-btn:hover { background: var(--accent-soft); }
 .mini-action-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
 input, select, textarea {
     font-family: inherit;
-    font-size: 13px;
+    /* 16px 下限：低于该字号时 iOS Safari 聚焦会整页放大（学习 subs-check-pro admin.css 3334-3340） */
+    font-size: 16px;
     color: var(--fg);
     background: color-mix(in srgb, var(--fg) 3%, var(--card));
     border: 1px solid var(--border);
@@ -260,7 +257,6 @@ label { font-size: 12px; color: var(--muted); }
     font-size: 13px;
     cursor: pointer;
 }
-.danger-btn:hover { background: color-mix(in srgb, var(--danger) 12%, transparent); }
 
 .badge {
     display: inline-block;
@@ -325,7 +321,6 @@ label { font-size: 12px; color: var(--muted); }
     white-space: nowrap;
     transition: background .15s ease, color .15s ease, box-shadow .15s ease;
 }
-.mode-option:hover { color: var(--fg); background: color-mix(in srgb, var(--fg) 6%, transparent); }
 .mode-option.active {
     color: var(--accent);
     background: color-mix(in srgb, var(--accent) 14%, transparent);
@@ -346,7 +341,6 @@ label { font-size: 12px; color: var(--muted); }
     border-color: color-mix(in srgb, var(--success) 35%, transparent);
     color: var(--success);
 }
-.toggle-btn:hover { transform: scale(1.06); }
 .toggle-btn:active { transform: scale(0.97); }
 .toggle-btn svg { width: 20px; height: 20px; }
 
@@ -646,7 +640,6 @@ thead th {
     z-index: 2;
 }
 tbody tr { transition: background 0.12s ease; }
-tbody tr:hover { background: var(--accent-soft); }
 
 .table-actions { display: inline-flex; gap: 6px; flex-wrap: wrap; }
 
@@ -704,7 +697,6 @@ h3 {
     cursor: pointer;
     line-height: 1;
 }
-.modal-close:hover { color: var(--fg); }
 
 .modal-body { padding: 14px 16px; overflow: auto; }
 
@@ -795,7 +787,6 @@ h3 {
     cursor: pointer;
     transition: all 0.15s ease;
 }
-.menu-btn:hover { background: var(--accent-soft); border-color: var(--accent); }
 .menu-btn.active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 700; }
 
 .version-line { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
@@ -875,7 +866,6 @@ h3 {
     transition: background .15s, color .15s, border-color .15s;
 }
 .cfg-tab .nav-icon { font-size: 13px; }
-.cfg-tab:hover { background: color-mix(in srgb, var(--accent) 8%, transparent); color: var(--fg); }
 .cfg-tab.active {
     background: linear-gradient(135deg, var(--accent), var(--accent-2));
     color: #fff;
@@ -947,11 +937,9 @@ h3 {
 .cfg-panel-footer .brand-name { font-weight: 700; font-size: 12px; color: var(--fg); white-space: nowrap; }
 .cfg-panel-footer .version-line { white-space: nowrap; }
 .cfg-panel-footer .github-link { color: var(--muted); display: inline-flex; flex-shrink: 0; }
-.cfg-panel-footer .github-link:hover { color: var(--fg); }
 /* 任务历史列表 */
 .history-list { max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
 .history-row { display: flex; align-items: center; gap: 8px; padding: 5px 8px; border: 1px solid var(--border); border-radius: 8px; font-size: 12px; cursor: pointer; }
-.history-row:hover { border-color: var(--accent); }
 .history-row .history-when { flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .history-row .history-mode { flex-shrink: 0; font-weight: 700; }
 .history-row .history-count { flex-shrink: 0; color: var(--text-secondary); }
@@ -1123,7 +1111,6 @@ h3 {
     transition: background .15s, color .15s;
     user-select: none;
 }
-.run-tab:hover { background: color-mix(in srgb, var(--accent) 8%, transparent); color: var(--fg); }
 .run-tab.active {
     background: linear-gradient(135deg, var(--accent), var(--accent-2));
     color: #fff;
@@ -1162,7 +1149,6 @@ h3 {
     cursor: pointer;
     transition: background .15s, color .15s;
 }
-.log-filter-btn:hover { color: var(--fg); }
 .log-filter-btn.active { background: var(--accent); color: #fff; }
 #logBox.filter-brief .log-line-detail { display: none; }
 #logBox.filter-error .log-line-info, #logBox.filter-error .log-line-detail { display: none; }
@@ -1273,7 +1259,6 @@ h3 {
 
 .ip-cell { font-family: var(--mono); }
 .ip-detail-link { color: var(--accent); cursor: pointer; text-decoration: none; }
-.ip-detail-link:hover { text-decoration: underline; }
 
 .speed-cell-content { display: inline-flex; align-items: center; gap: 6px; }
 .speed-btn {
@@ -1285,7 +1270,6 @@ h3 {
     font-size: 11px;
     cursor: pointer;
 }
-.speed-btn:hover { background: var(--accent-soft); }
 .speed-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 .speed-result { font-variant-numeric: tabular-nums; font-weight: 600; }
 .speed-qualified { color: var(--success); }
@@ -1360,7 +1344,6 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
     color: var(--accent);
     font-weight: 600;
 }
-.action-btn.export-btn:hover { background: color-mix(in srgb, var(--accent) 18%, transparent); }
 
 .no-transition, .no-transition * { transition: none !important; }
 
@@ -1369,7 +1352,9 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
     to { background-position: 40px 0; }
 }
 
-@supports (padding: max(0px)) {
+/* 用 env() 本身作探测条件（A11）：不支持 env() 的旧内核走 .app 基础 padding 保底，
+   避免命中本块后 max(10px, env(...)) 整条声明失效导致完全无内边距 */
+@supports (padding-top: env(safe-area-inset-top)) {
     .app {
         padding-left: max(10px, env(safe-area-inset-left));
         padding-right: max(10px, env(safe-area-inset-right));
@@ -1378,3 +1363,87 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
     }
 }
 
+
+/* ---------------- 触屏/鼠标双反馈通道（A1） ---------------- */
+/* 学习 subs-check-pro（admin.css 3901-3931）：hover 效果只在支持悬停的指针设备生效，
+   触屏（hover:none）改用 :active 即按即弹，避免触屏残留 hover 状态。桌面端视觉不变。 */
+@media (hover: hover) {
+    .btn:hover { filter: brightness(1.05); transform: translateY(-1px); }
+    .action-btn:hover { background: var(--accent-soft); border-color: var(--accent); }
+    .action-btn.danger:hover { background: color-mix(in srgb, var(--danger) 8%, transparent); border-color: var(--danger); }
+    .mini-action-btn:hover { background: var(--accent-soft); }
+    .danger-btn:hover { background: color-mix(in srgb, var(--danger) 12%, transparent); }
+    .mode-option:hover { color: var(--fg); background: color-mix(in srgb, var(--fg) 6%, transparent); }
+    .toggle-btn:hover { transform: scale(1.06); }
+    tbody tr:hover { background: var(--accent-soft); }
+    .modal-close:hover { color: var(--fg); }
+    .menu-btn:hover { background: var(--accent-soft); border-color: var(--accent); }
+    .cfg-tab:hover { background: color-mix(in srgb, var(--accent) 8%, transparent); color: var(--fg); }
+    .cfg-panel-footer .github-link:hover { color: var(--fg); }
+    .history-row:hover { border-color: var(--accent); }
+    .run-tab:hover { background: color-mix(in srgb, var(--accent) 8%, transparent); color: var(--fg); }
+    .log-filter-btn:hover { color: var(--fg); }
+    .ip-detail-link:hover { text-decoration: underline; }
+    .speed-btn:hover { background: var(--accent-soft); }
+    .action-btn.export-btn:hover { background: color-mix(in srgb, var(--accent) 18%, transparent); }
+    .health-row.is-warn:hover .health-value { color: var(--warning); }
+}
+@media (hover: none) {
+    /* 即按即弹：按下瞬间给可见反馈，松开即恢复 */
+    .btn:active, .toggle-btn:active { transform: scale(0.95); }
+    .action-btn:active, .mini-action-btn:active, .danger-btn:active, .mode-option:active,
+    .menu-btn:active, .cfg-tab:active, .run-tab:active, .log-filter-btn:active,
+    .speed-btn:active, .action-btn.export-btn:active { filter: brightness(0.92); }
+    .history-row:active { border-color: var(--accent); }
+}
+
+/* ---------------- Toast 倒计时进度条（A5） ---------------- */
+.toast {
+    position: relative;
+    overflow: hidden;
+}
+.toast::after {
+    content: '';
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 3px;
+    height: 2px;
+    border-radius: 1px;
+    background: currentColor;
+    opacity: 0.3;
+    transform-origin: left center;
+    /* 时长由 enhance.js nzToast 写入 --toast-ms，与自动关闭时长同源；缺省 2.6s */
+    animation: toast-countdown var(--toast-ms, 2.6s) linear forwards;
+}
+@keyframes toast-countdown { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+
+/* 复制按钮三段式反馈（A5）：成功瞬间整钮变绿色态（内容由 JS 换对勾），约 1.8s 后还原 */
+.copied { color: var(--success) !important; border-color: color-mix(in srgb, var(--success) 45%, transparent) !important; }
+
+/* ---------------- 配置活校验行内提示（A4） ---------------- */
+.cfg-field-hint { display: flex; gap: 4px; align-items: baseline; font-size: 11px; margin-top: 3px; line-height: 1.4; }
+.cfg-field-hint .hint-icon { flex-shrink: 0; }
+.cfg-field-hint.info { color: var(--muted); }
+.cfg-field-hint.warn { color: var(--warning); }
+
+/* ---------------- 分析 Hero 强调数字（A6） ---------------- */
+.hero-num { color: var(--accent); font-weight: 700; }
+.hero-num.tier-good { color: var(--success); }
+.hero-num.tier-warn { color: var(--warning); }
+.hero-num.tier-bad { color: var(--danger); }
+
+/* ---------------- 配置体检面板（A7） ---------------- */
+.health-panel { border: 1px solid var(--border); border-radius: var(--radius-sm); background: color-mix(in srgb, var(--fg) 2%, var(--card)); padding: 10px 12px; margin-top: 10px; }
+.health-summary { font-size: 13px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+.health-summary.all-ok { color: var(--success); }
+.health-summary.has-warn { color: var(--warning); }
+.health-group-title { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin: 10px 0 4px; }
+.health-row { display: flex; gap: 8px; align-items: baseline; font-size: 12px; padding: 3px 0; }
+.health-row .health-icon { flex-shrink: 0; }
+.health-row .health-label { color: var(--muted); flex-shrink: 0; }
+.health-row .health-value { color: var(--fg); word-break: break-all; }
+.health-row.is-warn { cursor: pointer; border-radius: 6px; }
+.health-row.is-warn .health-label { color: var(--warning); }
+.health-row .health-msg { font-style: normal; color: inherit; opacity: 0.85; margin-left: 4px; }
+.health-target-flash { outline: 2px solid var(--accent) !important; outline-offset: 1px; transition: outline-color 1.2s ease; }

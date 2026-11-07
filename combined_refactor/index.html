@@ -6,6 +6,8 @@
     <meta name="theme-color" content="#f4f6f7">
     <title>CFData 控制台 - Cloudflare IP 优选</title>
     <link rel="icon" href="/favicon.png" type="image/png">
+    <!-- A8：PWA 可安装（零缓存透传 SW；未登录时注册静默失败） -->
+    <link rel="manifest" href="/static/site.webmanifest">
     <link rel="stylesheet" href="/static/styles.css">
 <script>
     (function () {
@@ -29,7 +31,7 @@
                     <span class="status-pill" id="status"><span class="dot"></span>正在连接服务器...</span>
                 </div>
                 <div class="run-card">
-                    <button class="toggle-btn" id="nzToggle" onclick="nzToggleClick()" title="启动 / 停止任务">
+                    <button class="toggle-btn" id="nzToggle" onclick="nzToggleClick()" title="启动 / 停止任务" aria-pressed="false" aria-label="启动或停止任务">
                         <svg class="toggle-icon-idle" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.14v14l11-7-11-7z"/></svg>
                         <svg class="toggle-icon-stop" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
                         <span class="toggle-spinner"></span>
@@ -72,7 +74,7 @@
                         <button class="mini-action-btn" onclick="nzClearLog()" title="清空日志">🧹</button>
                     </div>
                 </div>
-                <div class="log-shell" id="logShell">
+                <div class="log-shell" id="logShell" role="log" aria-live="polite" aria-label="任务运行日志">
                     <div class="log-skeleton"><div class="sk-tag"></div><div class="sk-line"></div></div>
                     <div class="log-skeleton"><div class="sk-tag"></div><div class="sk-line"></div></div>
                     <div class="log-skeleton"><div class="sk-tag"></div><div class="sk-line"></div></div>
@@ -604,7 +606,14 @@
             <div class="cfg-body hidden" id="cfgPanelSettings">
                 <div class="cfg-panel-head">
                     <div class="cfg-panel-title">设置</div>
-                    <button class="menu-btn cfg-save-btn" onclick="saveSettingsPage()" title="保存当前页面的本地配置、自动加载偏好与管理面代理">💾 保存</button>
+                    <div style="display:flex;gap:6px;">
+                        <button class="menu-btn" onclick="nzToggleHealthPanel()" title="按当前表单值做只读体检，⚠ 项可点击前往配置">🩺 配置体检</button>
+                        <button class="menu-btn cfg-save-btn" onclick="saveSettingsPage()" title="保存当前页面的本地配置、自动加载偏好与管理面代理">💾 保存</button>
+                    </div>
+                </div>
+                <div class="health-panel hidden" id="healthPanelWrap" aria-live="polite">
+                    <div class="health-summary" id="healthPanelSummary"></div>
+                    <div id="healthPanel"></div>
                 </div>
 <div class="settings-grid">
                 <div class="card">
@@ -957,7 +966,7 @@
             </div>
             <div class="modal-actions footer">
                 <button class="action-btn export-btn" onclick="copySubstoreResults(event)">复制 Sub-Store 列表</button>
-                <button class="action-btn export-btn" onclick="copyConfiguredResults(event)">复制结果</button>
+                <button class="action-btn export-btn" id="copyResultsBtn" onclick="copyConfiguredResults(event)">复制结果</button>
             </div>
         </div>
     </div>
@@ -1051,6 +1060,7 @@
 
 
 <script src="/static/common.js"></script>
+<script src="/static/validators.js"></script>
 <script src="/static/app.js"></script>
 
 <script src="/static/enhance.js"></script>

@@ -26,6 +26,7 @@
 
     // 右侧配置分组切换；任务模式唯一切换入口在任务控制卡：
     // official/nsb/mode 入参只跟随当前模式显示对应参数页，MUST NOT 反向切换任务模式
+    var nzPanelScrollMemory = {}; // A12：配置面板 tab 滚动位置记忆（会话内存态）
     window.nzShowConfigPanel = function (name) {
         var key = name;
         if (key === 'mode' || key === 'official' || key === 'nsb') {
@@ -35,6 +36,11 @@
         }
         var tabs = { automation: 'cfgTabAutomation', results: 'cfgTabResults', accounts: 'cfgTabAccounts', settings: 'cfgTabSettings' };
         var bodies = { official: 'cfgPanelOfficial', nsb: 'cfgPanelNSB', automation: 'cfgPanelAutomation', results: 'cfgPanelResults', accounts: 'cfgPanelAccounts', settings: 'cfgPanelSettings' };
+        // A12：display:none 前先保存各面板滚动位置（存 → 切 → rAF 恢复，参照 subs-check-pro config-form.js:4693-4732）
+        Object.keys(bodies).forEach(function (k) {
+            var body = document.getElementById(bodies[k]);
+            if (body) nzPanelScrollMemory[k] = body.scrollTop;
+        });
         Object.keys(bodies).forEach(function (k) {
             var body = document.getElementById(bodies[k]);
             if (!body) return;
@@ -43,6 +49,12 @@
             body.classList.toggle('active', isActive);
             body.classList.toggle('hidden', !isActive);
         });
+        // A12：恢复目标面板滚动位置（rAF 等布局生效后再滚）
+        var targetBody = document.getElementById(bodies[key]);
+        if (targetBody) {
+            var savedTop = nzPanelScrollMemory[key] || 0;
+            requestAnimationFrame(function () { targetBody.scrollTop = savedTop; });
+        }
         document.querySelectorAll('.cfg-tab').forEach(function (t) { t.classList.remove('active'); });
         // 当前模式参数标签：文字/图标/说明跟随任务控制卡选择的模式，两个模式只有一个标签
         var modeTab = document.getElementById('cfgTabMode');
@@ -79,18 +91,45 @@
 
     /* ---------------- Toast ---------------- */
 
-    window.nzToast = function (text, kind) {
+    // 默认展示时长（毫秒）：与 styles.css 中 toast-countdown 动画时长保持一致
+    var NZ_TOAST_MS = 2600;
+
+    window.nzToast = function (text, kind, durationMs) {
         var wrap = document.getElementById('toastWrap');
         if (!wrap) return;
+        var ms = typeof durationMs === 'number' && durationMs > 0 ? durationMs : NZ_TOAST_MS;
         var t = document.createElement('div');
         t.className = 'toast ' + (kind || 'info');
         t.textContent = String(text == null ? '' : text);
+        // 底部倒计时进度条：动画时长与自动关闭时长同源（A5）
+        try { t.style.setProperty('--toast-ms', (ms / 1000) + 's'); } catch (e) { /* 旧内核忽略 */ }
         wrap.appendChild(t);
         setTimeout(function () {
             t.style.transition = 'opacity .3s';
             t.style.opacity = '0';
             setTimeout(function () { t.remove(); }, 320);
-        }, 2600);
+        }, ms);
+    };
+
+    /* ---------------- 复制按钮三段式反馈（A5） ---------------- */
+
+    // 成功后：按钮内容瞬时换对勾 + .copied 绿态 → 停留约 1.8s → 还原内容；
+    // 反馈期间 dataset.busy 置位，防重复触发复制。返回 false 表示正忙（调用方跳过本次复制）。
+    var NZ_COPIED_MS = 1800;
+    window.nzCopyFeedback = function (target) {
+        var btn = target && target.closest ? target.closest('button') : null;
+        if (!btn) return true;
+        if (btn.dataset.busy === '1') return false;
+        var original = btn.innerHTML;
+        btn.dataset.busy = '1';
+        btn.classList.add('copied');
+        btn.innerHTML = '<span aria-hidden="true">✓</span>';
+        setTimeout(function () {
+            btn.classList.remove('copied');
+            btn.innerHTML = original;
+            delete btn.dataset.busy;
+        }, NZ_COPIED_MS);
+        return true;
     };
 
     /* ---------------- 圆形启停状态机 ---------------- */
@@ -110,6 +149,9 @@
         if (btn) {
             btn.classList.remove('state-idle', 'state-preparing', 'state-running', 'state-stopping');
             btn.classList.add('state-' + state);
+            // A11：启停按钮按下态随任务状态同步（任务活跃 = true）
+            var active = state === 'preparing' || state === 'running' || state === 'stopping';
+            btn.setAttribute('aria-pressed', active ? 'true' : 'false');
         }
         var title = document.getElementById('nzRunTitle');
         if (title) title.textContent = STATE_META[state].title;
@@ -251,6 +293,13 @@
             nzSetToggleState('idle');
             nzToast('任务完成', 'success');
             nzScheduleAnalysis();
+            // A10：跨标签页广播任务完成（其他同源标签页经 storage 事件刷新状态/结果）
+            try {
+                localStorage.setItem(
+                    window.TASK_DONE_BROADCAST_KEY || 'cfdata_task_done',
+                    typeof window.buildTaskDoneBroadcast === 'function' ? window.buildTaskDoneBroadcast(currentMode) : String(Date.now())
+                );
+            } catch (e) { /* 隐私模式等存储不可用时忽略 */ }
             try { nzShowRunPanel('report'); } catch (e) { console.error(e); }
             try { nzUpdateStartReadiness(); } catch (e) { /* 旧函数缺失时忽略 */ }
         }
@@ -298,6 +347,22 @@
             '</div>' + (sub ? '<div class="chip-sub">' + sub + '</div>' : '') + '</div></div>';
     }
 
+    /* A6：达标率三态色档（0% 红 / >0% 且 <5% 橙 / ≥5% 绿），阈值纯函数在 common.js */
+    var NZ_TIER_COLORS = { good: '#0fd056', warn: '#d97706', bad: '#ef4444' };
+    function nzTierClass(qualified, total) {
+        var tier = 'good';
+        try { tier = window.qualifiedRateTier ? window.qualifiedRateTier(qualified, total) : 'good'; } catch (e) { /* 纯函数缺失时退默认 */ }
+        return NZ_TIER_COLORS[tier] ? tier : 'good';
+    }
+    function nzTierColor(qualified, total) {
+        return NZ_TIER_COLORS[nzTierClass(qualified, total)] || NZ_TIER_COLORS.good;
+    }
+    // Hero 关键数字强调 span；tierClass 传入时按三态着色
+    function nzHeroNum(value, tierClass) {
+        var cls = 'hero-num' + (tierClass ? ' tier-' + tierClass : '');
+        return '<span class="' + cls + '">' + nzEscText(value) + '</span>';
+    }
+
     function nzRefreshAnalysis() {
         // 数据层优先：服务端下发的统计记录（任务完成推送 / 历史查看 / 重启恢复）
         if (window.nzAnalysisData && typeof nzRenderAnalysisFromStats === 'function') {
@@ -337,17 +402,25 @@
         rankCard.style.display = dcRows.length > 0 ? '' : 'none';
         if (!hasData) return;
 
+        // A6：达标率三态（DOM 兜底路径以扫描结果为分母，无扫描行时退详细测试行）
+        var qualifiedTotal = qualified;
+        var qualifiedDenom = scanRows.length > 0 ? scanRows.length : testRows.length;
+        var tierColor = nzTierColor(qualifiedTotal, qualifiedDenom);
+        var qualifiedRate = qualifiedDenom > 0 ? Math.round(qualifiedTotal / qualifiedDenom * 100) : 0;
+
         var chips = nzChip('📡', '#0ea5a0', scanRows.length, '扫描结果', '当前任务结果行');
         chips += nzChip('🧪', '#8b5cf6', testRows.length, '详细测试', '丢包与延迟明细');
         chips += nzChip('🏢', '#0198d3', dcRows.length, '数据中心', '落地点汇总');
         chips += nzChip('🌍', '#e23b76', regionCount, '覆盖地区', '按结果行地区去重');
-        chips += nzChip('✅', '#0fd056', qualified, '达标节点', '测速/合格标记');
+        chips += nzChip('✅', tierColor, qualifiedTotal, '达标节点', '达标率 ' + qualifiedRate + '%');
         var chipsEl = document.getElementById('analysisChips');
         if (chipsEl) chipsEl.innerHTML = chips;
 
         var hero = document.getElementById('analysisHero');
         if (hero) {
-            hero.textContent = '共 ' + scanRows.length + ' 条扫描结果 · ' + testRows.length + ' 条详细测试 · 覆盖 ' + regionCount + ' 个地区 / ' + dcRows.length + ' 个数据中心';
+            hero.innerHTML = '共 ' + nzHeroNum(scanRows.length) + ' 条扫描结果 · ' + nzHeroNum(testRows.length) + ' 条详细测试' +
+                ' · 覆盖 ' + nzHeroNum(regionCount) + ' 个地区 / ' + nzHeroNum(dcRows.length) + ' 个数据中心' +
+                ' · 达标率 ' + nzHeroNum(qualifiedRate + '%', nzTierClass(qualifiedTotal, qualifiedDenom));
         }
 
         /* 数据中心排行：按 IP 数量 */
@@ -390,6 +463,8 @@
         var dcNames = Object.keys(dcDist);
         var regionCount = Object.keys(stats.regionDistribution || {}).length;
         var rate = stats.resultCount > 0 ? Math.round((stats.qualifiedCount || 0) / stats.resultCount * 100) : 0;
+        // A6：达标率三态（服务器统计路径）
+        var tierColor = nzTierColor(stats.qualifiedCount || 0, stats.resultCount || 0);
         summaryCard.style.display = '';
         rankCard.style.display = dcNames.length > 0 ? '' : 'none';
 
@@ -397,7 +472,7 @@
         chips += nzChip('🧪', '#8b5cf6', stats.testCount || 0, '详细测试', '丢包与延迟明细');
         chips += nzChip('🏢', '#0198d3', dcNames.length, '数据中心', '落地点汇总');
         chips += nzChip('🌍', '#e23b76', regionCount, '覆盖地区', '按地区去重');
-        chips += nzChip('✅', '#0fd056', stats.qualifiedCount || 0, '达标节点', '达标率 ' + rate + '%');
+        chips += nzChip('✅', tierColor, stats.qualifiedCount || 0, '达标节点', '达标率 ' + rate + '%');
         var chipsEl = document.getElementById('analysisChips');
         if (chipsEl) chipsEl.innerHTML = chips;
 
@@ -405,9 +480,10 @@
         if (hero) {
             var when = stats.startedAt ? new Date(stats.startedAt).toLocaleString('zh-CN', { hour12: false }) : '';
             var modeName = stats.mode === 'nsb' ? '非标优选' : '官方优选';
-            hero.textContent = (stats.label || modeName) + (when ? ' · ' + when : '') +
-                ' · 共 ' + (stats.resultCount || 0) + ' 条结果 · 覆盖 ' + regionCount + ' 个地区 / ' + dcNames.length + ' 个数据中心' +
-                (stats.failureSummary ? ' · ' + stats.failureSummary : '');
+            hero.innerHTML = nzEscText(stats.label || modeName) + (when ? ' · ' + nzEscText(when) : '') +
+                ' · 共 ' + nzHeroNum(stats.resultCount || 0) + ' 条结果 · 覆盖 ' + nzHeroNum(regionCount) + ' 个地区 / ' + nzHeroNum(dcNames.length) + ' 个数据中心' +
+                ' · 达标率 ' + nzHeroNum(rate + '%', nzTierClass(stats.qualifiedCount || 0, stats.resultCount || 0)) +
+                (stats.failureSummary ? ' · ' + nzEscText(stats.failureSummary) : '');
         }
 
         var rankEl = document.getElementById('analysisRankDC');
@@ -461,6 +537,26 @@
     var nzLogSelecting = false;
     var nzLogPaused = false;
     var nzLogFilterLevel = 'brief';
+    // A3：框选日志期间的行缓冲（选区稳定优先；纯函数在 common.js，旧文件缺失时退直连渲染）
+    var nzLogBuffer = typeof window.createLogBuffer === 'function' ? window.createLogBuffer(LOG_MAX) : null;
+
+    // 选区是否有效：shell 内按住且当前选区非空（点击不选中不缓冲）
+    function nzHasLogSelection() {
+        try {
+            var sel = window.getSelection();
+            return !!(sel && String(sel).length > 0);
+        } catch (e) { return false; }
+    }
+
+    // 选区结束：缓冲行按序回灌（nzAppendLogLine 自带 LOG_MAX 截断），丢弃超限先插省略提示
+    function nzFlushLogBuffer() {
+        if (!nzLogBuffer || nzLogBuffer.size === 0) return;
+        var out = nzLogBuffer.drain();
+        if (out.omitted > 0) {
+            nzAppendLogLine('（框选期间已省略 ' + out.omitted + ' 行日志）');
+        }
+        out.lines.forEach(function (line) { nzAppendLogLine(line); });
+    }
 
     // 「简要」级别隐藏的高频逐行细节（单点测速、分轮精简、上传重试、界面操作回声等）
     var LOG_DETAIL_RE = /(测速完成: |第 \d+\/\d+ 次上传|^第 \d+ 轮|精简第 \d+ 轮|已复制: |复制失败: |切换至：|已连接服务器|连接断开|已开始跟随后台任务|配置文件已从|当前配置已保存|调试模式已开启)/;
@@ -514,6 +610,7 @@
         if (box) box.innerHTML = '';
         nzLastLogLine = null;
         nzLastLogText = '';
+        if (nzLogBuffer) nzLogBuffer.clear();
         nzUpdateLogCount();
     };
 
@@ -571,6 +668,11 @@
         if (!box) return;
         if (shell) shell.classList.remove('loading');
         text = String(text == null ? '' : text);
+        // A3：框选期间不进 DOM（含重复合并、上限删除），只进缓冲，选区结束后统一回灌
+        if (nzLogBuffer && nzLogSelecting && nzHasLogSelection()) {
+            nzLogBuffer.push(text);
+            return;
+        }
         // 连续重复的相同日志合并为一行带计数徽标，避免刷屏
         if (nzLastLogLine && nzLastLogText === text && nzLastLogLine.parentNode === box) {
             nzLastLogCount++;
@@ -619,7 +721,7 @@
         }
     };
 
-    /* 日志滚动：上滚暂停 + 回到底部胶囊；框选文本不打断 */
+    /* 日志滚动：上滚暂停 + 回到底部胶囊；框选文本不打断（渲染转缓冲，松开回灌） */
     (function () {
         var shell = nzShell();
         if (!shell) return;
@@ -631,6 +733,8 @@
         document.addEventListener('mouseup', function () {
             if (nzLogSelecting) {
                 nzLogSelecting = false;
+                // A3：选区结束，回灌框选期间缓冲的日志行
+                try { nzFlushLogBuffer(); } catch (e) { /* 回灌失败不影响主流程 */ }
                 nzUpdateBackCapsule();
             }
         });
@@ -692,6 +796,12 @@
         // 初始日志过滤级别与启动就绪校验
         try { nzSetLogFilter('brief'); } catch (e) { /* ignore */ }
         try { nzUpdateStartReadiness(); } catch (e) { /* 旧函数缺失时忽略 */ }
+        // A8：PWA 可安装（零缓存透传 SW，仅满足安装判据；未登录或旧内核时静默失败）
+        if ('serviceWorker' in navigator) {
+            try {
+                navigator.serviceWorker.register('/static/sw.js', { scope: '/' }).catch(function () { /* 未登录/不支持时静默 */ });
+            } catch (e) { /* ignore */ }
+        }
     });
 
     nzSetToggleState('idle');

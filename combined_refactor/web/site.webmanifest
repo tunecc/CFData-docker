@@ -1,0 +1,24 @@
+{
+    "name": "CFData 控制台",
+    "short_name": "CFData",
+    "description": "Cloudflare IP 优选与订阅管理控制台",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#f4f6f7",
+    "theme_color": "#0ea5a0",
+    "lang": "zh-CN",
+    "icons": [
+        {
+            "src": "/static/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/static/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}

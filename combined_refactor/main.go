@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"mime"
 	"net"
 	"net/http"
 	"os"
@@ -289,9 +290,18 @@ func main() {
 		os.Exit(1)
 	}
 	staticHandler := http.StripPrefix("/static/", http.FileServer(http.FS(webFS)))
+	// A8：.webmanifest 需要正确的 MIME 类型（部分浏览器拒绝 text/plain 的 manifest）
+	if err := mime.AddExtensionType(".webmanifest", "application/manifest+json"); err != nil {
+		fmt.Printf("manifest MIME 注册失败: %v\n", err)
+	}
 	// 前端静态资源随镜像更新：要求浏览器每次回源，避免升级后仍执行缓存的旧 app.js / enhance.js
 	http.Handle("/static/", requireAuth(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Cache-Control", "no-cache")
+		// A8：Service Worker 根作用域声明——sw.js 物理路径在 /static/ 下，
+		// 无此头时默认作用域仅 /static/，无法控制页面本身
+		if r.URL.Path == "/static/sw.js" {
+			w.Header().Set("Service-Worker-Allowed", "/")
+		}
 		staticHandler.ServeHTTP(w, r)
 	}))
 	http.HandleFunc("/ws", requireAuth(handleWebSocket))

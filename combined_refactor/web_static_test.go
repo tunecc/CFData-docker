@@ -117,7 +117,7 @@ func TestIndexLogBoxCompactPlaceholder(t *testing.T) {
 func readFrontendSource(t *testing.T) string {
 	t.Helper()
 	var b strings.Builder
-	for _, f := range []string{"index.html", "web/common.js", "web/app.js", "web/enhance.js"} {
+	for _, f := range []string{"index.html", "web/common.js", "web/validators.js", "web/app.js", "web/enhance.js"} {
 		data, err := os.ReadFile(f)
 		if err != nil {
 			t.Fatalf("read %s: %v", f, err)
@@ -126,4 +126,135 @@ func readFrontendSource(t *testing.T) string {
 		b.WriteString("\n")
 	}
 	return b.String()
+}
+
+// TestPWAAssetsAndWiring 固化 PWA 可安装（A8）：manifest/sw/图标随 embed 提供、
+// index.html 引用 manifest、enhance.js 以根 scope 注册、main.go 声明 Service-Worker-Allowed。
+func TestPWAAssetsAndWiring(t *testing.T) {
+	handler := staticTestHandler()
+	for _, file := range []string{"site.webmanifest", "sw.js", "icon-192.png", "icon-512.png"} {
+		req := httptest.NewRequest(http.MethodGet, "/static/"+file, nil)
+		rec := httptest.NewRecorder()
+		handler.ServeHTTP(rec, req)
+		if rec.Code != http.StatusOK {
+			t.Fatalf("GET /static/%s = %d，PWA 资源缺失", file, rec.Code)
+		}
+	}
+	manifest, err := staticFiles.ReadFile("web/site.webmanifest")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, want := range []string{`"start_url": "/"`, `"display": "standalone"`, `/static/icon-192.png`, `/static/icon-512.png`} {
+		if !strings.Contains(string(manifest), want) {
+			t.Fatalf("site.webmanifest 缺少 %s", want)
+		}
+	}
+	sw, err := staticFiles.ReadFile("web/sw.js")
+	if err != nil {
+		t.Fatal(err)
+	}
+	// 零缓存透传：不允许出现任何缓存 API
+	if strings.Contains(string(sw), "caches") || strings.Contains(string(sw), "cache.put") {
+		t.Fatal("sw.js 应为零缓存透传，不得引入离线缓存")
+	}
+	htmlData, err := staticFiles.ReadFile("index.html")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(htmlData), `<link rel="manifest" href="/static/site.webmanifest">`) {
+		t.Fatal("index.html 缺少 manifest 引用")
+	}
+	enhanceData, err := os.ReadFile("web/enhance.js")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(enhanceData), `navigator.serviceWorker.register('/static/sw.js', { scope: '/' })`) {
+		t.Fatal("enhance.js 应以根作用域注册 Service Worker")
+	}
+	mainData, err := os.ReadFile("main.go")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(mainData), `Service-Worker-Allowed`) || !strings.Contains(string(mainData), `/static/sw.js`) {
+		t.Fatal("main.go 应为 /static/sw.js 声明 Service-Worker-Allowed: / 根作用域")
+	}
+}
+
+// TestUIInteractionMarkers 固化交互学习点落地的静态标记：
+// A1 hover 分离、A2 16px、A3 缓冲、A4 活校验接线、A5 倒计时/对勾、A6 三态、
+// A7 体检面板、A9 计数/截断、A10 广播、A11 aria 与 safe-area、A12 滚动记忆。
+func TestUIInteractionMarkers(t *testing.T) {
+	cssData, err := os.ReadFile("web/styles.css")
+	if err != nil {
+		t.Fatal(err)
+	}
+	css := string(cssData)
+	for _, want := range []string{
+		"@media (hover: hover)",       // A1
+		"@media (hover: none)",        // A1
+		"font-size: 16px",             // A2
+		"toast-countdown",             // A5
+		"var(--toast-ms, 2.6s)",       // A5 与 JS 同源
+		".copied",                     // A5
+		".cfg-field-hint",             // A4
+		".hero-num",                   // A6
+		".health-panel",               // A7
+		"@supports (padding-top: env(safe-area-inset-top))", // A11
+	} {
+		if !strings.Contains(css, want) {
+			t.Fatalf("styles.css 缺少标记: %s", want)
+		}
+	}
+	htmlData, err := staticFiles.ReadFile("index.html")
+	if err != nil {
+		t.Fatal(err)
+	}
+	html := string(htmlData)
+	for _, want := range []string{
+		`role="log" aria-live="polite"`, // A11
+		`aria-pressed="false"`,          // A11
+		`id="healthPanelWrap"`,          // A7
+		`id="copyResultsBtn"`,           // A9
+		`<script src="/static/validators.js"></script>`, // A4
+	} {
+		if !strings.Contains(html, want) {
+			t.Fatalf("index.html 缺少标记: %s", want)
+		}
+	}
+	appData, err := os.ReadFile("web/app.js")
+	if err != nil {
+		t.Fatal(err)
+	}
+	app := string(appData)
+	for _, want := range []string{
+		"bindConfigValidators",       // A4
+		"nzToggleHealthPanel",        // A7
+		"nzRenderHealthPanel",        // A7
+		"复制结果 (",                     // A9 计数
+		"window.truncateMiddle",      // A9
+		"parseTaskDoneBroadcast",     // A10
+		"nzFetchLatestOnHistory",     // A10
+	} {
+		if !strings.Contains(app, want) {
+			t.Fatalf("app.js 缺少标记: %s", want)
+		}
+	}
+	enhanceData, err := os.ReadFile("web/enhance.js")
+	if err != nil {
+		t.Fatal(err)
+	}
+	enhance := string(enhanceData)
+	for _, want := range []string{
+		"nzLogBuffer",             // A3
+		"nzFlushLogBuffer",        // A3
+		"nzCopyFeedback",          // A5
+		"nzHeroNum",               // A6
+		"TASK_DONE_BROADCAST_KEY", // A10
+		"aria-pressed",            // A11
+		"nzPanelScrollMemory",     // A12
+	} {
+		if !strings.Contains(enhance, want) {
+			t.Fatalf("enhance.js 缺少标记: %s", want)
+		}
+	}
 }
