@@ -316,6 +316,10 @@
                     <span class="label" title="测速达标结果的最大数量，关闭测速填 0">🏁 测速结果数量</span>
                     <input id="officialSpeedLimit" type="number" value="5" placeholder="0 关闭测速">
                 </div>
+                <div class="option-item">
+                    <span class="label" title="所有并发测速下载共享的总带宽上限，单位 MB/s；官方与非标测速共用，启用后非标测速并发按 总带宽÷合格阈值 自动收敛。0 表示不限速">🌐 总测速带宽上限</span>
+                    <input id="speedBandwidth" type="number" value="0" min="0" step="1" placeholder="0 不限速">
+                </div>
                 <div class="option-item full-width">
                     <span class="label">🔗 测速网址</span>
                     <div class="field-with-action">

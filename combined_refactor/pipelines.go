@@ -30,6 +30,7 @@ type officialFlowOptions struct {
 	speedURL   string
 	speedLimit int
 	speedMin   float64
+	bandwidth  int
 	// 调度路径：任务结束后按 CLI 语义写导出文件并按配置 R2 上传
 	exportAndUpload bool
 	cfg             *cliConfig
@@ -59,6 +60,7 @@ type nsbFlowOptions struct {
 	targetDC     string
 	speedMin     float64
 	speedLimit   int
+	bandwidth    int
 	compact      bool
 	scanMode     string
 	relinkHost   string
@@ -81,6 +83,10 @@ func runOfficialTaskFlow(ctx context.Context, session *appSession, opts official
 	if scanMode == "" {
 		scanMode = scanModeTCPing
 	}
+	// 网络健康探针覆盖任务全程（扫描 → 详细测试 → 批量测速）：拥塞节流全程生效，
+	// 拥塞期失败的扫描/测试/测速可按预算复核一次；预算在扫描入口按候选数初始化
+	stopNetHealth := startScanNetHealth()
+	defer stopNetHealth()
 	if opts.fromLibrary {
 		runOfficialTaskWithPool(ctx, session, opts.libraryIPs, opts.threads, opts.port, opts.delay, scanMode, opts.targetDC, opts.stopCount, true)
 	} else {
@@ -154,7 +160,7 @@ func runOfficialTaskFlow(ctx context.Context, session *appSession, opts official
 			if speedURL == "" || isAutoSpeedURL(speedURL) {
 				speedURL = speedTestURL
 			}
-			runOfficialSpeedBatch(ctx, session, opts.speedPort, speedURL, opts.speedLimit, opts.speedMin, results, false)
+			runOfficialSpeedBatch(ctx, session, opts.speedPort, speedURL, opts.speedLimit, opts.speedMin, opts.bandwidth, results, false)
 		}
 		// 测速在产出任何结果之前被取消时补传延迟筛选结果（仅 Web 路径；
 		// 调度路径由导出收尾统一上传，避免重复）
@@ -227,7 +233,7 @@ func runNSBTaskFlow(ctx context.Context, session *appSession, opts nsbFlowOption
 		scanMode = scanModeTCPing
 	}
 	relinkHost := opts.relinkHost
-	runNSBTask(ctx, session, fileName, fileContent, opts.outFile, opts.threads, opts.fallbackPort, opts.speedTest, opts.speedURL, opts.enableTLS, opts.delay, opts.resultLimit, opts.targetDC, opts.speedMin, opts.speedLimit, opts.compact, scanMode, relinkHost)
+	runNSBTask(ctx, session, fileName, fileContent, opts.outFile, opts.threads, opts.fallbackPort, opts.speedTest, opts.speedURL, opts.enableTLS, opts.delay, opts.resultLimit, opts.targetDC, opts.speedMin, opts.speedLimit, opts.bandwidth, opts.compact, scanMode, relinkHost)
 	if ctx.Err() != nil {
 		err := ctx.Err()
 		opts.done(err)

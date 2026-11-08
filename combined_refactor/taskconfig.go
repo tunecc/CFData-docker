@@ -31,6 +31,7 @@ type taskConfigUpdate struct {
 	NSBSpeedTest       *int
 	NSBSpeedMin        *float64
 	NSBSpeedLimit      *int
+	SpeedBandwidth     *int
 	NSBEnableSpeed     *bool
 	NSBTargetDC        *string
 	NSBTLS             *bool
@@ -129,6 +130,9 @@ func saveTaskConfigFields(path string, update taskConfigUpdate) error {
 	}
 	if update.NSBSpeedLimit != nil {
 		set("nsbspeedlimit", *update.NSBSpeedLimit)
+	}
+	if update.SpeedBandwidth != nil {
+		set("speedbandwidth", *update.SpeedBandwidth)
 	}
 	if update.NSBEnableSpeed != nil {
 		set("nsbenablespeed", *update.NSBEnableSpeed)
@@ -277,6 +281,9 @@ func validateTaskConfigUpdate(update *taskConfigUpdate) error {
 	}
 	if update.NSBSpeedTest != nil && (*update.NSBSpeedTest < 0 || *update.NSBSpeedTest > 100000) {
 		return fmt.Errorf("非标测速并发必须在 0-100000 之间")
+	}
+	if update.SpeedBandwidth != nil && (*update.SpeedBandwidth < 0 || *update.SpeedBandwidth > 100000) {
+		return fmt.Errorf("总测速带宽上限必须在 0-100000 MB/s 之间（0 表示不限速）")
 	}
 	if update.OfficialStopCount != nil && (*update.OfficialStopCount < 0 || *update.OfficialStopCount > 1000000) {
 		return fmt.Errorf("官方提前结束数量必须在 0-1000000 之间")

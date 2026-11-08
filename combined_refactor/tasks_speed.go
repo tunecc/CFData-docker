@@ -77,6 +77,12 @@ func runWindowedSpeedTest(ctx context.Context, ip string, port int, customURL st
 		defer close(readerDone)
 		for {
 			n, err := resp.Body.Read(buf)
+			if n > 0 {
+				// 总带宽限速：按实际读取字节数取令牌，令牌不足时暂停读取（TCP 背压传导）
+				if waitErr := speedTestBucketWaitN(readerCtx, int64(n)); waitErr != nil {
+					return
+				}
+			}
 			select {
 			case chunks <- readChunk{n: n, err: err}:
 			case <-readerCtx.Done():
@@ -243,6 +249,11 @@ func runOfficialSpeedTestsCore(ctx context.Context, results []TestResult, opts o
 			break
 		}
 		speedMB, speedErr, retried := speedWithRateLimitRetry(ctx, run, results[i].IP, opts.port, currentURL)
+		// 拥塞期复核：本地网络拥塞导致的测速失败在抖动后复核一次（预算内）；
+		// 源站限流（429）有自己的退避/换源机制，不消耗复核预算
+		if speedErr != "" && !isSpeedRateLimited(speedErr) && congestionRecheck(ctx) {
+			speedMB, speedErr, retried = speedWithRateLimitRetry(ctx, run, results[i].IP, opts.port, currentURL)
+		}
 		if ctx.Err() != nil {
 			return results, qualified
 		}
@@ -287,7 +298,7 @@ func runOfficialSpeedTestsCore(ctx context.Context, results []TestResult, opts o
 	return results, qualified
 }
 
-func runOfficialSpeedBatch(ctx context.Context, session *appSession, port int, customURL string, speedLimit int, speedMin float64, fallbackResults []TestResult, skipTested bool) {
+func runOfficialSpeedBatch(ctx context.Context, session *appSession, port int, customURL string, speedLimit int, speedMin float64, bandwidth int, fallbackResults []TestResult, skipTested bool) {
 	if port <= 0 {
 		port = 443
 	}
@@ -298,6 +309,9 @@ func runOfficialSpeedBatch(ctx context.Context, session *appSession, port int, c
 	}
 	if speedMin <= 0 {
 		speedMin = 0.1
+	}
+	if bandwidth < 0 {
+		bandwidth = 0
 	}
 
 	session.testMutex.Lock()
@@ -330,6 +344,13 @@ func runOfficialSpeedBatch(ctx context.Context, session *appSession, port int, c
 		}
 	}
 	sortOfficialTestResults(results)
+
+	// 测速阶段治理：总带宽桶 + 网络健康探针（管线内借用/独立任务自起自停）+ 同网段乱序。
+	// 官方测速保持串行节奏，不做 L/r 并发推导（brief 决定 D7）。
+	_, stopStage := beginSpeedStage(session, len(results), 0, speedMin, bandwidth, func() {
+		smartShuffleBySubnet(results, shuffleMinSpacing(1, len(results)), func(r TestResult) string { return r.IP }, nil)
+	}, false, "官方")
+	defer stopStage()
 
 	session.sendWSMessage("log", fmt.Sprintf("开始测速：%d 条记录，目标上限=%d，测速阈值=%.2fMB/s", len(results), speedLimit, speedMin))
 	session.sendWSMessage("official_speed_progress", map[string]interface{}{"current": 0, "total": len(results), "qualified": 0, "limit": speedLimit})

@@ -787,6 +787,7 @@ func runScheduledScan(configPath string) string {
 				speedURL:        speedURL,
 				speedLimit:      cfg.speedLimit,
 				speedMin:        cfg.speedMin,
+				bandwidth:       cfg.speedBandwidth,
 				exportAndUpload: true,
 				cfg:             cfg,
 				onDone:          deliver,
@@ -806,6 +807,7 @@ func runScheduledScan(configPath string) string {
 				targetDC:     cfg.nsbDC,
 				speedMin:     cfg.nsbSpeedMin,
 				speedLimit:   cfg.nsbSpeedLimit,
+				bandwidth:    cfg.speedBandwidth,
 				compact:      cfg.compactNSB,
 				scanMode:     cfg.scanMode,
 				relinkHost: func() string {

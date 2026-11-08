@@ -592,6 +592,12 @@ func runNSBDownloadSpeed(ctx context.Context, ip string, port int, enableTLS boo
 		defer close(readerDone)
 		for {
 			n, err := resp.Body.Read(buf)
+			if n > 0 {
+				// 总带宽限速：按实际读取字节数取令牌，令牌不足时暂停读取（TCP 背压传导）
+				if waitErr := speedTestBucketWaitN(speedCtx, int64(n)); waitErr != nil {
+					return
+				}
+			}
 			select {
 			case chunks <- readChunk{n: n, err: err}:
 			case <-speedCtx.Done():
@@ -653,7 +659,7 @@ done:
 	return float64(written) / duration.Seconds() / 1024, ""
 }
 
-func runNSBTask(ctx context.Context, session *appSession, fileName, fileContent, outFile string, maxThreads, fallbackPort, speedTest int, speedURL string, enableTLS bool, delay int, resultLimit int, targetDC string, speedMin float64, speedLimit int, compact bool, scanMode string, reallinkHost string) {
+func runNSBTask(ctx context.Context, session *appSession, fileName, fileContent, outFile string, maxThreads, fallbackPort, speedTest int, speedURL string, enableTLS bool, delay int, resultLimit int, targetDC string, speedMin float64, speedLimit, bandwidth int, compact bool, scanMode string, reallinkHost string) {
 	session.sendWSMessage("log", fmt.Sprintf("开始非标优选：%s", fileName))
 
 	tmpFile, err := os.CreateTemp(".", "cfdata-nsb-*.txt")
@@ -757,14 +763,26 @@ func runNSBTask(ctx context.Context, session *appSession, fileName, fileContent,
 	if resultLimit > 0 && resultLimit < total {
 		total = resultLimit
 	}
-	// 扫描期间启动网络健康探针：拥塞时 worker 自动放慢节奏，扫描结束清理
-	stopNetHealth := startScanNetHealth()
+	// 网络健康探针覆盖任务全程（扫描 → 链路复验 → 测速）：拥塞节流全程生效，
+	// 拥塞期失败的扫描/测速可按预算复核一次
+	stopNetHealth := startTaskNetHealth(len(expandedEntries))
+	defer stopNetHealth()
 
 	// 并发数量 0=自动：按候选规模自适应
 	if maxThreads <= 0 {
 		resolved := resolveScanThreads(maxThreads, len(expandedEntries))
 		session.sendWSMessage("log", fmt.Sprintf("并发数量 0=自动：按 %d 条候选自适应为 %d 线程", len(expandedEntries), resolved))
 		maxThreads = resolved
+	}
+	if len(expandedEntries) > 1 {
+		// 同网段最小间距乱序：降低相邻并发测同 /24 或同主域节点被上游限速/测死的概率
+		spacing := shuffleMinSpacing(maxThreads, len(expandedEntries))
+		smartShuffleBySubnet(expandedEntries, spacing, func(e struct {
+			ip            string
+			port          int
+			originalInput string
+		}) string { return e.ip }, nil)
+		session.sendWSMessage("log", fmt.Sprintf("候选同网段乱序：同 /24 或主域最小间距 %d", spacing))
 	}
 	reportNSBProgress(session, "scan", 0, total, "扫描中")
 	wasCanceled := runNSBScanWorkers(ctx, len(expandedEntries), maxThreads, resultLimit, func(current, etaSeconds int) {
@@ -781,12 +799,16 @@ func runNSBTask(ctx context.Context, session *appSession, fileName, fileContent,
 
 		entry := expandedEntries[idx]
 		item := fmt.Sprintf("%s %d", entry.ip, entry.port)
-		var res *iptestResult
-		var failure *nsbFailureRecord
-		if scanMode == scanModeHTTPing {
-			res, failure = scanNSBEntryHTTP(itemCtx, item, fallbackPort, enableTLS, delay, targetDC, idx)
-		} else {
-			res, failure = scanNSBEntry(itemCtx, item, fallbackPort, enableTLS, delay, targetDC, idx)
+		scanOne := func() (*iptestResult, *nsbFailureRecord) {
+			if scanMode == scanModeHTTPing {
+				return scanNSBEntryHTTP(itemCtx, item, fallbackPort, enableTLS, delay, targetDC, idx)
+			}
+			return scanNSBEntry(itemCtx, item, fallbackPort, enableTLS, delay, targetDC, idx)
+		}
+		res, failure := scanOne()
+		// 拥塞期复核：网络健康探针判定拥塞时的扫描失败，抖动等待后复核一次（预算内）
+		if res == nil && congestionRecheck(itemCtx) {
+			res, failure = scanOne()
 		}
 		if res != nil {
 			res.originalInput = entry.originalInput
@@ -807,8 +829,6 @@ func runNSBTask(ctx context.Context, session *appSession, fileName, fileContent,
 		session.sendWSMessage("nsb_scan_result", res.toNSBLiveMessage("", compact))
 		return accepted
 	})
-
-	stopNetHealth() // 扫描结束（含取消），停止网络健康探针
 
 	if wasCanceled || ctx.Err() != nil {
 		session.sendWSMessage("log", "非标优选延迟扫描已终止，正在整理已扫描到的数据...")
@@ -857,6 +877,12 @@ func runNSBTask(ctx context.Context, session *appSession, fileName, fileContent,
 		completionMessage = "任务已手动终止，已整理当前扫描结果"
 	}
 	if !wasCanceled && ctx.Err() == nil && speedTest > 0 && speedLimit > 0 {
+		// 测速阶段治理：总带宽桶 + L/r 并发收敛 + 网络健康探针（沿用任务全程探针）+ 同网段乱序；
+		// 结果展示在测速完成后由 sortNSBResults 重排，乱序只影响被测顺序
+		speedTest, stopStage := beginSpeedStage(session, len(nsbResults), speedTest, speedMin, bandwidth, func() {
+			smartShuffleBySubnet(nsbResults, shuffleMinSpacing(speedTest, len(nsbResults)), func(r iptestResult) string { return r.ipAddr }, nil)
+		}, true, "非标")
+		defer stopStage()
 		session.sendWSMessage("log", fmt.Sprintf("开始测速：%d 条记录，线程数=%d，目标上限=%d，测速阈值=%.2fMB/s", len(nsbResults), speedTest, speedLimit, speedMin))
 
 		reportNSBProgress(session, "speed", 0, speedLimit, "测速中")
@@ -879,7 +905,9 @@ func runNSBTask(ctx context.Context, session *appSession, fileName, fileContent,
 			}
 		}, func(idx int) (float64, string) {
 			res := &nsbResults[idx]
-			return runNSBDownloadSpeed(ctx, res.ipAddr, res.port, enableTLS, speedURL)
+			return speedTestWithCongestionRecheck(ctx, func() (float64, string) {
+				return runNSBDownloadSpeed(ctx, res.ipAddr, res.port, enableTLS, speedURL)
+			})
 		})
 		if speedCanceled {
 			wasCanceled = true
@@ -1052,7 +1080,7 @@ func runNSBReallinkFilter(ctx context.Context, session *appSession, results []ip
 	return kept, len(kept), removed
 }
 
-func runNSBReallinkTask(ctx context.Context, session *appSession, rows []nsbScanMessage, reallinkHost string, speedTest int, speedURL string, enableTLS bool, speedMin float64, speedLimit int, compact bool, scanMode string, outFile string) {
+func runNSBReallinkTask(ctx context.Context, session *appSession, rows []nsbScanMessage, reallinkHost string, speedTest int, speedURL string, enableTLS bool, speedMin float64, speedLimit, bandwidth int, compact bool, scanMode string, outFile string) {
 	reallinkHost = strings.TrimSpace(reallinkHost)
 	if reallinkHost == "" {
 		session.sendWSMessage("error", "链路复验未配置探针域名（relinkhost）")
@@ -1089,6 +1117,11 @@ func runNSBReallinkTask(ctx context.Context, session *appSession, rows []nsbScan
 		completionStatus = "partial"
 		completionMessage = "任务已手动终止，已整理当前可用结果"
 	} else if speedTest > 0 && speedLimit > 0 {
+		// 测速阶段治理：总带宽桶 + L/r 并发收敛 + 网络健康探针（独立任务自起自停）+ 同网段乱序
+		speedTest, stopStage := beginSpeedStage(session, len(results), speedTest, speedMin, bandwidth, func() {
+			smartShuffleBySubnet(results, shuffleMinSpacing(speedTest, len(results)), func(r iptestResult) string { return r.ipAddr }, nil)
+		}, true, "非标")
+		defer stopStage()
 		session.sendWSMessage("log", fmt.Sprintf("开始测速：%d 条记录，线程数=%d，目标上限=%d，测速阈值=%.2fMB/s", len(results), speedTest, speedLimit, speedMin))
 		reportNSBProgress(session, "speed", 0, speedLimit, "测速中")
 		speedCanceled := runNSBSpeedWorkers(ctx, results, speedTest, speedLimit, speedMin, func(tested, qualified int) {
@@ -1098,7 +1131,9 @@ func runNSBReallinkTask(ctx context.Context, session *appSession, rows []nsbScan
 			session.sendWSMessage("nsb_scan_result", res.toNSBLiveMessage(res.speedText, compact))
 		}, func(idx int) (float64, string) {
 			res := &results[idx]
-			return runNSBDownloadSpeed(ctx, res.ipAddr, res.port, enableTLS, speedURL)
+			return speedTestWithCongestionRecheck(ctx, func() (float64, string) {
+				return runNSBDownloadSpeed(ctx, res.ipAddr, res.port, enableTLS, speedURL)
+			})
 		})
 		if speedCanceled || ctx.Err() != nil {
 			wasCanceled = true
@@ -1153,7 +1188,7 @@ func runNSBReallinkTask(ctx context.Context, session *appSession, rows []nsbScan
 	triggerManualR2Upload(session, uploadRows)
 }
 
-func runNSBSpeedBatch(ctx context.Context, session *appSession, rows []nsbScanMessage, maxWorkers int, speedURL string, enableTLS bool, speedMin float64, speedLimit int, skipTested bool, compact bool) {
+func runNSBSpeedBatch(ctx context.Context, session *appSession, rows []nsbScanMessage, maxWorkers int, speedURL string, enableTLS bool, speedMin float64, speedLimit, bandwidth int, skipTested bool, compact bool) {
 	if speedLimit <= 0 {
 		session.sendWSMessage("log", "非标批量测速已关闭（测速上限 0）")
 		session.sendWSMessage("nsb_speed_complete", map[string]interface{}{"qualified": 0, "limit": speedLimit})
@@ -1161,6 +1196,9 @@ func runNSBSpeedBatch(ctx context.Context, session *appSession, rows []nsbScanMe
 	}
 	if speedMin <= 0 {
 		speedMin = 0.1
+	}
+	if bandwidth < 0 {
+		bandwidth = 0
 	}
 	if maxWorkers <= 0 {
 		maxWorkers = 1
@@ -1189,6 +1227,11 @@ func runNSBSpeedBatch(ctx context.Context, session *appSession, rows []nsbScanMe
 		return
 	}
 
+	// 测速阶段治理：总带宽桶 + L/r 并发收敛 + 网络健康探针（独立任务自起自停）+ 同网段乱序
+	maxWorkers, stopStage := beginSpeedStage(session, len(results), maxWorkers, speedMin, bandwidth, func() {
+		smartShuffleBySubnet(results, shuffleMinSpacing(maxWorkers, len(results)), func(r iptestResult) string { return r.ipAddr }, nil)
+	}, true, "非标")
+	defer stopStage()
 	session.sendWSMessage("log", fmt.Sprintf("开始非标测速：%d 条记录，线程数=%d，目标上限=%d，测速阈值=%.2fMB/s", len(results), maxWorkers, speedLimit, speedMin))
 	reportNSBProgress(session, "speed", 0, speedLimit, "测速中")
 	speedCanceled := runNSBSpeedWorkers(ctx, results, maxWorkers, speedLimit, speedMin, func(tested, qualified int) {
@@ -1198,7 +1241,9 @@ func runNSBSpeedBatch(ctx context.Context, session *appSession, rows []nsbScanMe
 		session.sendWSMessage("nsb_scan_result", res.toNSBLiveMessage(res.speedText, compact))
 	}, func(idx int) (float64, string) {
 		res := &results[idx]
-		return runNSBDownloadSpeed(ctx, res.ipAddr, res.port, enableTLS, speedURL)
+		return speedTestWithCongestionRecheck(ctx, func() (float64, string) {
+			return runNSBDownloadSpeed(ctx, res.ipAddr, res.port, enableTLS, speedURL)
+		})
 	})
 
 	qualifiedCount := 0

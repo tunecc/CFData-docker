@@ -50,6 +50,7 @@ type cliConfig struct {
 	nsbDC           string
 	nsbSpeedMin     float64
 	nsbSpeedLimit   int
+	speedBandwidth  int
 	relink          bool
 	relinkHost      string
 	showProgress    bool
@@ -124,6 +125,7 @@ type cliFileConfig struct {
 	ResultLimit     int     `json:"nsbresultlimit"`
 	NSBSpeedMin     float64 `json:"nsbspeedmin"`
 	NSBSpeedLimit   int     `json:"nsbspeedlimit"`
+	SpeedBandwidth  int     `json:"speedbandwidth"`
 	Format          string  `json:"outformat"`
 	Fields          string  `json:"outfields"`
 	Custom          string  `json:"outcustom"`
@@ -300,7 +302,7 @@ func defaultCLIExportConfig() cliExportConfig {
 
 func defaultCLIFileConfig() cliFileConfig {
 	offStop := defaultOfficialStopCount
-	return cliFileConfig{CLI: false, Mode: "official", ScanMode: "tcping", IPType: 4, Threads: 100, NSBThreads: 100, Out: "cfdata-results", SpeedTest: 0, Progress: true, NoColor: false, URL: autoSpeedURLValue, NSBURL: autoSpeedURLValue, DNS: defaultDNSServers, Debug: false, CompactIPv4: false, TestPort: 443, Delay: 500, NSBDelay: 0, DC: "", OffStop: &offStop, SpeedLimit: 5, SpeedMin: 0.1, File: "", SourceURL: "", NSBFallbackPort: 0, OutIPType: "all", OutQualified: "all", NSBDC: "", Relink: true, RelinkHost: "probe.609909.xyz", TLS: true, Compact: true, ResultLimit: 1000, NSBSpeedMin: 0.1, NSBSpeedLimit: 5, Format: "txt", Fields: "compact", Custom: "", V6Bracket: true, Separator: "-", OutStartRow: 1, OutEndRow: 20, GitHub: false, GHBranch: "main", GHPath: "", GHMessage: "update cfdata results", ScheduleEnabled: false, CronExpression: "", CheckInterval: 0, R2Enabled: false, R2WorkerURL: "", R2WorkerToken: "", R2Filename: "cfdata-targets.txt"}
+	return cliFileConfig{CLI: false, Mode: "official", ScanMode: "tcping", IPType: 4, Threads: 100, NSBThreads: 100, Out: "cfdata-results", SpeedTest: 0, Progress: true, NoColor: false, URL: autoSpeedURLValue, NSBURL: autoSpeedURLValue, DNS: defaultDNSServers, Debug: false, CompactIPv4: false, TestPort: 443, Delay: 500, NSBDelay: 0, DC: "", OffStop: &offStop, SpeedLimit: 5, SpeedMin: 0.1, File: "", SourceURL: "", NSBFallbackPort: 0, OutIPType: "all", OutQualified: "all", NSBDC: "", Relink: true, RelinkHost: "probe.609909.xyz", TLS: true, Compact: true, ResultLimit: 1000, NSBSpeedMin: 0.1, NSBSpeedLimit: 5, SpeedBandwidth: 0, Format: "txt", Fields: "compact", Custom: "", V6Bracket: true, Separator: "-", OutStartRow: 1, OutEndRow: 20, GitHub: false, GHBranch: "main", GHPath: "", GHMessage: "update cfdata results", ScheduleEnabled: false, CronExpression: "", CheckInterval: 0, R2Enabled: false, R2WorkerURL: "", R2WorkerToken: "", R2Filename: "cfdata-targets.txt"}
 }
 
 func (c cliFileConfig) Export() cliExportConfig {
@@ -563,6 +565,7 @@ func buildCLIConfigHelp() []cliConfigHelp {
 		{Name: "nsbresultlimit", Description: "非标模式延迟测试结果上限；必须为非 0 正整数", Default: "1000"},
 		{Name: "nsbspeedmin", Description: "非标模式测速结果阈值，单位 MB/s", Default: "0.1"},
 		{Name: "nsbspeedlimit", Description: "非标模式测速结果上限；0 表示关闭测速", Default: "5"},
+		{Name: "speedbandwidth", Description: "总测速带宽上限，单位 MB/s；官方与非标测速共享，0 表示不限速。启用后非标测速并发按 总带宽÷合格阈值 自动收敛", Default: "0"},
 		{Name: "relink", Description: "链路复验开关；开启后非标扫描完成时对结果做真实链路验证（TCP+TLS+HTTP 访问探针域），不可用的候选将被剔除", Default: "true", Options: []string{"true", "false"}},
 		{Name: "relinkhost", Description: "链路复验探针域名；默认使用内置公共探针，配合 relink 开关使用", Default: "probe.609909.xyz"},
 		{Name: "proxy", Description: "管理面代理；下载 ASN 库/locations、版本检查上传 GitHub/订阅等走此代理，扫描测速不受影响。支持 socks5://、socks5h://、http://、https://，留空使用系统环境变量代理", Default: ""},
@@ -692,6 +695,7 @@ func applyCLIFileConfigFields(cfg *cliConfig, fileCfg cliFileConfig, provided ma
 	setInt("nsbresultlimit", &cfg.resultLimit, fileCfg.ResultLimit)
 	setFloat("nsbspeedmin", &cfg.nsbSpeedMin, fileCfg.NSBSpeedMin)
 	setInt("nsbspeedlimit", &cfg.nsbSpeedLimit, fileCfg.NSBSpeedLimit)
+	setInt("speedbandwidth", &cfg.speedBandwidth, fileCfg.SpeedBandwidth)
 	if !provided["relink"] {
 		cfg.relink = fileCfg.Relink
 	}
@@ -758,6 +762,9 @@ func prepareOfficialCLIConfig(cfg *cliConfig) error {
 	if cfg.speedMin <= 0 {
 		cfg.speedMin = 0.1
 	}
+	if cfg.speedBandwidth < 0 {
+		cfg.speedBandwidth = 0
+	}
 	return nil
 }
 
@@ -780,6 +787,9 @@ func prepareNSBCLIConfig(cfg *cliConfig) error {
 	}
 	if cfg.nsbSpeedMin < 0 {
 		cfg.nsbSpeedMin = 0
+	}
+	if cfg.speedBandwidth < 0 {
+		cfg.speedBandwidth = 0
 	}
 	if cfg.nsbFallbackPort <= 0 || cfg.nsbFallbackPort > 65535 {
 		return errors.New("-nsbfallbackport 必须为 1-65535")

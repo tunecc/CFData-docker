@@ -365,15 +365,22 @@ func runOfficialTaskWithPool(ctx context.Context, session *appSession, ipList []
 	if stopCount < 0 {
 		stopCount = 0
 	}
-	// 扫描期间启动网络健康探针：拥塞时 worker 自动放慢节奏，任务结束清理
-	stopNetHealth := startScanNetHealth()
-	defer stopNetHealth()
+	// 网络健康探针已由任务编排（runOfficialTaskFlow）全程启动，此处仅按候选数初始化复核预算
+	if w := activeNetHealth.Load(); w != nil {
+		w.initRecheckBudget(len(ipList))
+	}
 
 	// 并发数量 0=自动：按候选规模自适应，Web 与调度路径共用本入口
 	if scanMaxThreads <= 0 {
 		resolved := resolveScanThreads(scanMaxThreads, len(ipList))
 		session.sendWSMessage("log", fmt.Sprintf("并发数量 0=自动：按 %d 条候选自适应为 %d 线程", len(ipList), resolved))
 		scanMaxThreads = resolved
+	}
+	if len(ipList) > 1 {
+		// 同网段最小间距乱序：降低相邻并发测同 /24 或同主域节点被上游限速/测死的概率
+		spacing := shuffleMinSpacing(scanMaxThreads, len(ipList))
+		smartShuffleBySubnet(ipList, spacing, subnetGroupKey, nil)
+		session.sendWSMessage("log", fmt.Sprintf("候选同网段乱序：同 /24 或主域最小间距 %d", spacing))
 	}
 	if targetDC == "" {
 		session.sendWSMessage("log", fmt.Sprintf("开始扫描：%d 条记录", len(ipList)))
@@ -452,6 +459,10 @@ func runOfficialScanCandidatesWithSource(ctx context.Context, session *appSessio
 		}
 
 		res, failureCategory, failureDetail := scanner(ctx, ip, port, delay)
+		// 拥塞期复核：网络健康探针判定拥塞时的扫描失败，抖动等待后复核一次（预算内）
+		if res == nil && congestionRecheck(ctx) {
+			res, failureCategory, failureDetail = scanner(ctx, ip, port, delay)
+		}
 		if res == nil {
 			recordFailure(failureCategory, failureDetail)
 			return
@@ -561,6 +572,13 @@ func runDetailedTest(ctx context.Context, session *appSession, selectedDC string
 		return
 	}
 
+	if len(testIPList) > 1 {
+		// 同网段最小间距乱序（详细测试同为扫描类阶段）：只改被测顺序，结果展示仍按延迟排序
+		spacing := shuffleMinSpacing(50, len(testIPList))
+		smartShuffleBySubnet(testIPList, spacing, subnetGroupKey, nil)
+		session.sendWSMessage("log", fmt.Sprintf("详细测试同网段乱序：同 /24 或主域最小间距 %d", spacing))
+	}
+
 	session.sendWSMessage("log", fmt.Sprintf("开始测试：%s，%d 个 IP", selectedDC, len(testIPList)))
 
 	var results []TestResult
@@ -599,6 +617,10 @@ func runDetailedTest(ctx context.Context, session *appSession, selectedDC string
 		}
 
 		res, failureCategory, failureDetail := testIPLatency(ctx, ip, port, delay, scanMode)
+		// 拥塞期复核：网络健康探针判定拥塞时的延迟测试失败，抖动等待后复核一次（预算内）
+		if res == nil && congestionRecheck(ctx) {
+			res, failureCategory, failureDetail = testIPLatency(ctx, ip, port, delay, scanMode)
+		}
 		if res == nil {
 			recordFailure(failureCategory, failureDetail)
 			return

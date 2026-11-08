@@ -1,7 +1,9 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"math/rand/v2"
 	"net"
 	"sync"
 	"sync/atomic"
@@ -43,6 +45,7 @@ type netHealthWatcher struct {
 	healthy       atomic.Bool
 	failureStreak atomic.Int64
 	announced     atomic.Bool
+	recheckBudget atomic.Int64 // 拥塞期复核预算（max(20, 总数/20)，任务级共享；0=不可用）
 	stopCh        chan struct{}
 	stopDone      chan struct{}
 	startOnce     sync.Once
@@ -145,6 +148,59 @@ func currentNetHealthThrottle() time.Duration {
 	return netHealthThrottleDelay
 }
 
+// 拥塞期复核抖动等待区间（学习 subs-check-pro check/check.go:770-781：300ms 基础 +
+// 最多 500ms 随机抖动后复核一次，避免把拥塞期失败误判为节点死亡）。
+const (
+	netHealthRecheckBase = 300 * time.Millisecond
+	netHealthRecheckSpan = 500 * time.Millisecond
+)
+
+// netHealthRecheckJitter 可注入的抖动函数，单测替换以消除随机性。
+var netHealthRecheckJitter = defaultRecheckJitter
+
+func defaultRecheckJitter() time.Duration {
+	return netHealthRecheckBase + time.Duration(rand.Int64N(int64(netHealthRecheckSpan)+1))
+}
+
+// initNetHealthRecheckBudget 初始化任务级复核预算（幂等，仅首次生效）：
+// max(20, 总数/20)，对标 subs-check-pro 复核预算设计（避免死节点被整体复测拖慢检测）。
+func (w *netHealthWatcher) initRecheckBudget(total int) {
+	budget := int64(max(20, total/20))
+	w.recheckBudget.CompareAndSwap(0, budget)
+}
+
+// takeRecheck 消耗一次复核预算；预算耗尽或未初始化返回 false。
+func (w *netHealthWatcher) takeRecheck() bool {
+	for {
+		current := w.recheckBudget.Load()
+		if current <= 0 {
+			return false
+		}
+		if w.recheckBudget.CompareAndSwap(current, current-1) {
+			return true
+		}
+	}
+}
+
+// congestionRecheck 在拥塞期间为一次失败申请复核机会：仅在探针处于拥塞判定状态
+// 且预算可用时取得预算并完成 300–800ms 抖动等待，返回 true 表示调用方应立即重试
+// 一次；false 表示不复核（未拥塞/预算耗尽/未启动探针/ctx 取消）。
+func congestionRecheck(ctx context.Context) bool {
+	w := activeNetHealth.Load()
+	if w == nil || w.isHealthy() {
+		return false
+	}
+	if !w.takeRecheck() {
+		return false
+	}
+	select {
+	case <-ctx.Done():
+		return false
+	case <-time.After(netHealthRecheckJitter()):
+	}
+	return ctx.Err() == nil
+}
+
 // activeNetHealth 保存当前扫描任务的网络探针；nil 表示无任务探针（不节流）。
 var activeNetHealth atomic.Pointer[netHealthWatcher]
 
@@ -152,6 +208,33 @@ var activeNetHealth atomic.Pointer[netHealthWatcher]
 func startScanNetHealth() (stop func()) {
 	w := newNetHealthWatcher(nil)
 	activeNetHealth.Store(w)
+	w.start()
+	return func() {
+		activeNetHealth.CompareAndSwap(w, nil)
+		w.stop()
+	}
+}
+
+// startTaskNetHealth 为整个任务启动探针，并按候选总数初始化任务级复核预算，返回 stop 函数。
+func startTaskNetHealth(total int) (stop func()) {
+	stop = startScanNetHealth()
+	if w := activeNetHealth.Load(); w != nil {
+		w.initRecheckBudget(total)
+	}
+	return stop
+}
+
+// ensureNetHealth 在无活跃探针时为独立测速任务启动探针并初始化预算（自起自停）；
+// 已有探针（编排管线内调用）时借用，不重复启动，返回的 stop 为空操作。
+func ensureNetHealth(total int) (stop func()) {
+	if activeNetHealth.Load() != nil {
+		return func() {}
+	}
+	w := newNetHealthWatcher(nil)
+	if !activeNetHealth.CompareAndSwap(nil, w) {
+		return func() {} // 并发下被他人抢占：借用现有探针
+	}
+	w.initRecheckBudget(total)
 	w.start()
 	return func() {
 		activeNetHealth.CompareAndSwap(w, nil)

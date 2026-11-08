@@ -439,7 +439,7 @@ func TestRunNSBTaskTriggersManualR2Upload(t *testing.T) {
 	t.Chdir(t.TempDir())
 	session := &appSession{r2AutoUpload: true}
 	input := "127.0.0.1 " + tracePort + "\n"
-	runNSBTask(context.Background(), session, "local.txt", input, filepath.Join(t.TempDir(), "out.csv"), 1, 443, 0, "", false, 0, 10, "", 0.1, 0, false, scanModeTCPing, "")
+	runNSBTask(context.Background(), session, "local.txt", input, filepath.Join(t.TempDir(), "out.csv"), 1, 443, 0, "", false, 0, 10, "", 0.1, 0, 0, false, scanModeTCPing, "")
 
 	select {
 	case <-done:
@@ -558,7 +558,7 @@ func TestOfficialSpeedBatchCanceledBeforeStartSkipsUpload(t *testing.T) {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
-	runOfficialSpeedBatch(ctx, session, 443, "http://example.invalid/speed", 5, 0.1, nil, false)
+	runOfficialSpeedBatch(ctx, session, 443, "http://example.invalid/speed", 5, 0.1, 0, nil, false)
 	time.Sleep(300 * time.Millisecond)
 	if got := atomic.LoadInt32(&calls); got != 0 {
 		t.Fatalf("测速开始前取消不应由测速阶段上传，请求次数 = %d", got)

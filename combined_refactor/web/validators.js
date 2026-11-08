@@ -91,6 +91,7 @@
             nsbDelay: delayValidator,
             officialSpeedMin: speedMinValidator,
             nsbSpeedMin: speedMinValidator,
+            speedBandwidth: countValidator('总测速带宽上限', '0 = 不限速（官方与非标测速共享）'),
             officialStopCount: countValidator('提前结束数量', '0 = 不提前结束（数据中心选「全部」时同样不生效）'),
             nsbResultLimit: countValidator('扫描合格数量', '0 = 不限制结果数量'),
             scheduleInterval: scheduleIntervalValidator,

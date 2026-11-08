@@ -115,6 +115,39 @@ func reportNSBProgress(session *appSession, phase string, current, total int, te
 	reportNSBProgressWithETA(session, phase, current, total, -1, text)
 }
 
+// speedTestWithCongestionRecheck 包装一次测速尝试：首次失败且网络健康探针处于拥塞
+// 判定状态时，等待 300–800ms 抖动后复核一次（预算内），以复核结果为最终结果。
+// 学习 subs-check-pro 的拥塞复核思路（docs/analyses/subs-check-pro-learnings.md 调查②）。
+func speedTestWithCongestionRecheck(ctx context.Context, attempt func() (float64, string)) (float64, string) {
+	speed, speedErr := attempt()
+	if speedErr != "" && congestionRecheck(ctx) {
+		return attempt()
+	}
+	return speed, speedErr
+}
+
+// beginSpeedStage 为一轮批量测速建立任务级治理：总带宽令牌桶、网络健康探针
+// （编排管线内已有探针时借用，独立测速任务自起自停）、同网段乱序（只改被测顺序）。
+// deriveConcurrency 为 true 时按 L/r 收敛并发（总带宽 ÷ 合格阈值，仅非标测速使用；
+// 官方测速保持串行节奏，见 brief 决定 D7）。返回收敛后的并发数与清理函数。
+func beginSpeedStage(session *appSession, total, threads int, speedMin float64, bandwidth int, shuffle func(), deriveConcurrency bool, stageLabel string) (int, func()) {
+	stopNetHealth := ensureNetHealth(total)
+	stopBucket := setSpeedTestBandwidthMB(float64(bandwidth))
+	if deriveConcurrency && threads > 0 {
+		if resolved := resolveSpeedThreads(threads, speedMin, float64(bandwidth)); resolved != threads {
+			session.sendWSMessage("log", fmt.Sprintf("%s测速并发按总带宽收敛：%d → %d（总带宽 %dMB/s，合格阈值 %.2fMB/s）", stageLabel, threads, resolved, bandwidth, speedMin))
+			threads = resolved
+		}
+	}
+	if shuffle != nil {
+		shuffle()
+	}
+	return threads, func() {
+		stopBucket()
+		stopNetHealth()
+	}
+}
+
 // reportNSBProgressWithETA 在 nsb_progress 消息上附带可选 etaSeconds（-1 表示省略字段）
 func reportNSBProgressWithETA(session *appSession, phase string, current, total, etaSeconds int, text string) {
 	percentage := 0.0

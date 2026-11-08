@@ -756,6 +756,7 @@
                     delay: val('officialDelay'),
                     speedMin: val('officialSpeedMin'),
                     speedLimit: val('officialSpeedLimit'),
+                    speedBandwidth: val('speedBandwidth'),
                     autoSpeed: selVal('officialAutoSpeed'),
                     targetDC: getOfficialTargetDC(),
                     stopCount: val('officialStopCount'),
@@ -799,6 +800,7 @@
             setValue('officialDelay', o.delay);
             setValue('officialSpeedMin', o.speedMin);
             setValue('officialSpeedLimit', o.speedLimit);
+            setValue('speedBandwidth', o.speedBandwidth);
             setValue('officialAutoSpeed', o.autoSpeed);
             if (o.targetDC !== undefined && o.targetDC !== null) applyOfficialTargetDCSelection(o.targetDC);
             setValue('officialStopCount', o.stopCount);
@@ -896,6 +898,7 @@
             result.nsb.speedMin = pick(c, ['nsbspeedmin']);
             result.official.speedLimit = pick(c, ['offspeedlimit', 'speedlimit']);
             result.nsb.speedLimit = pick(c, ['nsbspeedlimit']);
+            result.official.speedBandwidth = pick(c, ['speedbandwidth']);
             result.official.targetDC = pick(c, ['offdc', 'dc']);
             result.official.stopCount = pick(c, ['offstop']);
             result.nsb.targetDC = pick(c, ['nsbdc']);
@@ -1063,6 +1066,7 @@
                 payload.officialDelay = parseInt(o.delay, 10) || 0;
                 payload.officialSpeedMin = parseFloat(o.speedMin) || 0;
                 payload.officialSpeedLimit = Math.max(0, parseInt(o.speedLimit, 10) || 0);
+                payload.speedBandwidth = Math.max(0, parseInt(o.speedBandwidth, 10) || 0);
                 payload.officialAutoSpeed = o.autoSpeed === 'on';
                 payload.officialTargetDC = o.targetDC || '';
                 payload.officialStopCount = Math.max(0, parseInt(o.stopCount, 10) || 0);
@@ -2016,6 +2020,7 @@
                     enableTLS: speedCfg.enableTLS,
                     speedMin: speedCfg.speedMin,
                     speedLimit: speedCfg.speedLimit,
+                    bandwidth: getSpeedBandwidthValue(),
                     compact: nsbCompactView,
                     scanMode: getScanMode(),
                     r2AutoUpload: isR2AutoUploadSelected('nsbAutoUploadAccount'),
@@ -2734,12 +2739,17 @@
             return parseInt(document.getElementById('officialSpeedLimit')?.value || '0', 10) || 0;
         }
 
+        function getSpeedBandwidthValue() {
+            return Math.max(0, parseInt(document.getElementById('speedBandwidth')?.value || '0', 10) || 0);
+        }
+
         function getOfficialSpeedConfig() {
             const port = parseInt(document.getElementById('officialTestPort')?.value || '443', 10) || 443;
             const url = resolveSpeedTestUrl('officialSpeedUrl', 'officialSpeedUrlPreset');
             const speedMin = parseFloat(document.getElementById('officialSpeedMin')?.value || '0.1') || 0.1;
             const speedLimit = parseInt(document.getElementById('officialSpeedLimit')?.value || '0', 10) || 0;
-            return { port, url, speedMin, speedLimit, results: testData.slice() };
+            const bandwidth = Math.max(0, parseInt(document.getElementById('speedBandwidth')?.value || '0', 10) || 0);
+            return { port, url, speedMin, speedLimit, bandwidth, results: testData.slice() };
         }
 
         function syncOfficialSpeedConfigState(cfg = getOfficialSpeedConfig()) {
@@ -2843,7 +2853,7 @@
             resetProgress();
             progressBox.style.display = 'block';
             updateNSBSpeedButtons();
-            if (!wsSend({ type: 'start_nsb_speed_batch', data: { results: rows, speedTest: cfg.speedTest, speedURL: cfg.speedURL, enableTLS: cfg.enableTLS, speedMin: cfg.speedMin, speedLimit: cfg.speedLimit, skipTested: continued, compact: nsbCompactView, r2AutoUpload: isR2AutoUploadSelected('nsbAutoUploadAccount') } })) {
+            if (!wsSend({ type: 'start_nsb_speed_batch', data: { results: rows, speedTest: cfg.speedTest, speedURL: cfg.speedURL, enableTLS: cfg.enableTLS, speedMin: cfg.speedMin, speedLimit: cfg.speedLimit, bandwidth: getSpeedBandwidthValue(), skipTested: continued, compact: nsbCompactView, r2AutoUpload: isR2AutoUploadSelected('nsbAutoUploadAccount') } })) {
                 nsbBatchSpeedRunning = false;
                 finishRunningTask('✨ 开始扫描与测试');
                 updateNSBSpeedButtons();
@@ -3254,6 +3264,7 @@
                     enableTLS,
                     delay,
                     resultLimit,
+                    bandwidth: getSpeedBandwidthValue(),
                     dc: targetDC,
                     speedMin,
                     speedLimit,
@@ -5394,6 +5405,7 @@
             { group: '测速与阈值', tab: 'official', fields: [
                 { id: 'officialSpeedMin', label: '官方测试合格速度' },
                 { id: 'nsbSpeedMin', label: '非标测试合格速度', tab: 'nsb' },
+                { id: 'speedBandwidth', label: '总测速带宽上限', optional: true },
             ] },
             { group: '自动化', tab: 'automation', fields: [
                 { id: 'scheduleInterval', label: '检测间隔（分钟）' },

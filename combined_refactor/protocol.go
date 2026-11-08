@@ -21,6 +21,7 @@ type startTaskRequest struct {
 	OfficialSpeedURL   string  `json:"officialSpeedURL"`
 	OfficialSpeedMin   float64 `json:"officialSpeedMin"`
 	OfficialSpeedLimit int     `json:"officialSpeedLimit"`
+	Bandwidth          int     `json:"bandwidth"`
 	R2AutoUpload       bool    `json:"r2AutoUpload"`
 }
 
@@ -52,6 +53,7 @@ type startOfficialSpeedBatchRequest struct {
 	URL          string       `json:"url"`
 	SpeedMin     float64      `json:"speedMin"`
 	SpeedLimit   int          `json:"speedLimit"`
+	Bandwidth    int          `json:"bandwidth"`
 	Results      []TestResult `json:"results"`
 	SkipTested   bool         `json:"skipTested"`
 	R2AutoUpload bool         `json:"r2AutoUpload"`
@@ -72,6 +74,7 @@ type startNSBTaskRequest struct {
 	DC           string  `json:"dc"`
 	SpeedMin     float64 `json:"speedMin"`
 	SpeedLimit   int     `json:"speedLimit"`
+	Bandwidth    int     `json:"bandwidth"`
 	Compact      bool    `json:"compact"`
 	ScanMode     string  `json:"scanMode"`
 	RelinkHost   string  `json:"relinkHost"`
@@ -87,6 +90,7 @@ type startNSBReallinkRequest struct {
 	EnableTLS    bool             `json:"enableTLS"`
 	SpeedMin     float64          `json:"speedMin"`
 	SpeedLimit   int              `json:"speedLimit"`
+	Bandwidth    int              `json:"bandwidth"`
 	Compact      bool             `json:"compact"`
 	ScanMode     string           `json:"scanMode"`
 	R2AutoUpload bool             `json:"r2AutoUpload"`
@@ -99,6 +103,7 @@ type startNSBSpeedBatchRequest struct {
 	EnableTLS    bool             `json:"enableTLS"`
 	SpeedMin     float64          `json:"speedMin"`
 	SpeedLimit   int              `json:"speedLimit"`
+	Bandwidth    int              `json:"bandwidth"`
 	SkipTested   bool             `json:"skipTested"`
 	Compact      bool             `json:"compact"`
 	R2AutoUpload bool             `json:"r2AutoUpload"`
@@ -143,6 +148,7 @@ type taskConfigUpdateRequest struct {
 	NSBSpeedTest       *int     `json:"nsbSpeedTest,omitempty"`
 	NSBSpeedMin        *float64 `json:"nsbSpeedMin,omitempty"`
 	NSBSpeedLimit      *int     `json:"nsbSpeedLimit,omitempty"`
+	SpeedBandwidth     *int     `json:"speedBandwidth,omitempty"`
 	NSBEnableSpeed     *bool    `json:"nsbEnableSpeed,omitempty"`
 	NSBTargetDC        *string  `json:"nsbTargetDC,omitempty"`
 	NSBTLS             *bool    `json:"nsbTls,omitempty"`
@@ -176,6 +182,7 @@ func (r *taskConfigUpdateRequest) toTaskConfigUpdate() *taskConfigUpdate {
 		NSBSpeedTest:       r.NSBSpeedTest,
 		NSBSpeedMin:        r.NSBSpeedMin,
 		NSBSpeedLimit:      r.NSBSpeedLimit,
+		SpeedBandwidth:     r.SpeedBandwidth,
 		NSBEnableSpeed:     r.NSBEnableSpeed,
 		NSBTargetDC:        r.NSBTargetDC,
 		NSBTLS:             r.NSBTLS,
