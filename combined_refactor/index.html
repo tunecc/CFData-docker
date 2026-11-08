@@ -205,125 +205,154 @@
     <aside class="config-col">
         <div class="cfg-panel">
             <div class="cfg-tabs" id="cfgTabBar">
-                <button class="cfg-tab active" id="cfgTabMode" onclick="nzShowConfigPanel('mode')" title="官方优选参数与扫描（模式切换只在任务控制卡）"><span class="nav-icon" id="cfgTabModeIcon">☁️</span><span id="cfgTabModeLabel">官方优选</span></button>
-                <button class="cfg-tab" id="cfgTabAutomation" onclick="nzShowConfigPanel('automation')" title="自动调度"><span class="nav-icon">⏱️</span>自动化</button>
-                <button class="cfg-tab" id="cfgTabResults" onclick="nzShowConfigPanel('results')" title="结果导出与上传（R2 与 GitHub 账号配置在此）"><span class="nav-icon">📥</span>结果操作</button>
-                <button class="cfg-tab" id="cfgTabSettings" onclick="nzShowConfigPanel('settings')" title="外观、代理与配置管理"><span class="nav-icon">⚙️</span>设置</button>
+                <button class="cfg-tab active" id="cfgTabMode" onclick="nzShowConfigPanel('mode')" title="官方优选参数与扫描（模式切换只在任务控制卡）"><span id="cfgTabModeLabel">官方优选</span></button>
+                <button class="cfg-tab" id="cfgTabAutomation" onclick="nzShowConfigPanel('automation')" title="自动调度">自动化</button>
+                <button class="cfg-tab" id="cfgTabResults" onclick="nzShowConfigPanel('results')" title="结果导出与上传（R2 与 GitHub 账号配置在此）">结果操作</button>
+                <button class="cfg-tab" id="cfgTabSettings" onclick="nzShowConfigPanel('settings')" title="外观、代理与配置管理">设置</button>
             </div>
             <div class="cfg-body active" id="cfgPanelOfficial">
                 <div class="cfg-panel-head">
                     <div class="cfg-panel-title">官方优选参数</div>
-                    <button class="menu-btn cfg-save-btn" onclick="saveTaskConfigToServer('official')" title="保存当前页面的官方优选参数到服务器配置文件">💾 保存</button>
+                    <button class="menu-btn cfg-save-btn" onclick="saveTaskConfigToServer('official')" title="保存当前页面的官方优选参数到服务器配置文件">保存</button>
                 </div>
 <div id="officialControls">
-                <div class="control-title">
-                    <span>官方参数</span>
-                    <span style="font-size:12px;color:var(--text-secondary);">端口可选</span>
-                </div>
                 <div class="cfg-group" id="officialFoldScan">
                     <div class="cfg-group-head">
                         <span>扫描参数</span></div>
                     <div class="cfg-group-body">
-                <div class="option-item">
-                    <span class="label">🌐 IP 类型</span>
-                    <select id="officialIpType" onchange="renderOfficialDcLibrary()">
-                        <option value="4">IPv4</option>
-                        <option value="6">IPv6</option>
-                    </select>
+                <div class="cfg-field">
+                    <span class="cfg-label">IP 类型</span>
+                    <div class="cfg-ctrl">
+                        <select id="officialIpType" onchange="renderOfficialDcLibrary()">
+                            <option value="4">IPv4</option>
+                            <option value="6">IPv6</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="option-item">
-                    <span class="label" title="目标端口，HTTPS 默认 443">🚪 测试端口</span>
-                    <select id="officialTestPort">
-                        <optgroup label="HTTPS (默认)">
-                            <option value="443" selected>443</option>
-                            <option value="2053">2053</option>
-                            <option value="2083">2083</option>
-                            <option value="2087">2087</option>
-                            <option value="2096">2096</option>
-                            <option value="8443">8443</option>
-                        </optgroup>
-                        <optgroup label="HTTP">
-                            <option value="80">80</option>
-                            <option value="8080">8080</option>
-                            <option value="8880">8880</option>
-                            <option value="2052">2052</option>
-                            <option value="2082">2082</option>
-                            <option value="2086">2086</option>
-                            <option value="2095">2095</option>
-                        </optgroup>
-                    </select>
+                <div class="cfg-field">
+                    <span class="cfg-label">测试端口</span>
+                    <div class="cfg-ctrl">
+                        <select id="officialTestPort">
+                            <optgroup label="HTTPS (默认)">
+                                <option value="443" selected>443</option>
+                                <option value="2053">2053</option>
+                                <option value="2083">2083</option>
+                                <option value="2087">2087</option>
+                                <option value="2096">2096</option>
+                                <option value="8443">8443</option>
+                            </optgroup>
+                            <optgroup label="HTTP">
+                                <option value="80">80</option>
+                                <option value="8080">8080</option>
+                                <option value="8880">8880</option>
+                                <option value="2052">2052</option>
+                                <option value="2082">2082</option>
+                                <option value="2086">2086</option>
+                                <option value="2095">2095</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <span class="cfg-label-hint">目标端口，HTTPS 默认 443</span>
                 </div>
-                <div class="option-item">
-                    <span class="label" title="同时扫描的线程数；填 0 表示按候选规模自动适配">🚀 并发数量</span>
-                    <input id="officialThreads" type="number" value="100" placeholder="默认 100，0=自动">
+                <div class="cfg-field">
+                    <span class="cfg-label">并发数量</span>
+                    <div class="cfg-ctrl">
+                        <input id="officialThreads" type="number" value="100" placeholder="默认 100，0=自动">
+                    </div>
+                    <span class="cfg-label-hint">同时扫描的线程数；0 表示按候选规模自动适配</span>
                 </div>
-                <div class="option-item">
-                    <span class="label" title="超过此值的连接将被过滤，单位毫秒">⏱️ 扫描合格延迟</span>
-                    <input id="officialDelay" type="number" value="500" placeholder="默认 500ms">
+                <div class="cfg-field">
+                    <span class="cfg-label">扫描合格延迟</span>
+                    <div class="cfg-ctrl">
+                        <input id="officialDelay" type="number" value="500" placeholder="默认 500ms">
+                    </div>
+                    <span class="cfg-label-hint">超过此值的连接将被过滤，单位毫秒</span>
                 </div>
-                <div class="option-item full-width">
-                    <span class="label">📡 扫描方式</span>
-                    <div class="field-with-action">
-                        <select id="officialScanMode" class="speed-url-select" onchange="updateScanModeHint()">
+                <div class="cfg-field">
+                    <span class="cfg-label">扫描方式</span>
+                    <div class="cfg-ctrl">
+                        <select id="officialScanMode" onchange="updateScanModeHint()">
                             <option value="tcping" selected>TCPing（默认）</option>
                             <option value="httping">HTTPing</option>
                         </select>
-                        <input id="officialScanModeHint" type="text" value="仅测量 TCP 握手延迟" readonly style="flex:1;min-width:0;">
                     </div>
+                    <span class="cfg-label-hint" id="officialScanModeHint">仅测量 TCP 握手延迟，不同模式数据不可互相比较</span>
                 </div>
-                <div class="option-item">
-                    <span class="label" title="从数据中心库选择只扫描某个地区；「全部」扫描全部候选">🏢 数据中心</span>
-                    <select id="officialDcSelect" onchange="syncOfficialDcSelection()">
-                        <option value="">全部</option>
-                        <option value="__manual__">手动输入其他代码</option>
-                    </select>
+                <div class="cfg-field">
+                    <span class="cfg-label">数据中心</span>
+                    <div class="cfg-ctrl">
+                        <select id="officialDcSelect" onchange="syncOfficialDcSelection()">
+                            <option value="">全部</option>
+                            <option value="__manual__">手动输入其他代码</option>
+                        </select>
+                    </div>
+                    <span class="cfg-label-hint">从数据中心库选择只扫描某个地区；「全部」扫描全部候选</span>
                 </div>
-                <div class="option-item hidden" id="officialDcManualRow">
-                    <span class="label" title="手动输入数据中心代码（例如 HKG），仍使用全量候选池并按该数据中心过滤">✏️ 数据中心代码</span>
-                    <input id="officialTargetDC" type="text" value="" placeholder="例如 HKG">
+                <div class="cfg-field hidden" id="officialDcManualRow">
+                    <span class="cfg-label">数据中心代码</span>
+                    <div class="cfg-ctrl">
+                        <input id="officialTargetDC" type="text" value="" placeholder="例如 HKG">
+                    </div>
+                    <span class="cfg-label-hint">手动输入数据中心代码（例如 HKG），仍使用全量候选池并按该数据中心过滤</span>
                 </div>
-                <div class="option-item full-width">
-                    <span class="label" title="数据中心库保存在 /data，重建容器后仍保留">📚 数据中心库</span>
-                    <div class="field-with-action">
-                        <input id="officialDcLibraryStatus" type="text" value="尚未扫描" readonly>
+                <div class="cfg-field full-width">
+                    <div class="cfg-label-row">
+                        <span class="cfg-label">数据中心库</span>
                         <button id="btnUpdateDcLibrary" class="mini-action-btn"
                             title="使用当前 IP 类型、端口、并发、扫描合格延迟和扫描方式更新数据中心库"
-                            onclick="startDcLibraryScan()">🔄</button>
+                            onclick="startDcLibraryScan()">更新</button>
                     </div>
+                    <span class="cfg-status-chip" id="officialDcLibraryStatus">尚未扫描</span>
+                    <span class="cfg-label-hint">数据中心库保存在 /data，重建容器后仍保留</span>
                 </div>
-                <div class="option-item">
-                    <span class="label" title="仅当选定具体数据中心时生效：收集到该数量的目标数据中心 IP 后停止派发扫描任务（已扫描到的 IP 仍会按「自动测速」设置继续详细测试与测速）；数据中心为「全部」时本项不生效，0 表示扫描全部候选">⏹️ 提前结束数量</span>
-                    <input id="officialStopCount" type="number" value="20" min="0" placeholder="默认 20，0 不早停">
+                <div class="cfg-field">
+                    <span class="cfg-label">提前结束数量</span>
+                    <div class="cfg-ctrl">
+                        <input id="officialStopCount" type="number" value="20" min="0" placeholder="默认 20，0 不早停">
+                    </div>
+                    <span class="cfg-label-hint">仅当选定具体数据中心时生效：收集到该数量的目标数据中心 IP 后停止派发扫描任务（已扫描到的 IP 仍会按「自动测速」设置继续详细测试与测速）；数据中心为「全部」时本项不生效，0 表示扫描全部候选</span>
                 </div>
                     </div>
                 </div>
                 <div class="cfg-group" id="officialFoldSpeed">
                     <div class="cfg-group-head">
-                        <span>测速参数<span class="fold-tip">（关闭测速填 0）</span></span></div>
+                        <span>测速参数<span class="fold-tip">关闭测速填 0</span></span></div>
                     <div class="cfg-group-body">
-                <div class="option-item">
-                    <span class="label" title="扫描完成后自动进行详细测试和测速">🧪 自动测速</span>
-                    <select id="officialAutoSpeed">
-                        <option value="off" selected>关闭</option>
-                        <option value="on">开启</option>
-                    </select>
+                <div class="cfg-field">
+                    <span class="cfg-label">自动测速</span>
+                    <div class="cfg-ctrl">
+                        <select id="officialAutoSpeed">
+                            <option value="off" selected>关闭</option>
+                            <option value="on">开启</option>
+                        </select>
+                    </div>
+                    <span class="cfg-label-hint">扫描完成后自动进行详细测试和测速</span>
                 </div>
-                <div class="option-item">
-                    <span class="label" title="测速达标下限，单位 MB/s">📉 测试合格速度</span>
-                    <input id="officialSpeedMin" type="number" value="0.1" step="0.01" placeholder="默认 0.1MB/s" oninput="syncOfficialSpeedConfigState()">
+                <div class="cfg-field">
+                    <span class="cfg-label">测试合格速度</span>
+                    <div class="cfg-ctrl">
+                        <input id="officialSpeedMin" type="number" value="0.1" step="0.01" placeholder="默认 0.1MB/s" oninput="syncOfficialSpeedConfigState()">
+                    </div>
+                    <span class="cfg-label-hint">测速达标下限，单位 MB/s</span>
                 </div>
-                <div class="option-item">
-                    <span class="label" title="测速达标结果的最大数量，关闭测速填 0">🏁 测速结果数量</span>
-                    <input id="officialSpeedLimit" type="number" value="5" placeholder="0 关闭测速">
+                <div class="cfg-field">
+                    <span class="cfg-label">测速结果数量</span>
+                    <div class="cfg-ctrl">
+                        <input id="officialSpeedLimit" type="number" value="5" placeholder="0 关闭测速">
+                    </div>
+                    <span class="cfg-label-hint">测速达标结果的最大数量，关闭测速填 0</span>
                 </div>
-                <div class="option-item">
-                    <span class="label" title="所有并发测速下载共享的总带宽上限，单位 MB/s；官方与非标测速共用，启用后非标测速并发按 总带宽÷合格阈值 自动收敛。0 表示不限速">🌐 总测速带宽上限</span>
-                    <input id="speedBandwidth" type="number" value="0" min="0" step="1" placeholder="0 不限速">
+                <div class="cfg-field">
+                    <span class="cfg-label">总测速带宽上限</span>
+                    <div class="cfg-ctrl">
+                        <input id="speedBandwidth" type="number" value="0" min="0" step="1" placeholder="0 不限速">
+                    </div>
+                    <span class="cfg-label-hint">所有并发测速下载共享的总带宽上限，单位 MB/s；官方与非标测速共用，启用后非标测速并发按 总带宽÷合格阈值 自动收敛。0 表示不限速</span>
                 </div>
-                <div class="option-item full-width">
-                    <span class="label">🔗 测速网址</span>
-                    <div class="field-with-action">
-                        <select id="officialSpeedUrlPreset" class="speed-url-select" onchange="applySpeedUrlPreset('officialSpeedUrl', this.value)">
+                <div class="cfg-field full-width">
+                    <div class="cfg-label-row"><span class="cfg-label">测速网址</span></div>
+                    <div class="cfg-ctrl cfg-ctrl-row">
+                        <select id="officialSpeedUrlPreset" onchange="applySpeedUrlPreset('officialSpeedUrl', this.value)">
                             <option value="auto" selected>自动选择</option>
                             <option value="speed.cloudflare.com/__down?bytes=99999999">Cloudflare</option>
                             <option value="cf.090227.xyz/__down?bytes=99999999">CM提供</option>
@@ -342,18 +371,19 @@
                     <div class="cfg-group-head">
                         <span>上传与维护</span></div>
                     <div class="cfg-group-body">
-                <div class="option-item full-width">
-                    <span class="label">🧹 精简地址库</span>
-                    <div class="field-with-action">
-                        <input id="compactIPv4Hint" type="text" value="按 /24 子网探测 TCP:80 连通性，仅保留活跃子网并覆盖 ips-v4.txt"
-                            readonly>
+                <div class="cfg-field full-width">
+                    <div class="cfg-label-row">
+                        <span class="cfg-label">精简地址库</span>
                         <button id="btnCompactIPv4" class="mini-action-btn" title="开始精简 IPv4 地址库"
-                            onclick="startCompactIPv4()">🧹</button>
+                            onclick="startCompactIPv4()">开始</button>
                     </div>
+                    <span class="cfg-label-hint">按 /24 子网探测 TCP:80 连通性，仅保留活跃子网并覆盖 ips-v4.txt</span>
                 </div>
-                <div class="option-item full-width">
-                    <span class="label">⬆ 自动上传</span>
-                    <select id="officialAutoUploadAccount" onchange="markAutoUploadTouched('officialAutoUploadAccount')"></select>
+                <div class="cfg-field">
+                    <span class="cfg-label">自动上传</span>
+                    <div class="cfg-ctrl">
+                        <select id="officialAutoUploadAccount" onchange="markAutoUploadTouched('officialAutoUploadAccount')"></select>
+                    </div>
                 </div>
                     </div>
                 </div>
@@ -362,94 +392,125 @@
             <div class="cfg-body hidden" id="cfgPanelNSB">
                 <div class="cfg-panel-head">
                     <div class="cfg-panel-title">非标优选参数</div>
-                    <button class="menu-btn cfg-save-btn" onclick="saveTaskConfigToServer('nsb')" title="保存当前页面的非标优选参数到服务器配置文件">💾 保存</button>
+                    <button class="menu-btn cfg-save-btn" onclick="saveTaskConfigToServer('nsb')" title="保存当前页面的非标优选参数到服务器配置文件">保存</button>
                 </div>
 <div id="nsbControls" class="hidden">
-                <div class="control-title">
-                    <span>非标参数</span>
-                    <span style="font-size:12px;color:var(--text-secondary);">支持上传 txt/csv 文件或填写网络
-                        URL（二选一）；若识别失败，请整理为每行一个目标，格式：IP 空格 端口，例如 1.2.3.4 443</span>
-                </div>
                 <div class="cfg-group" id="nsbFoldScan">
                     <div class="cfg-group-head">
                         <span>输入与扫描参数</span></div>
                     <div class="cfg-group-body">
-                <div class="option-item full-width">
-                    <span class="label" title="支持 txt/csv 格式">📄 IP 文件</span>
-                    <input id="nsbFileInput" type="file" accept=".txt,.csv,text/plain,text/csv"
-                        onchange="syncNSBInputMode('file')">
+                <div class="cfg-field full-width">
+                    <div class="cfg-label-row"><span class="cfg-label">IP 文件</span></div>
+                    <div class="cfg-ctrl">
+                        <input id="nsbFileInput" type="file" accept=".txt,.csv,text/plain,text/csv"
+                            onchange="syncNSBInputMode('file')">
+                    </div>
+                    <span class="cfg-label-hint">支持 txt/csv，与网络 URL 二选一；若识别失败，请整理为每行一个目标，格式：IP 端口，例如 <code>1.2.3.4 443</code></span>
                 </div>
-                <div class="option-item full-width">
-                    <span class="label" title="从网络地址获取 IP 列表">🌐 网络 URL</span>
-                    <input id="nsbSourceUrl" type="url" placeholder="https://example.com/ip-list.txt"
-                        oninput="syncNSBInputMode('url')">
+                <div class="cfg-field full-width">
+                    <div class="cfg-label-row"><span class="cfg-label">网络 URL</span></div>
+                    <div class="cfg-ctrl">
+                        <input id="nsbSourceUrl" type="url" placeholder="https://example.com/ip-list.txt"
+                            oninput="syncNSBInputMode('url')">
+                    </div>
+                    <span class="cfg-label-hint">从网络地址获取 IP 列表</span>
                 </div>
-                <div class="option-item">
-                    <span class="label" title="未指定端口时使用的默认端口">🚪 备用端口</span>
-                    <input id="nsbFallbackPort" type="number" value="443" placeholder="关闭 TLS 默认 80，开启 TLS 默认 443">
+                <div class="cfg-field">
+                    <span class="cfg-label">备用端口</span>
+                    <div class="cfg-ctrl">
+                        <input id="nsbFallbackPort" type="number" value="443" placeholder="关闭 TLS 默认 80，开启 TLS 默认 443">
+                    </div>
+                    <span class="cfg-label-hint">未指定端口时使用的默认端口</span>
                 </div>
-                <div class="option-item">
-                    <span class="label" title="同时扫描的线程数；填 0 表示按候选规模自动适配">🚀 并发数量</span>
-                    <input id="nsbThreads" type="number" value="100" placeholder="默认 100，0=自动">
+                <div class="cfg-field">
+                    <span class="cfg-label">并发数量</span>
+                    <div class="cfg-ctrl">
+                        <input id="nsbThreads" type="number" value="100" placeholder="默认 100，0=自动">
+                    </div>
+                    <span class="cfg-label-hint">同时扫描的线程数；0 表示按候选规模自动适配</span>
                 </div>
-                <div class="option-item">
-                    <span class="label" title="超过此值的连接将被过滤，单位毫秒">⏱️ 扫描合格延迟</span>
-                    <input id="nsbDelay" type="number" value="0" placeholder="默认 0ms">
+                <div class="cfg-field">
+                    <span class="cfg-label">扫描合格延迟</span>
+                    <div class="cfg-ctrl">
+                        <input id="nsbDelay" type="number" value="0" placeholder="默认 0ms">
+                    </div>
+                    <span class="cfg-label-hint">超过此值的连接将被过滤，单位毫秒</span>
                 </div>
-                <div class="option-item">
-                    <span class="label" title="延迟测试通过的结果数量上限">🎯 扫描合格数量</span>
-                    <input id="nsbResultLimit" type="number" value="1000" placeholder="非 0 正整数">
+                <div class="cfg-field">
+                    <span class="cfg-label">扫描合格数量</span>
+                    <div class="cfg-ctrl">
+                        <input id="nsbResultLimit" type="number" value="1000" placeholder="非 0 正整数">
+                    </div>
+                    <span class="cfg-label-hint">延迟测试通过的结果数量上限</span>
                 </div>
-                <div class="option-item">
-                    <span class="label" title="启用 HTTPS 进行测试">🔗 TLS 模式</span>
-                    <select id="nsbTls" onchange="updateNSBFallbackPortDefault()">
-                        <option value="on" selected>开启</option>
-                        <option value="off">关闭</option>
-                    </select>
+                <div class="cfg-field">
+                    <span class="cfg-label">TLS 模式</span>
+                    <div class="cfg-ctrl">
+                        <select id="nsbTls" onchange="updateNSBFallbackPortDefault()">
+                            <option value="on" selected>开启</option>
+                            <option value="off">关闭</option>
+                        </select>
+                    </div>
+                    <span class="cfg-label-hint">启用 HTTPS 进行测试</span>
                 </div>
-                <div class="option-item full-width">
-                    <span class="label">📡 扫描方式</span>
-                    <div class="field-with-action">
-                        <select id="nsbScanMode" class="speed-url-select" onchange="updateScanModeHint()">
+                <div class="cfg-field">
+                    <span class="cfg-label">扫描方式</span>
+                    <div class="cfg-ctrl">
+                        <select id="nsbScanMode" onchange="updateScanModeHint()">
                             <option value="tcping" selected>TCPing（默认）</option>
                             <option value="httping">HTTPing</option>
                         </select>
-                        <input id="nsbScanModeHint" type="text" value="仅测量 TCP 握手延迟" readonly style="flex:1;min-width:0;">
                     </div>
+                    <span class="cfg-label-hint" id="nsbScanModeHint">仅测量 TCP 握手延迟，不同模式数据不可互相比较</span>
                 </div>
-                <div class="option-item">
-                    <span class="label" title="按数据中心筛选结果">🏢 数据中心</span>
-                    <input id="nsbTargetDC" type="text" value="" placeholder="留空不限制，如 NRT">
+                <div class="cfg-field">
+                    <span class="cfg-label">数据中心</span>
+                    <div class="cfg-ctrl">
+                        <input id="nsbTargetDC" type="text" value="" placeholder="留空不限制，如 NRT">
+                    </div>
+                    <span class="cfg-label-hint">按数据中心筛选结果</span>
                 </div>
                     </div>
                 </div>
                 <div class="cfg-group" id="nsbFoldSpeed">
                     <div class="cfg-group-head">
-                        <span>测速参数<span class="fold-tip">（含链路复验）</span></span></div>
+                        <span>测速参数<span class="fold-tip">含链路复验</span></span></div>
                     <div class="cfg-group-body">
-                <div class="option-item">
-                    <span class="label" title="扫描完成后自动进行测速">🧪 自动测速</span>
-                    <select id="nsbEnableSpeed" onchange="updateNSBSpeedControls()">
-                        <option value="on">开启</option>
-                        <option value="off" selected>关闭</option>
-                    </select>
+                <div class="cfg-field">
+                    <span class="cfg-label">自动测速</span>
+                    <div class="cfg-ctrl">
+                        <select id="nsbEnableSpeed" onchange="updateNSBSpeedControls()">
+                            <option value="on">开启</option>
+                            <option value="off" selected>关闭</option>
+                        </select>
+                    </div>
+                    <span class="cfg-label-hint">扫描完成后自动进行测速</span>
                 </div>
-                <div class="option-item">
-                    <span class="label" title="测速达标下限，单位 MB/s">📉 测试合格速度</span>
-                    <input id="nsbSpeedMin" type="number" value="0.1" step="0.01" placeholder="默认 0.1MB/s" oninput="syncNSBSpeedConfigState()">
+                <div class="cfg-field">
+                    <span class="cfg-label">测试合格速度</span>
+                    <div class="cfg-ctrl">
+                        <input id="nsbSpeedMin" type="number" value="0.1" step="0.01" placeholder="默认 0.1MB/s" oninput="syncNSBSpeedConfigState()">
+                    </div>
+                    <span class="cfg-label-hint">测速达标下限，单位 MB/s</span>
                 </div>
-                <div class="option-item">
-                    <span class="label" title="测速达标结果的最大数量，关闭测速填 0">🏁 测速结果数量</span>
-                    <input id="nsbSpeedLimit" type="number" value="5" placeholder="0 关闭测速">
+                <div class="cfg-field">
+                    <span class="cfg-label">测速结果数量</span>
+                    <div class="cfg-ctrl">
+                        <input id="nsbSpeedLimit" type="number" value="5" placeholder="0 关闭测速">
+                    </div>
+                    <span class="cfg-label-hint">测速达标结果的最大数量，关闭测速填 0</span>
                 </div>
-                <div class="option-item">
-                    <span class="label" title="同时测速的 IP 数量，设为 1 可获得准确速度">⚡ 测速并发</span>
-                    <input id="nsbSpeedTest" type="number" value="0" placeholder="0 关闭测速">
+                <div class="cfg-field">
+                    <span class="cfg-label">测速并发</span>
+                    <div class="cfg-ctrl">
+                        <input id="nsbSpeedTest" type="number" value="0" placeholder="0 关闭测速">
+                    </div>
+                    <span class="cfg-label-hint">同时测速的 IP 数量，设为 1 可获得准确速度</span>
                 </div>
-                <div class="option-item full-width">
-                    <span class="label">🔗 测速网址</span>
-                    <div class="field-with-action">
-                        <select id="nsbSpeedUrlPreset" class="speed-url-select" onchange="applySpeedUrlPreset('nsbSpeedUrl', this.value)">
+                <div class="cfg-field full-width">
+                    <div class="cfg-label-row"><span class="cfg-label">测速网址</span></div>
+                    <div class="cfg-ctrl cfg-ctrl-row">
+                        <select id="nsbSpeedUrlPreset" onchange="applySpeedUrlPreset('nsbSpeedUrl', this.value)">
                             <option value="auto" selected>自动选择</option>
                             <option value="speed.cloudflare.com/__down?bytes=99999999">Cloudflare</option>
                             <option value="cf.090227.xyz/__down?bytes=99999999">CM提供</option>
@@ -462,21 +523,26 @@
                             onclick="resetDefaultSpeedUrl('nsbSpeedUrl', 'nsbSpeedUrlPreset')">↺</button>
                     </div>
                 </div>
-                <div class="option-item full-width">
-                    <span class="label" title="扫描完成后对结果做真实链路验证（TCP+TLS+HTTP），不可用的候选将被剔除；默认关闭，开启自动测速时自动跟随执行">🔬 链路复验</span>
-                    <div class="field-with-action">
-                        <select id="nsbRelinkPreset" class="speed-url-select" onchange="applyRelinkPreset()">
+                <div class="cfg-field full-width">
+                    <div class="cfg-label-row">
+                        <span class="cfg-label">链路复验</span>
+                        <div class="cfg-label-row-actions">
+                            <button class="mini-action-btn" title="链路复验：对当前结果执行真实链路验证（需二次确认）"
+                                onclick="startNSBReallink()">验证</button>
+                            <button class="mini-action-btn" title="恢复公共探针"
+                                onclick="resetRelinkDefault()">↺</button>
+                        </div>
+                    </div>
+                    <div class="cfg-ctrl cfg-ctrl-row">
+                        <select id="nsbRelinkPreset" onchange="applyRelinkPreset()">
                             <option value="off" selected>关闭</option>
                             <option value="default">公共探针</option>
                             <option value="custom">手动输入</option>
                         </select>
-                        <input id="nsbRelinkHost" type="text" value="已关闭" style="flex: 1 1 120px;"
+                        <input id="nsbRelinkHost" type="text" value="已关闭"
                             placeholder="输入自定义探针域名" oninput="markRelinkCustom()">
-                        <button class="mini-action-btn" title="链路复验：对当前结果执行真实链路验证（需二次确认）"
-                            onclick="startNSBReallink()">🔬</button>
-                        <button class="mini-action-btn" title="恢复公共探针"
-                            onclick="resetRelinkDefault()">↺</button>
                     </div>
+                    <span class="cfg-label-hint">扫描完成后对结果做真实链路验证（TCP+TLS+HTTP），不可用的候选将被剔除；默认关闭，开启自动测速时自动跟随执行</span>
                 </div>
                     </div>
                 </div>
@@ -484,20 +550,28 @@
                     <div class="cfg-group-head">
                         <span>输出与上传</span></div>
                     <div class="cfg-group-body">
-                <div class="option-item">
-                    <span class="label" title="表格列数精简或完整">🧾 精简表格</span>
-                    <select id="nsbCompactView" onchange="setNSBCompactView(this.value === 'compact')">
-                        <option value="compact" selected>精简表格</option>
-                        <option value="full">完整表格</option>
-                    </select>
+                <div class="cfg-field">
+                    <span class="cfg-label">精简表格</span>
+                    <div class="cfg-ctrl">
+                        <select id="nsbCompactView" onchange="setNSBCompactView(this.value === 'compact')">
+                            <option value="compact" selected>精简表格</option>
+                            <option value="full">完整表格</option>
+                        </select>
+                    </div>
+                    <span class="cfg-label-hint">表格列数精简或完整</span>
                 </div>
-                <div class="option-item">
-                    <span class="label" title="CSV 导出文件名">🛠️ 输出文件名</span>
-                    <input id="nsbOutFile" type="text" value="ip.csv" placeholder="ip.csv">
+                <div class="cfg-field">
+                    <span class="cfg-label">输出文件名</span>
+                    <div class="cfg-ctrl">
+                        <input id="nsbOutFile" type="text" value="ip.csv" placeholder="ip.csv">
+                    </div>
+                    <span class="cfg-label-hint">CSV 导出文件名</span>
                 </div>
-                <div class="option-item full-width">
-                    <span class="label">⬆ 自动上传</span>
-                    <select id="nsbAutoUploadAccount" onchange="markAutoUploadTouched('nsbAutoUploadAccount')"></select>
+                <div class="cfg-field">
+                    <span class="cfg-label">自动上传</span>
+                    <div class="cfg-ctrl">
+                        <select id="nsbAutoUploadAccount" onchange="markAutoUploadTouched('nsbAutoUploadAccount')"></select>
+                    </div>
                 </div>
                     </div>
                 </div>
@@ -506,69 +580,87 @@
             <div class="cfg-body hidden" id="cfgPanelAutomation">
                 <div class="cfg-panel-head">
                     <div class="cfg-panel-title">自动化</div>
-                    <button class="menu-btn cfg-save-btn" onclick="saveAutomationPage()" title="保存当前页面的调度、通知与 R2 设置">💾 保存</button>
+                    <button class="menu-btn cfg-save-btn" onclick="saveAutomationPage()" title="保存当前页面的调度、通知与 R2 设置">保存</button>
                 </div>
-<div class="section-box" id="automationSection">
-            <h3>⏱️ 自动化</h3>
-            <div class="upload-status" id="scheduleStatusText">调度未启用</div>
-            <div class="automation-grid">
-                <div class="automation-column">
-                    <div class="settings-title">自动调度</div>
-                    <label class="inline-check"><input type="checkbox" id="scheduleEnabled"> 启用自动调度</label>
-                    <div class="form-group" id="scheduleCronField">
-                        <label for="scheduleCron">Cron 表达式</label>
-                        <div class="cfg-cron-wrap">
-                            <div class="cfg-cron-display" id="scheduleCronDisplay" tabindex="0" role="textbox" aria-label="Cron 表达式，点击编辑"></div>
-                            <div class="cfg-cron-labels-row" id="scheduleCronLabels" style="display:none;"></div>
-                            <input id="scheduleCron" type="text" placeholder="0 4 */2 * *" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="none" style="display:none;">
-                        </div>
-                        <div class="cfg-cron-badge" id="scheduleCronBadge" role="status"></div>
-                        <div class="automation-hint">优先级高于检测间隔；推荐隔两天的凌晨 4 点执行 <code>0 4 */2 * *</code> ·
-                            <a href="https://crontab.guru/examples.html" target="_blank" rel="noopener noreferrer">Cron 语法文档</a> ·
-                            <a href="https://crontab.guru" target="_blank" rel="noopener noreferrer">在线测试</a></div>
+<div id="automationSection">
+                <div class="cfg-group" id="automationFoldSchedule">
+                    <div class="cfg-group-head">
+                        <span>自动调度</span></div>
+                    <div class="cfg-group-body">
+                <div class="cfg-status-chip" id="scheduleStatusText">调度未启用</div>
+                <label class="cfg-field cfg-field--toggle" for="scheduleEnabled">
+                    <span class="cfg-label">启用自动调度</span>
+                    <span class="cfg-ctrl"><input type="checkbox" id="scheduleEnabled"></span>
+                </label>
+                <div class="cfg-field full-width">
+                    <div class="cfg-label-row"><label class="cfg-label" for="scheduleCron">Cron 表达式</label></div>
+                    <div class="cfg-ctrl cfg-cron-wrap">
+                        <div class="cfg-cron-display" id="scheduleCronDisplay" tabindex="0" role="textbox" aria-label="Cron 表达式，点击编辑"></div>
+                        <div class="cfg-cron-labels-row" id="scheduleCronLabels" style="display:none;"></div>
+                        <input id="scheduleCron" type="text" placeholder="0 4 */2 * *" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="none" style="display:none;">
                     </div>
-                    <div class="form-group" id="scheduleIntervalField">
-                        <label for="scheduleInterval">检测间隔（分钟）</label>
+                    <div class="cfg-cron-badge" id="scheduleCronBadge" role="status"></div>
+                    <span class="cfg-label-hint">优先级高于检测间隔；推荐隔两天的凌晨 4 点执行 <code>0 4 */2 * *</code> ·
+                        <a href="https://crontab.guru/examples.html" target="_blank" rel="noopener noreferrer">Cron 语法文档</a> ·
+                        <a href="https://crontab.guru" target="_blank" rel="noopener noreferrer">在线测试</a></span>
+                </div>
+                <div class="cfg-field" id="scheduleIntervalField">
+                    <label class="cfg-label" for="scheduleInterval">检测间隔（分钟）</label>
+                    <div class="cfg-ctrl">
                         <input id="scheduleInterval" type="number" min="0" placeholder="默认 2880">
                     </div>
-                    <div class="automation-hint">R2 上传配置已移至「结果操作」页的「R2 上传」分组；自动调度扫描完成后仍按原规则自动上传。</div>
+                    <span class="cfg-label-hint">未配置 Cron 时按此间隔调度</span>
                 </div>
-            </div>
-            <div class="automation-grid">
-                <div class="automation-column">
-                    <div class="settings-title">任务通知（Webhook）</div>
-                    <div class="form-group">
-                        <label for="notifyBarkServer">Bark 服务器（可选，默认官方）</label>
+                <div class="cfg-inline-hint lvl-info">R2 上传配置在「结果操作」页的「R2 上传」分组；自动调度扫描完成后仍按原规则自动上传。</div>
+                    </div>
+                </div>
+                <div class="cfg-group" id="automationFoldNotify">
+                    <div class="cfg-group-head">
+                        <span>任务通知（Webhook）</span></div>
+                    <div class="cfg-group-body">
+                <div class="cfg-field">
+                    <label class="cfg-label" for="notifyBarkServer">Bark 服务器</label>
+                    <div class="cfg-ctrl">
                         <input id="notifyBarkServer" type="url" placeholder="https://api.day.app">
                     </div>
-                    <div class="form-group">
-                        <label for="notifyBarkKey">Bark key</label>
+                    <span class="cfg-label-hint">可选，默认官方</span>
+                </div>
+                <div class="cfg-field">
+                    <label class="cfg-label" for="notifyBarkKey">Bark key</label>
+                    <div class="cfg-ctrl">
                         <input id="notifyBarkKey" type="password" autocomplete="off" placeholder="Bark key">
                     </div>
-                    <div class="form-group">
-                        <label for="notifyTelegramToken">Telegram bot token</label>
+                    <span class="cfg-label-hint">保存后不回传明文，留空保持不变</span>
+                </div>
+                <div class="cfg-field">
+                    <label class="cfg-label" for="notifyTelegramToken">Telegram bot token</label>
+                    <div class="cfg-ctrl">
                         <input id="notifyTelegramToken" type="password" autocomplete="off" placeholder="Telegram bot token">
                     </div>
-                    <div class="form-group">
-                        <label for="notifyTelegramChatID">Telegram chat ID</label>
+                    <span class="cfg-label-hint">保存后不回传明文，留空保持不变</span>
+                </div>
+                <div class="cfg-field">
+                    <label class="cfg-label" for="notifyTelegramChatID">Telegram chat ID</label>
+                    <div class="cfg-ctrl">
                         <input id="notifyTelegramChatID" type="text" placeholder="例如 123456789（群组可带负号）">
                     </div>
-                    <div class="automation-hint">手动任务完成与调度任务完成/失败时推送结果摘要；Bark key 与 bot token 保存后不回传明文，留空保持不变。通知走管理面代理，发送失败只记日志、不影响任务。</div>
-                    <div class="theme-options" style="display:flex;gap:8px;margin-top:6px;">
-                        <button class="menu-btn" style="flex:1;" onclick="sendNotifyTest('bark')">测试 Bark</button>
-                        <button class="menu-btn" style="flex:1;" onclick="sendNotifyTest('telegram')">测试 Telegram</button>
-                    </div>
-                    <div class="automation-hint" id="notifyTestFeedback" style="display:none"></div>
                 </div>
-            </div>
+                <div class="cfg-inline-hint lvl-info">手动任务完成与调度任务完成/失败时推送结果摘要；通知走管理面代理，发送失败只记日志、不影响任务。</div>
+                <div class="cfg-actions-row">
+                    <button class="menu-btn" onclick="sendNotifyTest('bark')">测试 Bark</button>
+                    <button class="menu-btn" onclick="sendNotifyTest('telegram')">测试 Telegram</button>
+                </div>
+                <div class="cfg-inline-hint" id="notifyTestFeedback" style="display:none"></div>
+                    </div>
+                </div>
         </div>
             </div>
             <div class="cfg-body hidden" id="cfgPanelSettings">
                 <div class="cfg-panel-head">
                     <div class="cfg-panel-title">设置</div>
-                    <div style="display:flex;gap:6px;">
-                        <button class="menu-btn" onclick="nzToggleHealthPanel()" title="按当前表单值做只读体检，⚠ 项可点击前往配置">🩺 配置体检</button>
-                        <button class="menu-btn cfg-save-btn" onclick="saveSettingsPage()" title="保存当前页面的本地配置、自动加载偏好与管理面代理">💾 保存</button>
+                    <div class="cfg-head-actions">
+                        <button class="menu-btn" onclick="nzToggleHealthPanel()" title="按当前表单值做只读体检，警告项可点击前往配置">配置体检</button>
+                        <button class="menu-btn cfg-save-btn" onclick="saveSettingsPage()" title="保存当前页面的本地配置、自动加载偏好与管理面代理">保存</button>
                     </div>
                 </div>
                 <div class="health-panel hidden" id="healthPanelWrap" aria-live="polite">
@@ -576,53 +668,63 @@
                     <div id="healthPanel"></div>
                 </div>
 <div class="settings-grid">
-                <div class="card">
-                    <div class="card-head"><div class="card-title">外观与代理</div></div>
-        <div id="settingsMenu" class="settings-panel">
-            <div class="settings-title">颜色模式</div>
-            <div class="theme-options">
-                <button class="menu-btn" id="theme-light" onclick="setTheme('light')">浅色</button>
-                <button class="menu-btn" id="theme-dark" onclick="setTheme('dark')">深色</button>
-                <button class="menu-btn" id="theme-auto" onclick="setTheme('auto')">自动</button>
-            </div>
-            <div class="settings-title">本地缓存</div>
-            <button class="danger-btn" onclick="resetAllConfig()">恢复全部默认配置</button>
-
-            <div class="settings-title" style="margin-top:12px;">🌐 管理面代理</div>
-            <div class="upload-status" id="proxyStatusText">未启用（可用系统环境变量代理）</div>
-            <div id="proxySourceText" style="font-size:11px;color:var(--text-secondary);margin-top:2px;"></div>
-            <input id="proxyInput" type="text" placeholder="socks5://127.0.0.1:1080 或 http://127.0.0.1:8080" style="width:100%;margin-top:6px;">
-            <div class="theme-options" style="display:flex;gap:8px;margin-top:6px;">
-                <button class="menu-btn" style="flex:1;" onclick="clearManagementProxy()">清除</button>
-            </div>
-            <div style="font-size:11px;line-height:1.5;color:var(--text-secondary);margin-top:6px;">
-                仅作用于下载 ASN 库/locations、版本检查、GitHub/订阅上传等管理操作；扫描与测速保持直连。程序配置优先生效，未配置时使用系统环境变量代理。
-            </div>
-        </div>
-
+                <div class="cfg-group">
+                    <div class="cfg-group-head">
+                        <span>外观与代理</span></div>
+                    <div class="cfg-group-body" id="settingsMenu">
+                <div class="cfg-field">
+                    <span class="cfg-label">颜色模式</span>
+                    <div class="cfg-ctrl">
+                        <div class="theme-options">
+                            <button class="menu-btn" id="theme-light" onclick="setTheme('light')">浅色</button>
+                            <button class="menu-btn" id="theme-dark" onclick="setTheme('dark')">深色</button>
+                            <button class="menu-btn" id="theme-auto" onclick="setTheme('auto')">自动</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="card">
-                    <div class="card-head"><div class="card-title">配置管理</div></div>
-        <div id="configMenu" class="settings-panel">
-            <div class="settings-title" style="margin-top:12px;">📂 加载配置</div>
-            <button class="menu-btn" onclick="loadConfigFromLS()">加载保存配置</button>
-
-            <div class="settings-title" style="margin-top:12px;">🔄 自动加载配置</div>
-            <select id="configAutoLoad" onchange="saveAutoLoadPreference(this.value)" style="width:100%;">
-                <option value="off">服务器参数（连接时自动加载，默认）</option>
-                <option value="localStorage">本地保存参数（覆盖服务器参数）</option>
-            </select>
-            <div style="font-size:11px;line-height:1.5;color:var(--text-secondary);margin-top:6px;">
-                服务器配置文件是任务参数的主载体：在「官方优选 / 非标优选」页面右上角点击「💾 保存」写入服务器，换浏览器或重启容器后自动回显。
-            </div>
-
-            <div class="settings-title" style="margin-top:12px;">📄 从服务器同步</div>
-            <button class="menu-btn" onclick="loadConfigFromServer()">从服务器同步配置</button>
-
-            <div class="settings-title" style="margin-top:12px;">🗑️ 管理</div>
-            <button class="danger-btn" onclick="deleteSavedConfig()">删除保存配置</button>
-        </div>
-
+                <div class="cfg-field full-width">
+                    <div class="cfg-label-row"><span class="cfg-label">本地缓存</span></div>
+                    <div class="cfg-ctrl"><button class="danger-btn" onclick="resetAllConfig()">恢复全部默认配置</button></div>
+                </div>
+                <div class="cfg-field full-width">
+                    <div class="cfg-label-row"><span class="cfg-label">管理面代理</span></div>
+                    <span class="cfg-status-chip" id="proxyStatusText">未启用（可用系统环境变量代理）</span>
+                    <span class="cfg-label-hint" id="proxySourceText"></span>
+                    <div class="cfg-ctrl cfg-ctrl-row">
+                        <input id="proxyInput" type="text" placeholder="socks5://127.0.0.1:1080 或 http://127.0.0.1:8080">
+                        <button class="menu-btn" onclick="clearManagementProxy()">清除</button>
+                    </div>
+                    <span class="cfg-label-hint">仅作用于下载 ASN 库/locations、版本检查、GitHub/订阅上传等管理操作；扫描与测速保持直连。程序配置优先生效，未配置时使用系统环境变量代理。</span>
+                </div>
+                    </div>
+                </div>
+                <div class="cfg-group">
+                    <div class="cfg-group-head">
+                        <span>配置管理</span></div>
+                    <div class="cfg-group-body" id="configMenu">
+                <div class="cfg-field full-width">
+                    <div class="cfg-label-row"><span class="cfg-label">加载配置</span></div>
+                    <div class="cfg-ctrl"><button class="menu-btn" onclick="loadConfigFromLS()">加载保存配置</button></div>
+                </div>
+                <div class="cfg-field full-width">
+                    <div class="cfg-label-row"><label class="cfg-label" for="configAutoLoad">自动加载配置</label></div>
+                    <div class="cfg-ctrl">
+                        <select id="configAutoLoad" onchange="saveAutoLoadPreference(this.value)">
+                            <option value="off">服务器参数（连接时自动加载，默认）</option>
+                            <option value="localStorage">本地保存参数（覆盖服务器参数）</option>
+                        </select>
+                    </div>
+                    <span class="cfg-label-hint">服务器配置文件是任务参数的主载体：在「官方优选 / 非标优选」页面点击「保存」写入服务器，换浏览器或重启容器后自动回显。</span>
+                </div>
+                <div class="cfg-field full-width">
+                    <div class="cfg-label-row"><span class="cfg-label">从服务器同步</span></div>
+                    <div class="cfg-ctrl"><button class="menu-btn" onclick="loadConfigFromServer()">从服务器同步配置</button></div>
+                </div>
+                <div class="cfg-field full-width">
+                    <div class="cfg-label-row"><span class="cfg-label">管理</span></div>
+                    <div class="cfg-ctrl"><button class="danger-btn" onclick="deleteSavedConfig()">删除保存配置</button></div>
+                </div>
+                    </div>
                 </div>
             </div>
             <div class="cfg-panel-footer">
@@ -639,67 +741,88 @@
             <div class="cfg-body hidden" id="cfgPanelResults">
                 <div class="cfg-panel-head">
                     <div class="cfg-panel-title">结果操作</div>
-                    <button class="menu-btn cfg-save-btn" onclick="saveResultsPage()" title="保存当前页面的结果面板设置与 R2 配置">💾 保存</button>
+                    <button class="menu-btn cfg-save-btn" onclick="saveResultsPage()" title="保存当前页面的结果面板设置与 R2 配置">保存</button>
                 </div>
                 <div class="result-panel-grid">
                     <div class="result-panel-section">
-                        <div class="modal-field">
-                            <label>数据来源</label>
-                            <select id="resultSourceSelect" onchange="handleResultSourceChange(this.value)">
-                                <option value="scan" selected>扫描结果</option>
-                                <option value="test">详细测试</option>
-                                <option value="nsb">NSB 测速</option>
-                            </select>
+                        <div class="cfg-field">
+                            <span class="cfg-label">数据来源</span>
+                            <div class="cfg-ctrl">
+                                <select id="resultSourceSelect" onchange="handleResultSourceChange(this.value)">
+                                    <option value="scan" selected>扫描结果</option>
+                                    <option value="test">详细测试</option>
+                                    <option value="nsb">NSB 测速</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="modal-field">
-                            <label>文件格式</label>
-                            <select id="resultFormat" onchange="handleResultFormatChange()">
-                                <option value="txt" selected>TXT</option>
-                                <option value="csv">CSV</option>
-                                <option value="substore">Sub-Store 目标列表</option>
-                            </select>
+                        <div class="cfg-field">
+                            <span class="cfg-label">文件格式</span>
+                            <div class="cfg-ctrl">
+                                <select id="resultFormat" onchange="handleResultFormatChange()">
+                                    <option value="txt" selected>TXT</option>
+                                    <option value="csv">CSV</option>
+                                    <option value="substore">Sub-Store 目标列表</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="modal-field">
-                            <label>文件名</label>
-                            <input id="resultFileName" type="text" value="cfdata-results" oninput="saveResultPanelSettings()">
+                        <div class="cfg-field">
+                            <span class="cfg-label">文件名</span>
+                            <div class="cfg-ctrl">
+                                <input id="resultFileName" type="text" value="cfdata-results" oninput="saveResultPanelSettings()">
+                            </div>
                         </div>
-                        <div class="modal-field">
-                            <label>开始行</label>
-                            <input id="resultStartRow" type="number" value="1" min="1" oninput="updateResultPreview()">
+                        <div class="cfg-field">
+                            <span class="cfg-label">开始行</span>
+                            <div class="cfg-ctrl">
+                                <input id="resultStartRow" type="number" value="1" min="1" oninput="updateResultPreview()">
+                            </div>
                         </div>
-                        <div class="modal-field">
-                            <label>结束行</label>
-                            <input id="resultEndRow" type="number" value="20" min="1" oninput="updateResultPreview()">
+                        <div class="cfg-field">
+                            <span class="cfg-label">结束行</span>
+                            <div class="cfg-ctrl">
+                                <input id="resultEndRow" type="number" value="20" min="1" oninput="updateResultPreview()">
+                            </div>
                         </div>
-                        <div class="modal-field" id="resultIPTypeFilterField">
-                            <label>IP 类型筛选</label>
-                            <select id="resultIPTypeFilter" onchange="updateResultPreview()">
-                                <option value="all" selected>导出全部类型</option>
-                                <option value="ipv4">仅导出IPV4</option>
-                                <option value="ipv6">仅导出IPV6</option>
-                            </select>
+                        <div class="cfg-field" id="resultIPTypeFilterField">
+                            <span class="cfg-label">IP 类型筛选</span>
+                            <div class="cfg-ctrl">
+                                <select id="resultIPTypeFilter" onchange="updateResultPreview()">
+                                    <option value="all" selected>导出全部类型</option>
+                                    <option value="ipv4">仅导出IPV4</option>
+                                    <option value="ipv6">仅导出IPV6</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="modal-field" id="resultQualifiedFilterField">
-                            <label>导出合格结果</label>
-                            <select id="resultQualifiedFilter" onchange="updateResultPreview()">
-                                <option value="all" selected>导出全部结果</option>
-                                <option value="qualified">仅导出合格</option>
-                                <option value="unqualified">仅导出不合格</option>
-                            </select>
+                        <div class="cfg-field" id="resultQualifiedFilterField">
+                            <span class="cfg-label">导出合格结果</span>
+                            <div class="cfg-ctrl">
+                                <select id="resultQualifiedFilter" onchange="updateResultPreview()">
+                                    <option value="all" selected>导出全部结果</option>
+                                    <option value="qualified">仅导出合格</option>
+                                    <option value="unqualified">仅导出不合格</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="modal-field">
-                            <label>延迟低于（毫秒，0=不限制）</label>
-                            <input id="resultLatencyFilter" type="number" min="0" step="1" value="0" oninput="updateResultPreview()">
+                        <div class="cfg-field">
+                            <span class="cfg-label">延迟低于</span>
+                            <div class="cfg-ctrl">
+                                <input id="resultLatencyFilter" type="number" min="0" step="1" value="0" oninput="updateResultPreview()">
+                            </div>
+                            <span class="cfg-label-hint">毫秒，0 = 不限制</span>
                         </div>
-                        <div class="modal-field">
-                            <label>丢包低于（%，100=不限制）</label>
-                            <input id="resultLossFilter" type="number" min="0" max="100" step="0.01" value="100" oninput="updateResultPreview()">
+                        <div class="cfg-field">
+                            <span class="cfg-label">丢包低于</span>
+                            <div class="cfg-ctrl">
+                                <input id="resultLossFilter" type="number" min="0" max="100" step="0.01" value="100" oninput="updateResultPreview()">
+                            </div>
+                            <span class="cfg-label-hint">百分比，100 = 不限制</span>
                         </div>
-                        <div class="modal-field full">
-                            <label style="display:flex;align-items:center;gap:6px;">输出示例
+                        <div class="cfg-field full-width">
+                            <div class="cfg-label-row">
+                                <span class="cfg-label">输出示例</span>
                                 <span class="preview-badge" id="resultPreviewBadge" style="display:none;">示例</span>
-                                <span style="font-size:11px;color:var(--text-secondary);">（无结果时按当前设置展示示例）</span>
-                            </label>
+                            </div>
+                            <span class="cfg-label-hint">无结果时按当前设置展示示例</span>
                             <pre class="result-preview" id="resultPreview">暂无预览</pre>
                         </div>
                     </div>
@@ -707,10 +830,10 @@
                         <div class="cfg-group-head">
                             <span>字段与顺序</span></div>
                         <div class="cfg-group-body">
-                            <div class="modal-field full">
-                                <div class="field-head">
-                                    <label>字段选择</label>
-                                    <div class="field-head-actions">
+                            <div class="cfg-field full-width">
+                                <div class="cfg-label-row">
+                                    <span class="cfg-label">字段选择</span>
+                                    <div class="cfg-label-row-actions">
                                         <button class="action-btn" id="resultSelectAllBtn" onclick="toggleAllResultFields()">全选</button>
                                         <button class="action-btn" onclick="selectIPPortOnly()">仅 IP:PORT</button>
                                         <button class="action-btn" onclick="selectDefaultResultFields()">默认选择</button>
@@ -718,13 +841,15 @@
                                 </div>
                                 <div class="field-picker" id="resultFieldPicker"></div>
                             </div>
-                            <div class="modal-field full">
-                                <label>自定义字段</label>
-                                <input id="resultCustomFields" type="text" placeholder="标题:内容，多项用逗号分隔，例如 备注:测试版,归属:cfdata" oninput="handleCustomResultFieldsChange()">
+                            <div class="cfg-field full-width">
+                                <div class="cfg-label-row"><span class="cfg-label">自定义字段</span></div>
+                                <div class="cfg-ctrl">
+                                    <input id="resultCustomFields" type="text" placeholder="标题:内容，多项用逗号分隔，例如 备注:测试版,归属:cfdata" oninput="handleCustomResultFieldsChange()">
+                                </div>
                             </div>
-                            <div class="modal-field full" id="resultTextSeparatorField">
-                                <label>TXT 字段分隔符</label>
-                                <div class="separator-row">
+                            <div class="cfg-field full-width" id="resultTextSeparatorField">
+                                <div class="cfg-label-row"><span class="cfg-label">TXT 字段分隔符</span></div>
+                                <div class="cfg-ctrl cfg-ctrl-row">
                                     <select id="resultTextSeparatorPreset" onchange="applyTextSeparatorPreset('result', this.value)">
                                         <option value="-" selected>-</option>
                                         <option value="|">|</option>
@@ -740,11 +865,12 @@
                                     <input id="resultTextSeparatorCustom" type="text" value="-" placeholder="自定义分隔符" oninput="markTextSeparatorCustom('result')">
                                 </div>
                             </div>
-                            <div class="modal-field full" id="resultIPv6BracketsField">
-                                <label class="inline-check"><input type="checkbox" id="resultIPv6Brackets" checked onchange="updateResultPreview()"> IPv6 地址添加方括号</label>
-                            </div>
-                            <div class="modal-field full">
-                                <label>输出顺序</label>
+                            <label class="cfg-field cfg-field--toggle" id="resultIPv6BracketsField" for="resultIPv6Brackets">
+                                <span class="cfg-label">IPv6 地址添加方括号</span>
+                                <span class="cfg-ctrl"><input type="checkbox" id="resultIPv6Brackets" checked onchange="updateResultPreview()"></span>
+                            </label>
+                            <div class="cfg-field full-width">
+                                <div class="cfg-label-row"><span class="cfg-label">输出顺序</span></div>
                                 <div class="order-list" id="resultOrderList"></div>
                             </div>
                         </div>
@@ -753,30 +879,39 @@
                         <div class="cfg-group-head">
                             <span>R2 上传</span></div>
                         <div class="cfg-group-body">
-                            <label class="inline-check"><input type="checkbox" id="r2Enabled"> 启用 R2 上传</label>
-                            <div class="form-group">
-                                <label for="r2WorkerUrl">Worker 地址</label>
-                                <input id="r2WorkerUrl" type="text" placeholder="例如 https://r2.example.com">
+                            <label class="cfg-field cfg-field--toggle" for="r2Enabled">
+                                <span class="cfg-label">启用 R2 上传</span>
+                                <span class="cfg-ctrl"><input type="checkbox" id="r2Enabled"></span>
+                            </label>
+                            <div class="cfg-field">
+                                <label class="cfg-label" for="r2WorkerUrl">Worker 地址</label>
+                                <div class="cfg-ctrl">
+                                    <input id="r2WorkerUrl" type="text" placeholder="例如 https://r2.example.com">
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="r2WorkerToken">Worker token</label>
-                                <input id="r2WorkerToken" type="password" autocomplete="off" placeholder="Worker token">
+                            <div class="cfg-field">
+                                <label class="cfg-label" for="r2WorkerToken">Worker token</label>
+                                <div class="cfg-ctrl">
+                                    <input id="r2WorkerToken" type="password" autocomplete="off" placeholder="Worker token">
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="r2Filename">文件名</label>
-                                <input id="r2Filename" type="text" placeholder="默认 cfdata-targets.txt">
-                                <div class="automation-hint">修改文件名后 R2 上会写入新文件，旧文件不会被自动删除。</div>
+                            <div class="cfg-field">
+                                <label class="cfg-label" for="r2Filename">文件名</label>
+                                <div class="cfg-ctrl">
+                                    <input id="r2Filename" type="text" placeholder="默认 cfdata-targets.txt">
+                                </div>
+                                <span class="cfg-label-hint">修改文件名后 R2 上会写入新文件，旧文件不会被自动删除</span>
                             </div>
-                            <div class="form-group">
-                                <label for="r2AliasPreview">节点别名（由「字段与顺序」自动生成）</label>
-                                <input id="r2AliasPreview" type="text" readonly placeholder="展开「字段与顺序」后自动生成">
-                                <div class="automation-hint">别名 = 「字段与顺序」中勾选的字段按「输出顺序」拼接，字段间分隔符复用「TXT 字段分隔符」；IP:PORT 已包含在每行地址中，不再参与别名；IP地址、端口号、数据中心、落地区域、地区、城市 参与生成，其余字段（延迟、丢包等）不适用于别名。未选择任何其他字段时只输出 IP:PORT，不加别名。</div>
+                            <div class="cfg-field full-width">
+                                <div class="cfg-label-row"><span class="cfg-label">节点别名</span></div>
+                                <span class="cfg-status-chip cfg-status-chip--mono" id="r2AliasPreview">展开「字段与顺序」后自动生成</span>
+                                <span class="cfg-label-hint">由「字段与顺序」自动生成：勾选的字段按「输出顺序」拼接，分隔符复用「TXT 字段分隔符」；IP:PORT 已包含在每行地址中，不再参与别名。未选择任何其他字段时只输出 IP:PORT，不加别名。</span>
                             </div>
                             <input id="r2AliasFormat" type="hidden">
-                            <div class="automation-hint">自动调度与「⬆ 自动上传」的 R2 上传按规则筛选：开启测速只上传测速达标行，未开启测速只上传通过延迟筛选的结果行，与导出文件的筛选和行数设置无关；动作区的「上传 R2」按钮则按本面板当前的格式与筛选设置上传。</div>
-                            <div class="automation-hint" id="r2UploadFeedback" style="display:none"></div>
-                            <div class="modal-field full">
-                                <label>上传状态</label>
+                            <div class="cfg-inline-hint lvl-info">自动调度与「自动上传」的 R2 上传按规则筛选：开启测速只上传测速达标行，未开启测速只上传通过延迟筛选的结果行，与导出文件的筛选和行数设置无关；动作区的「上传 R2」按钮则按本面板当前的格式与筛选设置上传。</div>
+                            <div class="cfg-inline-hint" id="r2UploadFeedback" style="display:none"></div>
+                            <div class="cfg-field full-width">
+                                <div class="cfg-label-row"><span class="cfg-label">上传状态</span></div>
                                 <div class="upload-status" id="r2UploadStatus">等待上传</div>
                             </div>
                         </div>
@@ -785,45 +920,70 @@
                         <div class="cfg-group-head">
                             <span>GitHub 上传</span></div>
                         <div class="cfg-group-body">
-                            <div class="modal-field github-field"><label>GitHub 账户</label>
-                                <div class="github-account-row">
-                                    <select id="githubAccountSelect" onchange="loadSelectedGitHubAccount()"></select>
-                                    <button class="action-btn" onclick="deleteSelectedGitHubAccount()">删除</button>
+                            <div class="cfg-field">
+                                <span class="cfg-label">GitHub 账户</span>
+                                <div class="cfg-ctrl">
+                                    <div class="github-account-row">
+                                        <select id="githubAccountSelect" onchange="loadSelectedGitHubAccount()"></select>
+                                        <button class="action-btn" onclick="deleteSelectedGitHubAccount()">删除</button>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="modal-field github-field"><label>账户名称</label><input id="githubAccountName" type="text" placeholder="例如 main-account"></div>
-                            <div class="modal-field github-field"><label>GitHub Token</label><input id="githubToken" type="password" autocomplete="off" placeholder="repo 权限 token"></div>
-                            <div class="modal-field github-field"><label>仓库 owner/repo</label><input id="githubRepo" type="text" placeholder="owner/repo"></div>
-                            <div class="modal-field github-field"><label>分支</label><input id="githubBranch" type="text" value="main"></div>
-                            <div class="modal-field github-field"><label>目标路径</label><input id="githubPath" type="text" placeholder="results/ip.csv 或 results/ip.txt"></div>
-                            <div class="modal-field full github-field"><label>提交信息</label><input id="githubMessage" type="text" value="update cfdata results"></div>
-                            <div class="modal-field full github-field"><label class="inline-check"><input id="githubSaveToken" type="checkbox"> 保存 token 到本机浏览器（使用 WebCrypto 加密存储）</label></div>
-                            <div class="modal-field full github-field">
-                                <label>快速上传指定文件（不使用上方结果内容）</label>
-                                <input id="githubQuickFile" type="file" accept=".txt,.csv,text/plain,text/csv">
+                            <div class="cfg-field">
+                                <span class="cfg-label">账户名称</span>
+                                <div class="cfg-ctrl"><input id="githubAccountName" type="text" placeholder="例如 main-account"></div>
                             </div>
-                            <div class="modal-field full github-field">
-                                <label>上传状态</label>
+                            <div class="cfg-field">
+                                <span class="cfg-label">GitHub Token</span>
+                                <div class="cfg-ctrl"><input id="githubToken" type="password" autocomplete="off" placeholder="repo 权限 token"></div>
+                            </div>
+                            <div class="cfg-field">
+                                <span class="cfg-label">仓库 owner/repo</span>
+                                <div class="cfg-ctrl"><input id="githubRepo" type="text" placeholder="owner/repo"></div>
+                            </div>
+                            <div class="cfg-field">
+                                <span class="cfg-label">分支</span>
+                                <div class="cfg-ctrl"><input id="githubBranch" type="text" value="main"></div>
+                            </div>
+                            <div class="cfg-field">
+                                <span class="cfg-label">目标路径</span>
+                                <div class="cfg-ctrl"><input id="githubPath" type="text" placeholder="results/ip.csv 或 results/ip.txt"></div>
+                            </div>
+                            <div class="cfg-field">
+                                <span class="cfg-label">提交信息</span>
+                                <div class="cfg-ctrl"><input id="githubMessage" type="text" value="update cfdata results"></div>
+                            </div>
+                            <label class="cfg-field cfg-field--toggle" for="githubSaveToken">
+                                <span class="cfg-label">保存 token 到本机浏览器</span>
+                                <span class="cfg-ctrl"><input id="githubSaveToken" type="checkbox"></span>
+                            </label>
+                            <span class="cfg-label-hint cfg-hint-indent">使用 WebCrypto 加密存储</span>
+                            <div class="cfg-field full-width">
+                                <div class="cfg-label-row"><span class="cfg-label">快速上传指定文件</span></div>
+                                <div class="cfg-ctrl">
+                                    <input id="githubQuickFile" type="file" accept=".txt,.csv,text/plain,text/csv">
+                                </div>
+                                <span class="cfg-label-hint">不使用上方结果内容</span>
+                            </div>
+                            <div class="cfg-field full-width">
+                                <div class="cfg-label-row"><span class="cfg-label">上传状态</span></div>
                                 <div class="upload-status" id="githubUploadStatus">等待上传</div>
                             </div>
-                            <div class="modal-field full">
-                                <label>上传失败提示</label>
-                                <div class="upload-status" id="uploadProxyHint">上传失败？可在「设置」标签页配置管理面代理后重试；支持程序配置（socks5://、http:// 等）与系统环境变量代理，扫描测速不受影响。</div>
-                            </div>
-                            <div class="automation-hint">账号只保存在本机浏览器加密存储；选择账号后字段自动回显，上传时按「保存 token」勾选状态更新账号。</div>
+                            <div class="upload-status" id="uploadProxyHint">上传失败？可在「设置」标签页配置管理面代理后重试；支持程序配置（socks5://、http:// 等）与系统环境变量代理，扫描测速不受影响。</div>
+                            <div class="cfg-inline-hint lvl-info">账号只保存在本机浏览器加密存储；选择账号后字段自动回显，上传时按「保存 token」勾选状态更新账号。</div>
                         </div>
                     </div>
                     <div class="cfg-group" id="resultFoldHistory">
                         <div class="cfg-group-head">
                             <span>任务历史</span></div>
                         <div class="cfg-group-body">
-                            <div class="automation-hint">任务完成后自动把统计摘要保存到服务器 history/ 目录；点击条目载入分析视图，重启后自动恢复最近一次分析。</div>
-                            <div class="theme-options" style="display:flex;gap:8px;margin:6px 0;">
-                                <button class="menu-btn" style="flex:1;" onclick="nzLoadHistoryList()">🔄 刷新</button>
-                                <button class="menu-btn" style="flex:1;" onclick="nzClearHistory()">🗑️ 清空</button>
+                            <div class="cfg-inline-hint lvl-info">任务完成后自动把统计摘要保存到服务器 history/ 目录；点击条目载入分析视图，重启后自动恢复最近一次分析。</div>
+                            <div class="cfg-actions-row">
+                                <button class="menu-btn" onclick="nzLoadHistoryList()">刷新</button>
+                                <button class="menu-btn" onclick="nzClearHistory()">清空</button>
                             </div>
-                            <div id="historyList" class="history-list"><div class="automation-hint">暂无历史记录</div></div>
-                            <div class="automation-hint" id="historyFeedback" style="display:none"></div>
+                            <div id="historyList" class="history-list"><div class="cfg-label-hint">暂无历史记录</div></div>
+                            <div class="cfg-inline-hint" id="historyFeedback" style="display:none"></div>
                         </div>
                     </div>
                     <div class="result-panel-actions">

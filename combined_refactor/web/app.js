@@ -453,7 +453,7 @@
             if (status.lastRun) {
                 parts.push('上次: ' + formatScheduleTime(status.lastRun) + (status.lastResult ? ' ' + status.lastResult : ''));
             }
-            if (payload.warning) parts.push('⚠ ' + payload.warning);
+            if (payload.warning) parts.push('警告: ' + payload.warning);
             el.textContent = parts.join(' · ');
         }
 
@@ -662,7 +662,7 @@
                     '<span class="history-when">' + when + '</span><span class="history-mode">' + modeName + '</span>' +
                     '<span class="history-count">' + (it.resultCount || 0) + ' 个 · 达标 ' + rate + '%</span>' +
                     '<span class="history-dur">' + dur + '</span>' +
-                    '<button class="mini-action-btn" title="删除该记录" onclick="event.stopPropagation(); nzHistoryDelete(\'' + file + '\')">🗑️</button></div>';
+                    '<button class="mini-action-btn" title="删除该记录" onclick="event.stopPropagation(); nzHistoryDelete(\'' + file + '\')">×</button></div>';
             });
             list.innerHTML = rows.join('');
         }
@@ -1181,7 +1181,7 @@
             const btn = document.getElementById('btnCompactIPv4');
             if (btn) {
                 btn.disabled = true;
-                btn.textContent = '⏳';
+                btn.textContent = '精简中…';
             }
             isTaskRunning = true;
             runningTaskLabel = 'IPv4 地址库精简';
@@ -1194,7 +1194,7 @@
             wsSend({ type: 'compact_ipv4', data: {} });
         }
 
-        function finishCompactIPv4(btnText = '🧹') {
+        function finishCompactIPv4(btnText = '开始') {
             const btn = document.getElementById('btnCompactIPv4');
             if (btn) {
                 btn.disabled = false;
@@ -1462,9 +1462,9 @@
             const hint = getScanModeHint();
             if (!hint) return;
             if (mode === 'httping') {
-                hint.value = '测量 HTTP GET 请求的完整 TTFB（含 TLS 握手），因此HTTPing 延迟比 TCPing 高属正常现象，不同模式数据不可互相比较';
+                hint.textContent = '测量 HTTP GET 请求的完整 TTFB（含 TLS 握手），因此HTTPing 延迟比 TCPing 高属正常现象，不同模式数据不可互相比较';
             } else {
-                hint.value = '仅测量 TCP 握手延迟，不同模式数据不可互相比较';
+                hint.textContent = '仅测量 TCP 握手延迟，不同模式数据不可互相比较';
             }
         }
 
@@ -1532,8 +1532,8 @@
 
         function nzUpdateStartReadiness() {
             const { ready } = nzStartReadiness();
-            const fileRow = document.getElementById('nsbFileInput')?.closest('.option-item');
-            const urlRow = document.getElementById('nsbSourceUrl')?.closest('.option-item');
+            const fileRow = document.getElementById('nsbFileInput')?.closest('.cfg-field');
+            const urlRow = document.getElementById('nsbSourceUrl')?.closest('.cfg-field');
             if (fileRow) fileRow.classList.toggle('missing-hint', !ready);
             if (urlRow) urlRow.classList.toggle('missing-hint', !ready);
             // 任务运行中不允许禁用启停按钮：停止运行中的任务必须始终可用
@@ -3028,7 +3028,7 @@
                 select.value = '';
                 select.disabled = true;
                 if (manualRow) manualRow.classList.add('hidden');
-                if (statusInput) statusInput.value = '尚无数据中心库，请点击右侧按钮更新；「全部」仍可直接扫描';
+                if (statusInput) statusInput.textContent = '尚无数据中心库，请点击右侧按钮更新；「全部」仍可直接扫描';
                 return;
             }
 
@@ -3048,7 +3048,7 @@
             }
             if (manualRow) manualRow.classList.toggle('hidden', officialDcSelection !== '__manual__');
             if (statusInput) {
-                statusInput.value = `更新于 ${formatDcLibraryTime(status.updatedAt)} · ${status.dcCount || dataCenters.length} 个数据中心 · ${status.ipCount || 0} 个 IP`;
+                statusInput.textContent = `更新于 ${formatDcLibraryTime(status.updatedAt)} · ${status.dcCount || dataCenters.length} 个数据中心 · ${status.ipCount || 0} 个 IP`;
             }
         }
 
@@ -4622,7 +4622,7 @@
             if (hidden) hidden.value = template;
             const preview = document.getElementById('r2AliasPreview');
             if (preview) {
-                preview.value = template === R2_ALIAS_NONE_TEMPLATE
+                preview.textContent = template === R2_ALIAS_NONE_TEMPLATE
                     ? '（仅输出 IP:PORT，不加别名）'
                     : (template || '');
             }
@@ -5275,8 +5275,8 @@
                     }
                     flushCompactHits();
                     finishRunningTask('✨ 开始扫描与测试');
-                    finishCompactIPv4('✅');
-                    setTimeout(() => finishCompactIPv4('🧹'), 3000);
+                    finishCompactIPv4('完成');
+                    setTimeout(() => finishCompactIPv4('开始'), 3000);
                     progressBar.style.background = 'linear-gradient(to right, #10b981, #34d399)';
                     progressBar.style.width = '100%';
                     progressBar.style.animation = 'none';
@@ -5352,26 +5352,29 @@
         /* ---------------- 配置活校验（A4）：建议不拦截 ---------------- */
 
         // 校验器注册表在 web/validators.js（纯函数，node 可测）；此处只做接线与行内提示渲染
+        // 行内提示三档（ok/info/warn）插入统一字段行内部，跨两列显示在控件行之下
+        const NZ_HINT_ICON_WARN = '<svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2 1.5 13.5h13z"/><path d="M8 6.6v3.1"/><path d="M8 11.7v.1"/></svg>';
+        const NZ_HINT_ICON_INFO = '<svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="6.4"/><path d="M8 7.4v3.4"/><path d="M8 4.9v.1"/></svg>';
+
         function nzValidateField(input) {
             if (!input || !window.CFDataValidators) return;
             const res = window.CFDataValidators.validateConfigField(input.id, input.value);
-            // 提示插在字段容器之后（.option-item 是横排 flex，提示放里面会挤进同一行）
-            const host = input.closest('.form-group') || input.closest('.option-item') || input.parentElement;
+            const host = input.closest('.cfg-field') || input.parentElement;
             if (!host) return;
-            let hint = document.querySelector('.cfg-field-hint[data-for="' + input.id + '"]');
+            let hint = host.querySelector(':scope > .cfg-inline-hint[data-for="' + input.id + '"]');
             if (res.level === 'ok') {
                 if (hint) hint.remove();
                 return;
             }
             if (!hint) {
                 hint = document.createElement('div');
-                hint.className = 'cfg-field-hint';
+                hint.className = 'cfg-inline-hint';
                 hint.dataset.for = input.id;
                 hint.setAttribute('role', 'status');
-                host.insertAdjacentElement('afterend', hint);
+                host.appendChild(hint);
             }
-            hint.className = 'cfg-field-hint ' + res.level;
-            hint.innerHTML = '<span class="hint-icon">' + (res.level === 'warn' ? '⚠' : 'ℹ') + '</span><span>' + escapeHTML(res.msg) + '</span>';
+            hint.className = 'cfg-inline-hint lvl-' + res.level;
+            hint.innerHTML = (res.level === 'warn' ? NZ_HINT_ICON_WARN : NZ_HINT_ICON_INFO) + '<span>' + escapeHTML(res.msg) + '</span>';
         }
 
         function bindConfigValidators() {
@@ -5434,12 +5437,12 @@
                     let cls = 'is-ok';
                     let msg = '';
                     if (field.requiredNote && value === '') {
-                        icon = '⚠'; cls = 'is-warn'; msg = field.requiredNote; warnCount++;
+                        icon = '!'; cls = 'is-warn'; msg = field.requiredNote; warnCount++;
                     } else if (value === '' && field.optional) {
                         icon = 'ℹ'; cls = 'is-info'; msg = '未配置（可选）';
                     } else {
                         const res = window.CFDataValidators.validateConfigField(field.id, value);
-                        if (res.level === 'warn') { icon = '⚠'; cls = 'is-warn'; msg = res.msg; warnCount++; }
+                        if (res.level === 'warn') { icon = '!'; cls = 'is-warn'; msg = res.msg; warnCount++; }
                         else if (res.level === 'info') { icon = 'ℹ'; cls = 'is-info'; msg = res.msg; }
                     }
                     const display = value === '' ? '（空）' : value;
@@ -5454,7 +5457,7 @@
             const summary = document.getElementById('healthPanelSummary');
             if (summary) {
                 summary.className = 'health-summary ' + (warnCount > 0 ? 'has-warn' : 'all-ok');
-                summary.textContent = warnCount > 0 ? ('发现 ' + warnCount + ' 项待优化，点击 ⚠ 行可前往对应配置') : '配置正常';
+                summary.textContent = warnCount > 0 ? ('发现 ' + warnCount + ' 项待优化，点击警告行可前往对应配置') : '配置正常';
             }
             panel.innerHTML = html;
             // 诊断即导航：⚠ 行点击/回车跳转配置 tab 并聚焦字段

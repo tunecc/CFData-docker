@@ -56,13 +56,11 @@
             requestAnimationFrame(function () { targetBody.scrollTop = savedTop; });
         }
         document.querySelectorAll('.cfg-tab').forEach(function (t) { t.classList.remove('active'); });
-        // 当前模式参数标签：文字/图标/说明跟随任务控制卡选择的模式，两个模式只有一个标签
+        // 当前模式参数标签：文字/说明跟随任务控制卡选择的模式，两个模式只有一个标签
         var modeTab = document.getElementById('cfgTabMode');
         if (modeTab) {
-            var icon = document.getElementById('cfgTabModeIcon');
             var label = document.getElementById('cfgTabModeLabel');
             var isNSB = key === 'nsb';
-            if (icon) icon.textContent = isNSB ? '📂' : '☁️';
             if (label) label.textContent = isNSB ? '非标优选' : '官方优选';
             modeTab.title = (isNSB ? '非标优选参数与扫描' : '官方优选参数与扫描') + '（模式切换只在任务控制卡）';
             if (isNSB || key === 'official') modeTab.classList.add('active');

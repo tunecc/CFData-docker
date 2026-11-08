@@ -23,11 +23,19 @@
     --card-shadow: 0 0 0 1px var(--border), 0 8px 24px rgba(15, 23, 42, 0.06);
     --logs-bg: #0f1216;
     --logs-fg: #d6dde6;
+    --input-bg: color-mix(in srgb, var(--fg) 3%, var(--card));
     --gap: 10px;
     --radius: 12px;
     --radius-sm: 8px;
     --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
     --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Courier New', monospace;
+
+    /* Cron 分段语义色：分/时/日/月/周，暗色主题单独提亮（见 data-theme='dark'） */
+    --cron-0: #3b82f6;
+    --cron-1: #8b5cf6;
+    --cron-2: #10b981;
+    --cron-3: #f59e0b;
+    --cron-4: #ec4899;
 
     /* 旧版变量别名：旧脚本内联样式仍引用 */
     --primary-color: var(--accent);
@@ -51,9 +59,20 @@
     --accent-soft: rgba(14, 165, 160, 0.16);
     --muted: #9aa4b2;
     --success: #16a34a;
+    --warning: #f0b24a;
+    --danger: #f87171;
+    --idle: #38bdf8;
+    --prepare: #4cc3fe;
+    --stopping: #2ee08a;
     --glass-bg: rgba(24, 25, 27, 0.78);
     --card-shadow: 0 0 0 1px var(--border), 0 8px 24px rgba(0, 0, 0, 0.35);
     --logs-bg: #0b0d10;
+    --input-bg: rgba(0, 0, 0, 0.2);
+    --cron-0: #60a5fa;
+    --cron-1: #a78bfa;
+    --cron-2: #34d399;
+    --cron-3: #fbbf24;
+    --cron-4: #f472b6;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -195,27 +214,26 @@ button { font-family: inherit; }
 
 input, select, textarea {
     font-family: inherit;
-    /* 16px 下限：低于该字号时 iOS Safari 聚焦会整页放大（学习 subs-check-pro admin.css 3334-3340） */
-    font-size: 16px;
+    /* 桌面 13px 紧凑密度；≤760px 恢复 16px，低于该字号 iOS Safari 聚焦会整页放大 */
+    font-size: 13px;
     color: var(--fg);
-    background: color-mix(in srgb, var(--fg) 3%, var(--card));
+    background: var(--input-bg);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
-    padding: 8px 10px;
+    padding: 6px 10px;
     outline: none;
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
     max-width: 100%;
 }
 input:focus, select:focus {
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-soft);
+    box-shadow: 0 0 0 2.5px color-mix(in srgb, var(--accent) 15%, transparent);
 }
 input[readonly] { color: var(--muted); }
 input[type='checkbox'] { width: auto; accent-color: var(--accent); }
 
 label { font-size: 12px; color: var(--muted); }
 
-.form-group { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; }
 .inline-check {
     display: flex;
     align-items: center;
@@ -223,28 +241,6 @@ label { font-size: 12px; color: var(--muted); }
     font-size: 13px;
     color: var(--fg);
     cursor: pointer;
-}
-
-.field-with-action { display: flex; gap: 6px; align-items: center; flex: 1; min-width: 0; }
-.field-with-action input, .field-with-action select { flex: 1; min-width: 0; }
-
-.option-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 7px 0;
-}
-.option-item .label { flex: 0 0 128px; font-size: 13px; color: var(--fg); }
-.option-item input, .option-item select { flex: 1; min-width: 0; }
-.option-item.full-width { flex-wrap: wrap; }
-
-.settings-title {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin: 10px 0 6px;
 }
 
 .danger-btn {
@@ -770,8 +766,6 @@ h3 {
 
 .config-section { display: flex; flex-direction: column; gap: 4px; }
 
-.automation-grid { display: flex; flex-direction: column; }
-
 /* ---------------- 设置视图 ---------------- */
 
 .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap); align-items: start; }
@@ -838,34 +832,37 @@ h3 {
 }
 .cfg-tabs {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
     gap: 4px;
-    padding: 10px 10px 8px;
+    padding: 8px 10px;
     border-bottom: 1px solid var(--border);
     background: color-mix(in srgb, var(--accent) 4%, var(--card));
     position: sticky;
     top: 0;
     z-index: 5;
+    flex-shrink: 0;
 }
+.cfg-tabs::-webkit-scrollbar { display: none; }
 .cfg-tab {
-    flex: 1 1 auto;
+    flex: 1 1 0;
     min-width: 0;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 4px;
-    padding: 8px 6px;
+    padding: 7px 6px;
     border: 1px solid transparent;
     border-radius: 10px;
     background: transparent;
-    color: var(--text-secondary);
+    color: var(--muted);
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
     white-space: nowrap;
     transition: background .15s, color .15s, border-color .15s;
 }
-.cfg-tab .nav-icon { font-size: 13px; }
 .cfg-tab.active {
     background: linear-gradient(135deg, var(--accent), var(--accent-2));
     color: #fff;
@@ -874,32 +871,143 @@ h3 {
 }
 .cfg-body {
     display: none;
-    padding: 12px;
+    padding: 6px 10px 12px;
     /* 面板内唯一滚动区：内容超高时在 cfg-body 内部滚动，修复旧版内容被裁剪的问题 */
     flex: 1 1 0;
     min-height: 0;
     overflow-y: auto;
 }
 .cfg-body.active { display: block; }
-.cfg-tabs { flex-shrink: 0; }
 .cfg-body .settings-grid { grid-template-columns: 1fr; }
 .cfg-panel-head {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 8px;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 .cfg-panel-title { font-size: 15px; font-weight: 700; }
 .cfg-save-btn { padding: 6px 12px; font-size: 12px; }
-.cfg-panel .section-box { margin-bottom: 12px; }
-.cfg-panel .section-box:last-child { margin-bottom: 0; }
-.cfg-panel .option-item .label { flex-shrink: 0; }
-.cfg-body .option-item.missing-hint {
+.cfg-head-actions { display: flex; align-items: center; gap: 6px; }
+.cfg-field.missing-hint {
     border: 1px dashed var(--danger);
-    border-radius: 10px;
-    padding: 6px;
     background: color-mix(in srgb, var(--danger) 6%, transparent);
+}
+
+/* ---------------- 统一配置行（学习 subs-check-pro admin-cfg-form .cfg-field） ---------------- */
+
+/* 普通行：label 列 + 控件列，说明跨两列；全宽/开关行只改列定义 */
+.cfg-field {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    column-gap: 10px;
+    row-gap: 3px;
+    align-items: center;
+    padding: 9px 8px;
+    border-bottom: 1px solid color-mix(in srgb, var(--border) 45%, transparent);
+    border-radius: 8px;
+    transition: background .15s ease;
+}
+.cfg-field:last-child { border-bottom-color: transparent; }
+.cfg-label {
+    grid-column: 1;
+    grid-row: 1;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--fg);
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+.cfg-ctrl {
+    grid-column: 2;
+    grid-row: 1;
+    display: flex;
+    min-width: 0;
+}
+.cfg-ctrl > input, .cfg-ctrl > select, .cfg-ctrl > textarea { width: 100%; }
+.cfg-ctrl-row { flex-wrap: wrap; gap: 6px; align-items: center; }
+.cfg-ctrl-row > select { flex: 0 0 auto; max-width: 46%; }
+.cfg-ctrl-row > input { flex: 1 1 120px; min-width: 0; }
+/* 全宽行：单列堆叠（覆盖普通行的固定 row/column），label 行可携带动作按钮 */
+.cfg-field.full-width { grid-template-columns: minmax(0, 1fr); }
+.cfg-field.full-width > * { grid-column: 1; grid-row: auto; }
+.cfg-label-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.cfg-label-row-actions { margin-left: auto; display: inline-flex; gap: 6px; flex-wrap: wrap; }
+/* 开关行：剩余空间全部给文本，控件靠右 */
+.cfg-field--toggle { grid-template-columns: minmax(0, 1fr) auto; cursor: pointer; }
+.cfg-field--toggle > .cfg-ctrl { justify-content: flex-end; }
+/* 次要说明：跨两列紧凑小字，支持内联 code 示例（可选中复制） */
+.cfg-label-hint {
+    grid-column: 1 / -1;
+    font-size: 10.5px;
+    line-height: 1.5;
+    color: var(--muted);
+    overflow-wrap: anywhere;
+}
+.cfg-label-hint code {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    padding: 0 4px;
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--fg) 6%, transparent);
+    user-select: text;
+}
+.cfg-hint-indent { padding-left: 8px; }
+/* 状态徽标：替代 readonly input 提示牌的展示控件 */
+.cfg-status-chip {
+    display: inline-block;
+    grid-column: 1 / -1;
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: var(--muted);
+    background: color-mix(in srgb, var(--fg) 4%, transparent);
+    border-radius: 8px;
+    padding: 6px 10px;
+    overflow-wrap: anywhere;
+    min-width: 0;
+}
+.cfg-status-chip--mono { font-family: var(--mono); font-size: 11px; }
+/* 行内提示：ok / info / warn 三档，颜色全部由语义变量 color-mix 派生（双主题自动适配） */
+.cfg-inline-hint {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 6px;
+    align-items: flex-start;
+    padding: 5px 8px;
+    border-radius: 6px;
+    font-size: 10.5px;
+    line-height: 1.5;
+    color: var(--muted);
+    border: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+    background: color-mix(in srgb, var(--fg) 3%, transparent);
+    margin: 2px 0;
+    overflow-wrap: anywhere;
+    animation: cfg-hint-in .18s ease-out;
+}
+.cfg-inline-hint svg { width: 12px; height: 12px; flex-shrink: 0; margin-top: 2px; }
+.cfg-inline-hint.lvl-info {
+    color: var(--fg);
+    background: color-mix(in srgb, var(--accent) 8%, transparent);
+    border-color: color-mix(in srgb, var(--accent) 20%, transparent);
+}
+.cfg-inline-hint.lvl-info svg { color: var(--accent); }
+.cfg-inline-hint.lvl-warn {
+    color: var(--warning);
+    background: color-mix(in srgb, var(--warning) 9%, transparent);
+    border-color: color-mix(in srgb, var(--warning) 25%, transparent);
+}
+.cfg-inline-hint.lvl-ok {
+    color: var(--success);
+    background: color-mix(in srgb, var(--success) 8%, transparent);
+    border-color: color-mix(in srgb, var(--success) 20%, transparent);
+}
+@keyframes cfg-hint-in { from { opacity: 0; transform: translateY(-2px); } to { opacity: 1; transform: none; } }
+/* 行内动作按钮组（通知测试 / 历史刷新清空） */
+.cfg-actions-row { display: flex; gap: 8px; margin: 6px 0 2px; }
+.cfg-actions-row .menu-btn { flex: 1; }
+/* 行 hover 轻高亮（桌面指针设备生效，触屏走 :active 通道） */
+@media (hover: hover) {
+    .cfg-field:hover { background: color-mix(in srgb, var(--fg) 2.5%, transparent); }
 }
 
 /* 设置面板底部页脚：品牌、版本号与 GitHub 链接（仅「设置」页显示） */
@@ -942,16 +1050,17 @@ h3 {
 .history-row { display: flex; align-items: center; gap: 8px; padding: 5px 8px; border: 1px solid var(--border); border-radius: 8px; font-size: 12px; cursor: pointer; }
 .history-row .history-when { flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .history-row .history-mode { flex-shrink: 0; font-weight: 700; }
-.history-row .history-count { flex-shrink: 0; color: var(--text-secondary); }
-.history-row .history-dur { flex-shrink: 0; color: var(--text-secondary); }
+.history-row .history-count { flex-shrink: 0; color: var(--muted); }
+.history-row .history-dur { flex-shrink: 0; color: var(--muted); }
 
-/* ---------------- 配置面板常开分组（原折叠分组改为静态分组） ---------------- */
+/* ---------------- 配置面板常开分组（accent 竖条 + 紧凑分组头） ---------------- */
 
 .cfg-group {
     border: 1px solid var(--border);
     border-radius: 10px;
     margin-bottom: 10px;
     background: color-mix(in srgb, var(--fg) 2%, transparent);
+    overflow: hidden;
 }
 .cfg-group:last-child { margin-bottom: 0; }
 .cfg-group-head {
@@ -960,11 +1069,21 @@ h3 {
     gap: 8px;
     padding: 8px 10px;
     color: var(--fg);
-    font-size: 13px;
+    font-size: 12.5px;
     font-weight: 700;
+    background: color-mix(in srgb, var(--fg) 2%, transparent);
 }
-.cfg-group-head .fold-tip { font-size: 11px; font-weight: 400; color: var(--text-secondary); }
-.cfg-group-body { padding: 2px 10px 10px; }
+.cfg-group-head::before {
+    content: '';
+    width: 3px;
+    height: 11px;
+    border-radius: 2px;
+    background: var(--accent);
+    opacity: .75;
+    flex-shrink: 0;
+}
+.cfg-group-head .fold-tip { font-size: 10.5px; font-weight: 400; color: var(--muted); }
+.cfg-group-body { padding: 2px 6px 8px; }
 
 /* ---------------- 自动化面板：Cron 分段控件（照 subs-check-pro） ---------------- */
 
@@ -1008,11 +1127,11 @@ h3 {
     flex-shrink: 0;
     white-space: nowrap;
 }
-.cfg-cron-seg-0 { color: #3b82f6; background: color-mix(in srgb, #3b82f6 11%, transparent); }
-.cfg-cron-seg-1 { color: #8b5cf6; background: color-mix(in srgb, #8b5cf6 11%, transparent); }
-.cfg-cron-seg-2 { color: #10b981; background: color-mix(in srgb, #10b981 11%, transparent); }
-.cfg-cron-seg-3 { color: #f59e0b; background: color-mix(in srgb, #f59e0b 11%, transparent); }
-.cfg-cron-seg-4 { color: #ec4899; background: color-mix(in srgb, #ec4899 11%, transparent); }
+.cfg-cron-seg-0 { color: var(--cron-0); background: color-mix(in srgb, var(--cron-0) 11%, transparent); }
+.cfg-cron-seg-1 { color: var(--cron-1); background: color-mix(in srgb, var(--cron-1) 11%, transparent); }
+.cfg-cron-seg-2 { color: var(--cron-2); background: color-mix(in srgb, var(--cron-2) 11%, transparent); }
+.cfg-cron-seg-3 { color: var(--cron-3); background: color-mix(in srgb, var(--cron-3) 11%, transparent); }
+.cfg-cron-seg-4 { color: var(--cron-4); background: color-mix(in srgb, var(--cron-4) 11%, transparent); }
 .cfg-cron-labels-row { display: flex; gap: 5px; padding: 0 2px; }
 .cfg-cron-label {
     font-size: 9.5px;
@@ -1023,11 +1142,11 @@ h3 {
     opacity: .7;
     white-space: nowrap;
 }
-.cfg-cron-label-0 { color: color-mix(in srgb, #3b82f6 60%, transparent); background: color-mix(in srgb, #3b82f6 9%, transparent); }
-.cfg-cron-label-1 { color: color-mix(in srgb, #8b5cf6 60%, transparent); background: color-mix(in srgb, #8b5cf6 9%, transparent); }
-.cfg-cron-label-2 { color: color-mix(in srgb, #10b981 60%, transparent); background: color-mix(in srgb, #10b981 9%, transparent); }
-.cfg-cron-label-3 { color: color-mix(in srgb, #f59e0b 60%, transparent); background: color-mix(in srgb, #f59e0b 9%, transparent); }
-.cfg-cron-label-4 { color: color-mix(in srgb, #ec4899 60%, transparent); background: color-mix(in srgb, #ec4899 9%, transparent); }
+.cfg-cron-label-0 { color: color-mix(in srgb, var(--cron-0) 60%, transparent); background: color-mix(in srgb, var(--cron-0) 9%, transparent); }
+.cfg-cron-label-1 { color: color-mix(in srgb, var(--cron-1) 60%, transparent); background: color-mix(in srgb, var(--cron-1) 9%, transparent); }
+.cfg-cron-label-2 { color: color-mix(in srgb, var(--cron-2) 60%, transparent); background: color-mix(in srgb, var(--cron-2) 9%, transparent); }
+.cfg-cron-label-3 { color: color-mix(in srgb, var(--cron-3) 60%, transparent); background: color-mix(in srgb, var(--cron-3) 9%, transparent); }
+.cfg-cron-label-4 { color: color-mix(in srgb, var(--cron-4) 60%, transparent); background: color-mix(in srgb, var(--cron-4) 9%, transparent); }
 .cfg-cron-placeholder { color: var(--muted); opacity: .45; font-style: italic; font-weight: 400; }
 .cfg-cron-raw-text { color: var(--fg); opacity: .7; white-space: nowrap; }
 .cfg-cron-display--error {
@@ -1075,7 +1194,8 @@ h3 {
 
 /* 结果操作面板：主字段区复用参考弹窗 modal-grid 两列交互，窄栏回退单列 */
 .cfg-body .result-panel-grid { display: flex; flex-direction: column; gap: 12px; }
-.result-panel-section { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.result-panel-section { display: grid; grid-template-columns: 1fr 1fr; gap: 0 10px; align-items: start; }
+.result-panel-section .cfg-field.full-width { grid-column: 1 / -1; }
 .result-panel-actions {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
@@ -1176,8 +1296,12 @@ h3 {
     .settings-grid { grid-template-columns: 1fr; }
     .modal-grid { grid-template-columns: 1fr; }
     .result-panel-section { grid-template-columns: 1fr; }
-    .option-item { flex-wrap: wrap; }
-    .option-item .label { flex-basis: 100%; }
+    /* 配置行窄屏单列堆叠；输入控件恢复 16px 防 iOS 聚焦缩放 */
+    .cfg-field { grid-template-columns: minmax(0, 1fr); }
+    .cfg-field > .cfg-label, .cfg-field > .cfg-ctrl { grid-column: 1; }
+    .cfg-field--toggle { grid-template-columns: minmax(0, 1fr) auto; }
+    .cfg-ctrl-row > select { max-width: 100%; }
+    input, select, textarea { font-size: 16px; }
     .log-shell { height: 240px; }
     .card { border-radius: 14px; }
 }
@@ -1201,25 +1325,6 @@ h3 {
 }
 .section-box h3 { margin-bottom: 4px; }
 
-.control-title {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 8px;
-    font-size: 13px;
-    font-weight: 700;
-    padding-bottom: 6px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 4px;
-}
-
-.speed-url-select { flex: 0 0 auto; max-width: 46%; }
-
-.automation-save-btn { margin-top: 12px; width: 100%; }
-
-.automation-column { display: flex; flex-direction: column; }
-
-.github-field { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; }
 .github-account-row, .field-pill {
     display: flex;
     align-items: center;
@@ -1420,12 +1525,6 @@ tr.row-unqualified td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb,
 
 /* 复制按钮三段式反馈（A5）：成功瞬间整钮变绿色态（内容由 JS 换对勾），约 1.8s 后还原 */
 .copied { color: var(--success) !important; border-color: color-mix(in srgb, var(--success) 45%, transparent) !important; }
-
-/* ---------------- 配置活校验行内提示（A4） ---------------- */
-.cfg-field-hint { display: flex; gap: 4px; align-items: baseline; font-size: 11px; margin-top: 3px; line-height: 1.4; }
-.cfg-field-hint .hint-icon { flex-shrink: 0; }
-.cfg-field-hint.info { color: var(--muted); }
-.cfg-field-hint.warn { color: var(--warning); }
 
 /* ---------------- 分析 Hero 强调数字（A6） ---------------- */
 .hero-num { color: var(--accent); font-weight: 700; }

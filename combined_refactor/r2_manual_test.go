@@ -507,7 +507,7 @@ func TestAutomationSectionExplainsGitHubAndR2Upload(t *testing.T) {
 		`id="r2UploadStatus"`,
 		"上传 R2",
 		"开启测速只上传测速达标行，未开启测速只上传通过延迟筛选的结果行",
-		"「⬆ 自动上传」的 R2 上传按规则筛选",
+		"「自动上传」的 R2 上传按规则筛选",
 	} {
 		if !strings.Contains(results, want) {
 			t.Fatalf("结果操作区块缺少 R2 上传配置或说明: %q", want)

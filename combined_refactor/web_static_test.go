@@ -196,7 +196,7 @@ func TestUIInteractionMarkers(t *testing.T) {
 		"toast-countdown",             // A5
 		"var(--toast-ms, 2.6s)",       // A5 与 JS 同源
 		".copied",                     // A5
-		".cfg-field-hint",             // A4
+		".cfg-inline-hint",            // A4 活校验行内提示（统一三档组件）
 		".hero-num",                   // A6
 		".health-panel",               // A7
 		"@supports (padding-top: env(safe-area-inset-top))", // A11
