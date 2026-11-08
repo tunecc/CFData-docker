@@ -182,6 +182,12 @@ func (s *appSession) startTaskNamed(label string, mode string, params map[string
 			snapshot := s.backgroundSummary()
 			// 先把终态写入快照再结束任务计数，保证恢复视图能看到最终阶段
 			s.markTaskFinished(ctx.Err() != nil)
+			// 终态已写入、isTaskRunning 仍为 true（beginTask 无法并发清空
+			// 回放缓冲），此刻落盘能完整捕获上次任务内容供重启后恢复；
+			// 空标签的同步任务（如调度流水线内部步骤）不覆盖快照
+			if label != "" {
+				persistTaskSnapshot(s)
+			}
 			s.endTask()
 			// 空标签的同步任务（如调度流水线内部步骤）不覆盖上次运行摘要
 			if label != "" {
@@ -412,6 +418,9 @@ type taskRestorePayload struct {
 	Mode     string                 `json:"mode"`
 	Snapshot backgroundTaskSnapshot `json:"snapshot"`
 	Logs     []string               `json:"logs"`
+	// FromDisk 标记载荷来自磁盘任务快照（进程重启后的恢复），前端据此
+	// 提示内容来自上次任务。
+	FromDisk bool `json:"fromDisk,omitempty"`
 }
 
 // taskRestoreChunk 携带一类回放数据的一批行，避免单条消息过大。

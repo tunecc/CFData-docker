@@ -1248,8 +1248,16 @@
             statusEl.classList.toggle('error', !connected);
         }
 
+        // 首条日志/恢复内容到达后移除静态占位行，避免「等待操作...」与真实内容并存
+        function clearLogPlaceholder() {
+            const box = document.getElementById('logBox');
+            const first = box && box.firstElementChild;
+            if (first && first.textContent === '[系统] 等待操作...') first.remove();
+        }
+
         function log(text) {
             recordWebDebugNotice('web_log', text);
+            clearLogPlaceholder();
             const box = document.getElementById('logBox');
             const div = document.createElement('div');
             const span = document.createElement('span');
@@ -1660,6 +1668,7 @@
             // 恢复载荷元信息：任务状态、进度与参数先行恢复，结果表格在 task_restore_done 统一重建
             taskRestoreData = { scan: [], test: [], speed: [], nsbLive: [], dc: [], nsbHeaders: [], nsbRows: [] };
             if (!data || !data.hasTask) return;
+            clearLogPlaceholder();
             const snapshot = data.snapshot || {};
             const mode = data.mode;
             isTaskRunning = !!data.running;
@@ -1678,6 +1687,8 @@
                 updateProgress(snapshot.current || 0, Math.max(snapshot.total || 0, snapshot.current || 0, 1), snapshot.phase || '完成');
             }
             (data.logs || []).forEach((line) => log(line));
+            // 磁盘快照恢复（进程重启后）：提示内容来自上次任务，与内存回放区分
+            if (data.fromDisk) log('已从磁盘恢复上次任务结果' + (data.label ? '（' + data.label + '）' : ''));
         }
 
         function applyTaskRestoreChunk(chunk) {

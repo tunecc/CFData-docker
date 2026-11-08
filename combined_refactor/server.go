@@ -115,9 +115,10 @@ func broadcastTaskEnvelope(seq uint64, msgType string, data interface{}) {
 
 // sendTaskRestore 把全局任务会话的当前状态与回放数据下发给新连接：先发任
 // 务状态与日志，再分批发送结果数据，最后以带序号的完成消息收尾，前端据此
-// 恢复到与持续在线一致的视图。
+// 恢复到与持续在线一致的视图。内存回放为空且无任务运行时，改用磁盘任务
+// 快照恢复上次任务视图（进程重启后的场景）。
 func sendTaskRestore(session *appSession) {
-	payload, chunks, lastSeq := taskSession.buildTaskRestore()
+	payload, chunks, lastSeq := resolveTaskRestore()
 	session.sendWSMessage("task_restored", payload)
 	for _, chunk := range chunks {
 		session.sendWSMessage("task_restore_chunk", chunk)
