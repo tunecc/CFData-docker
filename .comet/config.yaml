@@ -5,7 +5,6 @@ default_workflow: native
 # 此项目启用的工作流，可填写 native、classic 或同时启用两者。
 workflows:
   - native
-  - classic
 # 是否启用只读的环境感知恢复探针，同时作用于 Native 和 Classic；设为 false 可关闭自动工作流恢复。
 # ambient_resume: true | false
 ambient_resume: true
@@ -54,3 +53,6 @@ classic:
   # Classic 阶段通过后是否自动进入下一阶段。
   # 可选值：true | false
   auto_transition: true
+# 是否生成可直接打开的 HTML 变更说明，同时作用于 Native 和 Classic；开启会增加讲解内容的 token 消耗。
+# change_walkthrough: true | false（默认 true）
+change_walkthrough: true
