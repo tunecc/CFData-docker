@@ -80,8 +80,8 @@
         const githubAccountStorageKey = 'cfdata-github-accounts';
         const githubSessionTokens = new Map();
         const githubTokenCryptoSalt = 'cfdata-github-token-v1';
-        const edgetunnelAccountStorageKey = 'cfdata-edgetunnel-accounts';
-        const edgetunnelSessionPasswords = new Map();
+        // edgetunnel 功能已移除：清理历史版本残留的账号数据（一次性）
+        localStorage.removeItem('cfdata-edgetunnel-accounts');
 
         const LATENCY_COLORS = [
             { end: 50, color: '#1f8a3b' },
@@ -957,70 +957,44 @@
             return true;
         }
 
-        async function saveEdgetunnelAccountFromPanel(silent = false) {
-            const fail = (msg) => {
-                if (!silent) showNoticeCard(msg);
-                return msg;
-            };
-            const host = document.getElementById('edgetunnelHost').value.trim();
-            const password = document.getElementById('edgetunnelPassword').value.trim();
-            if (!host || !password) {
-                return fail('请先填写 edgetunnel 域名与密码');
-            }
-            await saveCurrentEdgetunnelAccount();
-            const okMsg = 'edgetunnel 账号已保存到本机浏览器加密存储';
-            if (!silent) showNoticeCard(okMsg);
-            log(okMsg);
-            return true;
-        }
-
         // 当前页面的账号表单是否填写过（名称/token/仓库 任一非空即视为要保存）
         function accountFormHasInput(ids) {
             return hasAnyFieldValue(ids.map((id) => document.getElementById(id)?.value));
         }
 
-        // 页面级保存：结果操作页（结果面板设置 + R2 上传设置）
-        function saveResultsPage() {
+        // 页面级保存：结果操作页（结果面板设置 + R2 上传设置 + 已填写的 GitHub 账号，空白表单跳过）
+        async function saveResultsPage() {
             const localOK = saveResultPanelSettings();
             const panelSent = flushResultPanelServerSync(true);
             suppressScheduleSavedNotice = true;
             // 响应丢失时兜底：5 秒后自动解除抑制，避免永久屏蔽调度保存提示
             setTimeout(() => { suppressScheduleSavedNotice = false; }, 5000);
             if (!saveScheduleConfig()) suppressScheduleSavedNotice = false;
-            if (!localOK && !panelSent) {
+            // GitHub 账号保存沿用原「上传账号」页语义：填写才保存，失败提示不与面板提示互相覆盖
+            let accountNoticeShown = false;
+            if (accountFormHasInput(['githubAccountName', 'githubToken', 'githubRepo'])) {
+                const result = await saveGithubAccountFromPanel(true);
+                if (result !== true) {
+                    suppressScheduleSavedNotice = false;
+                    showNoticeCard(result);
+                    accountNoticeShown = true;
+                } else {
+                    // 账号保存成功：抑制面板成功提示（WS 回包晚到会覆盖账号提示），保证最终只见一条明确确认
+                    resultPanelManualSavePending = false;
+                    showNoticeCard('上传账号已保存到本机浏览器加密存储');
+                    accountNoticeShown = true;
+                }
+            }
+            if (!localOK && !panelSent && !accountNoticeShown) {
                 suppressScheduleSavedNotice = false;
                 showNoticeCard('结果面板设置保存失败：本地与服务器均不可用');
             }
-            // 成功提示由 result_panel_config_saved 统一给出，避免两条提示互相覆盖
+            // 未填写账号时，结果面板成功提示由 result_panel_config_saved 统一给出
         }
 
         // 页面级保存：自动化页（调度、通知与 R2 与自动化共用同一配置）
         function saveAutomationPage() {
             saveScheduleConfig();
-        }
-
-        // 页面级保存：上传账号页（两个表单中的有效账号，空白表单跳过）
-        async function saveAccountsPage() {
-            const hasGithub = accountFormHasInput(['githubAccountName', 'githubToken', 'githubRepo']);
-            const hasEdgetunnel = accountFormHasInput(['edgetunnelAccountName', 'edgetunnelHost', 'edgetunnelPassword']);
-            if (!hasGithub && !hasEdgetunnel) {
-                showNoticeCard('请先填写要保存的 GitHub 或 edgetunnel 账号信息');
-                return;
-            }
-            const failures = [];
-            if (hasGithub) {
-                const result = await saveGithubAccountFromPanel(true);
-                if (result !== true) failures.push(result);
-            }
-            if (hasEdgetunnel) {
-                const result = await saveEdgetunnelAccountFromPanel(true);
-                if (result !== true) failures.push(result);
-            }
-            if (failures.length) {
-                showNoticeCard(failures[0]);
-                return;
-            }
-            showNoticeCard('上传账号已保存到本机浏览器加密存储');
         }
 
         // 页面级保存：设置页（本地配置 + 自动加载偏好 + 已填写的管理面代理）
@@ -3357,7 +3331,6 @@
                 if (!resultFieldOrder.length) resultFieldOrder = getDefaultResultFieldOrder((document.getElementById('resultFormat') || {}).value || 'txt');
                 renderResultFieldOptions();
                 renderGitHubAccounts();
-                if (typeof renderEdgetunnelAccounts === 'function') renderEdgetunnelAccounts();
                 syncR2AliasTemplate();
             } catch (e) { /* 结果数据未就绪时保持当前渲染 */ }
         }
@@ -3608,7 +3581,6 @@
             // 刷新页面或程序重启后前端没有结果行时，仍可预先勾选要导出的列。
             const available = buildResultFieldChoices(RESULT_FIELDS, resultCustomFields);
             document.querySelectorAll('.github-field').forEach((el) => el.style.display = '');
-            document.querySelectorAll('.edgetunnel-field').forEach((el) => el.style.display = '');
             document.getElementById('resultFieldPicker').innerHTML = available.map((f) => `<label class="field-pill"><input type="checkbox" value="${f.key}" ${resultFieldOrder.includes(f.key) ? 'checked' : ''} onchange="toggleResultField('${f.key}', this.checked)"> ${f.label}</label>`).join('');
             updateResultFieldQuickButtons();
             renderResultOrderList();
@@ -3680,27 +3652,8 @@
             const accounts = getGitHubAccounts();
             const accountOptions = '<option value="">新账户/不使用保存配置</option>' + accounts.map((a, i) => `<option value="${i}">${escapeHTML(a.name || a.repo || 'GitHub账户')} ${a.tokenHash ? '(' + escapeHTML(a.tokenHash.slice(0, 10)) + ')' : ''}</option>`).join('');
             if (select) select.innerHTML = accountOptions;
-            syncGitHubAccountPick();
             renderAutoUploadSelect('nsbAutoUploadAccount', accounts);
             renderAutoUploadSelect('officialAutoUploadAccount', accounts);
-        }
-
-        // 结果弹窗内的已保存账号选择：与「上传账号」面板字段双向同步
-        function syncGitHubAccountPick() {
-            const pick = document.getElementById('githubAccountPick');
-            const select = document.getElementById('githubAccountSelect');
-            if (!pick) return;
-            const accounts = getGitHubAccounts();
-            pick.innerHTML = '<option value="">使用当前填写信息</option>' + accounts.map((a, i) => `<option value="${i}">${escapeHTML(a.name || a.repo || 'GitHub账户')}</option>`).join('');
-            pick.value = select ? select.value : '';
-        }
-
-        function pickGitHubAccountFromModal() {
-            const pick = document.getElementById('githubAccountPick');
-            const select = document.getElementById('githubAccountSelect');
-            if (!pick || !select) return;
-            select.value = pick.value;
-            loadSelectedGitHubAccount();
         }
 
         function normalizeGitHubAccountKey(account) {
@@ -3724,7 +3677,6 @@
 
         function loadSelectedGitHubAccount() {
             const select = document.getElementById('githubAccountSelect');
-            syncGitHubAccountPick();
             const idx = parseInt(select.value, 10);
             if (Number.isNaN(idx)) {
                 clearGitHubAccountInputs();
@@ -3848,153 +3800,6 @@
             else accounts.push(next);
             saveGitHubAccounts(accounts);
             renderGitHubAccounts();
-        }
-
-        function getEdgetunnelAccounts() {
-            try {
-                const parsed = JSON.parse(localStorage.getItem(edgetunnelAccountStorageKey) || '[]');
-                return Array.isArray(parsed) ? parsed : [];
-            } catch (_) {
-                return [];
-            }
-        }
-
-        function saveEdgetunnelAccounts(accounts) {
-            localStorage.setItem(edgetunnelAccountStorageKey, JSON.stringify(accounts));
-        }
-
-        function renderEdgetunnelAccounts() {
-            const select = document.getElementById('edgetunnelAccountSelect');
-            const accounts = getEdgetunnelAccounts();
-            const accountOptions = '<option value="">新账户/不使用保存配置</option>' + accounts.map((a, i) => `<option value="${i}">${escapeHTML(a.name || a.host || 'edgetunnel账户')}</option>`).join('');
-            if (select) select.innerHTML = accountOptions;
-            syncEdgetunnelAccountPick();
-        }
-
-        function syncEdgetunnelAccountPick() {
-            const pick = document.getElementById('edgetunnelAccountPick');
-            const select = document.getElementById('edgetunnelAccountSelect');
-            if (!pick) return;
-            const accounts = getEdgetunnelAccounts();
-            pick.innerHTML = '<option value="">使用当前填写信息</option>' + accounts.map((a, i) => `<option value="${i}">${escapeHTML(a.name || a.host || 'edgetunnel账户')}</option>`).join('');
-            pick.value = select ? select.value : '';
-        }
-
-        function pickEdgetunnelAccountFromModal() {
-            const pick = document.getElementById('edgetunnelAccountPick');
-            const select = document.getElementById('edgetunnelAccountSelect');
-            if (!pick || !select) return;
-            select.value = pick.value;
-            loadSelectedEdgetunnelAccount();
-        }
-
-        function normalizeEdgetunnelAccountKey(account) {
-            return account?.name || account?.host || '';
-        }
-
-        function loadSelectedEdgetunnelAccount() {
-            const select = document.getElementById('edgetunnelAccountSelect');
-            syncEdgetunnelAccountPick();
-            const idx = parseInt(select.value, 10);
-            if (Number.isNaN(idx)) {
-                clearEdgetunnelAccountInputs();
-                return;
-            }
-            const account = getEdgetunnelAccounts()[idx];
-            if (!account) return;
-            document.getElementById('edgetunnelAccountName').value = account.name || '';
-            document.getElementById('edgetunnelHost').value = account.host || '';
-            document.getElementById('edgetunnelMode').value = account.mode || 'overwrite';
-            document.getElementById('edgetunnelSavePassword').checked = !!account.passwordCipher || !!account.password || edgetunnelSessionPasswords.has(normalizeEdgetunnelAccountKey(account));
-            const accountKey = normalizeEdgetunnelAccountKey(account);
-            const sessionPassword = edgetunnelSessionPasswords.get(accountKey) || '';
-            document.getElementById('edgetunnelPassword').value = sessionPassword;
-            if (!sessionPassword && account.password) {
-                document.getElementById('edgetunnelPassword').value = account.password;
-                edgetunnelSessionPasswords.set(accountKey, account.password);
-            } else if (!sessionPassword && account.passwordCipher) {
-                decryptStoredEdgetunnelPassword(account).then((password) => {
-                    if (password) {
-                        edgetunnelSessionPasswords.set(accountKey, password);
-                        if (document.getElementById('edgetunnelAccountSelect').value === String(idx)) {
-                            document.getElementById('edgetunnelPassword').value = password;
-                        }
-                    }
-                });
-            }
-        }
-
-        function clearEdgetunnelAccountInputs() {
-            ['edgetunnelAccountName', 'edgetunnelHost', 'edgetunnelPassword'].forEach((id) => document.getElementById(id).value = '');
-            document.getElementById('edgetunnelMode').value = 'overwrite';
-            document.getElementById('edgetunnelSavePassword').checked = false;
-        }
-
-        function deleteSelectedEdgetunnelAccount() {
-            const select = document.getElementById('edgetunnelAccountSelect');
-            const idx = parseInt(select.value, 10);
-            if (Number.isNaN(idx)) return;
-            const accounts = getEdgetunnelAccounts();
-            const deleted = accounts[idx];
-            if (deleted) edgetunnelSessionPasswords.delete(normalizeEdgetunnelAccountKey(deleted));
-            accounts.splice(idx, 1);
-            saveEdgetunnelAccounts(accounts);
-            renderEdgetunnelAccounts();
-        }
-
-        async function getEdgetunnelPasswordCryptoKey(accountName) {
-            if (!crypto.subtle) return null;
-            const material = await crypto.subtle.importKey('raw', new TextEncoder().encode(`${location.origin}|${accountName}|cfdata-edgetunnel-token-v1`), 'PBKDF2', false, ['deriveKey']);
-            return crypto.subtle.deriveKey({ name: 'PBKDF2', salt: new TextEncoder().encode('cfdata-edgetunnel-token-v1'), iterations: 120000, hash: 'SHA-256' }, material, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
-        }
-
-        async function encryptEdgetunnelPassword(accountName, password) {
-            const key = await getEdgetunnelPasswordCryptoKey(accountName);
-            if (!key) return '';
-            const iv = crypto.getRandomValues(new Uint8Array(12));
-            const cipher = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode(password));
-            return bytesToBase64(iv) + ':' + bytesToBase64(new Uint8Array(cipher));
-        }
-
-        async function decryptStoredEdgetunnelPassword(account) {
-            if (!account?.passwordCipher || !crypto.subtle) return '';
-            try {
-                const key = await getEdgetunnelPasswordCryptoKey(normalizeEdgetunnelAccountKey(account));
-                if (!key) return '';
-                const parts = account.passwordCipher.split(':');
-                if (parts.length !== 2) return '';
-                const iv = base64ToBytes(parts[0]);
-                const data = base64ToBytes(parts[1]);
-                const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, data);
-                return new TextDecoder().decode(plain);
-            } catch (_) {
-                return '';
-            }
-        }
-
-        async function saveCurrentEdgetunnelAccount() {
-            const name = document.getElementById('edgetunnelAccountName').value.trim() || document.getElementById('edgetunnelHost').value.trim();
-            if (!name) return;
-            const host = document.getElementById('edgetunnelHost').value.trim();
-            const password = document.getElementById('edgetunnelPassword').value.trim();
-            const mode = document.getElementById('edgetunnelMode').value;
-            const rememberPassword = document.getElementById('edgetunnelSavePassword').checked;
-            const accounts = getEdgetunnelAccounts();
-            const next = { name, host, mode };
-            if (rememberPassword && password) {
-                edgetunnelSessionPasswords.set(name, password);
-                next.passwordCipher = await encryptEdgetunnelPassword(name, password);
-                if (!next.passwordCipher) {
-                    showNoticeCard('当前浏览器不支持 WebCrypto，无法安全保存密码；本次仍会上传，但不会持久保存密码');
-                }
-            } else {
-                edgetunnelSessionPasswords.delete(name);
-            }
-            const existing = accounts.findIndex((a) => a.name === name);
-            if (existing >= 0) accounts[existing] = next;
-            else accounts.push(next);
-            saveEdgetunnelAccounts(accounts);
-            renderEdgetunnelAccounts();
         }
 
         function renderResultOrderList() {
@@ -4814,14 +4619,6 @@
             wsSend({ type: 'github_upload', data: payload });
         }
 
-        function setEdgetunnelUploadStatus(text, type = '') {
-            const el = document.getElementById('edgetunnelUploadStatus');
-            if (!el) return;
-            el.textContent = text;
-            el.classList.remove('error', 'success');
-            if (type) el.classList.add(type);
-        }
-
         function setR2UploadStatus(text, type = '') {
             const el = document.getElementById('r2UploadStatus');
             if (!el) return;
@@ -4862,36 +4659,6 @@
             }
             setR2UploadStatus('R2 上传中…', 'success');
             log('已提交 R2 上传请求');
-        }
-
-        function confirmEdgetunnelUpload(mode) {
-            const msg = '使用 edgetunnel 上传前，请确认你的 edgetunnel 已将优选订阅模式设置为「自定义订阅」（支持汇聚订阅），否则 edgetunnel 将无法下发正确内容。\n\n另外，不建议上传过多的优选地址，节点并不是越多越好，建议精选延迟低、稳定性好的节点上传。';
-            showConfirmCard(msg, function() {
-                uploadSelectedResultsToEdgetunnel(mode);
-            }, 'edgetunnel 上传提示');
-        }
-
-        async function uploadSelectedResultsToEdgetunnel(mode) {
-            const el = document.getElementById('edgetunnelUploadStatus');
-            el.textContent = '准备上传...';
-            el.className = 'upload-status';
-            const host = document.getElementById('edgetunnelHost').value.trim();
-            const password = document.getElementById('edgetunnelPassword').value.trim();
-            if (!host) return showNoticeCard('Host 不能为空');
-            if (!password) return showNoticeCard('密码不能为空');
-            await saveCurrentEdgetunnelAccount();
-            const format = document.getElementById('resultFormat').value;
-            let content;
-            try {
-                const quickFile = await readQuickUploadFile();
-                content = quickFile ? quickFile.content : buildSelectedResultContent(format);
-            } catch (err) {
-                showNoticeCard(err.message || '暂无可操作结果');
-                return;
-            }
-            setEdgetunnelUploadStatus('正在上传...', 'success');
-            wsSend({ type: 'edgetunnel_upload', data: { host, password, content, mode } });
-            log(`已提交 edgetunnel ${mode === 'append' ? '追加' : '覆盖'}上传请求`);
         }
 
         function renderRawURLCopy(rawURL) {
@@ -5297,26 +5064,6 @@
                     log(msg.data.message || 'GitHub 上传失败');
                     break;
 
-                case 'edgetunnel_upload_result':
-                    setEdgetunnelUploadStatus('上传成功', 'success');
-                    log('edgetunnel 上传完成');
-                    showNoticeCard('edgetunnel 上传完成');
-                    break;
-
-                case 'edgetunnel_upload_status':
-                    setEdgetunnelUploadStatus(msg.data.message || 'edgetunnel 上传中', 'success');
-                    break;
-
-                case 'edgetunnel_upload_error':
-                    recordWebDebugError('edgetunnel_upload_error', msg.data?.message || msg.data || 'edgetunnel 上传失败');
-                    if (msg.data.silent) {
-                        showNoticeCard(msg.data.message || 'edgetunnel 自动上传失败');
-                    } else {
-                        setEdgetunnelUploadStatus(msg.data.message || 'edgetunnel 上传失败', 'error');
-                    }
-                    log(msg.data.message || 'edgetunnel 上传失败');
-                    break;
-
                 case 'r2_upload_status':
                     setR2UploadStatus(msg.data.message || 'R2 上传中', 'success');
                     break;
@@ -5640,7 +5387,7 @@
             { group: '自动化', tab: 'automation', fields: [
                 { id: 'scheduleInterval', label: '检测间隔（分钟）' },
             ] },
-            { group: '上传与账号', tab: 'accounts', fields: [
+            { group: '上传与账号', tab: 'results', fields: [
                 { id: 'r2WorkerUrl', label: 'R2 Worker 地址', optional: true },
             ] },
         ];
@@ -5730,7 +5477,6 @@
             bindScheduleCronControl();
             bindConfigValidators();
             renderGitHubAccounts();
-            renderEdgetunnelAccounts();
             switchMode('official');
             // 面板设置恢复必须晚于 switchMode 的初始化渲染，否则恢复值会被重置
             restoreResultPanelSettings();

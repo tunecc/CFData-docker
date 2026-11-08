@@ -104,14 +104,6 @@ type startNSBSpeedBatchRequest struct {
 	R2AutoUpload bool             `json:"r2AutoUpload"`
 }
 
-type edgetunnelUploadRequest struct {
-	Host     string `json:"host"`
-	Password string `json:"password"`
-	Content  string `json:"content"`
-	Mode     string `json:"mode"`
-	Silent   bool   `json:"silent"`
-}
-
 type githubUploadRequest struct {
 	Token   string `json:"token"`
 	Owner   string `json:"owner"`

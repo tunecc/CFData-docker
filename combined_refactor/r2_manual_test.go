@@ -476,10 +476,14 @@ func TestAutomationSectionExplainsGitHubAndR2Upload(t *testing.T) {
 	html := readFrontendSource(t)
 	// R2 配置迁入「结果操作」面板后：自动化区块不再含 R2 字段/反馈，
 	// 规则说明跟随 R2 分组放在结果操作面板（spec: results-upload-ux）。
+	// 「上传账号」面板并入结果操作后，自动化区块的下一个面板即结果操作。
 	automationStart := strings.Index(html, `id="cfgPanelAutomation"`)
-	automationEnd := strings.Index(html, `id="cfgPanelAccounts"`)
+	automationEnd := strings.Index(html, `id="cfgPanelResults"`)
 	if automationStart < 0 || automationEnd <= automationStart {
 		t.Fatalf("无法定位自动化区块: %d-%d", automationStart, automationEnd)
+	}
+	if strings.Contains(html, `id="cfgPanelAccounts"`) || strings.Contains(html, `id="cfgTabAccounts"`) {
+		t.Fatal("「上传账号」tab 与面板应已并入结果操作，不应残留")
 	}
 	automation := html[automationStart:automationEnd]
 	for _, banned := range []string{`id="r2Enabled"`, `id="r2WorkerUrl"`, `id="r2WorkerToken"`, `id="r2UploadFeedback"`, `id="r2UploadStatus"`} {

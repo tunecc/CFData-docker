@@ -207,8 +207,7 @@
             <div class="cfg-tabs" id="cfgTabBar">
                 <button class="cfg-tab active" id="cfgTabMode" onclick="nzShowConfigPanel('mode')" title="官方优选参数与扫描（模式切换只在任务控制卡）"><span class="nav-icon" id="cfgTabModeIcon">☁️</span><span id="cfgTabModeLabel">官方优选</span></button>
                 <button class="cfg-tab" id="cfgTabAutomation" onclick="nzShowConfigPanel('automation')" title="自动调度"><span class="nav-icon">⏱️</span>自动化</button>
-                <button class="cfg-tab" id="cfgTabResults" onclick="nzShowConfigPanel('results')" title="结果导出与上传（R2 上传配置在此）"><span class="nav-icon">📥</span>结果操作</button>
-                <button class="cfg-tab" id="cfgTabAccounts" onclick="nzShowConfigPanel('accounts')" title="GitHub / edgetunnel 上传账号管理"><span class="nav-icon">📤</span>上传账号</button>
+                <button class="cfg-tab" id="cfgTabResults" onclick="nzShowConfigPanel('results')" title="结果导出与上传（R2 与 GitHub 账号配置在此）"><span class="nav-icon">📥</span>结果操作</button>
                 <button class="cfg-tab" id="cfgTabSettings" onclick="nzShowConfigPanel('settings')" title="外观、代理与配置管理"><span class="nav-icon">⚙️</span>设置</button>
             </div>
             <div class="cfg-body active" id="cfgPanelOfficial">
@@ -560,49 +559,6 @@
             </div>
         </div>
             </div>
-            <div class="cfg-body hidden" id="cfgPanelAccounts">
-                <div class="cfg-panel-head">
-                    <div class="cfg-panel-title">上传账号</div>
-                    <button class="menu-btn cfg-save-btn" onclick="saveAccountsPage()" title="保存当前页面中已填写的 GitHub 与 edgetunnel 账号">💾 保存</button>
-                </div>
-                <div class="section-box">
-                    <h3>GitHub 上传账号</h3>
-                    <div class="modal-field github-field"><label>GitHub 账户</label>
-                        <div class="github-account-row">
-                            <select id="githubAccountSelect" onchange="loadSelectedGitHubAccount()"></select>
-                            <button class="action-btn" onclick="deleteSelectedGitHubAccount()">删除</button>
-                        </div>
-                    </div>
-                    <div class="modal-field github-field"><label>账户名称</label><input id="githubAccountName" type="text" placeholder="例如 main-account"></div>
-                    <div class="modal-field github-field"><label>GitHub Token</label><input id="githubToken" type="password" autocomplete="off" placeholder="repo 权限 token"></div>
-                    <div class="modal-field github-field"><label>仓库 owner/repo</label><input id="githubRepo" type="text" placeholder="owner/repo"></div>
-                    <div class="modal-field github-field"><label>分支</label><input id="githubBranch" type="text" value="main"></div>
-                    <div class="modal-field github-field"><label>目标路径</label><input id="githubPath" type="text" placeholder="results/ip.csv 或 results/ip.txt"></div>
-                    <div class="modal-field full github-field"><label>提交信息</label><input id="githubMessage" type="text" value="update cfdata results"></div>
-                    <div class="modal-field full github-field"><label class="inline-check"><input id="githubSaveToken" type="checkbox"> 保存 token 到本机浏览器（使用 WebCrypto 加密存储）</label></div>
-                    <div class="automation-hint">账号只保存在本机浏览器加密存储；结果操作弹窗内可通过「选择已保存账号」下拉直接切换账号（面板字段同步更新），上传时按「保存 token」勾选状态更新账号。</div>
-                </div>
-                <div class="section-box">
-                    <h3>edgetunnel 上传账号</h3>
-                    <div class="modal-field edgetunnel-field"><label>edgetunnel 账户</label>
-                        <div class="github-account-row">
-                            <select id="edgetunnelAccountSelect" onchange="loadSelectedEdgetunnelAccount()"></select>
-                            <button class="action-btn" onclick="deleteSelectedEdgetunnelAccount()">删除</button>
-                        </div>
-                    </div>
-                    <div class="modal-field edgetunnel-field"><label>账户名称</label><input id="edgetunnelAccountName" type="text" placeholder="例如 main-tunnel"></div>
-                    <div class="modal-field edgetunnel-field"><label>edgetunnel 域名</label><input id="edgetunnelHost" type="text" placeholder="https://example.com"></div>
-                    <div class="modal-field edgetunnel-field"><label>密码</label><input id="edgetunnelPassword" type="password" autocomplete="off" placeholder="edgetunnel 密码"></div>
-                    <div class="modal-field edgetunnel-field"><label>上传模式</label>
-                        <select id="edgetunnelMode">
-                            <option value="overwrite">覆盖上传</option>
-                            <option value="append">追加上传</option>
-                        </select>
-                    </div>
-                    <div class="modal-field full edgetunnel-field"><label class="inline-check"><input id="edgetunnelSavePassword" type="checkbox"> 保存密码到本机浏览器（使用 WebCrypto 加密存储）</label></div>
-                    <div class="automation-hint">结果操作弹窗内的「上传 edgetunnel-追加 / 覆盖」按钮会使用此处当前填写的账号信息；弹窗内也可通过「选择已保存账号」下拉切换，面板字段同步更新。</div>
-                </div>
-            </div>
             <div class="cfg-body hidden" id="cfgPanelSettings">
                 <div class="cfg-panel-head">
                     <div class="cfg-panel-title">设置</div>
@@ -825,10 +781,19 @@
                         <div class="cfg-group-head">
                             <span>GitHub 上传</span></div>
                         <div class="cfg-group-body">
-                            <div class="modal-field full github-field">
-                                <label>选择已保存账号（切换后「上传账号」面板字段同步更新）</label>
-                                <select id="githubAccountPick" onchange="pickGitHubAccountFromModal()"></select>
+                            <div class="modal-field github-field"><label>GitHub 账户</label>
+                                <div class="github-account-row">
+                                    <select id="githubAccountSelect" onchange="loadSelectedGitHubAccount()"></select>
+                                    <button class="action-btn" onclick="deleteSelectedGitHubAccount()">删除</button>
+                                </div>
                             </div>
+                            <div class="modal-field github-field"><label>账户名称</label><input id="githubAccountName" type="text" placeholder="例如 main-account"></div>
+                            <div class="modal-field github-field"><label>GitHub Token</label><input id="githubToken" type="password" autocomplete="off" placeholder="repo 权限 token"></div>
+                            <div class="modal-field github-field"><label>仓库 owner/repo</label><input id="githubRepo" type="text" placeholder="owner/repo"></div>
+                            <div class="modal-field github-field"><label>分支</label><input id="githubBranch" type="text" value="main"></div>
+                            <div class="modal-field github-field"><label>目标路径</label><input id="githubPath" type="text" placeholder="results/ip.csv 或 results/ip.txt"></div>
+                            <div class="modal-field full github-field"><label>提交信息</label><input id="githubMessage" type="text" value="update cfdata results"></div>
+                            <div class="modal-field full github-field"><label class="inline-check"><input id="githubSaveToken" type="checkbox"> 保存 token 到本机浏览器（使用 WebCrypto 加密存储）</label></div>
                             <div class="modal-field full github-field">
                                 <label>快速上传指定文件（不使用上方结果内容）</label>
                                 <input id="githubQuickFile" type="file" accept=".txt,.csv,text/plain,text/csv">
@@ -841,6 +806,7 @@
                                 <label>上传失败提示</label>
                                 <div class="upload-status" id="uploadProxyHint">上传失败？可在「设置」标签页配置管理面代理后重试；支持程序配置（socks5://、http:// 等）与系统环境变量代理，扫描测速不受影响。</div>
                             </div>
+                            <div class="automation-hint">账号只保存在本机浏览器加密存储；选择账号后字段自动回显，上传时按「保存 token」勾选状态更新账号。</div>
                         </div>
                     </div>
                     <div class="cfg-group" id="resultFoldHistory">
@@ -856,26 +822,10 @@
                             <div class="automation-hint" id="historyFeedback" style="display:none"></div>
                         </div>
                     </div>
-                    <div class="cfg-group" id="resultFoldEdgetunnel">
-                        <div class="cfg-group-head">
-                            <span>edgetunnel 上传</span></div>
-                        <div class="cfg-group-body">
-                            <div class="modal-field full edgetunnel-field">
-                                <label>选择已保存账号（切换后「上传账号」面板字段同步更新）</label>
-                                <select id="edgetunnelAccountPick" onchange="pickEdgetunnelAccountFromModal()"></select>
-                            </div>
-                            <div class="modal-field full edgetunnel-field">
-                                <label>上传状态</label>
-                                <div class="upload-status" id="edgetunnelUploadStatus">等待上传</div>
-                            </div>
-                        </div>
-                    </div>
                     <div class="result-panel-actions">
                         <button class="action-btn export-btn" onclick="downloadSelectedResults()">导出文件</button>
                         <button class="action-btn export-btn" onclick="uploadResultsToR2()">上传 R2</button>
                         <button class="action-btn export-btn" onclick="uploadSelectedResultsToGitHub()">上传 GitHub</button>
-                        <button class="action-btn export-btn" onclick="confirmEdgetunnelUpload('append')">上传 edgetunnel-追加</button>
-                        <button class="action-btn export-btn" onclick="confirmEdgetunnelUpload('overwrite')">上传 edgetunnel-覆盖</button>
                     </div>
                 </div>
             </div>

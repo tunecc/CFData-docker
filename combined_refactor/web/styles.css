@@ -1219,7 +1219,7 @@ h3 {
 
 .automation-column { display: flex; flex-direction: column; }
 
-.github-field, .edgetunnel-field { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; }
+.github-field { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; }
 .github-account-row, .field-pill {
     display: flex;
     align-items: center;

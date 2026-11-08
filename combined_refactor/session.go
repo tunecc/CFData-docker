@@ -80,9 +80,9 @@ func (s *appSession) sendLogLine(text string) {
 // 记录回放并广播；普通连接会话直写自己的 WebSocket。
 func (s *appSession) dispatchOutgoing(msgType string, data interface{}) {
 	if s.emit != nil && s.broadcast == nil {
-		if msgType == "error" || msgType == "github_upload_error" || msgType == "edgetunnel_upload_error" {
+		if msgType == "error" || msgType == "github_upload_error" {
 			recordProgramDebugError(msgType, data)
-		} else if msgType == "log" || msgType == "github_upload_status" || msgType == "edgetunnel_upload_status" || msgType == "version_info" {
+		} else if msgType == "log" || msgType == "github_upload_status" || msgType == "version_info" {
 			recordDebugNotice(msgType, data)
 		}
 		s.emit(msgType, data)
