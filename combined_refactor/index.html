@@ -692,9 +692,11 @@
                     <span class="cfg-label-hint" id="proxySourceText"></span>
                     <div class="cfg-ctrl cfg-ctrl-row">
                         <input id="proxyInput" type="text" placeholder="socks5://127.0.0.1:1080 或 http://127.0.0.1:8080">
+                        <button class="menu-btn" id="proxyTestBtn" onclick="testManagementProxy()">测试</button>
                         <button class="menu-btn" onclick="clearManagementProxy()">清除</button>
                     </div>
-                    <span class="cfg-label-hint">仅作用于下载 ASN 库/locations、版本检查、GitHub/订阅上传等管理操作；扫描与测速保持直连。程序配置优先生效，未配置时使用系统环境变量代理。</span>
+                    <span class="cfg-inline-hint" id="proxyTestResult"></span>
+                    <span class="cfg-label-hint">测试当前填写或已生效的代理连通性（出口 IP/地区/延迟）；保存后同样可用。仅作用于下载 ASN 库/locations、版本检查、GitHub/订阅上传等管理操作；扫描与测速保持直连。程序配置优先生效，未配置时使用系统环境变量代理。</span>
                 </div>
                     </div>
                 </div>

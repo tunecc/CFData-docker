@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net"
 	"net/http"
 	"net/url"
@@ -87,17 +88,19 @@ func managementProxyInUse() *url.URL {
 	return nil
 }
 
-func applyManagementProxy(transport *http.Transport) *http.Transport {
-	if transport == nil || !managementProxyConfigured() {
+// applyProxyURLToTransport 把给定代理 URL 应用到 transport：socks5 走专用拨号器，其余走 HTTP(S) Proxy。
+// proxyURL 为 nil 时保持 transport 原状（由调用方决定是否直连）。
+func applyProxyURLToTransport(transport *http.Transport, proxyURL *url.URL) *http.Transport {
+	if transport == nil || proxyURL == nil {
 		return transport
 	}
-	if managementProxyURL.Scheme == "socks5" {
+	if proxyURL.Scheme == "socks5" {
 		var auth *proxy.Auth
-		if managementProxyURL.User != nil {
-			pw, _ := managementProxyURL.User.Password()
-			auth = &proxy.Auth{User: managementProxyURL.User.Username(), Password: pw}
+		if proxyURL.User != nil {
+			pw, _ := proxyURL.User.Password()
+			auth = &proxy.Auth{User: proxyURL.User.Username(), Password: pw}
 		}
-		dialer, err := proxy.SOCKS5("tcp", managementProxyURL.Host, auth, proxy.Direct)
+		dialer, err := proxy.SOCKS5("tcp", proxyURL.Host, auth, proxy.Direct)
 		if err != nil {
 			fmt.Printf("[proxy] socks5 拨号器构建失败，该请求保持直连: %v\n", err)
 			return transport
@@ -114,8 +117,15 @@ func applyManagementProxy(transport *http.Transport) *http.Transport {
 		}
 		return transport
 	}
-	transport.Proxy = http.ProxyURL(managementProxyURL)
+	transport.Proxy = http.ProxyURL(proxyURL)
 	return transport
+}
+
+func applyManagementProxy(transport *http.Transport) *http.Transport {
+	if transport == nil || !managementProxyConfigured() {
+		return transport
+	}
+	return applyProxyURLToTransport(transport, managementProxyURL)
 }
 
 func managementTransport() *http.Transport {
@@ -244,4 +254,97 @@ func updateProxyInConfigFile(path, raw string) error {
 	}
 	os.WriteFile(path+".bak", data, 0600)
 	return nil
+}
+
+// ----------------------- 管理面代理连通性测试 -----------------------
+
+const proxyTestTraceURL = "https://www.cloudflare.com/cdn-cgi/trace"
+const proxyTestTimeout = 10 * time.Second
+
+// resolveProxyTestTarget 决定代理测试目标：raw 非空时测试该地址本身（来源=程序配置）；
+// raw 为空时按生效链回退——程序配置 → 系统环境变量（与 managementProxyInUse 一致）→ 直连。
+func resolveProxyTestTarget(raw string) (*url.URL, string, error) {
+	value := strings.TrimSpace(raw)
+	if value != "" {
+		parsed, err := parseManagementProxy(value)
+		if err != nil {
+			return nil, "", err
+		}
+		return parsed, "程序配置", nil
+	}
+	if inUse := managementProxyInUse(); inUse != nil {
+		if managementProxyConfigured() {
+			return inUse, "程序配置", nil
+		}
+		return inUse, "系统环境变量", nil
+	}
+	return nil, "直连", nil
+}
+
+// testManagementProxyConnectivity 对目标代理做一次性连通性测试：请求 Cloudflare trace，
+// 返回可用性、出口 IP、出口地区、延迟与脱敏代理标签；不修改全局代理状态与配置文件。
+func testManagementProxyConnectivity(raw string) map[string]interface{} {
+	result := map[string]interface{}{"ok": false, "exitIP": "", "country": "", "latencyMs": int64(0), "proxyLabel": "", "source": "", "error": ""}
+	proxyURL, source, err := resolveProxyTestTarget(raw)
+	if err != nil {
+		result["error"] = err.Error()
+		return result
+	}
+	result["source"] = source
+	if proxyURL != nil {
+		result["proxyLabel"] = maskProxyURL(proxyURL)
+	}
+
+	transport := http.DefaultTransport.(*http.Transport).Clone()
+	transport.DialContext = dialContext
+	transport.TLSClientConfig = tlsConfigWithRootCAs("")
+	// 测试目标完全由 resolveProxyTestTarget 决定，显式清空默认的环境变量代理，避免来源标注与实际出口不符
+	transport.Proxy = nil
+	applyProxyURLToTransport(transport, proxyURL)
+	client := &http.Client{Transport: transport, Timeout: proxyTestTimeout}
+
+	req, err := http.NewRequest(http.MethodGet, proxyTestTraceURL, nil)
+	if err != nil {
+		result["error"] = err.Error()
+		return result
+	}
+	req.Header.Set("User-Agent", "CFData-WEB/"+appVersion)
+	start := time.Now()
+	resp, err := client.Do(req)
+	result["latencyMs"] = time.Since(start).Milliseconds()
+	if err != nil {
+		result["error"] = err.Error()
+		return result
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusMultipleChoices {
+		result["error"] = fmt.Sprintf("检测端点返回状态 %d", resp.StatusCode)
+		return result
+	}
+	data, err := io.ReadAll(io.LimitReader(resp.Body, 16*1024))
+	if err != nil {
+		result["error"] = err.Error()
+		return result
+	}
+	exitIP, country := "", ""
+	for _, line := range strings.Split(string(data), "\n") {
+		key, val, ok := strings.Cut(strings.TrimSpace(line), "=")
+		if !ok {
+			continue
+		}
+		switch key {
+		case "ip":
+			exitIP = strings.TrimSpace(val)
+		case "loc":
+			country = strings.ToUpper(strings.TrimSpace(val))
+		}
+	}
+	if exitIP == "" || country == "" {
+		result["error"] = "trace 响应缺少 ip/loc 字段"
+		return result
+	}
+	result["ok"] = true
+	result["exitIP"] = exitIP
+	result["country"] = country
+	return result
 }

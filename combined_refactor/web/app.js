@@ -68,6 +68,7 @@
         let proxyCountryCheckPending = false;
         let proxyCountryCheckTimer = null;
         let proxyWarningSinglePass = false;
+        let proxyTestPending = false;
         let resultModalMode = 'scan';
         let copyModalMode = 'scan';
         let sortModalMode = 'official';
@@ -364,6 +365,44 @@
         function clearManagementProxy() {
             if (!wsSend({ type: 'set_management_proxy', data: { value: '' } })) {
                 showNoticeCard('与服务端的连接尚未就绪，请稍后再试');
+            }
+        }
+
+        // 管理面代理连通性测试：测输入框当前值（未保存也不落盘），输入框为空时测当前生效出口
+        function setProxyTestButtonPending(pending) {
+            const btn = document.getElementById('proxyTestBtn');
+            if (btn) btn.disabled = pending;
+        }
+
+        function applyProxyTestResult(payload) {
+            proxyTestPending = false;
+            setProxyTestButtonPending(false);
+            const resultEl = document.getElementById('proxyTestResult');
+            if (!resultEl) return;
+            const formatFn = window.formatProxyTestResult;
+            const formatted = formatFn ? formatFn(payload) : { text: '', level: 'lvl-info' };
+            resultEl.textContent = formatted.text;
+            resultEl.className = `cfg-inline-hint ${formatted.level}`.trim();
+        }
+
+        function testManagementProxy() {
+            if (proxyTestPending) return;
+            const input = document.getElementById('proxyInput');
+            const value = input ? input.value.trim() : '';
+            const resultEl = document.getElementById('proxyTestResult');
+            if (resultEl) {
+                resultEl.textContent = '正在测试代理连通性…';
+                resultEl.className = 'cfg-inline-hint lvl-info';
+            }
+            proxyTestPending = true;
+            setProxyTestButtonPending(true);
+            if (!wsSend({ type: 'test_management_proxy', data: { value } })) {
+                proxyTestPending = false;
+                setProxyTestButtonPending(false);
+                if (resultEl) {
+                    resultEl.textContent = '与服务端的连接尚未就绪，请稍后再试';
+                    resultEl.className = 'cfg-inline-hint lvl-warn';
+                }
             }
         }
 
@@ -4953,6 +4992,9 @@
                         }
                     }
                     showNoticeCard((msg.data && msg.data.message) || '代理设置已保存并生效');
+                    break;
+                case 'proxy_test_result':
+                    applyProxyTestResult(msg.data || {});
                     break;
                 case 'version_info':
                     renderVersionInfo(msg.data || {});

@@ -549,6 +549,16 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 			}
 			session.sendWSMessage("proxy_updated", status)
 		},
+		"test_management_proxy": func(data json.RawMessage) {
+			var params struct {
+				Value string `json:"value"`
+			}
+			if err := json.Unmarshal(data, &params); err != nil {
+				session.sendWSMessage("error", "test_management_proxy 参数解析失败")
+				return
+			}
+			session.sendWSMessage("proxy_test_result", testManagementProxyConnectivity(params.Value))
+		},
 		"get_schedule_config": func(data json.RawMessage) {
 			payload, err := scheduleConfigPayload(defaultCLIConfigPath())
 			if err != nil {

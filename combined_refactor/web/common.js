@@ -100,6 +100,21 @@
             return s.slice(0, headLen) + '…' + (tailLen > 0 ? s.slice(s.length - tailLen) : '');
         }
 
+        // 管理面代理连通性测试结果格式化：payload 来自 WS proxy_test_result。
+        // 成功 → lvl-ok（含被测代理、出口 IP、地区、延迟、来源）；失败 → lvl-warn（含原因）。
+        function formatProxyTestResult(payload) {
+            const p = payload && typeof payload === 'object' ? payload : {};
+            if (p.ok) {
+                const label = p.proxyLabel ? `（${p.proxyLabel}）` : '';
+                const parts = [`测试成功${label}`, `出口 IP ${p.exitIP || '未知'}`, `地区 ${p.country || '未知'}`];
+                if (Number.isFinite(p.latencyMs) && p.latencyMs >= 0) parts.push(`延迟 ${p.latencyMs} ms`);
+                if (p.source) parts.push(`来源 ${p.source}`);
+                return { text: parts.join('，'), level: 'lvl-ok' };
+            }
+            const reason = String(p.error || '').trim() || '未知原因';
+            return { text: `测试失败：${reason}`, level: 'lvl-warn' };
+        }
+
         // 跨标签页任务完成广播（A10）：写入方与接收方共用同一键与格式。
         const TASK_DONE_BROADCAST_KEY = 'cfdata_task_done';
         function buildTaskDoneBroadcast(mode, ts) {
@@ -161,4 +176,5 @@ window.truncateMiddle = truncateMiddle;
 window.TASK_DONE_BROADCAST_KEY = TASK_DONE_BROADCAST_KEY;
 window.buildTaskDoneBroadcast = buildTaskDoneBroadcast;
 window.parseTaskDoneBroadcast = parseTaskDoneBroadcast;
+window.formatProxyTestResult = formatProxyTestResult;
 window.createLogBuffer = createLogBuffer;
